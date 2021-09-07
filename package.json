@@ -4,6 +4,10 @@
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko-com",
 	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vjekob/al-objid.git"
+	},
 	"icon": "images/icon.png",
 	"galleryBanner": {
 		"color": "#505C6D",
@@ -32,7 +36,7 @@
 			"properties": {
 				"objectidninja.backEndUrl": {
 					"type": "string",
-					"markdownDescription": "URL of the back-end API you want to communicate with. This API must support functionality described at https://github.com/vjekob/alobjectidninja/azure/swagger.html"
+					"markdownDescription": "URL of the back-end API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/backend"
 				},
 				"objectidninja.backEndAPIKey": {
 					"type": "string",
