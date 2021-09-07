@@ -1,0 +1,33 @@
+{
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ],
+      "route": "v1/getNext"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "blob",
+      "direction": "in",
+      "name": "ranges",
+      "path": "%BlobContainer%/{appId}/_ranges.json"
+    },
+    {
+      "type": "blob",
+      "direction": "in",
+      "name": "ids",
+      "path": "%BlobContainer%/{appId}/{type}.json"
+    }
+  ],
+  "scriptFile": "../dist/getNext_v1/index.js"
+}

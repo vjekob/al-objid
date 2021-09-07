@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"name": "VS Code Extension",
+			"path": "."
+		},
+		{
+			"name": "Azure Backend",
+			"path": "backend"
+		},
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/dist": true,
+			"**/node_modules": true
+		}
+	}
+}

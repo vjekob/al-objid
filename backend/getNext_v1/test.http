@@ -1,0 +1,49 @@
+### Localhost
+
+post http://localhost:7071/api/v1/getNext
+Content-Type: application/json
+
+{
+    "appId": "67295cd84-95f4-4313-9d3c-a5a6e8d8c15a",
+    "type": "codeunit",
+    "ranges": [
+        {
+            "from": 50111,
+            "to": 50115
+        },
+        {
+            "from": 50100,
+            "to": 50105
+        },
+        {
+            "from": 50120,
+            "to": 50125
+        }
+    ]
+}
+
+
+### Remote
+
+get https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
+Content-Type: application/json
+X-Functions-Key: jMZkPxekwz8GmeEZaamr1eVYaYliZvshLzaeBiOu2/vBVDMmMyUUCQ==
+
+{
+    "appId": "67295c84-95f4-4313-9d3c-a5a6e8d8c15a",
+    "type": "codeunit",
+    "ranges": [
+        {
+            "from": 50111,
+            "to": 50115
+        },
+        {
+            "from": 50100,
+            "to": 50105
+        },
+        {
+            "from": 50120,
+            "to": 50125
+        }
+    ]
+}

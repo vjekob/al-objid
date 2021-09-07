@@ -1,0 +1,41 @@
+### Localhost
+
+post http://localhost:7071/api/v1/syncIds
+Content-Type: application/json
+
+{
+    "appId": "67295c84-95f4-4313-9d3c-a5a6e8d8c15a",
+    "ids": {
+        "codeunit": []
+    }
+}
+
+
+### Remote
+
+get https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
+Content-Type: application/json
+X-Functions-Key: JhaJ5kiav3oAwTwXMrCIxq9Ez/sOk1k9moWWdrM7wL06yo6GvaX1Dg==
+
+{
+    "appId": "992c2309-cca4-43cb-9e41-911f482ec088",
+    "type": "codeunit",
+    "ranges": [
+        {
+            "from":6014400,
+            "to":6014699
+        },
+        {
+            "from":6059767,
+            "to":6060166
+        },
+        {
+            "from":6150613,
+            "to":6151612
+        },
+        {
+            "from":6184471,
+            "to":6185269
+        }
+    ]
+}

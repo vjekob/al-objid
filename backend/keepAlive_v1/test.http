@@ -1,0 +1,8 @@
+### Localhost
+
+get http://localhost:7071/api/v1/keepAlive
+
+
+### Remote
+
+get https://vjekocom-alext-weu.azurewebsites.net/api/v1/keepAlive?code=i8TSiTGPao/ViDtFuDiQ2Ptxg4/7iElFUv7c60z0w0bgA0tPZj7zUw==
