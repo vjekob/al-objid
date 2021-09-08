@@ -10,3 +10,7 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+.debug/**
+backend/**
+**/*.zip
+**/*.code-workspace
