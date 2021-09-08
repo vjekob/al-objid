@@ -4,10 +4,11 @@ post http://localhost:7071/api/v1/syncIds
 Content-Type: application/json
 
 {
-    "appId": "67295c84-95f4-4313-9d3c-a5a6e8d8c15a",
+    "appId": "67295cd84-95f4-4313-9d3c-a5a6e8d8c15a",
     "ids": {
         "codeunit": []
-    }
+    },
+    "authKey": "ILxKOJ+aSgOllUokvZ8CnwJB7OZXyXHlZ102FHsiSUI="
 }
 
 

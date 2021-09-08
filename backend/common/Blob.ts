@@ -37,6 +37,14 @@ export class Blob<T> {
         });
     }
 
+    async delete(): Promise<boolean> {
+        return new Promise((fulfill) => {
+            this.service.deleteBlob(STORAGE_CONTAINER, this.blob, (error, result) => {
+                fulfill(!error);
+            });
+        });
+    }
+
     /**
      * Performs an optimistic update of the blob. It first reads the blob, then calls the `update` callback thet performs any data
      * updates in-memory, and then returns the new object. Then, this method attempts to updated the blob it read. If the blob has

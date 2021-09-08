@@ -36,6 +36,10 @@ export class BodyWithAppId {
     }
 }
 
+export interface BodyWithAuthorization {
+    authKey: string;
+}
+
 /**
  * Represents request body that includes the `type` property. Provides static validation for body to check for
  * presence and type of this property.
@@ -176,3 +180,11 @@ export const OBJECT_TYPES = [
     "tableextension",
     "xmlport"
 ];
+
+/**
+ * Represents an app authorization structure.
+ */
+export interface AppAuthorization {
+    key: string;
+    valid: boolean;
+}

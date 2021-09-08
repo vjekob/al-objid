@@ -1,6 +1,7 @@
 import { Blob } from "./Blob";
-import { ObjectIds, OBJECT_TYPES, Range } from "./types";
+import { AppAuthorization, ObjectIds, OBJECT_TYPES, Range } from "./types";
 import { findFirstAvailableId } from "./util";
+import crypto = require("crypto");
 
 export async function updateRanges(appId: string, ranges: Range[]): Promise<Range[]> {
     const blob = new Blob<Range[]>(`${appId}/_ranges.json`);
@@ -63,4 +64,27 @@ export async function updateConsumptions(appId: string, objectIds: ObjectIds): P
         result[type] = await blob.optimisticUpdate(() => [...new Set(ids.sort())]);
     }
     return result;
+}
+
+export async function readAppAuthorization(appId: string): Promise<AppAuthorization> {
+    const blob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
+    const result = await blob.read(true);
+    return result;
+}
+
+export async function writeAppAuthorization(appId: string): Promise<string> {
+    const sha1 = crypto.createHash("sha256");
+    sha1.update(`APP_AUTH_${appId}_${Date.now()}`);
+    const blob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
+    const authorization = await blob.optimisticUpdate(auth => ({
+        key: sha1.digest("base64"),
+        valid: true,
+    }));
+
+    return authorization.key;
+}
+
+export async function removeAppAuthorization(appId: string): Promise<boolean> {
+    const blob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
+    return await blob.delete();
 }

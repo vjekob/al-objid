@@ -1,3 +1,4 @@
+import { AppAuthorization, BodyWithAuthorization } from "./../common/types";
 import { RequestValidator } from "./../common/RequestValidator";
 import { BodyWithAppId, BodyWithRanges, BodyWithType, Range, TypedContext } from "../common/types";
 import { AzureFunction } from "@azure/functions";
@@ -8,21 +9,26 @@ import { updateConsumption, updateRanges } from "../common/updates";
 type GetNextBindings = {
     ranges: Range[];
     ids: number[];
+    authorization?: AppAuthorization;
 }
 
-interface GetNextBody extends BodyWithRanges, BodyWithAppId, BodyWithType { };
+interface GetNextBody extends BodyWithRanges, BodyWithAppId, BodyWithType, BodyWithAuthorization { };
 
 async function retrieveBindings(context: TypedContext<GetNextBindings>, body: GetNextBody): Promise<GetNextBindings> {
-    let { ranges, ids = [] } = context.bindings;
+    let { ranges, ids = [], authorization } = context.bindings;
     if (!ranges || !areRangesEqual(ranges, body.ranges)) {
         ranges = await updateRanges(body.appId, body.ranges);
     }
-    return { ranges, ids };
+    return { ranges, ids, authorization };
 }
 
 const httpTrigger: AzureFunction = RequestHandler.handle<GetNextBindings, GetNextBody>(
     async (context, req) => {
-        const { ranges, ids } = await retrieveBindings(context, req.body);
+        const { ranges, ids, authorization } = await retrieveBindings(context, req.body);
+
+        if (authorization && authorization.valid && authorization.key != req.body.authKey) {
+            return new ErrorResponse("You must provide a valid authorization key to access this endpoint.", 401);
+        }
 
         const result = {
             id: findFirstAvailableId(ranges, ids),

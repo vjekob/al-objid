@@ -6,10 +6,10 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "get",
-        "post"
+        "post",
+        "delete"
       ],
-      "route": "v1/getNext"
+      "route": "v1/authorizeApp"
     },
     {
       "type": "http",
@@ -19,21 +19,9 @@
     {
       "type": "blob",
       "direction": "in",
-      "name": "authorization",
-      "path": "%BlobContainer%/{appId}/_authorization.json"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
       "name": "ranges",
       "path": "%BlobContainer%/{appId}/_ranges.json"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
-      "name": "ids",
-      "path": "%BlobContainer%/{appId}/{type}.json"
     }
   ],
-  "scriptFile": "../dist/getNext_v1/index.js"
+  "scriptFile": "../dist/authorizeApp_v1/index.js"
 }
