@@ -19,7 +19,8 @@ Content-Type: application/json
             "from": 50120,
             "to": 50125
         }
-    ]
+    ],
+    "authKey": "ILxKOJ+aSgOllUokvZ8CnwJB7OZXyXHlZ102FHsiSUI="
 }
 
 
@@ -27,7 +28,6 @@ Content-Type: application/json
 
 get https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
 Content-Type: application/json
-X-Functions-Key: jMZkPxekwz8GmeEZaamr1eVYaYliZvshLzaeBiOu2/vBVDMmMyUUCQ==
 
 {
     "appId": "67295c84-95f4-4313-9d3c-a5a6e8d8c15a",
