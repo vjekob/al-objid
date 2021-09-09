@@ -3,13 +3,13 @@ import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { AppManifest, getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
-import { API_RESULT, Backend } from "../lib/Backend";
+import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 
 function deleteAuthorizationFile(uri: Uri, manifest: AppManifest): boolean {
     let result = Authorization.delete(uri);
     if (result !== true) {
-        UI.authorization.showDeauthorizationFailedWarning(manifest.id, result);
+        UI.authorization.showDeauthorizationFailedWarning(manifest, result);
         return false;
     }
     return true;
@@ -25,17 +25,17 @@ export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) =>
     const manifest = getManifest(uri)!;
     const key = Authorization.read(uri);
     if (!key) {
-        UI.authorization.showNotAuthorizedWarning(manifest.id);
+        UI.authorization.showNotAuthorizedWarning(manifest);
         return;
     }
 
     let response = await Backend.deauthorizeApp(manifest.id, key?.key || "", async (response) => {
         switch (response.error.statusCode) {
             case 401:
-                UI.authorization.showIncorrectKeyWarning(manifest.id);
+                UI.authorization.showIncorrectKeyWarning(manifest);
                 return true;
             case 405:
-                UI.authorization.showNotAuthorizedWarning(manifest.id);
+                UI.authorization.showNotAuthorizedWarning(manifest);
                 return true;
             default:
                 return false;
@@ -45,7 +45,7 @@ export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) =>
         if (token) {
             token.success = true;
         } else {
-            UI.authorization.showDeauthorizationSuccessfulInfo(manifest.id);
+            UI.authorization.showDeauthorizationSuccessfulInfo(manifest);
         }
     }
 

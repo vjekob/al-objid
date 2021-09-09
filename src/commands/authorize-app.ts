@@ -14,16 +14,16 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
         return;
     }
 
-    const manifest = getManifest(uri);
+    const manifest = getManifest(uri)!;
     let response = await Backend.authorizeApp(manifest!.id, async (response) => {
         const { error } = response;
         if (error.statusCode !== 405) return false;
 
-        const result = await UI.authorization.showAlreadyAuthorizedWarning(manifest!.id);
+        const result = await UI.authorization.showAlreadyAuthorizedWarning(manifest);
         if (result === "Yes") {
             let key = Authorization.read(uri!);
             if (!key) {
-                UI.authorization.showNoKeyError(manifest!.id);
+                UI.authorization.showNoKeyError(manifest);
             }
             let token = { success: false };
             await deauthorizeApp(uri, token);
@@ -38,9 +38,9 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
 
     Authorization.write(uri, response.authKey);
     if (repeat) {
-        UI.authorization.showReauthorizedInfo(manifest!.id);
+        UI.authorization.showReauthorizedInfo(manifest);
     } else {
-        UI.authorization.showAuthorizationSuccessfulInfo(manifest!.id);
+        UI.authorization.showAuthorizationSuccessfulInfo(manifest);
     }
 
     AuthorizationStatusBar.instance.updateStatusBar();

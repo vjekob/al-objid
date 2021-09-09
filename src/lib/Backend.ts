@@ -44,9 +44,6 @@ export const API_RESULT = {
     SUCCESS: Symbol("SUCCESS"),
     ERROR_HANDLED: Symbol("ERROR_HANDLED"),
     ERROR_NOT_HANDLED: Symbol("ERROR_NOT_HANDLED"),
-    ERROR_ALREADY_AUTHORIZED: Symbol("ALREADY_AUTHORIZED"),
-    ERROR_NOT_AUTHORIZED: Symbol("NOT_AUTHORIZED"),
-    ERROR_INVALID_AUTH_KEY: Symbol("ERROR_INVALID_AUTH_KEY")
 }
 
 /**
@@ -82,6 +79,7 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
 
     try {
         response.value = await https.send<T>(method, data);
+        response.status = API_RESULT.SUCCESS;
     } catch (error: any) {
         // TODO: log error
         response.error = error;

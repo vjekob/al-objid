@@ -1,4 +1,5 @@
 import { window } from "vscode";
+import { AppManifest } from "./AppManifest";
 import { EXTENSION_NAME, LABELS } from "./constants";
 
 const CONSTANTS = {
@@ -56,21 +57,21 @@ export const UI = {
     },
 
     authorization: {
-        showAlreadyAuthorizedWarning: async (appId: string) =>
-            window.showWarningMessage(`Application ${appId} is already authorized. Do you want to re-authorize it?`, "Yes", "No"),
-        showReauthorizedInfo: (appId: string) =>
-            window.showInformationMessage(`You have re-authorized app ${appId}. Please make sure to share your authorization file with your team members to avoid disruption of service.`),
-        showIncorrectKeyWarning: (appId: string) =>
-            window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${appId}.`),
-        showNotAuthorizedWarning: (appId: string) =>
-            window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${appId} because it is not authorized.`),
-        showNoKeyError: (appId: string) =>
-            window.showErrorMessage(`You do not have an authorization key configured for app ${appId}. Please make sure that .objidauth file is present in the root folder of your app.`),
-        showAuthorizationSuccessfulInfo: (appId: string) =>
-            window.showInformationMessage(`You have successfully authorized app ${appId}. Please commit the .objidauth file to your repository or otherwise share it with your team members as soon as possible.`),
-        showDeauthorizationSuccessfulInfo: (appId: string) =>
-            window.showInformationMessage(`You have successfully deauthorized app ${appId}.`),
-        showDeauthorizationFailedWarning: (appId: string, error: string) =>
-            window.showWarningMessage(`An error occurred while deleting the authorization file for app ${appId}: ${error}`)
+        showAlreadyAuthorizedWarning: async (manifest: AppManifest) =>
+            window.showWarningMessage(`Application "${manifest.name}" is already authorized. Do you want to re-authorize it?`, "Yes", "No"),
+        showReauthorizedInfo: (manifest: AppManifest) =>
+            window.showInformationMessage(`You have re-authorized app "${manifest.name}". Please make sure to share your authorization file with your team members to avoid disruption of service.`),
+        showIncorrectKeyWarning: (manifest: AppManifest) =>
+            window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} "${manifest.name}".`),
+        showNotAuthorizedWarning: (manifest: AppManifest) =>
+            window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} "${manifest.name}" because it is not authorized.`),
+        showNoKeyError: (manifest: AppManifest) =>
+            window.showErrorMessage(`You do not have an authorization key configured for app "${manifest.name}". Please make sure that .objidauth file is present in the root folder of your app.`),
+        showAuthorizationSuccessfulInfo: (manifest: AppManifest) =>
+            window.showInformationMessage(`You have successfully authorized app "${manifest.name}". Please commit the .objidauth file to your repository or otherwise share it with your team members as soon as possible.`),
+        showDeauthorizationSuccessfulInfo: (manifest: AppManifest) =>
+            window.showInformationMessage(`You have successfully deauthorized app "${manifest.name}".`),
+        showDeauthorizationFailedWarning: (manifest: AppManifest, error: string) =>
+            window.showWarningMessage(`An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`)
     }
 }
