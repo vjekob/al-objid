@@ -19,7 +19,11 @@ export class RequestHandler {
             const { authorization } = (context as unknown as AuthorizationContext).bindings;
             const { authKey } = req.body as unknown as BodyWithAuthorization;
             if (authorization && authorization.valid && authorization.key != authKey) {
-                return new ErrorResponse("You must provide a valid authorization key to access this endpoint.", 401);
+                context.res = {
+                    status: 401,
+                    body: "You must provide a valid authorization key to access this endpoint."
+                };
+                return;
             }
 
             if (validator instanceof RequestValidator && !validator.validate(req)) {

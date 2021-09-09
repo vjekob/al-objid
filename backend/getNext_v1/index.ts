@@ -35,6 +35,7 @@ const httpTrigger: AzureFunction = RequestHandler.handle<GetNextBindings, GetNex
             updateAttempts: 0,
             hasConsumption: !!context.bindings.ids
         }
+        result.available = result.id > 0;
 
         if (result.id && req.method === "POST") {
             const { appId, type, content } = req.body;
@@ -49,7 +50,6 @@ const httpTrigger: AzureFunction = RequestHandler.handle<GetNextBindings, GetNex
             result.hasConsumption = true;
         }
 
-        result.available = result.id > 0;
         return result;
     },
     new RequestValidator([

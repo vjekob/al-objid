@@ -95,7 +95,7 @@ export function logEvent(appId: string, eventType: string, user: string, data: a
     // Intentionally not awaiting - this fine to execute asynchronous from request
     blob.optimisticUpdate(log => {
         // Remove entries older than a day
-        log = log.filter(entry => entry.timestamp < Date.now() - 3600 * 1000 * 24);
+        log = (log || []).filter(entry => entry.timestamp > Date.now() - 3600 * 1000 * 24);
         log.push({
             timestamp: Date.now(),
             eventType,

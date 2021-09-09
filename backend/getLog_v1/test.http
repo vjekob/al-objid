@@ -1,7 +1,6 @@
 ### Localhost
 
-post http://localhost:7071/api/v1/authorizeApp
-Content-Type: application/json
+get http://localhost:7071/api/v1/getLog
 
 {
     "appId": "eea13c88-1ff5-4fcd-b450-70468fa84d5d",
