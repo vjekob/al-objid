@@ -19,5 +19,6 @@
 		".vscode-test",
 		"backend",
 		".debug",
+		"doc"
 	],
 }

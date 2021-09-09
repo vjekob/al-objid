@@ -31,7 +31,7 @@ then stores the key in the authorization file named `.objidauth` in the root of 
 
 This is an example of the authorization file:
 
-![Authorization key example](../images/authorization-key.png)
+![Authorization key example](./images/authorization-key.png)
 
 Once your app is authorized, every request to the back end will include the key stored in that file. When the back
 end receives a request for an authorized app, it will compare the key received with the request with the authorization
@@ -56,7 +56,7 @@ Another way of making it secure is to deploy your own back end. Seriously. The b
 extension is. If you want to run it on your own infrastructure with your own Azure subscription, with your own security
 in place, and you can configure Ninja to use your own endpoints:
 
-![Configuration of own Azure function back end](../images/settings-own-back-end.png)
+![Configuration of own Azure function back end](./images/settings-own-back-end.png)
 
 Here's the repository for the back end Azure function app that the public **Vjeko.com AL Object ID Ninja** extension is
 using: https://github.com/vjekob/al-objid/tree/master/backend
