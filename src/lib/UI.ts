@@ -72,5 +72,10 @@ export const UI = {
             window.showInformationMessage(`You have successfully deauthorized app "${manifest.name}".`),
         showDeauthorizationFailedWarning: (manifest: AppManifest, error: string) =>
             window.showWarningMessage(`An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`)
+    },
+
+    log: {
+        showObjectConsumptionInfo: (user: string, type: string, id: number, appName: string) =>
+            window.showInformationMessage(`${user} created ${type} ${id} in ${appName}.`)
     }
 }

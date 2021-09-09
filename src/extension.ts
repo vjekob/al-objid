@@ -1,4 +1,4 @@
-import { ExtensionContext, commands, languages } from "vscode";
+import { ExtensionContext, commands, languages, Disposable } from "vscode";
 import { authorizeApp } from "./commands/authorize-app";
 import { commitSuggestionCommand } from "./commands/commit-suggestion";
 import { confirmAuthorizeApp } from "./commands/confirm-authorize-app";
@@ -6,6 +6,7 @@ import { confirmDeauthorizeApp } from "./commands/confirm-deauthorize-app";
 import { deauthorizeApp } from "./commands/deauthorize-app";
 import { syncObjectIds } from "./commands/sync-object-ids";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
+import { BackEndLogHandler } from "./features/BackEndLogHandler";
 import { NextObjectIdCompletionProvider } from "./features/NextObjectIdCompletionProvider";
 import { Output } from "./features/Output";
 
@@ -25,6 +26,7 @@ export function activate(context: ExtensionContext) {
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),
 		...AuthorizationStatusBar.instance.getDisposables(),
 		...Output.instance.getDisposables(),
+		Disposable.from(new BackEndLogHandler())
 	);
 }
 

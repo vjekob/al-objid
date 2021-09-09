@@ -29,12 +29,13 @@ Content-Type: application/json
 
 ### Remote
 
-get https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
+post https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
 Content-Type: application/json
 
 {
     "appId": "67295c84-95f4-4313-9d3c-a5a6e8d8c15a",
     "type": "codeunit",
+    "authKey": "K6cJc/Z+e3A1x6ibgGmzDxjOKv8ZkyPrnzXFej1Q4Ic=",
     "ranges": [
         {
             "from": 50111,
@@ -48,5 +49,8 @@ Content-Type: application/json
             "from": 50120,
             "to": 50125
         }
-    ]
+    ],
+    "content": {
+        "user": "waldo"
+    }
 }

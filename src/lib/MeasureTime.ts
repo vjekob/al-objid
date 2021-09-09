@@ -1,14 +1,11 @@
 import { performance } from "perf_hooks";
 import { output } from "../features/Output";
-
-interface MeasurementPropertyBag<T> {
-    [key: string]: T;
-}
+import { PropertyBag } from "./PropertyBag";
 
 export class MeasureTime {
-    private static _descriptions: MeasurementPropertyBag<string> = {};
-    private static _startTimes: MeasurementPropertyBag<number> = {};
-    private static _durations: MeasurementPropertyBag<number> = {};
+    private static _descriptions: PropertyBag<string> = {};
+    private static _startTimes: PropertyBag<number> = {};
+    private static _durations: PropertyBag<number> = {};
 
     public static start(moniker: string, description?: string) {
             this._startTimes[moniker] = performance.now();

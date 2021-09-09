@@ -3,6 +3,7 @@ import { output } from "../features/Output";
 import { HttpMethod, Https } from "./Https";
 import { MeasureTime } from "./MeasureTime";
 import { UI } from "./UI";
+import { User } from "./User";
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -11,13 +12,13 @@ interface HttpRequest {
     path: string,
     method: string,
     data: any
-};
+}
 
 interface HttpResponse<T> {
     error: any,
     status: symbol,
     value?: T,
-};
+}
 
 const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
 
@@ -39,6 +40,13 @@ export interface AuthorizationInfo {
 
 export interface AuthorizationDeletedInfo {
     deleted: boolean;
+}
+
+export interface EventLogEntry {
+    eventType: string;
+    timestamp: number;
+    user: string;
+    data: any;
 }
 
 export const API_RESULT = {
@@ -122,7 +130,8 @@ export class Backend {
                 appId,
                 type,
                 ranges,
-                authKey
+                authKey,
+                content: { user: User.username }
             }
         );
         if (response.status === API_RESULT.SUCCESS) output.log(`Received next ${type} ID response: ${JSON.stringify(response.value)}`);
@@ -156,5 +165,15 @@ export class Backend {
             errorHandler
         );
         return typeof response.value === "object" && response.value.deleted;
+    }
+
+    static async getLog(appId: string, authKey: string): Promise<EventLogEntry[] | undefined> {
+        const response = await sendRequest<EventLogEntry[]>(
+            "/api/v1/getLog",
+            "GET",
+            { appId, authKey },
+            async () => true // On error, do nothing (message is logged in the output already)
+        );
+        return response.value;
     }
 }
