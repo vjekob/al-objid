@@ -6,6 +6,8 @@ import { Backend, ConsumptionInfo } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { Authorization } from "../lib/Authorization";
+import { MeasureTime } from "../lib/MeasureTime";
+import { output } from "../features/Output";
 
 async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
     let folderPath: string = uri.fsPath;
@@ -43,15 +45,28 @@ export const syncObjectIds = async (uri?: Uri) => {
     uri = await ALWorkspace.selectWorkspaceFolder(uri);
     if (!uri) return;
 
-    const uris = await getWorkspaceFolderFiles(uri);
-    const objects = getObjectDefinitions(uris);
-    const consumption: ConsumptionInfo = getConsumption(objects);
     const manifest = getManifest(uri); 
 
     if (!manifest) {
         UI.sync.showNoManifestError();
         return;
     }
+
+    output.log("Starting syncing object ID consumption with the back end");
+
+    MeasureTime.reset("loading", "parsing");
+
+    MeasureTime.start("loading", "Retrieving list of workspace files");
+    const uris = await getWorkspaceFolderFiles(uri);
+    MeasureTime.stop("loading");
+
+    MeasureTime.start("parsing", `Parsing ${uris.length} object files`)
+    const objects = getObjectDefinitions(uris);
+    MeasureTime.stop("parsing");
+
+    MeasureTime.log("loading", "parsing");
+
+    const consumption: ConsumptionInfo = getConsumption(objects);
 
     const key = Authorization.read(uri);
     if (await Backend.syncIds(manifest?.id, consumption, key?.key || "")) {

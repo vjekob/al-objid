@@ -1,5 +1,6 @@
 import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
+import { output } from "../features/Output";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { AppManifest, getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
@@ -23,6 +24,8 @@ export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) =>
     }
 
     const manifest = getManifest(uri)!;
+    output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`);
+
     const key = Authorization.read(uri);
     if (!key) {
         UI.authorization.showNotAuthorizedWarning(manifest);

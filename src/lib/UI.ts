@@ -5,7 +5,6 @@ import { EXTENSION_NAME, LABELS } from "./constants";
 const CONSTANTS = {
     BACKEND: {
         CANNOT_COMMUNICATE: "Cannot communicate with the back-end API.",
-        USE_LATEST: ` Make sure you are using the latest version of ${EXTENSION_NAME} extension or manually configure the API endpoint.`,
     },
 
     SYNC: {
@@ -27,7 +26,7 @@ export const UI = {
         showEndpointNotFoundError: (endpoint: string, isDefault: boolean) => {
             let message = CONSTANTS.BACKEND.CANNOT_COMMUNICATE;
             message += isDefault
-                ? CONSTANTS.BACKEND.USE_LATEST
+                ? ` Make sure you are using the latest version of ${EXTENSION_NAME} extension or manually configure the API endpoint.`
                 : " Make sure the API is available at the configured endpoint.";
 
             message += `\n\nEndpoint: ${endpoint}`;
@@ -36,7 +35,7 @@ export const UI = {
         showEndpointUnauthorizedError: (isDefault: boolean) => {
             let message = CONSTANTS.BACKEND.CANNOT_COMMUNICATE;
             message += isDefault
-                ? CONSTANTS.BACKEND.USE_LATEST
+                ? " Your app authorization key may be missing or wrong, or your API key may be misconfigured."
                 : " Make sure your API key is valid."
             window.showErrorMessage(message);
         }

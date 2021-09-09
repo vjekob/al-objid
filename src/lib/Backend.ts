@@ -1,5 +1,7 @@
 import { workspace } from "vscode";
+import { output } from "../features/Output";
 import { HttpMethod, Https } from "./Https";
+import { MeasureTime } from "./MeasureTime";
 import { UI } from "./UI";
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
@@ -78,10 +80,18 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
     };
 
     try {
+        MeasureTime.reset("request");
+        MeasureTime.start("request", `Sending ${method} request to ${path} endpoint`);
         response.value = await https.send<T>(method, data);
+        MeasureTime.stop("request");
+        MeasureTime.log("request");
         response.status = API_RESULT.SUCCESS;
     } catch (error: any) {
-        // TODO: log error
+        MeasureTime.stop("request");
+        MeasureTime.log("request");
+
+        output.log(`Sending ${method} request to ${path} endpoint resulted in an error: ${JSON.stringify(error)}`);
+
         response.error = error;
         response.status = API_RESULT.ERROR_NOT_HANDLED;
         if (!errorHandler || !(await errorHandler(response, request))) handleErrorDefault(response, request);
@@ -115,7 +125,7 @@ export class Backend {
                 authKey
             }
         );
-
+        if (response.status === API_RESULT.SUCCESS) output.log(`Received next ${type} ID response: ${JSON.stringify(response.value)}`);
         return response.value;
     }
 
@@ -125,7 +135,6 @@ export class Backend {
             "POST",
             { appId, ids, authKey }
         );
-
         return !!response.value;
     }
 
@@ -136,7 +145,6 @@ export class Backend {
             { appId },
             errorHandler
         );
-
         return response.value;
     }
 

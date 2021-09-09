@@ -2,6 +2,7 @@ import { Command, CompletionItem, CompletionItemKind, MarkdownString, Position, 
 import { Backend, NextObjectIdInfo } from "../lib/Backend";
 import { AppManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
+import { output } from "./Output";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 
@@ -20,9 +21,11 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             command: "vjeko-al-objid.commit-suggestion",
             title: "",
             arguments: [async () => {
+                output.log(`Commiting object ID auto-complete for ${type} ${objectId.id}`);
                 const key = Authorization.read(uri);
                 const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, key?.key || "");
                 if (!realId || !realId.available || realId.id === objectId.id) return;
+                output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`);
     
                 let replace = new WorkspaceEdit();
                 replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId}`)]);

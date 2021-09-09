@@ -7,6 +7,7 @@ import { deauthorizeApp } from "./commands/deauthorize-app";
 import { syncObjectIds } from "./commands/sync-object-ids";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
 import { NextObjectIdCompletionProvider } from "./features/NextObjectIdCompletionProvider";
+import { Output } from "./features/Output";
 
 export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
@@ -22,7 +23,8 @@ export function activate(context: ExtensionContext) {
 
 		// Other
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),
-		...AuthorizationStatusBar.instance.getStatusBarDisposables(),
+		...AuthorizationStatusBar.instance.getDisposables(),
+		...Output.instance.getDisposables(),
 	);
 }
 

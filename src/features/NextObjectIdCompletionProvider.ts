@@ -6,6 +6,7 @@ import { Backend, NextObjectIdInfo } from "../lib/Backend";
 import { getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
 import { Authorization } from "../lib/Authorization";
+import { output } from "./Output";
 
 type SymbolInfo = {
     type: string;
@@ -84,7 +85,9 @@ export class NextObjectIdCompletionProvider {
 
         const key = Authorization.read(document.uri);
         const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, key?.key || "");
+
         if (showNotificationsIfNecessary(objectId) || !objectId) return [];
+        output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
 
         return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri)];
     }

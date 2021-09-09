@@ -3,13 +3,16 @@ import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
 import { EXTENSION_NAME, URLS } from "../lib/constants";
+import { DisposableHolder } from "./DisposableHolder";
 
-export class AuthorizationStatusBar {
+export class AuthorizationStatusBar extends DisposableHolder {
     private _status: StatusBarItem;
     private static _instance: AuthorizationStatusBar;
 
     private constructor() {
-        this._status = window.createStatusBarItem(StatusBarAlignment.Left, 1);
+        super();
+        this.registerDisposable(this._status = window.createStatusBarItem(StatusBarAlignment.Left, 1));
+        this.registerDisposable(window.onDidChangeActiveTextEditor(() => this.updateStatusBar));
     }
 
     public static get instance(): AuthorizationStatusBar {
@@ -34,12 +37,7 @@ export class AuthorizationStatusBar {
         this._status.show();
     }
 
-    public getStatusBarDisposables() {
+    protected override prepareDisposables() {
         this.updateStatusBar();
-
-        return [
-            window.onDidChangeActiveTextEditor(() => this.updateStatusBar),
-            this._status,
-        ]
     };
 }

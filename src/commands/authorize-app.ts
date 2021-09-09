@@ -1,5 +1,6 @@
 import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
+import { output } from "../features/Output";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
@@ -15,6 +16,8 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
     }
 
     const manifest = getManifest(uri)!;
+    output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`);
+    
     let response = await Backend.authorizeApp(manifest!.id, async (response) => {
         const { error } = response;
         if (error.statusCode !== 405) return false;
