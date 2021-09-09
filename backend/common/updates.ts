@@ -1,19 +1,19 @@
 import { Blob } from "./Blob";
-import { AppAuthorization, ObjectIds, OBJECT_TYPES, Range } from "./types";
+import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, Range } from "./types";
 import { findFirstAvailableId } from "./util";
 import crypto = require("crypto");
 
 export async function updateRanges(appId: string, ranges: Range[]): Promise<Range[]> {
     const blob = new Blob<Range[]>(`${appId}/_ranges.json`);
     return await blob.optimisticUpdate(() => ranges);
-};
+}
 
 export interface ConsumptionUpdateContext {
     id: number;
     available: boolean;
     updated: boolean;
     updateAttempts: number;
-};
+}
 
 function getBlobName(appId: string, type: string): string {
     return `${appId}/${type.toLowerCase()}.json`;
@@ -54,7 +54,7 @@ export async function updateConsumption(appId: string, type: string, ranges: Ran
     });
 
     return !tooManyAttempts;
-};
+}
 
 export async function updateConsumptions(appId: string, objectIds: ObjectIds): Promise<ObjectIds> {
     let result: ObjectIds = {};
@@ -87,4 +87,21 @@ export async function writeAppAuthorization(appId: string): Promise<string> {
 export async function removeAppAuthorization(appId: string): Promise<boolean> {
     const blob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
     return await blob.delete();
+}
+
+export function logEvent(appId: string, eventType: string, user: string, data: any): void {
+    const blob = new Blob<EventLogEntry[]>(getBlobName(appId, "_log"));
+
+    // Intentionally not awaiting - this fine to execute asynchronous from request
+    blob.optimisticUpdate(log => {
+        // Remove entries older than a day
+        log = log.filter(entry => entry.timestamp < Date.now() - 3600 * 1000 * 24);
+        log.push({
+            timestamp: Date.now(),
+            eventType,
+            user,
+            data
+        });
+        return [...log];
+    });
 }

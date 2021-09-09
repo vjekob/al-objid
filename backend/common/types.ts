@@ -19,7 +19,7 @@ export type Range = {
  */
 export type ObjectIds = {
     [key: string]: number[];
-}
+};
 
 /**
  * Represents request body that includes the `appId` property. Provides static validation for body to check for
@@ -105,7 +105,7 @@ export class BodyWithRanges {
             }
         ]
     }
-};
+}
 
 const OBJECT_IDS_VALIDATION_ERROR = {
     INVALID_TYPE: Symbol(),
@@ -162,6 +162,34 @@ export interface TypedContext<T> extends Context {
     bindings: T;
 }
 
+export interface AuthorizationContext {
+    bindings: {
+        authorization: AppAuthorization;
+    }
+}
+
+/**
+ * Represents an app authorization structure.
+ */
+ export interface AppAuthorization {
+    key: string;
+    valid: boolean;
+}
+
+/**
+ * Represents an entry in the event log
+ */
+export interface EventLogEntry {
+    eventType: string;
+    timestamp: number;
+    user: string;
+    data: any;
+}
+
+export interface UserContent {
+    user: string;
+}
+
 /**
  * Array of supported object types that require object ID numbering in AL.
  */
@@ -181,10 +209,9 @@ export const OBJECT_TYPES = [
     "xmlport"
 ];
 
-/**
- * Represents an app authorization structure.
- */
-export interface AppAuthorization {
-    key: string;
-    valid: boolean;
-}
+export const EVENT_LOG_ENTRY_TYPES = [
+    "consumption",
+    "sync",
+    "authorization",
+    "deauthorization"
+];

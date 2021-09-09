@@ -1,5 +1,5 @@
 import { RequestValidator } from "./RequestValidator";
-import { TypedContext, TypedRequest } from "./types";
+import { AuthorizationContext, BodyWithAuthorization, TypedContext, TypedRequest } from "./types";
 
 type HandlerFunc<TBindings, TBody> = (context: TypedContext<TBindings>, req: TypedRequest<TBody>) => Promise<any>;
 
@@ -16,6 +16,12 @@ export class ErrorResponse {
 export class RequestHandler {
     static handle<TBindings, TBody>(handler: HandlerFunc<TBindings, TBody>, validator?: RequestValidator) {
         return async (context: TypedContext<TBindings>, req: TypedRequest<TBody>) => {
+            const { authorization } = (context as unknown as AuthorizationContext).bindings;
+            const { authKey } = req.body as unknown as BodyWithAuthorization;
+            if (authorization && authorization.valid && authorization.key != authKey) {
+                return new ErrorResponse("You must provide a valid authorization key to access this endpoint.", 401);
+            }
+
             if (validator instanceof RequestValidator && !validator.validate(req)) {
                 context.res = {
                     status: 400,

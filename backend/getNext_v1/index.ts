@@ -5,6 +5,7 @@ import { AzureFunction } from "@azure/functions";
 import { areRangesEqual, findFirstAvailableId } from "../common/util";
 import { ErrorResponse, RequestHandler } from "../common/RequestHandler";
 import { updateConsumption, updateRanges } from "../common/updates";
+import { Log } from "../common/Log";
 
 type GetNextBindings = {
     ranges: Range[];
@@ -12,7 +13,9 @@ type GetNextBindings = {
     authorization?: AppAuthorization;
 }
 
-interface GetNextBody extends BodyWithRanges, BodyWithAppId, BodyWithType, BodyWithAuthorization { };
+interface GetNextBody extends BodyWithRanges, BodyWithAppId, BodyWithType, BodyWithAuthorization {
+    content: any;
+};
 
 async function retrieveBindings(context: TypedContext<GetNextBindings>, body: GetNextBody): Promise<GetNextBindings> {
     let { ranges, ids = [], authorization } = context.bindings;
@@ -24,12 +27,7 @@ async function retrieveBindings(context: TypedContext<GetNextBindings>, body: Ge
 
 const httpTrigger: AzureFunction = RequestHandler.handle<GetNextBindings, GetNextBody>(
     async (context, req) => {
-        const { ranges, ids, authorization } = await retrieveBindings(context, req.body);
-
-        if (authorization && authorization.valid && authorization.key != req.body.authKey) {
-            return new ErrorResponse("You must provide a valid authorization key to access this endpoint.", 401);
-        }
-
+        const { ranges, ids } = await retrieveBindings(context, req.body);
         const result = {
             id: findFirstAvailableId(ranges, ids),
             updated: false,
@@ -39,10 +37,14 @@ const httpTrigger: AzureFunction = RequestHandler.handle<GetNextBindings, GetNex
         }
 
         if (result.id && req.method === "POST") {
-            const { appId, type } = req.body;
+            const { appId, type, content } = req.body;
             let success = await updateConsumption(appId, type, ranges, result);
             if (!success) {
                 return new ErrorResponse("Too many attempts at updating BLOB", 418);
+            }
+
+            if (content && result.available) {
+                Log.logConsumption(appId, type, result.id, content);
             }
             result.hasConsumption = true;
         }
