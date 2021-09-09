@@ -1,7 +1,7 @@
 import { CancellationToken, commands, CompletionContext, CompletionItem, DocumentSymbol, Position, TextDocument, Uri, window } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
-import { OBJECT_TYPES } from "../lib/constants";
+import { LABELS, OBJECT_TYPES } from "../lib/constants";
 import { Backend, NextObjectIdInfo } from "../lib/Backend";
 import { getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
@@ -12,6 +12,12 @@ type SymbolInfo = {
     id: string;
     name: string;
 };
+
+async function syncIfChosen(choice: Promise<string | undefined>) {
+    if (await choice === LABELS.BUTTON_SYNCHRONIZE) {
+        commands.executeCommand("vjeko-al-objid.sync-object-ids");
+    }
+}
 
 async function getSymbolAtPosition(uri: Uri, position: Position): Promise<DocumentSymbol | null> {
     try {
@@ -56,14 +62,12 @@ function showNotificationsIfNecessary(objectId?: NextObjectIdInfo): boolean {
     if (!objectId) return true;
 
     if (!objectId.hasConsumption) {
-        UI.nextId.showNoBackEndConsumptionInfo();
-        // TODO: show suggestion to run object ID sync
-        return false; // We want the auto-complete suggestion to appear!
+        syncIfChosen(UI.nextId.showNoBackEndConsumptionInfo());
+        return true;
     }
 
     if (!objectId.available) {
-        // TODO: fix this message
-        window.showInformationMessage("No more numbers are available for assignment.");
+        syncIfChosen(UI.nextId.showNoMoreNumbersWarning());
         return true;
     }
 

@@ -1,9 +1,9 @@
-import { Uri, window } from "vscode";
+import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { AppManifest, getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
-import { Backend } from "../lib/Backend";
+import { API_RESULT, Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 
 function deleteAuthorizationFile(uri: Uri, manifest: AppManifest): boolean {
@@ -15,7 +15,7 @@ function deleteAuthorizationFile(uri: Uri, manifest: AppManifest): boolean {
     return true;
 }
 
-export const deauthorizeApp = async (uri?: Uri, repeat: boolean = false) => {
+export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) => {
     if (!uri) uri = await ALWorkspace.selectWorkspaceFolder();
     if (!uri) {
         UI.general.showNoWorkspacesOpenInfo();
@@ -29,9 +29,24 @@ export const deauthorizeApp = async (uri?: Uri, repeat: boolean = false) => {
         return;
     }
 
-    let response = await Backend.deauthorizeApp(manifest.id, key?.key || "");
+    let response = await Backend.deauthorizeApp(manifest.id, key?.key || "", async (response) => {
+        switch (response.error.statusCode) {
+            case 401:
+                UI.authorization.showIncorrectKeyWarning(manifest.id);
+                return true;
+            case 405:
+                UI.authorization.showNotAuthorizedWarning(manifest.id);
+                return true;
+            default:
+                return false;
+        }
+    });
     if (response && deleteAuthorizationFile(uri, manifest)) {
-        UI.authorization.showDeauthorizationSuccessfulInfo(manifest.id);
+        if (token) {
+            token.success = true;
+        } else {
+            UI.authorization.showDeauthorizationSuccessfulInfo(manifest.id);
+        }
     }
 
     AuthorizationStatusBar.instance.updateStatusBar();

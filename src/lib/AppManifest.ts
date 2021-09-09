@@ -1,5 +1,6 @@
 import { Uri, workspace } from "vscode";
 import path = require("path");
+import * as fs from "fs";
 
 export interface AppManifest {
     id: string;
@@ -14,7 +15,7 @@ export function getManifest(uri: Uri): AppManifest | null {
 
     const appPath = path.join(folder.uri.fsPath, "app.json");
     try {
-        return require(appPath);
+        return JSON.parse(fs.readFileSync(appPath).toString()) as AppManifest;
     }
     catch {
         return null;

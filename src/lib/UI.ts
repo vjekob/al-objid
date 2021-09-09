@@ -1,5 +1,5 @@
 import { window } from "vscode";
-import { EXTENSION_NAME } from "./constants";
+import { EXTENSION_NAME, LABELS } from "./constants";
 
 const CONSTANTS = {
     BACKEND: {
@@ -49,13 +49,15 @@ export const UI = {
     },
 
     nextId: {
-        showNoBackEndConsumptionInfo: () =>
-            window.showInformationMessage("Azure back end has no information about consumed object IDs. Do you want to synchronize?", "Synchronize"),
+        showNoBackEndConsumptionInfo: async () =>
+            window.showInformationMessage("Azure back end has no information about consumed object IDs. Do you want to synchronize?", LABELS.BUTTON_SYNCHRONIZE, "No"),
+        showNoMoreNumbersWarning: async () =>
+            window.showWarningMessage("No more numbers are available for assignment. Do you want to synchronize?", LABELS.BUTTON_SYNCHRONIZE, "No"),
     },
 
     authorization: {
         showAlreadyAuthorizedWarning: async (appId: string) =>
-            window.showWarningMessage(`Application ${appId} is already authorized. Do you want to re-authorize it?`, "Yes"),
+            window.showWarningMessage(`Application ${appId} is already authorized. Do you want to re-authorize it?`, "Yes", "No"),
         showReauthorizedInfo: (appId: string) =>
             window.showInformationMessage(`You have re-authorized app ${appId}. Please make sure to share your authorization file with your team members to avoid disruption of service.`),
         showIncorrectKeyWarning: (appId: string) =>

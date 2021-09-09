@@ -1,4 +1,4 @@
-import { env, Uri, window } from "vscode";
+import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
 
 const OPTION = {
@@ -13,6 +13,7 @@ export const confirmAuthorizeApp = async () => {
     });
     switch (result) {
         case OPTION.YES:
+            commands.executeCommand("vjeko-al-objid.authorize-app");
             break;
         case OPTION.LEARN:
             env.openExternal(Uri.parse(URLS.AUTHORIZATON_LEARN));

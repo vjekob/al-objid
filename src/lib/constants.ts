@@ -20,3 +20,6 @@ export const OBJECT_TYPES = [
     "xmlport"
 ];
 
+export const LABELS = {
+    BUTTON_SYNCHRONIZE: "Synchronize",
+};

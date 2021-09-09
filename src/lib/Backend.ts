@@ -2,6 +2,23 @@ import { workspace } from "vscode";
 import { HttpMethod, Https } from "./Https";
 import { UI } from "./UI";
 
+type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
+
+interface HttpRequest {
+    hostname: string,
+    path: string,
+    method: string,
+    data: any
+};
+
+interface HttpResponse<T> {
+    error: any,
+    status: symbol,
+    value?: T,
+};
+
+const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
+
 export interface NextObjectIdInfo {
     id: number;
     updated: boolean;
@@ -22,29 +39,30 @@ export interface AuthorizationDeletedInfo {
     deleted: boolean;
 }
 
-export interface HttpResponse<T> {
-    error: any,
-    status: symbol,
-    value: T
-};
-
-const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
-
 export const API_RESULT = {
+    NOT_SENT: Symbol("NOT_SENT"),
     SUCCESS: Symbol("SUCCESS"),
     ERROR_HANDLED: Symbol("ERROR_HANDLED"),
+    ERROR_NOT_HANDLED: Symbol("ERROR_NOT_HANDLED"),
     ERROR_ALREADY_AUTHORIZED: Symbol("ALREADY_AUTHORIZED"),
     ERROR_NOT_AUTHORIZED: Symbol("NOT_AUTHORIZED"),
     ERROR_INVALID_AUTH_KEY: Symbol("ERROR_INVALID_AUTH_KEY")
 }
 
-type ErrorHandler<T> = (error: any, hostname: string) => Promise<T | symbol | undefined>;
-
-// TODO: this Promise<T | symbol | undefined> is a mess! There should be a HttpResponse<T> class that includes error: any, status: symbol, and result: T
-async function sendRequest<T>(path: string, method: HttpMethod, data: any, errorHandler: ErrorHandler<T>): Promise<T | symbol | undefined> {
+/**
+ * Sends a request to the back-end API.
+ * 
+ * @param path Back-end endpoint
+ * @param method HTTP method
+ * @param data Data to send to the back-end endpoint
+ * @param errorHandler Error handler to execute in case of unsuccessful request
+ * @template T Type of response object expected from the back end
+ * @returns `HttpResponse` object that contains full information about response, error, and error handling status
+ */
+async function sendRequest<T>(path: string, method: HttpMethod, data: any, errorHandler?: ErrorHandler<T>): Promise<HttpResponse<T>> {
     const config = workspace.getConfiguration("objectidninja");
     const url = (config.get("backEndUrl") || "") as string;
-    const key = (config.get("backEndAPIKey") ||  "") as string;
+    const key = (config.get("backEndAPIKey") || "") as string;
 
     const hostname = url || DEFAULT_HOST_NAME;
     const https = new Https({
@@ -56,23 +74,33 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
         }
     });
 
+    const request: HttpRequest = { hostname, path, method, data };
+    const response: HttpResponse<T> = {
+        error: null,
+        status: API_RESULT.NOT_SENT,
+    };
+
     try {
-        return await https.send<T>(method, data);
+        response.value = await https.send<T>(method, data);
     } catch (error: any) {
-        return errorHandler(error, hostname);
+        // TODO: log error
+        response.error = error;
+        response.status = API_RESULT.ERROR_NOT_HANDLED;
+        if (!errorHandler || !(await errorHandler(response, request))) handleErrorDefault(response, request);
     }
+    return response;
 }
 
-function preHandleError(error: any, hostname: string): symbol | undefined {
+function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest): void {
+    const { error } = response;
+    const { hostname } = request;
     if (error.error && error.error.code === "ENOTFOUND") {
         UI.backend.showEndpointNotFoundError(hostname, hostname === DEFAULT_HOST_NAME);
-        return API_RESULT.ERROR_HANDLED;
     }
     if (error.statusCode) {
         switch (error.statusCode) {
             case 401:
                 UI.backend.showEndpointUnauthorizedError(hostname === DEFAULT_HOST_NAME);
-                return API_RESULT.ERROR_HANDLED;
         }
     }
 }
@@ -87,67 +115,40 @@ export class Backend {
                 type,
                 ranges,
                 authKey
-            },
-            async () => {
-                // TODO: log error
-                return undefined;
             }
         );
 
-        return typeof response === "object" ? response : undefined;
+        return response.value;
     }
 
     static async syncIds(appId: string, ids: ConsumptionInfo, authKey: string): Promise<boolean> {
         const response = await sendRequest<ConsumptionInfo>(
             "/api/v1/syncIds",
             "POST",
-            {
-                appId,
-                ids,
-                authKey
-            },
-            async (error, hostname) => {
-                let result = preHandleError(error, hostname);
-                if (result) return result;
-            }
+            { appId, ids, authKey }
         );
 
-        return !!response;
+        return !!response.value;
     }
 
-    static async authorizeApp(appId: string): Promise<AuthorizationInfo | symbol | undefined> {
+    static async authorizeApp(appId: string, errorHandler: ErrorHandler<AuthorizationInfo>): Promise<AuthorizationInfo | undefined> {
         const response = await sendRequest<AuthorizationInfo>(
             "/api/v1/authorizeApp",
             "POST",
             { appId },
-           async (error, hostname) => {
-                if (error.statusCode === 405) return API_RESULT.ERROR_ALREADY_AUTHORIZED;
-                let result = preHandleError(error, hostname);
-                return result || {} as AuthorizationInfo;
-            }
+            errorHandler
         );
 
-        return response;
+        return response.value;
     }
 
-    static async deauthorizeApp(appId: string, authKey: string): Promise<boolean> {
+    static async deauthorizeApp(appId: string, authKey: string, errorHandler: ErrorHandler<AuthorizationDeletedInfo>): Promise<boolean> {
         const response = await sendRequest<AuthorizationDeletedInfo>(
             "/api/v1/authorizeApp",
             "DELETE",
             { appId, authKey },
-            async (error, hostname) => {
-                if (error.statusCode === 401) {
-                    UI.authorization.showIncorrectKeyWarning(appId);
-                    return {} as AuthorizationDeletedInfo;
-                }
-                if (error.statusCode === 405) {
-                    UI.authorization.showNotAuthorizedWarning(appId);
-                    return {} as AuthorizationDeletedInfo;
-                }
-                let result = preHandleError(error, hostname);
-                return result;
-            }
+            errorHandler
         );
-        return typeof response === "object" && response.deleted;
+        return typeof response.value === "object" && response.value.deleted;
     }
 }
