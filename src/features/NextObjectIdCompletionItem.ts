@@ -1,7 +1,7 @@
 import { Command, CompletionItem, CompletionItemKind, MarkdownString, Position, Range, TextEdit, Uri, workspace, WorkspaceEdit } from "vscode";
 import { Backend, NextObjectIdInfo } from "../lib/Backend";
 import { AppManifest } from "../lib/AppManifest";
-import { getAuthorization } from "../lib/Authorization";
+import { Authorization } from "../lib/Authorization";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 
@@ -20,7 +20,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             command: "vjeko-al-objid.commit-suggestion",
             title: "",
             arguments: [async () => {
-                const key = getAuthorization(uri);
+                const key = Authorization.read(uri);
                 const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, key?.key || "");
                 if (!realId || !realId.available || realId.id === objectId.id) return;
     

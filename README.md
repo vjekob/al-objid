@@ -30,6 +30,10 @@ Here's what *Vjeko.comAL Object ID Ninja* includes:
 ask you to synchronize the object IDs. You can run the synchronization manuually at any time, for example to free any
 object IDs that are no longer in use.
 * Secured communication. While no meaningful information is exposed (object IDs, ranges, app id)
+* Authorization and deauthorization of AL apps. When an app is authorized, then all requests to the back end are authorized through a secret key. Key is
+assigned per app, and is stored in the `.objidauth` file in the root of the AL app. Authorization helps secure the content accessed from the back end,
+because every request made for an authorized app must include the authorization key. This makes it very difficult for malicious individuals to hijack
+your app data cached in the back end.
 
 ## Configuring your own back end
 

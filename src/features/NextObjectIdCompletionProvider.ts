@@ -5,7 +5,7 @@ import { OBJECT_TYPES } from "../lib/constants";
 import { Backend, NextObjectIdInfo } from "../lib/Backend";
 import { getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
-import { getAuthorization } from "../lib/Authorization";
+import { Authorization } from "../lib/Authorization";
 
 type SymbolInfo = {
     type: string;
@@ -78,7 +78,7 @@ export class NextObjectIdCompletionProvider {
         const manifest = getManifest(document.uri);
         if (!manifest) return;
 
-        const key = getAuthorization(document.uri);
+        const key = Authorization.read(document.uri);
         const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, key?.key || "");
         if (showNotificationsIfNecessary(objectId) || !objectId) return [];
 

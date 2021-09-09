@@ -5,7 +5,7 @@ import { getManifest } from "../lib/AppManifest";
 import { Backend, ConsumptionInfo } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { getAuthorization } from "../lib/Authorization";
+import { Authorization } from "../lib/Authorization";
 
 async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
     let folderPath: string = uri.fsPath;
@@ -53,7 +53,7 @@ export const syncObjectIds = async (uri?: Uri) => {
         return;
     }
 
-    const key = getAuthorization(uri);
+    const key = Authorization.read(uri);
     if (await Backend.syncIds(manifest?.id, consumption, key?.key || "")) {
         UI.sync.showSuccessInfo();
     }

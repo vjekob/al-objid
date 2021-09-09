@@ -1,11 +1,9 @@
 import { Uri } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
+import { Authorization } from "../lib/Authorization";
 import { API_RESULT, Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
-import path = require("path");
-import * as fs from "fs";
-import { getAuthorization } from "../lib/Authorization";
 
 export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
     if (!uri) uri = await ALWorkspace.selectWorkspaceFolder();
@@ -19,7 +17,7 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
     if (response === API_RESULT.ERROR_ALREADY_AUTHORIZED) {
         const result = await UI.authorization.showAlreadyAuthorizedWarning(manifest!.id);
         if (result === "Yes") {
-            let key = getAuthorization(uri);
+            let key = Authorization.read(uri);
             if (!key) {
                 UI.authorization.showNoKeyError(manifest!.id);
                 return;
@@ -32,8 +30,7 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
         return;
     }
     if (typeof response === "object" && response.authKey) {
-        const appPath = path.join(uri.fsPath, ".objidauth");
-        fs.writeFileSync(appPath, JSON.stringify({ key: response.authKey }));
+        Authorization.write(uri, response.authKey);
         if (repeat) {
             UI.authorization.showReauthorizedInfo(manifest!.id);
         } else {
