@@ -69,6 +69,6 @@ export const UI = {
         showDeauthorizationSuccessfulInfo: (appId: string) =>
             window.showInformationMessage(`You have successfully deauthorized app ${appId}.`),
         showDeauthorizationFailedWarning: (appId: string, error: string) =>
-            window.showWarningMessage(`An error occurred while deleting the authorization file for app ${appId}: ${error}`);
+            window.showWarningMessage(`An error occurred while deleting the authorization file for app ${appId}: ${error}`)
     }
 }
