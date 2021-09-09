@@ -1,8 +1,21 @@
-import { window } from "vscode";
+import { env, Uri, window } from "vscode";
+import { URLS } from "../lib/constants";
 
-export const confirmAuthorizeApp = async () => {
-    let result = window.showQuickPick(["Yes - authorize the app", "No, I've changed my mind"], {
-        title: "Are you sure you want to authorize your app?"
-    });
+const OPTION = {
+    YES: "Yes, authorize the app and make it more secure",
+    NO: "No, I've changed my mind",
+    LEARN: "I am not sure, tell me more about authorization",
 };
 
+export const confirmAuthorizeApp = async () => {
+    let result = await window.showQuickPick(Object.values(OPTION), {
+        placeHolder: "Are you sure you want to authorize your app?"
+    });
+    switch (result) {
+        case OPTION.YES:
+            break;
+        case OPTION.LEARN:
+            env.openExternal(Uri.parse(URLS.AUTHORIZATON_LEARN));
+            break;   
+    }
+};

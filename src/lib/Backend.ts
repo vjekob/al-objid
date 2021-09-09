@@ -22,11 +22,20 @@ export interface AuthorizationDeletedInfo {
     deleted: boolean;
 }
 
+export interface HttpResponse<T> {
+    error: any,
+    status: symbol,
+    value: T
+};
+
 const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
 
 export const API_RESULT = {
+    SUCCESS: Symbol("SUCCESS"),
     ERROR_HANDLED: Symbol("ERROR_HANDLED"),
-    ERROR_ALREADY_AUTHORIZED: Symbol("ALREADY_AUTHORIZED")
+    ERROR_ALREADY_AUTHORIZED: Symbol("ALREADY_AUTHORIZED"),
+    ERROR_NOT_AUTHORIZED: Symbol("NOT_AUTHORIZED"),
+    ERROR_INVALID_AUTH_KEY: Symbol("ERROR_INVALID_AUTH_KEY")
 }
 
 type ErrorHandler<T> = (error: any, hostname: string) => Promise<T | symbol | undefined>;
@@ -132,7 +141,7 @@ export class Backend {
                     return {} as AuthorizationDeletedInfo;
                 }
                 if (error.statusCode === 405) {
-                    UI.authorization.showNotAuthorizedInfo(appId);
+                    UI.authorization.showNotAuthorizedWarning(appId);
                     return {} as AuthorizationDeletedInfo;
                 }
                 let result = preHandleError(error, hostname);

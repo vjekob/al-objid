@@ -11,12 +11,12 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
 		// Commands
 		commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
-		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 		commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
+		commands.registerCommand("vjeko-al-objid.confirm-authorize-app", confirmAuthorizeApp),
 
 		// Internal commands
 		commands.registerCommand("vjeko-al-objid.commit-suggestion", commitSuggestionCommand),
-		commands.registerCommand("vjeko-al-objid.confirm-authorize-app", confirmAuthorizeApp),
+		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 
 		// Other
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),

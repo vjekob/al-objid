@@ -2,6 +2,7 @@ import { MarkdownString, StatusBarAlignment, StatusBarItem, window } from "vscod
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
+import { EXTENSION_NAME, URLS } from "../lib/constants";
 
 export class AuthorizationStatusBar {
     private _status: StatusBarItem;
@@ -28,8 +29,8 @@ export class AuthorizationStatusBar {
         this._status.text = `$(${authKey ? "lock" : "unlock"}) ${authKey ? "Authorized" : "Unauthorized"}`;
         this._status.command = authKey ? undefined : "vjeko-al-objid.confirm-authorize-app";
         this._status.tooltip = authKey
-            ? new MarkdownString(`The "${manifest!.name}" application is ***authorized*** with Vjeko.com AL Object ID Ninja back end. Your data exchange is secure.`)
-            : new MarkdownString(`The "${manifest!.name}" application is ***not authorized***.\n\nTo authorize your app, please run the \`Vjeko: Authorize AL App\` command or click this status bar item.\n\nTo learn more about authorization [click here](https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md)`);
+            ? new MarkdownString(`The "${manifest!.name}" application is ***authorized*** with ${EXTENSION_NAME} back end. Your data exchange is secure.`)
+            : new MarkdownString(`The "${manifest!.name}" application is ***not authorized***.\n\nTo authorize your app, please run the \`Vjeko: Authorize AL App\` command or click this status bar item.\n\nTo learn more about authorization [click here](${URLS.AUTHORIZATON_LEARN})`);
         this._status.show();
     }
 

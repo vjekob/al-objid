@@ -60,13 +60,15 @@ export const UI = {
             window.showInformationMessage(`You have re-authorized app ${appId}. Please make sure to share your authorization file with your team members to avoid disruption of service.`),
         showIncorrectKeyWarning: (appId: string) =>
             window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${appId}.`),
-        showNotAuthorizedInfo: (appId: string) =>
-            window.showInformationMessage(`${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${appId} because it is not authorized.`),
+        showNotAuthorizedWarning: (appId: string) =>
+            window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${appId} because it is not authorized.`),
         showNoKeyError: (appId: string) =>
             window.showErrorMessage(`You do not have an authorization key configured for app ${appId}. Please make sure that .objidauth file is present in the root folder of your app.`),
         showAuthorizationSuccessfulInfo: (appId: string) =>
             window.showInformationMessage(`You have successfully authorized app ${appId}. Please commit the .objidauth file to your repository or otherwise share it with your team members as soon as possible.`),
         showDeauthorizationSuccessfulInfo: (appId: string) =>
             window.showInformationMessage(`You have successfully deauthorized app ${appId}.`),
+        showDeauthorizationFailedWarning: (appId: string, error: string) =>
+            window.showWarningMessage(`An error occurred while deleting the authorization file for app ${appId}: ${error}`);
     }
 }

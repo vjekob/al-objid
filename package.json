@@ -22,7 +22,7 @@
 	"activationEvents": [
 		"onLanguage:al",
 		"onCommand:vjeko-al-objid.sync-object-ids",
-		"onCommand:vjeko-al-objid.authorize-app",
+		"onCommand:vjeko-al-objid.confirm-authorize-app",
 		"onCommand:vjeko-al-objid.deauthorize-app"
 	],
 	"main": "./out/extension.js",
@@ -33,7 +33,7 @@
 				"title": "Vjeko: Synchronize Object IDs with Azure Back End"
 			},
 			{
-				"command": "vjeko-al-objid.authorize-app",
+				"command": "vjeko-al-objid.confirm-authorize-app",
 				"title": "Vjeko: Authorize AL App"
 			},
 			{
