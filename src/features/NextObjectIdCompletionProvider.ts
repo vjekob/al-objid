@@ -1,10 +1,11 @@
 import { CancellationToken, commands, CompletionContext, CompletionItem, DocumentSymbol, Position, TextDocument, Uri, window } from "vscode";
 import { EOL } from "os";
-import { NextObjectIdCompletionItem } from "./../lib/NextObjectIdCompletionItem";
+import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { OBJECT_TYPES } from "../lib/constants";
 import { Backend, NextObjectIdInfo } from "../lib/Backend";
 import { getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
+import { getAuthorization } from "../lib/Authorization";
 
 type SymbolInfo = {
     type: string;
@@ -62,7 +63,7 @@ function showNotificationsIfNecessary(objectId?: NextObjectIdInfo): boolean {
 
     if (!objectId.available) {
         // TODO: fix this message
-        window.showInformationMessage("No more numbers are available for assignment.", "Yes", "Always", "No", "Never");
+        window.showInformationMessage("No more numbers are available for assignment.");
         return true;
     }
 
@@ -77,7 +78,8 @@ export class NextObjectIdCompletionProvider {
         const manifest = getManifest(document.uri);
         if (!manifest) return;
 
-        const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false);
+        const key = getAuthorization(document.uri);
+        const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, key?.key || "");
         if (showNotificationsIfNecessary(objectId) || !objectId) return [];
 
         return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri)];

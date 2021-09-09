@@ -21,7 +21,9 @@
 	],
 	"activationEvents": [
 		"onLanguage:al",
-		"onCommand:vjeko-al-objid.sync-object-ids"
+		"onCommand:vjeko-al-objid.sync-object-ids",
+		"onCommand:vjeko-al-objid.authorize-app",
+		"onCommand:vjeko-al-objid.deauthorize-app"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -29,9 +31,17 @@
 			{
 				"command": "vjeko-al-objid.sync-object-ids",
 				"title": "Vjeko: Synchronize Object IDs with Azure Back End"
+			},
+			{
+				"command": "vjeko-al-objid.authorize-app",
+				"title": "Vjeko: Authorize AL App"
+			},
+			{
+				"command": "vjeko-al-objid.deauthorize-app",
+				"title": "Vjeko: Deauthorize AL App"
 			}
 		],
-		"configuration":{
+		"configuration": {
 			"title": "Vjeko.com AL Object ID Ninja",
 			"properties": {
 				"objectidninja.backEndUrl": {
@@ -43,7 +53,13 @@
 					"description": "API key used to access the back-end."
 				}
 			}
-		}
+		},
+		"languages": [
+			{
+				"id": "jsonc",
+				"filenames": [".objidauth"]
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

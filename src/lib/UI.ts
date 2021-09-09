@@ -9,9 +9,19 @@ const CONSTANTS = {
 
     SYNC: {
         NOTHING_TO_SYNC: "There is nothing to synchronize."
+    },
+
+    AUTHORIZATION: {
+        INCORRECT_KEY: "The authorization key you have provided is incorrect.",
+        CANNOT_DEAUTHORIZE: "You cannot deauthorize app"
     }
-}
+};
+
 export const UI = {
+    general: {
+        showNoWorkspacesOpenInfo: () =>
+            window.showInformationMessage("There are no AL folders open. Nothing to do."),
+    },
     backend: {
         showEndpointNotFoundError: (endpoint: string, isDefault: boolean) => {
             let message = CONSTANTS.BACKEND.CANNOT_COMMUNICATE;
@@ -32,8 +42,6 @@ export const UI = {
     },
 
     sync: {
-        showNoWorkspacesOpenInfo: () =>
-            window.showInformationMessage(`There are no workspaces open. ${CONSTANTS.SYNC.NOTHING_TO_SYNC}`),
         showNoManifestError: () =>
             window.showErrorMessage(`There is no app.json file in this workspace. ${CONSTANTS.SYNC.NOTHING_TO_SYNC}`),
         showSuccessInfo: () =>
@@ -43,5 +51,22 @@ export const UI = {
     nextId: {
         showNoBackEndConsumptionInfo: () =>
             window.showInformationMessage("Azure back end has no information about consumed object IDs. Do you want to synchronize?", "Synchronize"),
+    },
+
+    authorization: {
+        showAlreadyAuthorizedWarning: async (appId: string) =>
+            window.showWarningMessage(`Application ${appId} is already authorized. Do you want to re-authorize it?`, "Yes"),
+        showReauthorizedInfo: (appId: string) =>
+            window.showInformationMessage(`You have re-authorized app ${appId}. Please make sure to share your authorization file with your team members to avoid disruption of service.`),
+        showIncorrectKeyWarning: (appId: string) =>
+            window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${appId}.`),
+        showNotAuthorizedInfo: (appId: string) =>
+            window.showInformationMessage(`${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${appId} because it is not authorized.`),
+        showNoKeyError: (appId: string) =>
+            window.showErrorMessage(`You do not have an authorization key configured for app ${appId}. Please make sure that .objidauth file is present in the root folder of your app.`),
+        showAuthorizationSuccessfulInfo: (appId: string) =>
+            window.showInformationMessage(`You have successfully authorized app ${appId}. Please commit the .objidauth file to your repository or otherwise share it with your team members as soon as possible.`),
+        showDeauthorizationSuccessfulInfo: (appId: string) =>
+            window.showInformationMessage(`You have successfully deauthorized app ${appId}.`),
     }
 }

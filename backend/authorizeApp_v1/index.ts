@@ -1,6 +1,5 @@
 import { BodyWithAuthorization } from './../common/types';
 import { AzureFunction } from "@azure/functions";
-import { Blob } from "../common/Blob";
 import { ErrorResponse, RequestHandler } from "../common/RequestHandler";
 import { RequestValidator } from "../common/RequestValidator";
 import { BodyWithAppId } from "../common/types";
@@ -22,7 +21,7 @@ const httpTrigger: AzureFunction = RequestHandler.handle<any, AuthorizeBody>(
                 }
             case "DELETE":
                 if (!authorization.valid) {
-                    return new ErrorResponse(`You cannot de-authorize app ${appId} because it is already authorized.`, 405);
+                    return new ErrorResponse(`You cannot de-authorize app ${appId} because it is not authorized.`, 405);
                 }
                 if (authKey !== authorization.key) {
                     return new ErrorResponse(`You cannot de-authorize app ${appId} because you provided the incorrect authorization key.`, 401);

@@ -3,6 +3,8 @@ import path = require("path");
 
 export interface AppManifest {
     id: string;
+    name: string;
+    version: string;
     idRanges: any[];
 }
 

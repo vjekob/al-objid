@@ -1,7 +1,9 @@
 import https = require("https");
 
+export type HttpMethod = "GET" | "POST" | "DELETE";
+
 type Request = {
-    method?: "GET" | "POST"
+    method?: HttpMethod,
     hostname: string;
     port?: number;
     path: string;
@@ -24,7 +26,7 @@ export class Https {
         this.options.headers.Accept = type;
     }
 
-    send<T>(method: "GET" | "POST", data: any) {
+    send<T>(method: HttpMethod, data: any) {
         return new Promise<T>((fulfill, reject) => {
             this.options.method = method;
             const serialized = JSON.stringify(data);
