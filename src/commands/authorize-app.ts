@@ -1,4 +1,5 @@
 import { Uri } from "vscode";
+import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
@@ -37,4 +38,6 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
             UI.authorization.showAuthorizationSuccessfulInfo(manifest!.id);
         }
     }
+
+    AuthorizationStatusBar.instance.updateStatusBar();
 };
