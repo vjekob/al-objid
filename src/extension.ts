@@ -9,6 +9,7 @@ import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
 import { BackEndLogHandler } from "./features/BackEndLogHandler";
 import { NextObjectIdCompletionProvider } from "./features/NextObjectIdCompletionProvider";
 import { Output } from "./features/Output";
+import { Config } from "./lib/Config";
 
 export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
@@ -26,6 +27,7 @@ export function activate(context: ExtensionContext) {
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),
 		...AuthorizationStatusBar.instance.getDisposables(),
 		...Output.instance.getDisposables(),
+		...Config.instance.getDisposables(),
 		Disposable.from(new BackEndLogHandler())
 	);
 }

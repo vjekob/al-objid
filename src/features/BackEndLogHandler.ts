@@ -3,6 +3,7 @@ import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { Authorization } from "../lib/Authorization";
 import { Backend, EventLogEntry } from "../lib/Backend";
+import { Config } from "../lib/Config";
 import { PropertyBag } from "../lib/PropertyBag";
 import { UI } from "../lib/UI";
 import { User } from "../lib/User";
@@ -62,6 +63,8 @@ export class BackEndLogHandler {
 
     private processLog() {
         if (this._disposed) return;
+
+        if (!Config.instance.showEventLogNotifications) return;
 
         for (let appId of Object.keys(this._pending)) {
             let pending = this._pending[appId];

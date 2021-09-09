@@ -1,4 +1,4 @@
-# Vjeko.com AL Object ID Ninja
+# AL Object ID Ninja
 
 Zero-configuration, dead-simple, no-collision object ID assignment for multi-user repositories.
 

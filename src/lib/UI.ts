@@ -1,4 +1,5 @@
 import { window } from "vscode";
+import { Output } from "../features/Output";
 import { AppManifest } from "./AppManifest";
 import { EXTENSION_NAME, LABELS } from "./constants";
 
@@ -75,7 +76,10 @@ export const UI = {
     },
 
     log: {
-        showObjectConsumptionInfo: (user: string, type: string, id: number, appName: string) =>
-            window.showInformationMessage(`${user} created ${type} ${id} in ${appName}.`)
+        showObjectConsumptionInfo: (user: string, type: string, id: number, appName: string) => {
+            let message = `${user} created ${type} ${id} in ${appName}.`;
+            Output.instance.log(message);
+            window.showInformationMessage(message)
+        }
     }
 }

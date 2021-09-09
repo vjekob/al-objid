@@ -1,6 +1,6 @@
 {
 	"name": "vjeko-al-objid",
-	"displayName": "Vjeko.com AL Object ID Ninja",
+	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko-com",
 	"version": "0.0.5",
@@ -42,7 +42,7 @@
 			}
 		],
 		"configuration": {
-			"title": "Vjeko.com AL Object ID Ninja",
+			"title": "AL Object ID Ninja",
 			"properties": {
 				"objectidninja.backEndUrl": {
 					"type": "string",
@@ -51,6 +51,11 @@
 				"objectidninja.backEndAPIKey": {
 					"type": "string",
 					"description": "API key used to access the back-end."
+				},
+				"objectidninja.showEventLogNotifications": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show notifications when other developers create objects in the app you are working on"
 				}
 			}
 		},

@@ -17,7 +17,7 @@ export class Output extends DisposableHolder {
 
     public log(message: string) {
         if (message) {
-            this._channel.appendLine(message);
+            this._channel.appendLine(`[${new Date().toISOString()}] ${message}`);
         }
     }
 }

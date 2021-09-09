@@ -1,4 +1,4 @@
-export const EXTENSION_NAME = "Vjeko's AL Object ID Ninja";
+export const EXTENSION_NAME = "AL Object ID Ninja";
 
 export const URLS = {
     AUTHORIZATON_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md",

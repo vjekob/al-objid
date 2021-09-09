@@ -1,5 +1,6 @@
 import { workspace } from "vscode";
 import { output } from "../features/Output";
+import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
 import { MeasureTime } from "./MeasureTime";
 import { UI } from "./UI";
@@ -68,8 +69,8 @@ export const API_RESULT = {
  */
 async function sendRequest<T>(path: string, method: HttpMethod, data: any, errorHandler?: ErrorHandler<T>): Promise<HttpResponse<T>> {
     const config = workspace.getConfiguration("objectidninja");
-    const url = (config.get("backEndUrl") || "") as string;
-    const key = (config.get("backEndAPIKey") || "") as string;
+    const url = Config.instance.backEndUrl;
+    const key = Config.instance.backEndAPIKey;
 
     const hostname = url || DEFAULT_HOST_NAME;
     const https = new Https({

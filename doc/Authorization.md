@@ -1,6 +1,6 @@
-# App Authorization in Vjeko.com AL Object ID Ninja
+# App Authorization in AL Object ID Ninja
 
-**Vjeko.com AL Object ID Ninja** is proud to be zero-configuration and immediately usable from the moment you install
+**AL Object ID Ninja** is proud to be zero-configuration and immediately usable from the moment you install
 it. However, for it to be able to reach this goal, it must share some information about your AL apps with a publicly
 available API. You don't need to worry, this information is minimal, and anonymous. It includes your app ID and object
 ID consumption information.
@@ -58,7 +58,7 @@ in place, and you can configure Ninja to use your own endpoints:
 
 ![Configuration of own Azure function back end](./images/settings-own-back-end.png)
 
-Here's the repository for the back end Azure function app that the public **Vjeko.com AL Object ID Ninja** extension is
+Here's the repository for the back end Azure function app that the public **AL Object ID Ninja** extension is
 using: https://github.com/vjekob/al-objid/tree/master/backend
 
 If you need help setting it up, I am always available.
