@@ -1,6 +1,6 @@
 # App Authorization in AL Object ID Ninja
 
-**AL Object ID Ninja** is proud to be zero-configuration and immediately usable from the moment you install
+AL Object ID Ninja is proud to be zero-configuration and immediately usable from the moment you install
 it. However, for it to be able to reach this goal, it must share some information about your AL apps with a publicly
 available API. You don't need to worry, this information is minimal, and anonymous. It includes your app ID and object
 ID consumption information.
