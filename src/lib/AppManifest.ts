@@ -1,4 +1,5 @@
 import { Uri, workspace } from "vscode";
+import { AppIdCache } from "./AppIdCache";
 import path = require("path");
 import * as fs from "fs";
 
@@ -15,7 +16,9 @@ export function getManifest(uri: Uri): AppManifest | null {
 
     const appPath = path.join(folder.uri.fsPath, "app.json");
     try {
-        return JSON.parse(fs.readFileSync(appPath).toString()) as AppManifest;
+        const manifest = JSON.parse(fs.readFileSync(appPath).toString()) as AppManifest;
+        manifest.id = AppIdCache.instance.getAppIdHash(manifest.id);
+        return manifest;
     }
     catch {
         return null;
