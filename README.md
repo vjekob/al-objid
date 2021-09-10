@@ -2,20 +2,23 @@
 
 Zero-configuration, dead-simple, no-collision object ID assignment for multi-user repositories.
 
-## The Good, The Bad, and The Ugly of object ID assignment
+## Why do I need this extension?
 
-Object ID collisions are a reality of every AL development team. Sooner or later (and it's really sooner, not later)
-two developers will assign the same object ID to objects they create. Everything will be fine in their locals, but if
-one of them doesnt' manually take care of it, the build gets broken.
+Object ID collisions are a reality of every AL development team. Sooner or later two developers will assign
+the same object ID to different objects they create. In the best case, this causes manual renumbering work.
+In the worst case you have a broken build.
 
-There is no easy way to avoid this problem. Either your developer must be in constant communication when assigning new
-object IDs, or they have to constantly fix object ID collisions. The more people you have on your team, and the busier
-your team is, the more likely you are to waste a lot of time making sure your builds don't break because of object ID
-collisions.
+AL Object ID Ninja solves this problem. It uses a central object ID cache that keeps track, in real time,
+of all object IDs your team members assigned to their objects. Unlike the AL Language, AL Object ID Ninja
+will never suggest the same object ID to developers working on the same app at the same time.
+
+## Getting started
+
+
 
 ## How does this extension help?
 
-*Vjeko.com AL Object ID Ninja* helps by using Azure serverless back end to coordinate object ID assignment across your
+*AL Object ID Ninja* helps by using Azure serverless back end to coordinate object ID assignment across your
 team. The beautiful part is that it just works, out of the box, without any configuration. An object ID that was
 consumed by one user, won't be suggested to another user. All object ID assignments are fully integrated into
 Intellisense and using this feature doesn't require you to change the way you write code in any way.
@@ -24,7 +27,7 @@ In short, when using this tool, two users working at the same time won't ever ge
 
 ## Features
 
-Here's what *Vjeko.comAL Object ID Ninja* includes:
+Here's what *AL Object ID Ninja* includes:
 * Auto-suggestion of object ID while typing AL code. This extension will put its own object ID suggestion above the default one suggested by AL Language.
 * Synchronization of all consumed object IDs with the back end. When requesting the first object ID, the extension will
 ask you to synchronize the object IDs. You can run the synchronization manuually at any time, for example to free any
