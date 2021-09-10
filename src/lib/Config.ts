@@ -1,7 +1,7 @@
 import { workspace, WorkspaceConfiguration } from "vscode";
 import { DisposableHolder } from "../features/DisposableHolder";
 
-const CONFIG_SECTION = "objectidninja";
+const CONFIG_SECTION = "objectIdNinja";
 
 export class Config extends DisposableHolder {
     private _config: WorkspaceConfiguration;

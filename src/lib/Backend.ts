@@ -68,7 +68,7 @@ export const API_RESULT = {
  * @returns `HttpResponse` object that contains full information about response, error, and error handling status
  */
 async function sendRequest<T>(path: string, method: HttpMethod, data: any, errorHandler?: ErrorHandler<T>): Promise<HttpResponse<T>> {
-    const config = workspace.getConfiguration("objectidninja");
+    const config = workspace.getConfiguration("objectIdNinja");
     const url = Config.instance.backEndUrl;
     const key = Config.instance.backEndAPIKey;
 

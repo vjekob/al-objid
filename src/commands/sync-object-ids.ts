@@ -45,10 +45,16 @@ export const syncObjectIds = async (uri?: Uri) => {
     uri = await ALWorkspace.selectWorkspaceFolder(uri);
     if (!uri) return;
 
-    const manifest = getManifest(uri); 
+    const manifest = getManifest(uri);
 
     if (!manifest) {
         UI.sync.showNoManifestError();
+        return;
+    }
+
+    // Easter egg or cheating, call it what you want... but this is to prevent "creative" users from intentionally breaking the demo for others.
+    if (manifest.id === "c454e488-56ca-4414-bd68-1d3a2548abf2") {
+        UI.sandbox.showSandboxInfo("synchronized");
         return;
     }
 

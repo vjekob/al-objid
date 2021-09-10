@@ -7,3 +7,12 @@ Content-Type: application/json
     "appId": "eea13c88-1ff5-4fcd-b450-70468fa84d5d",
     "authKey": "anwUaXOeSGhR6SSFJ8Xx33nKzpZgUsE2BzpGLOhNrQc="
 }
+
+### Azure
+
+post https://vjekocom-alext-weu.azurewebsites.net/api/v1/authorizeApp
+Content-Type: application/json
+
+{
+    "appId": "c454e488-56ca-4414-bd68-1d3a2548abf2"
+}

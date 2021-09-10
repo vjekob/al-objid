@@ -44,18 +44,18 @@
 		"configuration": {
 			"title": "AL Object ID Ninja",
 			"properties": {
-				"objectidninja.backEndUrl": {
+				"objectIdNinja.backEndUrl": {
 					"type": "string",
-					"markdownDescription": "URL of the back-end API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/backend"
+					"markdownDescription": "URL of the back-end API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/backend. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid.azurewebsites.net`, `myids.contoso.com`. Incorrect examples are: `https://my-al-objectid.azurewebsites.net/` or `http://mids.contoso.com/`"
 				},
-				"objectidninja.backEndAPIKey": {
+				"objectIdNinja.backEndAPIKey": {
 					"type": "string",
-					"description": "API key used to access the back-end."
+					"markdownDescription": "API key used to access the back-end. This API key is passed as `x-functions-key` header to all of API endpoints. When using Azure Functions, make sure this is the app key that can authorize access to all individual functions in the app."
 				},
-				"objectidninja.showEventLogNotifications": {
+				"objectIdNinja.showEventLogNotifications": {
 					"type": "boolean",
 					"default": true,
-					"description": "Show notifications when other developers create objects in the app you are working on"
+					"description": "Show notifications when other developers create objects in the app you are working on."
 				}
 			}
 		},

@@ -1,9 +1,13 @@
 import { Blob } from "./Blob";
-import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, Range } from "./types";
+import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, Range, SANDBOX_ID } from "./types";
 import { findFirstAvailableId } from "./util";
 import crypto = require("crypto");
 
 export async function updateRanges(appId: string, ranges: Range[]): Promise<Range[]> {
+    if (appId === SANDBOX_ID) {
+        ranges = [{ from: 50000, to: 99999 }];
+    }
+
     const blob = new Blob<Range[]>(`${appId}/_ranges.json`);
     return await blob.optimisticUpdate(() => ranges);
 }

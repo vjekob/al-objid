@@ -16,6 +16,13 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
     }
 
     const manifest = getManifest(uri)!;
+
+    // Easter egg or cheating, call it what you want... but this is to prevent "creative" users from intentionally breaking the demo for others.
+    if (manifest.id === "c454e488-56ca-4414-bd68-1d3a2548abf2") {
+        UI.sandbox.showSandboxInfo("authorized");
+        return;
+    }
+
     output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`);
     
     let response = await Backend.authorizeApp(manifest!.id, async (response) => {

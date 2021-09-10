@@ -81,5 +81,10 @@ export const UI = {
             Output.instance.log(message);
             window.showInformationMessage(message)
         }
+    },
+
+    sandbox: {
+        showSandboxInfo: (action: string) => 
+            window.showInformationMessage(`You are working in the BC Beerinar Sandbox app. This app is for demo purposes, and cannot be ${action}. Yes, I know, you'd like to have fun, but others would, too, so thanks for understanding 😉`)
     }
 }

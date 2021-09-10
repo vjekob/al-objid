@@ -109,7 +109,6 @@ export class BodyWithRanges {
 
 const OBJECT_IDS_VALIDATION_ERROR = {
     INVALID_TYPE: Symbol(),
-    NO_VALID_TYPES: Symbol(),
     ARRAY_EXPECTED: Symbol(),
 };
 
@@ -133,12 +132,10 @@ export class BodyWithObjectIds {
                             if (typeof n !== "number") return OBJECT_IDS_VALIDATION_ERROR.ARRAY_EXPECTED;
                         }
                     }
-                    if (count === 0) return OBJECT_IDS_VALIDATION_ERROR.NO_VALID_TYPES;
                     return true;
                 },
                 errorMessage: {
                     [OBJECT_IDS_VALIDATION_ERROR.INVALID_TYPE]: `${INVALID_OBJECT_IDS}invalid object type specified`,
-                    [OBJECT_IDS_VALIDATION_ERROR.NO_VALID_TYPES]: `${INVALID_OBJECT_IDS}no valid object types specified`,
                     [OBJECT_IDS_VALIDATION_ERROR.ARRAY_EXPECTED]: `${INVALID_OBJECT_IDS}array of number expected`,
                 }
             }
@@ -215,3 +212,5 @@ export const EVENT_LOG_ENTRY_TYPES = [
     "authorization",
     "deauthorization"
 ];
+
+export const SANDBOX_ID = "c454e488-56ca-4414-bd68-1d3a2548abf2";
