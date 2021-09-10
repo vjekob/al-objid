@@ -16,3 +16,5 @@ backend/**
 **/*.code-workspace
 doc
 *.vsix
+images/*.gif
+images/back-end-configuration.png
