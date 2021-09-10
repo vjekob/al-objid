@@ -15,6 +15,7 @@ export class AppIdCache {
         if (this._map[appId]) return this._map[appId];
 
         const sha256 = crypto.createHash("sha256");
+        sha256.update(appId);
         return this._map[appId] = sha256.digest("hex").replace("/", "-");
     }
 }

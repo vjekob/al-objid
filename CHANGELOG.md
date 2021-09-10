@@ -7,6 +7,10 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ## Unreleased
 There are no unreleased changes at this point.
 
+## [1.0.3] - 2021-09-10
+### Fixed
+- Fixed the bug with SHA256 not actually being created from app id. This was embarrassing, really. One more reason to invest some time into testability ASAP.
+
 ## [1.0.2] - 2021-09-10
 ### Changed
 - App id read from the `app.json` manifest is no longer used to identify the extension anywhere in the front or back end. Instead
