@@ -3,6 +3,7 @@ import { authorizeApp } from "./commands/authorize-app";
 import { commitSuggestionCommand } from "./commands/commit-suggestion";
 import { confirmAuthorizeApp } from "./commands/confirm-authorize-app";
 import { confirmDeauthorizeApp } from "./commands/confirm-deauthorize-app";
+import { confirmSyncObjectIds } from "./commands/confirm-sync-object-ids";
 import { deauthorizeApp } from "./commands/deauthorize-app";
 import { syncObjectIds } from "./commands/sync-object-ids";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
@@ -14,12 +15,13 @@ import { Config } from "./lib/Config";
 export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
 		// Commands
-		commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
+		commands.registerCommand("vjeko-al-objid.confirm-sync-object-ids", confirmSyncObjectIds),
 		commands.registerCommand("vjeko-al-objid.confirm-authorize-app", confirmAuthorizeApp),
 		commands.registerCommand("vjeko-al-objid.confirm-deauthorize-app", confirmDeauthorizeApp),
 
 		// Internal commands
 		commands.registerCommand("vjeko-al-objid.commit-suggestion", commitSuggestionCommand),
+		commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
 		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 		commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
 

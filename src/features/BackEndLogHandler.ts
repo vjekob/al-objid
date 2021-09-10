@@ -70,7 +70,7 @@ export class BackEndLogHandler {
             let pending = this._pending[appId];
             let log = this._log[appId];
             for (let event of pending) {
-                if (event.user === User.username) continue;
+                if (event.user === Config.instance.overrideUserName) continue;
                 if (log && log.find(e => e.timestamp === event.timestamp)) continue;
                 switch (event.eventType) {
                     case "consumption":

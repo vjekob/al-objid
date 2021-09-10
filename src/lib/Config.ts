@@ -1,5 +1,6 @@
 import { workspace, WorkspaceConfiguration } from "vscode";
 import { DisposableHolder } from "../features/DisposableHolder";
+import { User } from "./User";
 
 const CONFIG_SECTION = "objectIdNinja";
 
@@ -21,17 +22,29 @@ export class Config extends DisposableHolder {
         return this._instance || (this._instance = new Config());
     }
 
-    get backEndUrl(): string {
+    private getWithDefault<T>(setting: string, defaultValue: T) {
+        let config = this._config.get<T>(setting);
+        if (typeof config === "undefined") config = defaultValue;
+        return config;
+    }
+
+    public get backEndUrl(): string {
         return this._config.get<string>("backEndUrl") || "";
     }
 
-    get backEndAPIKey(): string {
+    public get backEndAPIKey(): string {
         return this._config.get<string>("backEndAPIKey") || "";
     }
 
-    get showEventLogNotifications(): boolean {
-        let config = this._config.get<boolean>("showEventLogNotifications");
-        if (typeof config === "undefined") config = true;
-        return !!config;
+    public get showEventLogNotifications(): boolean {
+        return this.getWithDefault<boolean>("showEventLogNotifications", true);
+    }
+
+    public get overrideUserName(): string {
+        return this._config.get<string>("overrideUserName") || User.username;
+    }
+
+    public get includeUserName(): boolean {
+        return this.getWithDefault<boolean>("includeUserName", true);
     }
 }

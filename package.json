@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko-com",
-	"version": "0.0.5",
+	"version": "1.0.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -29,7 +29,7 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "vjeko-al-objid.sync-object-ids",
+				"command": "vjeko-al-objid.confirm-sync-object-ids",
 				"title": "Vjeko: Synchronize Object IDs with Azure Back End"
 			},
 			{
@@ -56,6 +56,15 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Show notifications when other developers create objects in the app you are working on."
+				},
+				"objectIdNinja.overrideUserName": {
+					"type": "string",
+					"description": "Name to be shown in notification messages. If you leave this empty, Object ID Ninja will use your OS user name (or your Git user name in future versions)."
+				},
+				"objectIdNinja.includeUserName": {
+					"type": "boolean",
+					"default": true,
+					"description": "If you don't want your user name to be sent to the back end, you can switch this option off. When you do, other developers on your team won't see notifications about object ID assignments done by you."
 				}
 			}
 		},

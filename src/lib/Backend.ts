@@ -124,16 +124,21 @@ function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest):
 
 export class Backend {
     static async getNextNo(appId: string, type: string, ranges: any, commit: boolean, authKey: string): Promise<NextObjectIdInfo | undefined> {
+        let request: any = {
+            appId,
+            type,
+            ranges,
+            authKey,
+        };
+
+        if (Config.instance.includeUserName) {
+            request.content = { user: Config.instance.overrideUserName };
+        }
+
         const response = await sendRequest<NextObjectIdInfo>(
             "/api/v1/getNext",
             commit ? "POST" : "GET",
-            {
-                appId,
-                type,
-                ranges,
-                authKey,
-                content: { user: User.username }
-            }
+            request
         );
         if (response.status === API_RESULT.SUCCESS) output.log(`Received next ${type} ID response: ${JSON.stringify(response.value)}`);
         return response.value;
