@@ -77,11 +77,11 @@ export async function readAppAuthorization(appId: string): Promise<AppAuthorizat
 }
 
 export async function writeAppAuthorization(appId: string): Promise<string> {
-    const sha1 = crypto.createHash("sha256");
-    sha1.update(`APP_AUTH_${appId}_${Date.now()}`);
+    const sha256 = crypto.createHash("sha256");
+    sha256.update(`APP_AUTH_${appId}_${Date.now()}`);
     const blob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
     const authorization = await blob.optimisticUpdate(auth => ({
-        key: sha1.digest("base64"),
+        key: sha256.digest("base64"),
         valid: true,
     }));
 
