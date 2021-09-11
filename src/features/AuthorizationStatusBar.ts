@@ -1,7 +1,7 @@
 import { MarkdownString, StatusBarAlignment, StatusBarItem, window } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
-import { Authorization } from "../lib/Authorization";
+import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { EXTENSION_NAME, URLS } from "../lib/constants";
 import { DisposableHolder } from "./DisposableHolder";
 
@@ -26,7 +26,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
             return;
         }
 
-        let authKey = Authorization.read(document.uri);
+        let { authKey } = ObjIdConfig.instance(document.uri);
         let manifest = getManifest(document.uri);
 
         this._status.text = `$(${authKey ? "lock" : "unlock"}) ${authKey ? "Authorized" : "Unauthorized"}`;

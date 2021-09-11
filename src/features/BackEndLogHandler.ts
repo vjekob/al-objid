@@ -1,7 +1,7 @@
 import { window, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
-import { Authorization } from "../lib/Authorization";
+import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend, EventLogEntry } from "../lib/Backend";
 import { Config } from "../lib/Config";
 import { PropertyBag } from "../lib/PropertyBag";
@@ -51,8 +51,8 @@ export class BackEndLogHandler {
         for (let folder of folders) {
             let manifest = getManifest(folder.uri)!;
             this._appName[manifest.id] = manifest.name;
-            let authKey = Authorization.read(folder.uri);
-            promises.push(Backend.getLog(manifest.id, authKey?.key || "").then(entries => {
+            let { authKey } = ObjIdConfig.instance(folder.uri);
+            promises.push(Backend.getLog(manifest.id, authKey).then(entries => {
                 if (!entries) return;
                 this._pending[manifest.id] = [...(this._pending[manifest.id] || []), ...entries];
             }));

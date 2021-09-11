@@ -2,19 +2,10 @@ import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { output } from "../features/Output";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { AppManifest, getManifest } from "../lib/AppManifest";
-import { Authorization } from "../lib/Authorization";
+import { getManifest } from "../lib/AppManifest";
+import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
-
-function deleteAuthorizationFile(uri: Uri, manifest: AppManifest): boolean {
-    let result = Authorization.delete(uri);
-    if (result !== true) {
-        UI.authorization.showDeauthorizationFailedWarning(manifest, result);
-        return false;
-    }
-    return true;
-}
 
 export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) => {
     if (!uri) uri = await ALWorkspace.selectWorkspaceFolder();
@@ -26,13 +17,12 @@ export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) =>
     const manifest = getManifest(uri)!;
     output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`);
 
-    const key = Authorization.read(uri);
-    if (!key) {
+    if (!ObjIdConfig.instance(uri).authKey) {
         UI.authorization.showNotAuthorizedWarning(manifest);
         return;
     }
 
-    let response = await Backend.deauthorizeApp(manifest.id, key?.key || "", async (response) => {
+    let response = await Backend.deauthorizeApp(manifest.id, ObjIdConfig.instance(uri).authKey || "", async (response) => {
         switch (response.error.statusCode) {
             case 401:
                 UI.authorization.showIncorrectKeyWarning(manifest);
@@ -44,7 +34,8 @@ export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) =>
                 return false;
         }
     });
-    if (response && deleteAuthorizationFile(uri, manifest)) {
+    if (response) {
+        ObjIdConfig.instance(uri).authKey = "";
         if (token) {
             token.success = true;
         } else {

@@ -1,13 +1,13 @@
 import { Command, CompletionItem, CompletionItemKind, MarkdownString, Position, Range, TextEdit, Uri, workspace, WorkspaceEdit } from "vscode";
 import { Backend, NextObjectIdInfo } from "../lib/Backend";
 import { AppManifest } from "../lib/AppManifest";
-import { Authorization } from "../lib/Authorization";
+import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 
 export class NextObjectIdCompletionItem extends CompletionItem {
-    constructor(type: string, objectId: NextObjectIdInfo, manifest: AppManifest, position: Position, uri: Uri, ) {
+    constructor(type: string, objectId: NextObjectIdInfo, manifest: AppManifest, position: Position, uri: Uri,) {
         super(`${objectId.id}`, CompletionItemKind.Constant);
 
         this.sortText = "0";
@@ -21,19 +21,19 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             command: "vjeko-al-objid.commit-suggestion",
             title: "",
             arguments: [async () => {
-                output.log(`Commiting object ID auto-complete for ${type} ${objectId.id}`);
-                const key = Authorization.read(uri);
-                const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, key?.key || "");
+                output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`);
+                const { authKey } = ObjIdConfig.instance(uri);
+                const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, authKey);
                 if (!realId || !realId.available || realId.id === objectId.id) return;
                 output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`);
-    
+
                 let replace = new WorkspaceEdit();
                 replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId.id}`)]);
                 workspace.applyEdit(replace);
             }]
         };
     }
-    
+
     getCompletionDocumentation(type: string, objectId: NextObjectIdInfo): MarkdownString {
         const message = new MarkdownString("Assigns the next available object ID from the Azure back end.");
         message.appendCodeblock(`${type} ${objectId.id}`, "al");
@@ -42,7 +42,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             return message;
         }
         message.appendMarkdown("This number is **temporary**. The actual number will be assigned when you select this auto-complete entry.")
-    
+
         return message;
-    }        
+    }
 }

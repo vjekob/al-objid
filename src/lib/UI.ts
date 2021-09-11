@@ -1,6 +1,7 @@
 import { window } from "vscode";
 import { Output } from "../features/Output";
 import { AppManifest } from "./AppManifest";
+import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { EXTENSION_NAME, LABELS } from "./constants";
 
 const CONSTANTS = {
@@ -66,9 +67,9 @@ export const UI = {
         showNotAuthorizedWarning: (manifest: AppManifest) =>
             window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} "${manifest.name}" because it is not authorized.`),
         showNoKeyError: (manifest: AppManifest) =>
-            window.showErrorMessage(`You do not have an authorization key configured for app "${manifest.name}". Please make sure that .objidauth file is present in the root folder of your app.`),
+            window.showErrorMessage(`You do not have an authorization key configured for app "${manifest.name}". Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`),
         showAuthorizationSuccessfulInfo: (manifest: AppManifest) =>
-            window.showInformationMessage(`You have successfully authorized app "${manifest.name}". Please commit the .objidauth file to your repository or otherwise share it with your team members as soon as possible.`),
+            window.showInformationMessage(`You have successfully authorized app "${manifest.name}". Please commit the ${CONFIG_FILE_NAME} file to your repository or otherwise share it with your team members as soon as possible.`),
         showDeauthorizationSuccessfulInfo: (manifest: AppManifest) =>
             window.showInformationMessage(`You have successfully deauthorized app "${manifest.name}".`),
         showDeauthorizationFailedWarning: (manifest: AppManifest, error: string) =>

@@ -21,7 +21,7 @@ export class ALWorkspace {
         if (uri && this.isALWorkspace(uri)) return workspace.getWorkspaceFolder(uri)!.uri;
 
         const workspaces = workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri));
-        if (!workspaces) {
+        if (!workspaces || workspaces.length === 0) {
             UI.general.showNoWorkspacesOpenInfo();
             return;
         }

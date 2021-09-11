@@ -5,7 +5,7 @@ import { getManifest } from "../lib/AppManifest";
 import { Backend, ConsumptionInfo } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { Authorization } from "../lib/Authorization";
+import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { MeasureTime } from "../lib/MeasureTime";
 import { output } from "../features/Output";
 
@@ -74,8 +74,7 @@ export const syncObjectIds = async (uri?: Uri) => {
 
     const consumption: ConsumptionInfo = getConsumption(objects);
 
-    const key = Authorization.read(uri);
-    if (await Backend.syncIds(manifest?.id, consumption, key?.key || "")) {
+    if (await Backend.syncIds(manifest?.id, consumption, ObjIdConfig.instance(uri).authKey || "")) {
         UI.sync.showSuccessInfo();
     }
 }

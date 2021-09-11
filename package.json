@@ -72,7 +72,8 @@
 			{
 				"id": "jsonc",
 				"filenames": [
-					".objidauth"
+					".objidauth",
+					".objidconfig"
 				]
 			}
 		]
@@ -99,5 +100,6 @@
 		"vscode-test": "^1.5.2"
 	},
 	"dependencies": {
+		"comment-json": "^4.1.1"
 	}
 }
