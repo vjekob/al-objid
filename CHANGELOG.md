@@ -5,7 +5,10 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
-There are no unreleased changes at this point.
+### Added
+- App pools feature (https://github.com/vjekob/al-objid/issues/1).
+### Changed
+- `.objidauth` file renamed to `.objidconfig` to encompass more functionality this file now covers.
 
 ## [1.0.3] - 2021-09-10
 ### Fixed

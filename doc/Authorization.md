@@ -27,7 +27,7 @@ This is where the *app authorization* feature comes to help. If you want to prev
 your app ID, you can authorize your app.
 
 When you authorize your app, the back end generates a unique key for that app, sends it to Ninja, and Ninja
-then stores the key in the authorization file named `.objidauth` in the root of your AL app repository.
+then stores the key in the configuration file named `.objidconfig` in the root of your AL app repository.
 
 This is an example of the authorization file:
 
