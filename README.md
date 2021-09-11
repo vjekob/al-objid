@@ -12,7 +12,7 @@ AL Object ID Ninja solves this problem. It uses a central object ID cache that k
 of all object IDs your team members assigned to their objects. Unlike the AL Language, AL Object ID Ninja
 will never suggest the same object ID to developers working on the same app at the same time.
 
-![Assigning object IDs](https://vjeko.com/wp-content/uploads/2021/09/assigning-id.gif)
+![Assigning object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/images/assigning-id.gif)
 
 While the AL extension doesn't see that codeunit ID `50108` is already assigned by another developer,
 AL Object ID Ninja sees it. Also, AL Object ID Ninja sees that somebody even assigned `50109` while 
@@ -36,7 +36,7 @@ needed, and you can use it on your existing projects as well as the new ones wit
 While AL Object ID Ninja back end requires some information to be available before it can start
 assigning new IDs to your team, it will synchronize this information for you automatically.
 
-![Getting started](https://vjeko.com/wp-content/uploads/2021/09/getting-started.gif)
+![Getting started](https://raw.githubusercontent.com/vjekob/al-objid/master/images/getting-started.gif)
 
 That's it! Now everyone on your team can assign objects ID without fear of collision.
 
@@ -48,7 +48,8 @@ available number. When you accept the suggestion from IntelliSense, it commits t
 end so that nobody else will receive that suggestion.
 
 The information this extension exchanges with the back end is minimal. It only sends this:
-* `id` from `app.json`. This is needed so the back end can track assignment per app.
+* SHA256 hash of the `id` from `app.json`. This identifies the app in the back end, but since it's a
+hash, it does not expose the actual app id to anyone.
 * `idRanges` from `app.json`. This is needed so that the back end can know which object IDs are
 available for assignment.
 * Type of the object for the ID is needed.
@@ -78,12 +79,22 @@ Ninja replaces the object ID in the code with the hard-fetched one.
 Seriously. No object ID collisions will happen as long as everyone on your team is using AL Object
 ID Ninja.
 
+### Support for multi-root workspaces
+
+AL Object ID Ninja fully supports multi-root workspaces. No matter if you have single AL app or
+multiple AL apps in any single-root or multi-root configuration, AL Object ID Ninja will always
+correctly identify which AL app the action is for.
+
+Whenever AL Object ID Ninja is not sure, for example when you have no editor tabs open, and there
+are more than one AL app folders in the current workspace, it will ask you which one the action
+is for.
+
 ### Notifications of assignment made by other users
 
 Whenever another user assigns an object ID from AL Object ID Ninja, everyone working on the same
 app at that time receives notifications.
 
-![Object ID Assignment Notifications](https://vjeko.com/wp-content/uploads/2021/09/assigning-id-multiuser.gif)
+![Object ID Assignment Notifications](https://raw.githubusercontent.com/vjekob/al-objid/master/images/assigning-id-multiuser.gif)
 
 > Note: You can switch the notifications off in your settings.
 
@@ -95,7 +106,7 @@ accidentally by developers accidentally assigning ID multiple times for the same
 synchronize objects at any time your branch is in sync with all other branches (meaning there
 are no active branches on which developers have new objects not yet merged into mainline).
 
-![Synchronizing object IDs](https://vjeko.com/wp-content/uploads/2021/09/synchronization.gif)
+![Synchronizing object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/images/synchronization.gif)
 
 > Note: Automatic detection of object deletion and automatic releasing of freed-up object IDs
 is currently in development and will be included in the next version.
@@ -114,16 +125,16 @@ object ID assignment information.
 AL Object ID Ninja has a simple security mechanism to prevent that: App Authorization. You can
 authorize your app with the back end and receive your own per-app authorization key.
 
-![Authorizing your app](https://vjeko.com/wp-content/uploads/2021/09/authorization.gif)
+![Authorizing your app](https://raw.githubusercontent.com/vjekob/al-objid/master/images/authorization.gif)
 
 Once an app is authorized, every request it makes must include this authorization key and back end
 will reject any requests made without or with an invalid authorization key.
 
-![Attempting to use an invalid key](https://vjeko.com/wp-content/uploads/2021/09/invalid-key.gif)
+![Attempting to use an invalid key](https://raw.githubusercontent.com/vjekob/al-objid/master/images/invalid-key.gif)
 
 You can revoke existing authorization keys and request new ones at any time.
 
-![Re-authorizing your app to request new authorization key](https://vjeko.com/wp-content/uploads/2021/09/re-authorization.gif)
+![Re-authorizing your app to request new authorization key](https://raw.githubusercontent.com/vjekob/al-objid/master/images/re-authorization.gif)
 
 Learn more about authorization: https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md
 
@@ -138,7 +149,7 @@ public service, you may want to use your own back end instead. This is possible.
 1. Deploy the Azure Functions application from the `backend` directory onto your own Azure subscription.
 2. Configure the back-end URL and back-end key in your Visual Studio Code settings.
 
-![Configuring back end](https://vjeko.com/wp-content/uploads/2021/09/back-end-configuration.png)
+![Configuring back end](https://raw.githubusercontent.com/vjekob/al-objid/master/images/back-end-configuration.png)
 
 ## Upcoming features
 
