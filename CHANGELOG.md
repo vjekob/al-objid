@@ -7,6 +7,13 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ## Unreleased
 ### Added
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
+
+## [1.0.4] - 2021-09-12
+### Added
+- `Learn more` button added to the first synchronization toast message.
+- Best-practices parser option added, and turned on by default. When this option is off, only one object per file will be parsed. This option will improve
+synchronization speed on very large repositories when used from very slow computers.
+
 ### Changed
 - `.objidauth` file renamed to `.objidconfig` to encompass more functionality this file now covers.
 
