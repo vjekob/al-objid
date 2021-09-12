@@ -133,7 +133,7 @@ suggestion right where AL Language used to place theirs: on the top of the Intel
 Your focus stays on your code while AL Object ID Ninja does its magic for you. And it works in all
 scenarios: plain code, snippets, you name it.
 
-### It's crazy fast!
+#### It's crazy fast!
 
 Seriously, AL Object ID Ninja will blow your mind away with how fast it is. It's impossibly lightweight
 both in the front end and in the back end, and whatever task you put in front of it, it will get it
