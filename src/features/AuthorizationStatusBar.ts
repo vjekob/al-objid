@@ -33,7 +33,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
         this._status.command = authKey ? undefined : "vjeko-al-objid.confirm-authorize-app";
         this._status.tooltip = authKey
             ? new MarkdownString(`The "${manifest!.name}" application is ***authorized*** with ${EXTENSION_NAME} back end. Your data exchange is secure.`)
-            : new MarkdownString(`The "${manifest!.name}" application is ***not authorized***.\n\nTo authorize your app, please run the \`Vjeko: Authorize AL App\` command or click this status bar item.\n\nTo learn more about authorization [click here](${URLS.AUTHORIZATON_LEARN})`);
+            : new MarkdownString(`The "${manifest!.name}" application is ***not authorized***.\n\nTo authorize your app, please run the \`Vjeko: Authorize AL App\` command or click this status bar item.\n\nTo learn more about authorization [click here](${URLS.AUTHORIZATION_LEARN})`);
         this._status.show();
     }
 

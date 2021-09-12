@@ -1,10 +1,12 @@
-import { ExtensionContext, commands, languages, Disposable } from "vscode";
+import path = require("path");
+import { ExtensionContext, commands, languages, Disposable, Uri } from "vscode";
 import { authorizeApp } from "./commands/authorize-app";
 import { commitSuggestionCommand } from "./commands/commit-suggestion";
 import { confirmAuthorizeApp } from "./commands/confirm-authorize-app";
 import { confirmDeauthorizeApp } from "./commands/confirm-deauthorize-app";
 import { confirmSyncObjectIds } from "./commands/confirm-sync-object-ids";
 import { deauthorizeApp } from "./commands/deauthorize-app";
+import { learnWelcome } from "./commands/learn-welcome";
 import { syncObjectIds } from "./commands/sync-object-ids";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
 import { BackEndLogHandler } from "./features/BackEndLogHandler";
@@ -24,6 +26,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
 		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 		commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
+		commands.registerCommand("vjeko-al-objid.learn-welcome", learnWelcome),
 
 		// Other
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),

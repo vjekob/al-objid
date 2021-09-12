@@ -15,8 +15,13 @@ type SymbolInfo = {
 };
 
 async function syncIfChosen(choice: Promise<string | undefined>) {
-    if (await choice === LABELS.BUTTON_SYNCHRONIZE) {
-        commands.executeCommand("vjeko-al-objid.sync-object-ids");
+    switch (await choice) {
+        case LABELS.BUTTON_SYNCHRONIZE:
+            commands.executeCommand("vjeko-al-objid.sync-object-ids");
+            break;
+        case LABELS.BUTTON_LEARN_MORE:
+            commands.executeCommand("vjeko-al-objid.learn-welcome");
+            break;
     }
 }
 

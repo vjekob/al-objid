@@ -16,7 +16,7 @@ export const confirmAuthorizeApp = async () => {
             commands.executeCommand("vjeko-al-objid.authorize-app");
             break;
         case OPTION.LEARN:
-            env.openExternal(Uri.parse(URLS.AUTHORIZATON_LEARN));
+            env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
             break;   
     }
 };

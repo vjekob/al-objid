@@ -52,7 +52,11 @@ export const UI = {
 
     nextId: {
         showNoBackEndConsumptionInfo: async () =>
-            window.showInformationMessage("Azure back end has no information about consumed object IDs. Do you want to synchronize?", LABELS.BUTTON_SYNCHRONIZE, "No"),
+            window.showInformationMessage(
+                "Azure back end has no information about consumed object IDs. Do you want to synchronize?", 
+                LABELS.BUTTON_SYNCHRONIZE, 
+                "No",
+                LABELS.BUTTON_LEARN_MORE),
         showNoMoreNumbersWarning: async () =>
             window.showWarningMessage("No more numbers are available for assignment. Do you want to synchronize?", LABELS.BUTTON_SYNCHRONIZE, "No"),
     },

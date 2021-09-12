@@ -16,7 +16,7 @@ export const confirmDeauthorizeApp = async () => {
             commands.executeCommand("vjeko-al-objid.deauthorize-app");
             break;
         case OPTION.LEARN:
-            env.openExternal(Uri.parse(URLS.AUTHORIZATON_LEARN));
+            env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
             break;   
     }
 };
