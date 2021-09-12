@@ -36,8 +36,8 @@ export class ObjIdConfig {
     private read(): ObjIdConfiguration {
         try {
             return parse(fs.readFileSync(this._path).toString() || "{}") as unknown as ObjIdConfiguration;
-        } catch (e) {
-            Output.instance.log(`Cannot read file ${path}: ${e}`);
+        } catch (e: any) {
+            if (e.code !== "ENOENT") Output.instance.log(`Cannot read file ${path}: ${e}`);
             return {} as ObjIdConfiguration;
         }
     }

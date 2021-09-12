@@ -187,6 +187,16 @@ export interface UserContent {
     user: string;
 }
 
+export interface PoolInfo {
+    ownerApp: string;
+    ranges: Range[];
+    apps: string[];
+}
+
+export interface PoolReference {
+    poolId: string;
+}
+
 /**
  * Array of supported object types that require object ID numbering in AL.
  */
@@ -212,5 +222,3 @@ export const EVENT_LOG_ENTRY_TYPES = [
     "authorization",
     "deauthorization"
 ];
-
-export const SANDBOX_ID = "c454e488-56ca-4414-bd68-1d3a2548abf2";

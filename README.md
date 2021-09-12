@@ -14,9 +14,10 @@ will never suggest the same object ID to developers working on the same app at t
 
 ![Assigning object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/images/assigning-id.gif)
 
-While the AL extension doesn't see that codeunit ID `50108` is already assigned by another developer,
-AL Object ID Ninja sees it. Also, AL Object ID Ninja sees that somebody even assigned `50109` while 
-IntelliSense dropdown was open, so you only get to assign ID `50110`. No more object ID collisions.
+> In the example above, while the AL extension doesn't see that codeunit ID `50108` is already assigned
+by another developer, AL Object ID Ninja sees it. Also, AL Object ID Ninja sees that somebody even
+assigned `50109` while IntelliSense dropdown was open, so you only get to assign ID `50110`. No more
+object ID collisions.
 
 ## Business as usual
 
@@ -112,6 +113,54 @@ are no active branches on which developers have new objects not yet merged into 
 is currently in development and will be included in the next version.
 
 Learn more about synchronization: https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md
+
+### Simple and lightweight
+
+The best tools are those that do their job without taking your attention away from your task. Even
+better tools are those that you don't even notice while you use them.
+
+AL Object ID Ninja was built with two non-functional goals in mind: it has to be simple to use from
+the first second, and it must not slow you down while you are writing your code.
+
+#### It's so simple you won't even notice it
+
+While you are writing code, AL Object ID Ninja will do its job silently in the background. It's one
+job is to give you object IDs that won't collide. And that's what it does. It places its object ID
+suggestion right where AL Language used to place theirs: on the top of the IntelliSense list.
+
+![Using IntelliSense](https://raw.githubusercontent.com/vjekob/al-objid/master/images/intellisense.gif)
+
+Your focus stays on your code while AL Object ID Ninja does its magic for you. And it works in all
+scenarios: plain code, snippets, you name it.
+
+### It's crazy fast!
+
+Seriously, AL Object ID Ninja will blow your mind away with how fast it is. It's impossibly lightweight
+both in the front end and in the back end, and whatever task you put in front of it, it will get it
+done in - quite literally - no time!
+
+Getting new object ID won't ever slow you down:
+
+![Crazy fast retrieving object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/images/crazy-fast-1.gif)
+
+And what about synchronization? When you need to synchronize your object IDs with the back end, AL
+Object ID Ninja must read and parse every single file in your repository. While most other tools
+are notoriously slow at parsing objects, AL Object ID Ninja will do this in a blink of an eye, even
+when there are thousands of files to process:
+
+![Crazy fast parsing](https://raw.githubusercontent.com/vjekob/al-objid/master/images/crazy-fast-2.gif)
+
+And just for the kick of it, you can choose whether you want it fast and reliable, or even faster
+(and still reliable).
+
+> Note: Actual speed may vary depending on your hardware and internet connection. The videos in here
+are recorded on an Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz with 32 GB of RAM, with a Samsung SSD
+drive.
+
+### Full logging
+
+AL Object ID Ninja doesn't hide any of its mastery from you. Everything it does, every call it makes
+to the back end, every response it receives, it logs in its dedicated output channel.
 
 ### App authorization 
 

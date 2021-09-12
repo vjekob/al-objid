@@ -16,13 +16,21 @@
 			"**/node_modules": true
 		},
 		"cSpell.words": [
+			"codeunit",
 			"Deauthorization",
 			"deauthorize",
 			"Deauthorizing",
 			"endregion",
+			"enumextension",
 			"objid",
 			"objidconfig",
-			"vjeko"
+			"pageextension",
+			"permissionset",
+			"permissionsetextension",
+			"reportextension",
+			"tableextension",
+			"vjeko",
+			"xmlport"
 		]
 	}
 }

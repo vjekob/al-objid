@@ -1,0 +1,13 @@
+post http://localhost:7071/api/v1/createPool
+Content-Type: application/json
+
+{
+    "appId": "86777cf74fe4dd3ddd3c534382a97d1ea9148281d3df7630ea44af7c0207afa2",
+    "authKey": "3+5EYWRMo7rmYd+MTnRTAZzOsJOV0ZI442QpURs8l5U=",
+    "ranges": [
+        {
+            "from": 50100,
+            "to": 50149
+        }
+    ]
+}

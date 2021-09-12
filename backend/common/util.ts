@@ -1,4 +1,5 @@
 import { Range } from "./types";
+import crypto = require("crypto");
 
 /**
  * Compares to range arrays to determine whether they are equal. Equal means that there is equa number of elements in
@@ -45,4 +46,10 @@ export function findFirstAvailableId(ranges: Range[], ids: number[]): number {
 
     // All numbers from all ranges are consumed
     return 0;
+}
+
+export function getSha256(content: string, encoding: "hex" | "base64") {
+    const sha256 = crypto.createHash("sha256");
+    sha256.update(content);
+    return sha256.digest(encoding);
 }

@@ -1,4 +1,4 @@
-import { BodyWithAuthorization, SANDBOX_ID } from './../common/types';
+import { BodyWithAuthorization } from './../common/types';
 import { AzureFunction } from "@azure/functions";
 import { ErrorResponse, RequestHandler } from "../common/RequestHandler";
 import { RequestValidator } from "../common/RequestValidator";
@@ -10,10 +10,6 @@ interface AuthorizeBody extends BodyWithAppId, BodyWithAuthorization {}
 const httpTrigger: AzureFunction = RequestHandler.handle<any, AuthorizeBody>(
     async (context, req) => {
         const { appId, authKey } = req.body;
-
-        if (appId === SANDBOX_ID) {
-            return new ErrorResponse("Nice try 😁", 418);
-        }
 
         let authorization = await readAppAuthorization(appId);
         switch (req.method) {

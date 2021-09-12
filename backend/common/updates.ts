@@ -1,13 +1,9 @@
 import { Blob } from "./Blob";
-import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, Range, SANDBOX_ID } from "./types";
-import { findFirstAvailableId } from "./util";
+import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, PoolInfo, PoolReference, Range } from "./types";
+import { findFirstAvailableId, getSha256 } from "./util";
 import crypto = require("crypto");
 
 export async function updateRanges(appId: string, ranges: Range[]): Promise<Range[]> {
-    if (appId === SANDBOX_ID) {
-        ranges = [{ from: 50000, to: 99999 }];
-    }
-
     const blob = new Blob<Range[]>(`${appId}/_ranges.json`);
     return await blob.optimisticUpdate(() => ranges);
 }
@@ -77,11 +73,10 @@ export async function readAppAuthorization(appId: string): Promise<AppAuthorizat
 }
 
 export async function writeAppAuthorization(appId: string): Promise<string> {
-    const sha256 = crypto.createHash("sha256");
-    sha256.update(`APP_AUTH_${appId}_${Date.now()}`);
+    const key = getSha256(`APP_AUTH_${appId}_${Date.now()}`, "base64");
     const blob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
     const authorization = await blob.optimisticUpdate(auth => ({
-        key: sha256.digest("base64"),
+        key,
         valid: true,
     }));
 
@@ -108,4 +103,35 @@ export function logEvent(appId: string, eventType: string, user: string, data: a
         });
         return [...log];
     });
+}
+
+export async function createAppPool(poolId: string, ownerAppId: string, ranges: Range[]): Promise<PoolInfo> {
+    const blob = new Blob<PoolInfo>(`pool/${poolId}.json`);
+    return await blob.optimisticUpdate(() => {
+        return {
+            ownerApp: ownerAppId,
+            ranges,
+            apps: [ownerAppId]
+        };
+    });
+}
+
+export async function joinAppToPool(poolId: string, appId: string) {
+    const promises = [];
+
+    promises.push(new Blob<PoolInfo>(`pool/${poolId}.json`).optimisticUpdate((pool) => {
+        let apps: string[] = (pool && pool.apps) || [];
+        return (apps.includes(appId))
+            ? pool
+            : {
+                ...pool,
+                apps: [...apps, appId]
+            };
+    }));
+
+    promises.push(new Blob<PoolReference>(getBlobName(appId, "_pool")).optimisticUpdate(() => {
+        return { poolId };
+    }));
+
+    await Promise.all(promises);
 }

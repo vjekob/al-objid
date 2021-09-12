@@ -7,7 +7,8 @@ import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { MeasureTime } from "../lib/MeasureTime";
-import { output } from "../features/Output";
+import { Output, output } from "../features/Output";
+import { Config } from "../lib/Config";
 
 async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
     let folderPath: string = uri.fsPath;
@@ -16,10 +17,16 @@ async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
 }
 
 function getObjectDefinitions(uris: Uri[]): ALObject[] {
-    let objects: ALObject[] = [];
+    const objects: ALObject[] = [];
+    const bestPractice = Config.instance.useBestPracticesParser;
+    Output.instance.log(
+        bestPractice
+            ? "Using best-practices parser (this is slightly faster because it only looks for one object per file)"
+            : "Using slower parser (this is slightly slower because it parses each file entirely looking for as many objects as it defines)"
+    );
     for (let uri of uris) {
         let file = fs.readFileSync(uri.fsPath).toString();
-        objects.push(...parseObjects(file));
+        objects.push(...parseObjects(file, bestPractice));
     }
     return objects;
 }

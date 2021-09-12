@@ -47,4 +47,8 @@ export class Config extends DisposableHolder {
     public get includeUserName(): boolean {
         return this.getWithDefault<boolean>("includeUserName", true);
     }
+
+    public get useBestPracticesParser(): boolean {
+        return this.getWithDefault<boolean>("useBestPracticesParser", true);
+    }
 }

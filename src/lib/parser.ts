@@ -113,7 +113,7 @@ function parseObjectDeclaration(line: string): ALObject | null {
     };
 }
 
-export function parseObjects(text: string): ALObject[] {
+export function parseObjects(text: string, returnOnFirstObject: boolean): ALObject[] {
     let line = "";
     let block = 0;
 
@@ -175,7 +175,10 @@ export function parseObjects(text: string): ALObject[] {
                 if (state === STATE.ROOT) {
                     if (!block) {
                         let object = parseObjectDeclaration(line.trim());
-                        if (object) objects.push(object);
+                        if (object) {
+                            objects.push(object);
+                            if (returnOnFirstObject) return objects;
+                        }
                         line = "";
                     }
                     block++;

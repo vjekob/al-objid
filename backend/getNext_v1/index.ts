@@ -1,4 +1,4 @@
-import { AppAuthorization, BodyWithAuthorization } from "./../common/types";
+import { BodyWithAuthorization } from "./../common/types";
 import { RequestValidator } from "./../common/RequestValidator";
 import { BodyWithAppId, BodyWithRanges, BodyWithType, Range, TypedContext } from "../common/types";
 import { AzureFunction } from "@azure/functions";
@@ -10,7 +10,6 @@ import { Log } from "../common/Log";
 type GetNextBindings = {
     ranges: Range[];
     ids: number[];
-    authorization?: AppAuthorization;
 }
 
 interface GetNextBody extends BodyWithRanges, BodyWithAppId, BodyWithType, BodyWithAuthorization {
@@ -18,11 +17,11 @@ interface GetNextBody extends BodyWithRanges, BodyWithAppId, BodyWithType, BodyW
 };
 
 async function retrieveBindings(context: TypedContext<GetNextBindings>, body: GetNextBody): Promise<GetNextBindings> {
-    let { ranges, ids = [], authorization } = context.bindings;
+    let { ranges, ids = [] } = context.bindings;
     if (!ranges || !areRangesEqual(ranges, body.ranges)) {
         ranges = await updateRanges(body.appId, body.ranges);
     }
-    return { ranges, ids, authorization };
+    return { ranges, ids };
 }
 
 const httpTrigger: AzureFunction = RequestHandler.handle<GetNextBindings, GetNextBody>(
