@@ -36,6 +36,42 @@ However, every repository is a living thing, and actual object ID assignments in
 may get out of sync with the back end. In all those situations, you will have to synchronize with
 the back end to get the assignment in sync again.
 
+## Running synchronization manually
+
+Objects can occasionally get out of sync. In those situations, you can trigger synchronization
+manually.
+
+![Running synchronization manually](./images/manual-synchronization.gif)
+
+There are two types of manual synchronization: *update* and *replace*.
+
+### Update synchronization
+
+Update synchronization (or merge synchronization) combines any object ID assignment information that's
+already recorded in the back end with any new object ID assignment information that exists only in front
+end.
+
+For example, your back end contains information about codeunits `50100..50105`. You check out a branch
+that has codeunits `50110..50115`. If you run synchronization and choose the `Update` option, the back
+end will contain information about codeunits `50100..50105, 50110..50115`.
+
+Typical use cases for update synchronization are:
+* Synchronizing initially from multiple branches
+* Occasionally working offline and then syncing up when back online
+
+### Replace synchronization
+
+Replace synchronization (or full synchronization) discards any existing object ID assignment information
+from the back end, and then records the new object ID assignment information from the front end.
+
+For example, your back end contains information about codeunits `50100..50105`. You check out a branch
+that has codeunits `50110..50115`. If you run synchronization and choose the `Replace` option, the back
+end will contain information about codeunits `50110..50115`.
+
+Typical use cases for replace synchronization:
+* Initial synchronization
+* Releasing possible unused object IDs after larger refactoring or longer development cycles
+
 ## How can object IDs get out of sync?
 
 There are several ways how object ID assignment can get out of sync.
