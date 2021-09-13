@@ -47,7 +47,11 @@ export const UI = {
         showNoManifestError: () =>
             window.showErrorMessage(`There is no app.json file in this workspace. ${CONSTANTS.SYNC.NOTHING_TO_SYNC}`),
         showSuccessInfo: () =>
-            window.showInformationMessage("Object IDs are now in sync with the Azure back end. Happy developing!")
+            window.showInformationMessage("Object IDs are now in sync with the Azure back end. Happy developing!"),
+        showAreYouSure: async () =>
+            window.showQuickPick(Object.values(LABELS.SYNC_ARE_YOU_SURE), {
+                placeHolder: "Are you sure you want to replace existing object ID assignments?"
+            }),
     },
 
     nextId: {
@@ -86,10 +90,5 @@ export const UI = {
             Output.instance.log(message);
             window.showInformationMessage(message)
         }
-    },
-
-    sandbox: {
-        showSandboxInfo: (action: string) => 
-            window.showInformationMessage(`You are working in the BC Beerinar Sandbox app. This app is for demo purposes, and cannot be ${action}. Yes, I know, you'd like to have fun, but others would, too, so thanks for understanding 😉`)
     }
 }

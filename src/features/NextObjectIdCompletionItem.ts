@@ -1,8 +1,9 @@
 import { Command, CompletionItem, CompletionItemKind, MarkdownString, Position, Range, TextEdit, Uri, workspace, WorkspaceEdit } from "vscode";
-import { Backend, NextObjectIdInfo } from "../lib/Backend";
+import { Backend } from "../lib/Backend";
 import { AppManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
+import { NextObjectIdInfo } from "../lib/BackendTypes";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 

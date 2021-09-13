@@ -14,7 +14,7 @@ export interface ConsumptionUpdateContext {
     updateAttempts: number;
 }
 
-function getBlobName(appId: string, type: string): string {
+export function getBlobName(appId: string, type: string): string {
     return `${appId}/${type.toLowerCase()}.json`;
 }
 

@@ -1,5 +1,6 @@
 import { workspace } from "vscode";
 import { output } from "../features/Output";
+import { AuthorizationDeletedInfo, AuthorizationInfo, ConsumptionInfo, ConsumptionInfoWithTotal, EventLogEntry, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
 import { MeasureTime } from "./MeasureTime";
@@ -21,33 +22,6 @@ interface HttpResponse<T> {
 }
 
 const DEFAULT_HOST_NAME = "vjekocom-alext-weu-2.azurewebsites.net";
-
-export interface NextObjectIdInfo {
-    id: number;
-    updated: boolean;
-    available: boolean;
-    updateAttempts: number;
-    hasConsumption: boolean;
-}
-
-export interface ConsumptionInfo {
-    [key: string]: number[];
-}
-
-export interface AuthorizationInfo {
-    authKey: string;
-}
-
-export interface AuthorizationDeletedInfo {
-    deleted: boolean;
-}
-
-export interface EventLogEntry {
-    eventType: string;
-    timestamp: number;
-    user: string;
-    data: any;
-}
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),
@@ -143,10 +117,10 @@ export class Backend {
         return response.value;
     }
 
-    static async syncIds(appId: string, ids: ConsumptionInfo, authKey: string): Promise<boolean> {
+    static async syncIds(appId: string, ids: ConsumptionInfo, patch: boolean, authKey: string): Promise<boolean> {
         const response = await sendRequest<ConsumptionInfo>(
             "/api/v1/syncIds",
-            "POST",
+            patch ? "PATCH" : "POST",
             { appId, ids, authKey }
         );
         return !!response.value;
@@ -178,6 +152,15 @@ export class Backend {
             "GET",
             { appId, authKey },
             async () => true // On error, do nothing (message is logged in the output already)
+        );
+        return response.value;
+    }
+
+    static async getConsumption(appId: string, authKey: string): Promise<ConsumptionInfoWithTotal | undefined> {
+        const response = await sendRequest<ConsumptionInfoWithTotal>(
+            "/api/v1/getConsumption",
+            "GET",
+            { appId, authKey },
         );
         return response.value;
     }

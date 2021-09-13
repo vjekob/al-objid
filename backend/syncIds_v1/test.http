@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ### Remote
 
-post https://vjekocom-alext-weu.azurewebsites.net/api/v1/syncIds
+patch https://vjekocom-alext-weu-2.azurewebsites.net/api/v1/syncIds
 Content-Type: application/json
 
 {

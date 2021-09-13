@@ -7,7 +7,16 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ## Unreleased
 ### Added
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
-- Adding IDs to existing consumption (instead of full synchronization) - [Issue #4](https://github.com/vjekob/al-objid/issues/4)
+
+## [1.1.0] - 2021-09-13
+### Added
+- Merge synchronization feature. It allows merging actual object ID consumption (as collected from the repo) with recorded consumption in the back end.
+([Git Issue #4](https://github.com/vjekob/al-objid/issues/4))
+- `getConsumption` endpoint in the back end. It returns actual ID consumption per object type. This will be useful for several upcoming features.
+### Changed
+- Synchronization box has different UI when asking for type of synchronization to perform.
+### Fixed
+- Fixed possible closure bug with notifications processing when multiple folders are added in the workspace.
 
 ## [1.0.5] - 2021-09-13
 ### Fixed

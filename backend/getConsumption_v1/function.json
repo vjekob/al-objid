@@ -1,0 +1,26 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get"
+      ],
+      "route": "v1/getConsumption"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "blob",
+      "direction": "in",
+      "name": "authorization",
+      "path": "%BlobContainer%/{appId}/_authorization.json"
+    }
+  ],
+  "scriptFile": "../dist/getConsumption_v1/index.js"
+}

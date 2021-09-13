@@ -24,5 +24,10 @@ export const OBJECT_TYPES = [
 
 export const LABELS = {
     BUTTON_SYNCHRONIZE: "Synchronize",
-    BUTTON_LEARN_MORE: "Learn more"
+    BUTTON_LEARN_MORE: "Learn more",
+
+    SYNC_ARE_YOU_SURE: {
+        YES: "Yes, please replace existing object ID consumptions in the back end",
+        NO: "No, I have changed my mind"
+    },
 };

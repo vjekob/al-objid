@@ -2,10 +2,11 @@ import { workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
-import { Backend, EventLogEntry } from "../lib/Backend";
+import { Backend } from "../lib/Backend";
 import { Config } from "../lib/Config";
 import { PropertyBag } from "../lib/PropertyBag";
 import { UI } from "../lib/UI";
+import { EventLogEntry } from "../lib/BackendTypes";
 
 interface ConsumptionData {
     type: string;
@@ -47,14 +48,15 @@ export class BackEndLogHandler {
         if (!folders) return;
 
         let promises: Promise<any>[] = [];
+        let updateEntry = (id: string) => (entries: EventLogEntry[] | undefined) => {
+            if (!entries) return;
+            this._pending[id] = [...(this._pending[id] || []), ...entries];
+        };
         for (let folder of folders) {
             let manifest = getManifest(folder.uri)!;
             this._appName[manifest.id] = manifest.name;
             let { authKey } = ObjIdConfig.instance(folder.uri);
-            promises.push(Backend.getLog(manifest.id, authKey).then(entries => {
-                if (!entries) return;
-                this._pending[manifest.id] = [...(this._pending[manifest.id] || []), ...entries];
-            }));
+            promises.push(Backend.getLog(manifest.id, authKey).then(updateEntry(manifest.id)));
         }
 
         await Promise.all(promises);

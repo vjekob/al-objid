@@ -1,6 +1,6 @@
 import https = require("https");
 
-export type HttpMethod = "GET" | "POST" | "DELETE";
+export type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
 
 type Request = {
     method?: HttpMethod,

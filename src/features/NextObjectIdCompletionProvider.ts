@@ -2,11 +2,12 @@ import { CancellationToken, commands, CompletionContext, CompletionItem, Documen
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS, OBJECT_TYPES } from "../lib/constants";
-import { Backend, NextObjectIdInfo } from "../lib/Backend";
+import { Backend } from "../lib/Backend";
 import { getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
+import { NextObjectIdInfo } from "../lib/BackendTypes";
 
 type SymbolInfo = {
     type: string;
@@ -17,7 +18,9 @@ type SymbolInfo = {
 async function syncIfChosen(choice: Promise<string | undefined>) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
-            commands.executeCommand("vjeko-al-objid.sync-object-ids");
+            commands.executeCommand("vjeko-al-objid.sync-object-ids", {
+                skipQuestion: true
+            });
             break;
         case LABELS.BUTTON_LEARN_MORE:
             commands.executeCommand("vjeko-al-objid.learn-welcome");
