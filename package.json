@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -70,6 +70,11 @@
 					"type": "boolean",
 					"default": true,
 					"markdownDescription": "AL Object ID Ninja understands every AL syntax, even when it doesn't follow best practices. When [synchronizing objects](https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md), AL Object Ninja will only look for one object per file if this setting is switched on. Otherwise, it will parse each file entirely looking for all objects. Best practice is to have one object per file. The speed difference is minimal, AL Object Ninja is blazing fast either way."
+				},
+				"objectIdNinja.useVerboseOutputLogging": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "Switch this on if you want very detailed messages in the AL Object ID Ninja output channel."
 				}
 			}
 		},

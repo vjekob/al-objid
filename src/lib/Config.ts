@@ -51,4 +51,8 @@ export class Config extends DisposableHolder {
     public get useBestPracticesParser(): boolean {
         return this.getWithDefault<boolean>("useBestPracticesParser", true);
     }
+
+    public get useVerboseOutputLogging(): boolean {
+        return this.getWithDefault<boolean>("useVerboseOutputLogging", true);
+    }
 }

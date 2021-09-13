@@ -1,5 +1,5 @@
 import { workspace } from "vscode";
-import { output } from "../features/Output";
+import { Output, output } from "../features/Output";
 import { AuthorizationDeletedInfo, AuthorizationInfo, ConsumptionInfo, ConsumptionInfoWithTotal, EventLogEntry, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
@@ -21,7 +21,7 @@ interface HttpResponse<T> {
     value?: T,
 }
 
-const DEFAULT_HOST_NAME = "vjekocom-alext-weu-2.azurewebsites.net";
+const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),
@@ -54,6 +54,11 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
             "X-Functions-Key": key
         }
     });
+
+    if (Config.instance.useVerboseOutputLogging) {
+        let { authKey, ...log } = data;
+        Output.instance.log(`[Verbose] sending request to https://${hostname}${path}: ${JSON.stringify(log)}`);
+    }
 
     const request: HttpRequest = { hostname, path, method, data };
     const response: HttpResponse<T> = {

@@ -8,6 +8,10 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ### Added
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
 
+## [1.1.1] - 2021-09-14
+### Added
+- Configuration option `Use Verbose Output Logging`. When it is switched on, more logging happens (e.g. deeper back-end invocation logging).
+
 ## [1.1.0] - 2021-09-13
 ### Added
 - Merge synchronization feature. It allows merging actual object ID consumption (as collected from the repo) with recorded consumption in the back end.
