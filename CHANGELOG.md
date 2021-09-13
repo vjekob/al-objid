@@ -7,6 +7,7 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ## Unreleased
 ### Added
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
+- Adding IDs to existing consumption (instead of full synchronization) - [Issue #4](https://github.com/vjekob/al-objid/issues/4)
 
 ## [1.0.5] - 2021-09-13
 ### Fixed

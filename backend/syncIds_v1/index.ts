@@ -13,7 +13,7 @@ const httpTrigger: AzureFunction = RequestHandler.handle<SyncIdsBindings, SyncId
     async (context, req) => {
         const { appId, ids } = req.body;
 
-        return await updateConsumptions(appId, ids);
+        return await updateConsumptions(appId, ids, req.method === "PATCH");
     },
     new RequestValidator([
         BodyWithAppId.validateAppId,

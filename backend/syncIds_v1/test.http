@@ -1,14 +1,26 @@
-### Localhost
+### Localhost - POST
 
 post http://localhost:7071/api/v1/syncIds
 Content-Type: application/json
 
 {
-    "appId": "67295cd84-95f4-4313-9d3c-a5a6e8d8c15a",
+    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf",
     "ids": {
-        "codeunit": []
-    },
-    "authKey": "ILxKOJ+aSgOllUokvZ8CnwJB7OZXyXHlZ102FHsiSUI="
+        "codeunit": [1, 2, 3]
+    } 
+}
+
+
+### Localhost - PATCH
+
+patch http://localhost:7071/api/v1/syncIds
+Content-Type: application/json
+
+{
+    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf",
+    "ids": {
+        "codeunit": [4,5]
+    } 
 }
 
 

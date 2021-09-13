@@ -1,7 +1,6 @@
 import { Blob } from "./Blob";
 import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, PoolInfo, PoolReference, Range } from "./types";
 import { findFirstAvailableId, getSha256 } from "./util";
-import crypto = require("crypto");
 
 export async function updateRanges(appId: string, ranges: Range[]): Promise<Range[]> {
     const blob = new Blob<Range[]>(`${appId}/_ranges.json`);
@@ -33,7 +32,7 @@ export async function updateConsumption(appId: string, type: string, ranges: Ran
             return [context.id];
         }
 
-        if (attempts === 50) {
+        if (attempts === 100) {
             tooManyAttempts = true;
             return ids;
         }
@@ -56,12 +55,18 @@ export async function updateConsumption(appId: string, type: string, ranges: Ran
     return !tooManyAttempts;
 }
 
-export async function updateConsumptions(appId: string, objectIds: ObjectIds): Promise<ObjectIds> {
+export async function updateConsumptions(appId: string, objectIds: ObjectIds, patch: boolean): Promise<ObjectIds> {
     let result: ObjectIds = {};
     for (let type of OBJECT_TYPES) {
         let ids = objectIds[type] || [];
         let blob = new Blob<number[]>(getBlobName(appId, type));
-        result[type] = await blob.optimisticUpdate(() => [...new Set(ids.sort())]);
+        result[type] = await blob.optimisticUpdate(existing => {
+            let result = [
+                ...(patch ? existing : []),
+                ...ids
+            ];
+            return [...new Set(result)].sort();
+        });
     }
     return result;
 }

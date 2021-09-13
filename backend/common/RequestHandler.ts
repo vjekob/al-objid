@@ -1,3 +1,5 @@
+import { performance } from "perf_hooks";
+import { TIMEOUT_TOKEN } from "./Blob";
 import { RequestValidator } from "./RequestValidator";
 import { AuthorizationContext, BodyWithAuthorization, TypedContext, TypedRequest } from "./types";
 
@@ -34,17 +36,32 @@ export class RequestHandler {
                 return;
             }
 
-            const result = await handler(context, req);
-            if (result instanceof ErrorResponse) {
-                context.res = {
-                    status: result.status || 400,
-                    body: result.message
-                };
-            } else {
-                context.res = {
-                    status: 200,
-                    body: result
-                };
+            let start = performance.now();
+            try {
+                const result = await handler(context, req);
+                if (result instanceof ErrorResponse) {
+                    context.res = {
+                        status: result.status || 400,
+                        body: result.message
+                    };
+                } else {
+                    context.res = {
+                        status: 200,
+                        body: result
+                    };
+                }
+            } catch (e) {
+                if (e === TIMEOUT_TOKEN) {
+                    context.res = {
+                        status: 408,
+                        body: `Request has timed out after ${performance.now() - start} ms.`
+                    }
+                } else {
+                    context.res = {
+                        status: 500,
+                        body: `An unexpected error has occurred: ${JSON.stringify(e)}`
+                    }
+                }
             }
         }
     }
