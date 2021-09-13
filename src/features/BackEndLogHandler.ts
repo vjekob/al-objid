@@ -1,4 +1,4 @@
-import { window, workspace } from "vscode";
+import { workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
@@ -6,7 +6,6 @@ import { Backend, EventLogEntry } from "../lib/Backend";
 import { Config } from "../lib/Config";
 import { PropertyBag } from "../lib/PropertyBag";
 import { UI } from "../lib/UI";
-import { User } from "../lib/User";
 
 interface ConsumptionData {
     type: string;
@@ -70,7 +69,7 @@ export class BackEndLogHandler {
             let pending = this._pending[appId];
             let log = this._log[appId];
             for (let event of pending) {
-                if (event.user === Config.instance.overrideUserName) continue;
+                if (event.user === Config.instance.userName) continue;
                 if (log && log.find(e => e.timestamp === event.timestamp)) continue;
                 switch (event.eventType) {
                     case "consumption":

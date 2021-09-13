@@ -4,7 +4,6 @@ import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
 import { MeasureTime } from "./MeasureTime";
 import { UI } from "./UI";
-import { User } from "./User";
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -21,7 +20,7 @@ interface HttpResponse<T> {
     value?: T,
 }
 
-const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
+const DEFAULT_HOST_NAME = "vjekocom-alext-weu-2.azurewebsites.net";
 
 export interface NextObjectIdInfo {
     id: number;
@@ -132,7 +131,7 @@ export class Backend {
         };
 
         if (Config.instance.includeUserName) {
-            request.content = { user: Config.instance.overrideUserName };
+            request.content = { user: Config.instance.userName };
         }
 
         const response = await sendRequest<NextObjectIdInfo>(

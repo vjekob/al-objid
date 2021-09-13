@@ -10,7 +10,7 @@ late and another developer "hijacked" your IDs.
 
 It auto-suggest next available object ID through IntelliSense:
 
-![IntelliSense auto-suggestion of next available ID](./images/intellisense-2.gif)
+![IntelliSense auto-suggestion of next available ID](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/intellisense-2.gif)
 
 ## How is this different from what AL already does?
 
@@ -33,7 +33,7 @@ only thing you need to do is synchronize it once for each AL app you want to use
 The first time you invoke IntelliSense to suggest you an object ID, AL Object ID Ninja
 will notify you. Just click `Synchronize` and you are good to go.
 
-![Synchronizing for the first time](./images/getting-started-2.gif)
+![Synchronizing for the first time](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/getting-started-2.gif)
 
 ## That's it?
 

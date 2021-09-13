@@ -14,7 +14,9 @@ vsc-extension-quickstart.md
 backend/**
 **/*.zip
 **/*.code-workspace
-doc
+doc/images
+doc/Authorization.md
+doc/Synchronization.md
 *.vsix
 images/*.gif
 images/back-end-configuration.png

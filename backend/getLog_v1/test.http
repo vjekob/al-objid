@@ -1,8 +1,12 @@
 ### Localhost
 
 get http://localhost:7071/api/v1/getLog
+Content-Type: application/json
 
 {
-    "appId": "eea13c88-1ff5-4fcd-b450-70468fa84d5d",
-    "authKey": "anwUaXOeSGhR6SSFJ8Xx33nKzpZgUsE2BzpGLOhNrQc="
+    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf"
 }
+
+### Azure
+
+get https://vjekocom-alext-weu.azurewebsites.net/api/v1/getLog

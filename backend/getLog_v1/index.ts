@@ -8,7 +8,7 @@ interface LogBindings {
 }
 
 const httpTrigger: AzureFunction = RequestHandler.handle<LogBindings, any>(
-    async (context) => context.bindings.log,
+    async (context) => context.bindings.log || [],
     new RequestValidator([BodyWithAppId.validateAppId])
 );
 

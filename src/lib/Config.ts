@@ -40,7 +40,7 @@ export class Config extends DisposableHolder {
         return this.getWithDefault<boolean>("showEventLogNotifications", true);
     }
 
-    public get overrideUserName(): string {
+    public get userName(): string {
         return this._config.get<string>("overrideUserName") || User.username;
     }
 

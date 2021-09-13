@@ -8,6 +8,7 @@ export interface AppManifest {
     name: string;
     version: string;
     idRanges: any[];
+    idRange: {};
 }
 
 export function getManifest(uri: Uri): AppManifest | null {
@@ -18,6 +19,9 @@ export function getManifest(uri: Uri): AppManifest | null {
     try {
         const manifest = JSON.parse(fs.readFileSync(appPath).toString()) as AppManifest;
         manifest.id = AppIdCache.instance.getAppIdHash(manifest.id);
+        if (!manifest.idRanges && manifest.idRange) {
+            manifest.idRanges = [manifest.idRange];
+        }
         return manifest;
     }
     catch {

@@ -8,6 +8,12 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ### Added
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
 
+## [1.0.5] - 2021-09-13
+### Fixed
+- Fixed bug with `getLog` service returning empty string instead of empty JSON array when no log files are found ([Git Issue #6](https://github.com/vjekob/al-objid/issues/6))
+- Fixed bug with `Learn more` button not working in the initial sync toast notification.
+- Fixed bug with `idRange` property not being read from `app.json` manifest ([Git Issue #7](https://github.com/vjekob/al-objid/issues/7))
+
 ## [1.0.4] - 2021-09-12
 ### Added
 - `Learn more` button added to the first synchronization toast message.
