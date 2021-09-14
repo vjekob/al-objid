@@ -1,9 +1,9 @@
 import { Context, HttpRequest } from "@azure/functions";
 import { performance } from "perf_hooks";
-import { Blob, TIMEOUT_TOKEN } from "./Blob";
+import { AuthorizationCache } from "./AuthorizationCache";
+import { TIMEOUT_TOKEN } from "./Blob";
 import { RequestValidator } from "./RequestValidator";
-import { AppAuthorization, AuthorizationContext, BodyWithAppId, BodyWithAuthorization, TypedContext, TypedRequest } from "./types";
-import { getBlobName } from "./updates";
+import { BodyWithAppId, BodyWithAuthorization, TypedContext, TypedRequest } from "./types";
 
 type HandlerFunc<TBindings, TBody> = (context: TypedContext<TBindings>, req: TypedRequest<TBody>) => Promise<any>;
 
@@ -22,11 +22,7 @@ export class ErrorResponse {
 export class RequestHandler {
     private static async handleAuthorization(body: AuthorizableBody, context: Context): Promise<boolean> {
         let { appId, authKey } = body;
-        if (appId) {
-            let authBlob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
-            let authorization = await authBlob.read();
-            if (!authorization || !authorization.valid || authorization.key === authKey) return true;
-        }
+        if (await AuthorizationCache.checkAuthorization(appId, authKey)) return true;
 
         context.res = {
             status: 401,
@@ -74,7 +70,7 @@ export class RequestHandler {
                 }
             }
         }
-}
+    }
 
     public static handleAuthorized<TBindings, TBody>(handler: HandlerFunc<TBindings, TBody>, validator?: RequestValidator) {
         return async (context: Context, req: HttpRequest) => {

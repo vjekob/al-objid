@@ -29,9 +29,9 @@ post https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
 Content-Type: application/json
 
 {
-    "appId": "67295c84-95f4-4313-9d3c-a5a6e8d8c15a",
+    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
     "type": "codeunit",
-    "authKey": "K6cJc/Z+e3A1x6ibgGmzDxjOKv8ZkyPrnzXFej1Q4Ic=",
+    "authKey": "Fz3oT8cTmTFo67m9xQ9bI38ZqDYVH/PlQdVorIKmsCY=",
     "ranges": [
         {
             "from": 50111,
