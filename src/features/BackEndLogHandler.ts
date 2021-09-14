@@ -6,10 +6,9 @@ import { Backend } from "../lib/Backend";
 import { Config } from "../lib/Config";
 import { PropertyBag } from "../lib/PropertyBag";
 import { UI } from "../lib/UI";
-import { EventLogEntry } from "../lib/BackendTypes";
+import { EventLogEntry, FolderAuthorization } from "../lib/BackendTypes";
 
-// Increasing polling interval to 2 minutes (from 15 seconds)
-const POLLING_INTERVAL = 120000;
+const POLLING_INTERVAL = 30000;
 
 interface ConsumptionData {
     type: string;
@@ -41,7 +40,7 @@ export class BackEndLogHandler {
             await this.checkLog();
             this.processLog();
             this.flushLog();
-        }, 15000);
+        }, POLLING_INTERVAL);
     }
 
     private async checkLog() {
@@ -50,19 +49,22 @@ export class BackEndLogHandler {
         let folders = workspace.workspaceFolders?.filter(folder => ALWorkspace.isALWorkspace(folder.uri));
         if (!folders) return;
 
-        let promises: Promise<any>[] = [];
-        let updateEntry = (id: string) => (entries: EventLogEntry[] | undefined) => {
-            if (!entries) return;
-            this._pending[id] = [...(this._pending[id] || []), ...entries];
-        };
+        let payload: FolderAuthorization[] = [];
         for (let folder of folders) {
             let manifest = getManifest(folder.uri)!;
             this._appName[manifest.id] = manifest.name;
             let { authKey } = ObjIdConfig.instance(folder.uri);
-            promises.push(Backend.getLog(manifest.id, authKey).then(updateEntry(manifest.id)));
+            payload.push({ appId: manifest.id, authKey });
         }
 
-        await Promise.all(promises);
+        let folderLogs = await Backend.getLog(payload);
+        if (!folderLogs) return;
+
+        for (let folder of folderLogs) {
+            let { entries, appId } = folder;
+            if (!entries || !entries.length) continue;
+            this._pending[appId] = [...(this._pending[appId] || []), ...entries];
+        }
     }
 
     private processLog() {

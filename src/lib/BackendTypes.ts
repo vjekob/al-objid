@@ -18,11 +18,21 @@ export interface AuthorizationDeletedInfo {
     deleted: boolean;
 }
 
+export interface FolderAuthorization {
+    appId: string;
+    authKey: string;
+}
+
 export interface EventLogEntry {
     eventType: string;
     timestamp: number;
     user: string;
     data: any;
+}
+
+export interface FolderEventLogEntries {
+    appId: string;
+    entries: EventLogEntry[];
 }
 
 export type ConsumptionInfoWithTotal = ConsumptionInfo | {

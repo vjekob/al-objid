@@ -1,6 +1,6 @@
 import { workspace } from "vscode";
 import { Output, output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, ConsumptionInfo, ConsumptionInfoWithTotal, EventLogEntry, NextObjectIdInfo } from "./BackendTypes";
+import { AuthorizationDeletedInfo, AuthorizationInfo, ConsumptionInfo, ConsumptionInfoWithTotal, EventLogEntry, FolderAuthorization, FolderEventLogEntries, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
 import { MeasureTime } from "./MeasureTime";
@@ -151,11 +151,11 @@ export class Backend {
         return typeof response.value === "object" && response.value.deleted;
     }
 
-    static async getLog(appId: string, authKey: string): Promise<EventLogEntry[] | undefined> {
-        const response = await sendRequest<EventLogEntry[]>(
-            "/api/v1/getLog",
+    static async getLog(payload: FolderAuthorization[]): Promise<FolderEventLogEntries[] | undefined> {
+        const response = await sendRequest<FolderEventLogEntries[]>(
+            "/api/v2/getLog",
             "GET",
-            { appId, authKey },
+            { appFolders: payload },
             async () => true // On error, do nothing (message is logged in the output already)
         );
         return response.value;
