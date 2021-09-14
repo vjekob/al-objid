@@ -5,7 +5,7 @@ import { AzureFunction } from "@azure/functions";
 import { areRangesEqual, findFirstAvailableId } from "../common/util";
 import { ErrorResponse, RequestHandler } from "../common/RequestHandler";
 import { updateConsumption, updateRanges } from "../common/updates";
-import { Log } from "../common/Log";
+import { Log } from "../common/LogCache";
 
 type GetNextBindings = {
     ranges: Range[];

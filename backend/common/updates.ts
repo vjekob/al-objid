@@ -93,23 +93,6 @@ export async function removeAppAuthorization(appId: string): Promise<boolean> {
     return await blob.delete();
 }
 
-export function logEvent(appId: string, eventType: string, user: string, data: any): void {
-    const blob = new Blob<EventLogEntry[]>(getBlobName(appId, "_log"));
-
-    // Intentionally not awaiting - this fine to execute asynchronous from request
-    blob.optimisticUpdate(log => {
-        // Remove entries older than a day
-        log = (log || []).filter(entry => entry.timestamp > Date.now() - 3600 * 1000 * 24);
-        log.push({
-            timestamp: Date.now(),
-            eventType,
-            user,
-            data
-        });
-        return [...log];
-    });
-}
-
 export async function createAppPool(poolId: string, ownerAppId: string, ranges: Range[]): Promise<PoolInfo> {
     const blob = new Blob<PoolInfo>(`pool/${poolId}.json`);
     return await blob.optimisticUpdate(() => {

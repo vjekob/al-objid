@@ -1,16 +1,13 @@
 import { AzureFunction } from "@azure/functions";
-import { Blob } from "../common/Blob";
+import { Log } from "../common/LogCache";
 import { RequestHandler } from "../common/RequestHandler";
 import { RequestValidator } from "../common/RequestValidator";
-import { BodyWithAppId, EventLogEntry } from "../common/types";
-import { getBlobName } from "../common/updates";
+import { BodyWithAppId } from "../common/types";
 
 const httpTrigger: AzureFunction = RequestHandler.handleAuthorized<any, BodyWithAppId>(
     async (_, req) => {
         let { appId } = req.body;
-        let blob = new Blob<EventLogEntry[]>(getBlobName(appId, "_log"));
-        let log = await blob.read() || [];
-        return log;
+        return Log.read(appId);
     },
     new RequestValidator([BodyWithAppId.validateAppId])
 );
