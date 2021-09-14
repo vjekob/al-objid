@@ -204,6 +204,14 @@ export interface RejectionInfo {
     endpoint: string;
 }
 
+export class IPAddress {
+    static fromHeaders(req: HttpRequest) {
+        let raw = req.headers["x-forwarded-for"] || "";
+        let parts = raw.split(":");
+        return parts[0] || "<UNKNOWN>";
+    }
+}
+
 /**
  * Array of supported object types that require object ID numbering in AL.
  */

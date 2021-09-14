@@ -1,4 +1,5 @@
 import { Context, HttpRequest } from "@azure/functions";
+import { IPAddress } from "./types";
 import { logRejection } from "./updates";
 
 const CONSTRAINTS = {
@@ -33,7 +34,7 @@ const nextRequestAt: PropertyBag<number> = {};
 
 export class RateLimiter {
     private static getContext(req: HttpRequest): RateLimiterContext {
-        const ipAddress = req.headers["x-forwarded-for"] || "<UNKNOWN>";
+        const ipAddress = IPAddress.fromHeaders(req);
         const method = req.method;
         let url = req.url || (req as any).originalUrl || "";
         const parts = url.split("?")[0].split("/");
@@ -43,6 +44,8 @@ export class RateLimiter {
     }
 
     public static accept(req: HttpRequest, context: Context): boolean {
+        return true;
+        
         let { ipAddress, appId, endpoint } = this.getContext(req);
         const now = Date.now();
 
