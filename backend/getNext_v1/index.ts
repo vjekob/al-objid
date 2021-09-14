@@ -24,7 +24,7 @@ async function retrieveBindings(context: TypedContext<GetNextBindings>, body: Ge
     return { ranges, ids };
 }
 
-const httpTrigger: AzureFunction = RequestHandler.handle<GetNextBindings, GetNextBody>(
+const httpTrigger: AzureFunction = RequestHandler.handleAuthorized<GetNextBindings, GetNextBody>(
     async (context, req) => {
         const { ranges, ids } = await retrieveBindings(context, req.body);
         const result = {

@@ -15,12 +15,6 @@
       "type": "http",
       "direction": "out",
       "name": "res"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
-      "name": "authorization",
-      "path": "%BlobContainer%/{appId}/_authorization.json"
     }
   ],
   "scriptFile": "../dist/syncIds_v1/index.js"

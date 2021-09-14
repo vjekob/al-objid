@@ -15,12 +15,6 @@
       "type": "http",
       "direction": "out",
       "name": "res"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
-      "name": "ranges",
-      "path": "%BlobContainer%/{appId}/_ranges.json"
     }
   ],
   "scriptFile": "../dist/authorizeApp_v1/index.js"

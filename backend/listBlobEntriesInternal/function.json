@@ -1,14 +1,14 @@
 {
   "bindings": [
     {
-      "authLevel": "anonymous",
+      "authLevel": "function",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
       "methods": [
-        "get"
-      ],
-      "route": "v1/getConsumption"
+        "get",
+        "post"
+      ]
     },
     {
       "type": "http",
@@ -16,5 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/getConsumption_v1/index.js"
+  "scriptFile": "../dist/listBlobEntriesInternal/index.js"
 }

@@ -1,5 +1,5 @@
 import { AzureFunction } from "@azure/functions";
-import { ErrorResponse, RequestHandler } from "../common/RequestHandler";
+import { RequestHandler } from "../common/RequestHandler";
 import { RequestValidator } from "../common/RequestValidator";
 import { AppAuthorization, BodyWithAppId, BodyWithAuthorization, BodyWithObjectIds } from "../common/types";
 import { updateConsumptions } from "../common/updates";
@@ -9,8 +9,8 @@ interface SyncIdsBindings {
     authorization: AppAuthorization;
 }
 
-const httpTrigger: AzureFunction = RequestHandler.handle<SyncIdsBindings, SyncIdsBody>(
-    async (context, req) => {
+const httpTrigger: AzureFunction = RequestHandler.handleAuthorized<SyncIdsBindings, SyncIdsBody>(
+    async (_, req) => {
         const { appId, ids } = req.body;
 
         return await updateConsumptions(appId, ids, req.method === "PATCH");

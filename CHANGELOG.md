@@ -17,6 +17,9 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 why only one object per file was detected. With `false` setting on, whoever uses bad practice of having multiple objects per file will by default
 be able to parse full content of their repository without making a configuration change. Those who know that they follow best practices should
 switch this setting to `true` to improve the speed (still, speed improvements will only be noticeable on slow machines).
+- Polling interval for `getLog` call incrased from 15 seconds to 2 minutes to reduce the amount of calls placed by the app towards the back end.
+It may be decreased back again when back-end consumption is analyzed in detail. Also, it may be made configurable when non-defaut back-end URLs
+are used (to be considered for a future version).
 
 ## [1.1.0] - 2021-09-13
 ### Added

@@ -15,7 +15,7 @@ const getUpdateType = (types: ObjectIdsWithTotal, type: string) => (content: num
     }
 };
 
-const httpTrigger: AzureFunction = RequestHandler.handle<any, BodyWithAppId>(
+const httpTrigger: AzureFunction = RequestHandler.handleAuthorized<any, BodyWithAppId>(
     async (context, req) => {
         let result: ObjectIdsWithTotal = {
             _total: 0

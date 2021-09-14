@@ -4,7 +4,7 @@ post http://localhost:7071/api/v1/getNext
 Content-Type: application/json
 
 {
-    "appId": "eea13c88-1ff5-4fcd-b450-70468fa84d5d",
+    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
     "type": "codeunit",
     "ranges": [
         {
@@ -20,10 +20,6 @@ Content-Type: application/json
             "to": 50125
         }
     ],
-    "authKey": "anwUaXOeSGhR6SSFJ8Xx33nKzpZgUsE2BzpGLOhNrQc=",
-    "content": {
-        "user": "clovio\\vjeko"
-    }
 }
 
 

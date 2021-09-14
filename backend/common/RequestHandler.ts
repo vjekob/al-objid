@@ -1,9 +1,13 @@
+import { Context, HttpRequest } from "@azure/functions";
 import { performance } from "perf_hooks";
-import { TIMEOUT_TOKEN } from "./Blob";
+import { Blob, TIMEOUT_TOKEN } from "./Blob";
 import { RequestValidator } from "./RequestValidator";
-import { AuthorizationContext, BodyWithAuthorization, TypedContext, TypedRequest } from "./types";
+import { AppAuthorization, AuthorizationContext, BodyWithAppId, BodyWithAuthorization, TypedContext, TypedRequest } from "./types";
+import { getBlobName } from "./updates";
 
 type HandlerFunc<TBindings, TBody> = (context: TypedContext<TBindings>, req: TypedRequest<TBody>) => Promise<any>;
+
+interface AuthorizableBody extends BodyWithAppId, BodyWithAuthorization { }
 
 export class ErrorResponse {
     public message: string;
@@ -16,53 +20,74 @@ export class ErrorResponse {
 }
 
 export class RequestHandler {
-    static handle<TBindings, TBody>(handler: HandlerFunc<TBindings, TBody>, validator?: RequestValidator) {
+    private static async handleAuthorization(body: AuthorizableBody, context: Context): Promise<boolean> {
+        let { appId, authKey } = body;
+        if (appId) {
+            let authBlob = new Blob<AppAuthorization>(getBlobName(appId, "_authorization"));
+            let authorization = await authBlob.read();
+            if (!authorization || !authorization.valid || authorization.key === authKey) return true;
+        }
+
+        context.res = {
+            status: 401,
+            body: "You must provide valid credentials (appId, authKey) to access this endpoint"
+        }
+        return false;
+    }
+
+    private static handleValidation(req: HttpRequest, context: Context, validator?: RequestValidator): boolean {
+        if (validator instanceof RequestValidator && !validator.validate(req)) {
+            context.res = {
+                status: 400,
+                body: validator.validationError,
+            };
+            return false;
+        }
+        return true;
+    }
+
+    private static async handleRequest<TBindings, TBody>(context: TypedContext<TBindings>, req: TypedRequest<TBody>, handler: HandlerFunc<TBindings, TBody>) {
+        let start = performance.now();
+        try {
+            const result = await handler(context, req);
+            if (result instanceof ErrorResponse) {
+                context.res = {
+                    status: result.status || 400,
+                    body: result.message
+                };
+            } else {
+                context.res = {
+                    status: 200,
+                    body: result
+                };
+            }
+        } catch (e) {
+            if (e === TIMEOUT_TOKEN) {
+                context.res = {
+                    status: 408,
+                    body: `Request has timed out after ${performance.now() - start} ms.`
+                }
+            } else {
+                context.res = {
+                    status: 500,
+                    body: `An unexpected error has occurred: ${JSON.stringify(e)}`
+                }
+            }
+        }
+}
+
+    public static handleAuthorized<TBindings, TBody>(handler: HandlerFunc<TBindings, TBody>, validator?: RequestValidator) {
+        return async (context: Context, req: HttpRequest) => {
+            if (!await this.handleAuthorization(req.body, context)) return;
+            if (!this.handleValidation(req, context, validator)) return;
+            await this.handleRequest(context, req as any, handler);
+        }
+    }
+
+    public static handle<TBindings, TBody>(handler: HandlerFunc<TBindings, TBody>, validator?: RequestValidator) {
         return async (context: TypedContext<TBindings>, req: TypedRequest<TBody>) => {
-            const { authorization } = (context as unknown as AuthorizationContext).bindings;
-            const { authKey } = req.body as unknown as BodyWithAuthorization;
-            if (authorization && authorization.valid && authorization.key != authKey) {
-                context.res = {
-                    status: 401,
-                    body: "You must provide a valid authorization key to access this endpoint."
-                };
-                return;
-            }
-
-            if (validator instanceof RequestValidator && !validator.validate(req)) {
-                context.res = {
-                    status: 400,
-                    body: validator.validationError,
-                };
-                return;
-            }
-
-            let start = performance.now();
-            try {
-                const result = await handler(context, req);
-                if (result instanceof ErrorResponse) {
-                    context.res = {
-                        status: result.status || 400,
-                        body: result.message
-                    };
-                } else {
-                    context.res = {
-                        status: 200,
-                        body: result
-                    };
-                }
-            } catch (e) {
-                if (e === TIMEOUT_TOKEN) {
-                    context.res = {
-                        status: 408,
-                        body: `Request has timed out after ${performance.now() - start} ms.`
-                    }
-                } else {
-                    context.res = {
-                        status: 500,
-                        body: `An unexpected error has occurred: ${JSON.stringify(e)}`
-                    }
-                }
-            }
+            if (!this.handleValidation(req, context, validator)) return;
+            await this.handleRequest(context, req as any, handler);
         }
     }
 }

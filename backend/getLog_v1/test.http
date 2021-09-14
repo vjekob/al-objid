@@ -4,7 +4,8 @@ get http://localhost:7071/api/v1/getLog
 Content-Type: application/json
 
 {
-    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf"
+    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
+    "authKey": "sFz3oT8cTmTFo67m9xQ9bI38ZqDYVH/PlQdVorIKmsCY="
 }
 
 ### Azure

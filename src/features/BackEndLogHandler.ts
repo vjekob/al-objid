@@ -8,6 +8,9 @@ import { PropertyBag } from "../lib/PropertyBag";
 import { UI } from "../lib/UI";
 import { EventLogEntry } from "../lib/BackendTypes";
 
+// Increasing polling interval to 2 minutes (from 15 seconds)
+const POLLING_INTERVAL = 120000;
+
 interface ConsumptionData {
     type: string;
     id: number;

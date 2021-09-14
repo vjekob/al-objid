@@ -15,18 +15,6 @@
       "type": "http",
       "direction": "out",
       "name": "res"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
-      "name": "authorization",
-      "path": "%BlobContainer%/{appId}/_authorization.json"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
-      "name": "log",
-      "path": "%BlobContainer%/{appId}/_log.json"
     }
   ],
   "scriptFile": "../dist/getLog_v1/index.js"

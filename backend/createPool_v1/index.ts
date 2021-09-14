@@ -12,7 +12,7 @@ interface CreatePoolBindings {
 
 interface CreatePoolBody extends BodyWithAppId, BodyWithRanges { }
 
-const httpTrigger: AzureFunction = RequestHandler.handle<CreatePoolBindings, CreatePoolBody>(
+const httpTrigger: AzureFunction = RequestHandler.handleAuthorized<CreatePoolBindings, CreatePoolBody>(
     async (context, req) => {
         const { pool } = context.bindings;
         if (pool && pool.poolId) {

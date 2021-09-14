@@ -45,6 +45,14 @@ export class Blob<T> {
         });
     }
 
+    async readAll(token?: any): Promise<any> {
+        return new Promise((fulfill) => {
+            this.service.listBlobsSegmented(STORAGE_CONTAINER, token, (error, result) => {
+                error ? fulfill(null) : fulfill(result)
+            });
+        });
+    }
+
     /**
      * Performs an optimistic update of the blob. It first reads the blob, then calls the `update` callback thet performs any data
      * updates in-memory, and then returns the new object. Then, this method attempts to updated the blob it read. If the blob has

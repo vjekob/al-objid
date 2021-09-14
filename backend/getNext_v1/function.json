@@ -19,12 +19,6 @@
     {
       "type": "blob",
       "direction": "in",
-      "name": "authorization",
-      "path": "%BlobContainer%/{appId}/_authorization.json"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
       "name": "ranges",
       "path": "%BlobContainer%/{appId}/_ranges.json"
     },
