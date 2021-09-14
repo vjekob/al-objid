@@ -197,6 +197,13 @@ export interface PoolReference {
     poolId: string;
 }
 
+export interface RejectionInfo {
+    dateTime: string;
+    ipAddress: string;
+    appId: string;
+    endpoint: string;
+}
+
 /**
  * Array of supported object types that require object ID numbering in AL.
  */

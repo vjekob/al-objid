@@ -1,5 +1,5 @@
 import { Blob } from "./Blob";
-import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, PoolInfo, PoolReference, Range } from "./types";
+import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, PoolInfo, PoolReference, Range, RejectionInfo } from "./types";
 import { findFirstAvailableId, getSha256 } from "./util";
 
 export async function updateRanges(appId: string, ranges: Range[]): Promise<Range[]> {
@@ -122,4 +122,22 @@ export async function joinAppToPool(poolId: string, appId: string) {
     }));
 
     await Promise.all(promises);
+}
+
+export async function logRejection(appId: string, endpoint: string, ipAddress: string) {
+    const blob = new Blob<RejectionInfo[]>("0/rejections.json");
+    try {
+        await blob.optimisticUpdate(entries => {
+            let result = [...(entries || [])];
+            result.push({
+                dateTime: new Date().toString(),
+                appId,
+                endpoint,
+                ipAddress,
+            });
+            return result;
+        });
+    } catch (e) {
+        debugger;
+    }
 }

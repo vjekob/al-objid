@@ -2,6 +2,7 @@ import { Context, HttpRequest } from "@azure/functions";
 import { performance } from "perf_hooks";
 import { AuthorizationCache } from "./AuthorizationCache";
 import { TIMEOUT_TOKEN } from "./Blob";
+import { RateLimiter } from "./RateLimiter";
 import { RequestValidator } from "./RequestValidator";
 import { BodyWithAppId, BodyWithAuthorization, TypedContext, TypedRequest } from "./types";
 
@@ -42,6 +43,15 @@ export class RequestHandler {
         return true;
     }
 
+    private static handleRateLimiting(req: HttpRequest, context: Context): boolean {
+        if (RateLimiter.accept(req, context)) return true;
+        context.res = {
+            status: 429,
+            body: "Chill down, will you please? And while you are at it, shame on you, too!"
+        }
+        return false;
+    }
+
     private static async handleRequest<TBindings, TBody>(context: TypedContext<TBindings>, req: TypedRequest<TBody>, handler: HandlerFunc<TBindings, TBody>) {
         let start = performance.now();
         try {
@@ -72,18 +82,18 @@ export class RequestHandler {
         }
     }
 
+    private static async processRequest<TBindings, TBody>(context: Context, req: HttpRequest, handler: HandlerFunc<TBindings, TBody>, authorized: boolean, validator?: RequestValidator) {
+        if (!this.handleRateLimiting(req, context)) return;
+        if (authorized && !await this.handleAuthorization(req.body, context)) return;
+        if (!this.handleValidation(req, context, validator)) return;
+        await this.handleRequest(context, req as any, handler);
+}
+
     public static handleAuthorized<TBindings, TBody>(handler: HandlerFunc<TBindings, TBody>, validator?: RequestValidator) {
-        return async (context: Context, req: HttpRequest) => {
-            if (!await this.handleAuthorization(req.body, context)) return;
-            if (!this.handleValidation(req, context, validator)) return;
-            await this.handleRequest(context, req as any, handler);
-        }
+        return async (context: Context, req: HttpRequest) => this.processRequest(context, req, handler, true, validator);
     }
 
     public static handle<TBindings, TBody>(handler: HandlerFunc<TBindings, TBody>, validator?: RequestValidator) {
-        return async (context: TypedContext<TBindings>, req: TypedRequest<TBody>) => {
-            if (!this.handleValidation(req, context, validator)) return;
-            await this.handleRequest(context, req as any, handler);
-        }
+        return async (context: Context, req: HttpRequest) => this.processRequest(context, req, handler, false, validator);
     }
 }

@@ -1,4 +1,23 @@
-### Localhost
+### Localhost - GET
+
+get http://localhost:7071/api/v1/getNext?blabla=4
+Content-Type: application/json
+X-Forwarded-For: 192.168.0.23
+
+{
+    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
+    "authKey": "S4N8E9UGLiJ311f25OhyPRh0+Kd1aVMu/9zr5qzb748=",
+    "type": "codeunit",
+    "ranges": [
+        {
+            "from": 50100,
+            "to": 59999
+        }
+    ]
+}
+
+
+### Localhost - POST
 
 post http://localhost:7071/api/v1/getNext
 Content-Type: application/json
@@ -8,16 +27,8 @@ Content-Type: application/json
     "type": "codeunit",
     "ranges": [
         {
-            "from": 50111,
-            "to": 50115
-        },
-        {
             "from": 50100,
-            "to": 50105
-        },
-        {
-            "from": 50120,
-            "to": 51125
+            "to": 59999
         }
     ],
     "content": {
