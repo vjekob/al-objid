@@ -7,10 +7,16 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ## Unreleased
 ### Added
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
+- Support for table fields and enum values (coming in 1.1.1).
 
 ## [1.1.1] - 2021-09-14
 ### Added
 - Configuration option `Use Verbose Output Logging`. When it is switched on, more logging happens (e.g. deeper back-end invocation logging).
+### Changed
+- `useBestPracticesParser` settings is now `false` by default. It's (tiny bit) slower than full-syntax parser, but it doesn't confuse users with
+why only one object per file was detected. With `false` setting on, whoever uses bad practice of having multiple objects per file will by default
+be able to parse full content of their repository without making a configuration change. Those who know that they follow best practices should
+switch this setting to `true` to improve the speed (still, speed improvements will only be noticeable on slow machines).
 
 ## [1.1.0] - 2021-09-13
 ### Added
