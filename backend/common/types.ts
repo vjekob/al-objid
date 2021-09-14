@@ -36,6 +36,34 @@ export class BodyWithAppId {
     }
 }
 
+export interface FolderAuthorization {
+    appId: string;
+    authKey: string;
+}
+
+export class BodyWithAppFolders {
+    appFolders: FolderAuthorization[];
+
+    static get validateAppFolders(): ValidatorRule<BodyWithAppFolders>[] {
+        return [
+            RequestValidator.getPropertyIsArrayValidationRule("appFolders"),
+            RequestValidator.getPropertyArrayMinLengthRule("appFolders", 1),
+            {
+                rule: (body) => {
+                    for (let appFolder of body.appFolders) {
+                        if (!appFolder.appId) return false;
+                        for (let prop of Object.keys(appFolder)) {
+                            if (prop !== "appId" && prop !== "authKey") return false;
+                        }
+                    }
+                    return true;
+                },
+                errorMessage: () => "Invalid `appFolders` specification. Each element must contain `appId` and optionally `authKey`. No other properties are allowed"
+            }
+        ]
+    }
+}
+
 export interface BodyWithAuthorization {
     authKey: string;
 }
@@ -122,7 +150,7 @@ export class BodyWithObjectIds {
             RequestValidator.getPropertyPresenceValidationRule("ids"),
             RequestValidator.getPropertyTypeValidationRule("ids", "object"),
             {
-                rule: ({ids}) => {
+                rule: ({ ids }) => {
                     let count = 0;
                     for (let type in ids) {
                         if (!OBJECT_TYPES.includes(type)) return OBJECT_IDS_VALIDATION_ERROR.INVALID_TYPE;
@@ -168,7 +196,7 @@ export interface AuthorizationContext {
 /**
  * Represents an app authorization structure.
  */
- export interface AppAuthorization {
+export interface AppAuthorization {
     key: string;
     valid: boolean;
 }

@@ -4,7 +4,7 @@ post http://localhost:7071/api/v1/authorizeApp
 Content-Type: application/json
 
 {
-    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3"
+    "appId": "83b9edea7c8a47f8e2307dca527994e7e4d154254839c48f02c4936e89a3fa62"
 }
 
 ### Localhost - delete
@@ -13,8 +13,8 @@ delete http://localhost:7071/api/v1/authorizeApp
 Content-Type: application/json
 
 {
-    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
-    "authKey": "KUSVA73ScpHsrR5HGNeJDk9qVt+bLSWxOPCfkm9PMQI="
+    "appId": "83b9edea7c8a47f8e2307dca527994e7e4d154254839c48f02c4936e89a3fa62",
+    "authKey": "zVBD2a9W6s17fXwMnLBInzVCP+qklPd69W6DLXqQZI0="
 }
 
 ### Azure

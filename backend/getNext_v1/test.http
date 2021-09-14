@@ -5,8 +5,8 @@ Content-Type: application/json
 X-Forwarded-For: 192.168.0.23
 
 {
-    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
-    "authKey": "KUSVA73ScpHsrR5HGNeJDk9qVt+bLSWxOPCfkm9PMQI=",
+    "appId": "83b9edea7c8a47f8e2307dca527994e7e4d154254839c48f02c4936e89a3fa62",
+    "authKey": "zVBD2a9W6s17fXwMnLBInzVCP+qklPd69W6DLXqQZI0=",
     "type": "codeunit",
     "ranges": [
         {
@@ -23,11 +23,11 @@ post http://localhost:7071/api/v1/getNext
 Content-Type: application/json
 
 {
-    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
+    "appId": "83b9edea7c8a47f8e2307dca527994e7e4d154254839c48f02c4936e89a3fa62",
     "type": "codeunit",
     "ranges": [
         {
-            "from": 50100,
+            "from": 50120,
             "to": 59999
         }
     ],
@@ -39,25 +39,16 @@ Content-Type: application/json
 
 ### Remote
 
-post https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
+post https://vjekocom-alext-weu-2.azurewebsites.net/api/v1/getnext
 Content-Type: application/json
 
 {
-    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
+    "appId": "08434c1c977f16b0901157a44860fbb2c70d6e0e7fe488d05aeed14724390e46",
     "type": "codeunit",
-    "authKey": "Fz3oT8cTmTFo67m9xQ9bI38ZqDYVH/PlQdVorIKmsCY=",
     "ranges": [
         {
-            "from": 50111,
-            "to": 50115
-        },
-        {
-            "from": 50100,
-            "to": 50105
-        },
-        {
-            "from": 50120,
-            "to": 50125
+            "from": 50130,
+            "to": 50199
         }
     ],
     "content": {

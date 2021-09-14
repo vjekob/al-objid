@@ -44,8 +44,6 @@ export class RateLimiter {
     }
 
     public static accept(req: HttpRequest, context: Context): boolean {
-        return true;
-        
         let { ipAddress, appId, endpoint } = this.getContext(req);
         const now = Date.now();
 
