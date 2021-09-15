@@ -15,6 +15,8 @@ type SymbolInfo = {
     name: string;
 };
 
+let syncAllowed = true;
+
 async function syncIfChosen(choice: Promise<string | undefined>) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
@@ -24,6 +26,9 @@ async function syncIfChosen(choice: Promise<string | undefined>) {
             break;
         case LABELS.BUTTON_LEARN_MORE:
             commands.executeCommand("vjeko-al-objid.learn-welcome");
+            break;
+        default:
+            syncAllowed = false;
             break;
     }
 }
@@ -71,7 +76,9 @@ function showNotificationsIfNecessary(objectId?: NextObjectIdInfo): boolean {
     if (!objectId) return true;
 
     if (!objectId.hasConsumption) {
-        syncIfChosen(UI.nextId.showNoBackEndConsumptionInfo());
+        if (syncAllowed) {
+            syncIfChosen(UI.nextId.showNoBackEndConsumptionInfo());
+        }
         return true;
     }
 

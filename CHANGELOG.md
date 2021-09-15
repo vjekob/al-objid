@@ -9,6 +9,12 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
 - Support for table fields and enum values (coming in 1.1.1).
 
+## [1.2.1] - 2021-09-15
+### Changed
+- The *Azure back end has no information about consumed object IDs. Do you want to synchronize?* question is now asked only once per VS Code
+session. Clicking `No` will store that answer for the duration of the session, and will no longer ask that question. Previously, this question
+was asked on every attempt to assign a new number in a repo that hasn't been synchronized.
+
 ## [1.2.0] - 2021-09-15
 ### Added
 - Configuration option `Use Verbose Output Logging`. When it is switched on, more logging happens (e.g. deeper back-end invocation logging).
@@ -17,7 +23,7 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 why only one object per file was detected. With `false` setting on, whoever uses bad practice of having multiple objects per file will by default
 be able to parse full content of their repository without making a configuration change. Those who know that they follow best practices should
 switch this setting to `true` to improve the speed (still, speed improvements will only be noticeable on slow machines).
-- Polling interval for `getLog` call incrased from 15 seconds to 30 seconds to reduce the number of calls placed by the app towards the back end.
+- Polling interval for `getLog` call increased from 15 seconds to 30 seconds to reduce the number of calls placed by the app towards the back end.
 - `v2/getLog` endpoint is invoked instead of `v1/getLog` to further reduce the number of calls. The `v2` endpoint accepts multiple repos do
 instead of looping through repos every 15 seconds and then sending individual requests for each of them, there is now one single request.
 
