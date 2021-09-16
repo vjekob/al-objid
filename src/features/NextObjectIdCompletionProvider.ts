@@ -1,13 +1,14 @@
-import { CancellationToken, commands, CompletionContext, CompletionItem, DocumentSymbol, Position, TextDocument, Uri, window } from "vscode";
+import { CancellationToken, commands, CompletionContext, CompletionItem, DocumentSymbol, Position, TextDocument, Uri, window, workspace } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS, OBJECT_TYPES } from "../lib/constants";
 import { Backend } from "../lib/Backend";
-import { getManifest } from "../lib/AppManifest";
+import { AppManifest, getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
+import { PropertyBag } from "../lib/PropertyBag";
 
 type SymbolInfo = {
     type: string;
@@ -15,9 +16,11 @@ type SymbolInfo = {
     name: string;
 };
 
-let syncAllowed = true;
+let syncDisabled: PropertyBag<boolean> = {};
+let syncSkipped = 0;
+let stopAsking = false;
 
-async function syncIfChosen(choice: Promise<string | undefined>) {
+async function syncIfChosen(manifest: AppManifest, choice: Promise<string | undefined>) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
             commands.executeCommand("vjeko-al-objid.sync-object-ids", {
@@ -28,7 +31,12 @@ async function syncIfChosen(choice: Promise<string | undefined>) {
             commands.executeCommand("vjeko-al-objid.learn-welcome");
             break;
         default:
-            syncAllowed = false;
+            syncDisabled[manifest.id] = true;
+            if (++syncSkipped > 1) {
+                if (await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo() === LABELS.BUTTON_DONT_ASK) {
+                    stopAsking = true;
+                }
+            }
             break;
     }
 }
@@ -72,18 +80,18 @@ async function getTypeAtPosition(document: TextDocument, position: Position): Pr
     return OBJECT_TYPES.includes(type) ? type : null;
 }
 
-function showNotificationsIfNecessary(objectId?: NextObjectIdInfo): boolean {
+function showNotificationsIfNecessary(manifest: AppManifest, objectId?: NextObjectIdInfo): boolean {
     if (!objectId) return true;
 
     if (!objectId.hasConsumption) {
-        if (syncAllowed) {
-            syncIfChosen(UI.nextId.showNoBackEndConsumptionInfo());
+        if (!syncDisabled[manifest.id] && !stopAsking) {
+            syncIfChosen(manifest, UI.nextId.showNoBackEndConsumptionInfo(manifest.name));
         }
         return true;
     }
 
     if (!objectId.available) {
-        syncIfChosen(UI.nextId.showNoMoreNumbersWarning());
+        syncIfChosen(manifest, UI.nextId.showNoMoreNumbersWarning());
         return true;
     }
 
@@ -101,7 +109,7 @@ export class NextObjectIdCompletionProvider {
         const { authKey } = ObjIdConfig.instance(document.uri);
         const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, authKey);
 
-        if (showNotificationsIfNecessary(objectId) || !objectId) return [];
+        if (showNotificationsIfNecessary(manifest, objectId) || !objectId) return [];
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
 
         return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri)];

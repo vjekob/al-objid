@@ -9,11 +9,12 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - App pools feature (https://github.com/vjekob/al-objid/issues/1).
 - Support for table fields and enum values (coming in 1.1.1).
 
-## [1.2.1] - 2021-09-15
+## [1.2.1] - 2021-09-16
 ### Changed
 - The *Azure back end has no information about consumed object IDs. Do you want to synchronize?* question is now asked only once per VS Code
-session. Clicking `No` will store that answer for the duration of the session, and will no longer ask that question. Previously, this question
-was asked on every attempt to assign a new number in a repo that hasn't been synchronized.
+session. Clicking `No` will store that answer for the duration of the session, and will no longer ask that question for the same app. If `No`
+is clicked again in the same session for another app, an additional question is asked to either keep or stop prompting. Previously, this
+question was asked on every attempt to assign a new number in a repo that hasn't been synchronized.
 
 ## [1.2.0] - 2021-09-15
 ### Added

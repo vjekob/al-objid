@@ -25,6 +25,7 @@ export const OBJECT_TYPES = [
 export const LABELS = {
     BUTTON_SYNCHRONIZE: "Synchronize",
     BUTTON_LEARN_MORE: "Learn more",
+    BUTTON_DONT_ASK: "Stop asking me for this VS Code session",
 
     SYNC_ARE_YOU_SURE: {
         YES: "Yes, please replace existing object ID consumptions in the back end",
