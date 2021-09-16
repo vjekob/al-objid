@@ -1,5 +1,5 @@
 import path = require("path");
-import { ExtensionContext, commands, languages, Disposable, Uri } from "vscode";
+import { ExtensionContext, commands, languages, Disposable } from "vscode";
 import { authorizeApp } from "./commands/authorize-app";
 import { commitSuggestionCommand } from "./commands/commit-suggestion";
 import { confirmAuthorizeApp } from "./commands/confirm-authorize-app";
