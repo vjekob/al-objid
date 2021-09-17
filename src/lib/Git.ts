@@ -11,6 +11,7 @@ export interface GitBranchInfo {
     name?: string;
     tracks?: string;
     current: boolean;
+    ahead: number;
 }
 
 export class Git {
@@ -66,6 +67,21 @@ export class Git {
         return Array.isArray(result) && result.filter(line => line).length === 0;
     }
 
+    public async getRepositoryRootUri(git: any, uri: Uri): Promise<Uri | undefined> {
+        // If git extension is active, we can use it to obtain the results faster
+        if (git) {
+            let repo = git.getRepository(uri);
+            if (!repo) return;
+            return repo.rootUri;
+        }
+
+        // Git extension is not active, we must do this through raw git (which is substantially slower)
+        let result = await this.execute("rev-parse --show-toplevel", uri, false) as string | undefined;
+        if (!result) return;
+        let repoUri = Uri.file(result.trim());
+        return repoUri;
+    }
+
     /**
      * Returns all branches (local and remote) with their tracking information. Unlike the raw command, this
      * method will exclude any raw remote branches that are already included through a local branch that tracks
@@ -78,15 +94,24 @@ export class Git {
         let output = await this.execute("branch --all -vv", uri, false) as string;
         if (!output) return null;
 
-        let regex = /^(?<current>\*)?\s*(?<name>.+?)\s+(?<sha>.+?)(\s\[(?<tracks>.+)\])?\s+(?<message>.+)$/gm;
+        let regex = /^(?<current>\*)?\s*(?<name>.+?)\s+(?<sha>[a-f0-9]+?)(\s\[(?<tracks>.+?)(\:\s(?<position>ahead|behind)\s(?<count>\d+))?\])?\s+(?<message>.+)$/gm;
         let raw = [];
         let match;
         while (match = regex.exec(output)) raw.push(match);
-        let branches: GitBranchInfo[] = raw.map(branch => ({
-            name: branch.groups!.name,
-            tracks: branch.groups!.tracks,
-            current: !!branch.groups!.current,
-        }));
+        let branches: GitBranchInfo[] = raw.map(branch => {
+            let ahead = 0;
+            let { name, tracks, current, position, count } = branch.groups!;
+            if (position) {
+                ahead = parseInt(count);
+                if (position === "behind") ahead = -ahead;
+            }
+            return {
+                name,
+                tracks,
+                current: !!current,
+                ahead,
+            };
+        });
 
         let result: GitBranchInfo[] = [];
         let tracked: any = {};
@@ -107,6 +132,23 @@ export class Git {
             result.push(branch);
         }
         return result;
+    }
+
+    public async getAheadBehind(uri: Uri): Promise<number | null> {
+        let output = await this.execute("status --branch --porcelain", uri, false) as string | null;
+        if (!output) return null;
+
+        let match = output.trim().match(/^##.+\[(?<position>ahead|behind)\s(?<count>\d+)\]$/i);
+        if (!match) return 0;
+
+        let { count, position } = match.groups!;
+        let result = parseInt(count);
+        return position === "ahead" ? result : -result;
+    }
+
+    public async checkout(uri: Uri, branch: string): Promise<boolean> {
+        let output = await this.execute(`checkout ${branch}`, uri, false);
+        return output !== null;
     }
 }
 

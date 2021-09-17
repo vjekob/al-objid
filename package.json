@@ -23,7 +23,8 @@
 		"onLanguage:al",
 		"onCommand:vjeko-al-objid.confirm-sync-object-ids",
 		"onCommand:vjeko-al-objid.confirm-authorize-app",
-		"onCommand:vjeko-al-objid.confirm-deauthorize-app"
+		"onCommand:vjeko-al-objid.confirm-deauthorize-app",
+		"onCommand:vjeko-al-objid.auto-sync-object-ids"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -39,6 +40,10 @@
 			{
 				"command": "vjeko-al-objid.confirm-deauthorize-app",
 				"title": "Vjeko: Deauthorize AL App"
+			},
+			{
+				"command": "vjeko-al-objid.auto-sync-object-ids",
+				"title": "Vjeko: Automatically Synchronize Object IDs for Entire Workspace"
 			}
 		],
 		"configuration": {

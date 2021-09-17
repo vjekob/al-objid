@@ -1,6 +1,6 @@
-import path = require("path");
 import { ExtensionContext, commands, languages, Disposable } from "vscode";
 import { authorizeApp } from "./commands/authorize-app";
+import { autoSyncObjectIds } from "./commands/auto-sync-object-ids";
 import { commitSuggestionCommand } from "./commands/commit-suggestion";
 import { confirmAuthorizeApp } from "./commands/confirm-authorize-app";
 import { confirmDeauthorizeApp } from "./commands/confirm-deauthorize-app";
@@ -20,6 +20,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.confirm-sync-object-ids", confirmSyncObjectIds),
 		commands.registerCommand("vjeko-al-objid.confirm-authorize-app", confirmAuthorizeApp),
 		commands.registerCommand("vjeko-al-objid.confirm-deauthorize-app", confirmDeauthorizeApp),
+		commands.registerCommand("vjeko-al-objid.auto-sync-object-ids", autoSyncObjectIds),
 
 		// Internal commands
 		commands.registerCommand("vjeko-al-objid.commit-suggestion", commitSuggestionCommand),

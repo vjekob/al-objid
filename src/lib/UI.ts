@@ -1,4 +1,4 @@
-import { window } from "vscode";
+import { Uri, window } from "vscode";
 import { Output } from "../features/Output";
 import { AppManifest } from "./AppManifest";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
@@ -52,6 +52,11 @@ export const UI = {
             window.showQuickPick(Object.values(LABELS.SYNC_ARE_YOU_SURE), {
                 placeHolder: "Are you sure you want to replace existing object ID assignments?"
             }),
+        showRepoNotClean: (name: string) =>
+            window.showWarningMessage(
+                `Repository ${name} is dirty or has staged content. To perform automatic synchronization, all your repositories must be clean.`,
+                "OK",
+                LABELS.BUTTON_LEARN_MORE),
     },
 
     nextId: {
