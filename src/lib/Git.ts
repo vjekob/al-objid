@@ -1,5 +1,7 @@
 import { exec } from "child_process";
 import { Uri } from "vscode";
+import { LogLevel, output, Output } from "../features/Output";
+import { PropertyBag } from "./PropertyBag";
 
 /**
  * Represents a branch info with local and remote tracking info:
@@ -12,6 +14,10 @@ export interface GitBranchInfo {
     tracks?: string;
     current: boolean;
     ahead: number;
+    behind: number;
+    sha?: string;
+    shaRemote?: string;
+    message: string;
 }
 
 export class Git {
@@ -26,12 +32,15 @@ export class Git {
 
     private async execute(command: string, uri: Uri, split = true): Promise<string[] | string | null> {
         return new Promise((resolve) => {
-            exec(`git ${command}`, { cwd: uri.fsPath, windowsHide: true }, (error, stdout) => {
+            const gitCommand = `git ${command}`;
+            output.log(`[Git] Executing command: ${gitCommand}`);
+            exec(gitCommand, { cwd: uri.fsPath, windowsHide: true }, (error, stdout) => {
                 if (error) {
+                    output.log(`[Git] --> Error executing Git: ${error}`);
                     resolve(null);
                     return;
                 }
-
+                output.log("--> Success!", LogLevel.Verbose);
                 if (!split) {
                     resolve(stdout);
                     return;
@@ -82,6 +91,11 @@ export class Git {
         return repoUri;
     }
 
+    public async fetch(uri: Uri): Promise<boolean> {
+        let result = await this.execute("fetch", uri, false);
+        return result !== null;
+    }
+
     /**
      * Returns all branches (local and remote) with their tracking information. Unlike the raw command, this
      * method will exclude any raw remote branches that are already included through a local branch that tracks
@@ -94,27 +108,26 @@ export class Git {
         let output = await this.execute("branch --all -vv", uri, false) as string;
         if (!output) return null;
 
-        let regex = /^(?<current>\*)?\s*(?<name>.+?)\s+(?<sha>[a-f0-9]+?)(\s\[(?<tracks>.+?)(\:\s(?<position>ahead|behind)\s(?<count>\d+))?\])?\s+(?<message>.+)$/gm;
+        let regex = /^(?<current>\*)?\s*(?<name>.+?)\s+(?<sha>[a-f0-9]+?)\s(\[(?<tracks>.+?)\:?( ahead (?<ahead>\d+))?(\,? behind (?<behind>\d+))?\]\s)?(?<message>.+)$/gm;
         let raw = [];
         let match;
         while (match = regex.exec(output)) raw.push(match);
         let branches: GitBranchInfo[] = raw.map(branch => {
-            let ahead = 0;
-            let { name, tracks, current, position, count } = branch.groups!;
-            if (position) {
-                ahead = parseInt(count);
-                if (position === "behind") ahead = -ahead;
-            }
+            let { name, tracks, current, ahead, behind, sha, message } = branch.groups!;
             return {
                 name,
                 tracks,
                 current: !!current,
-                ahead,
+                ahead: parseInt(ahead) | 0,
+                behind: parseInt(behind) | 0,
+                sha,
+                message
             };
         });
 
         let result: GitBranchInfo[] = [];
-        let tracked: any = {};
+        let tracked: PropertyBag<boolean> = {};
+        let remoteSha: PropertyBag<string> = {};
         // Pass 1: correct branch names and remote tracking
         for (let branch of branches) {
             if (branch.tracks) {
@@ -124,40 +137,37 @@ export class Git {
             if (branch.name!.startsWith("remotes/")) {
                 branch.tracks = branch.name!.substring(8);
                 branch.name = undefined;
+                remoteSha[branch.tracks!] = branch.sha!;
+                branch.shaRemote = branch.sha;
+                branch.sha = undefined;
             }
         }
-        // Pass 2: exclude raw remote branches tracked by local
+        // Pass 2: exclude raw remote branches tracked by local and update remote sha
         for (let branch of branches) {
             if (!branch.name && branch.tracks && tracked[branch.tracks]) continue;
+            if (branch.name && branch.tracks) branch.shaRemote = remoteSha[branch.tracks];
             result.push(branch);
         }
         return result;
-    }
-
-    public async getAheadBehind(uri: Uri): Promise<number | null> {
-        let output = await this.execute("status --branch --porcelain", uri, false) as string | null;
-        if (!output) return null;
-
-        let match = output.trim().match(/^##.+\[(?<position>ahead|behind)\s(?<count>\d+)\]$/i);
-        if (!match) return 0;
-
-        let { count, position } = match.groups!;
-        let result = parseInt(count);
-        return position === "ahead" ? result : -result;
     }
 
     public async checkout(uri: Uri, branch: string): Promise<boolean> {
         let output = await this.execute(`checkout ${branch}`, uri, false);
         return output !== null;
     }
+
+    public async getCurrentBranchName(uri: Uri): Promise<string> {
+        let output = await this.execute("rev-parse --abbrev-ref HEAD", uri, false) as string | undefined;
+        return (output && output.trim()) || "";
+    }
+
+    public async deleteBranch(uri: Uri, branch: string): Promise<boolean> {
+        let output = await this.execute(`branch -D ${branch}`, uri, false);
+        return !!output;
+    }
+
+    public async trackRemoteBranch(uri: Uri, remoteBranch: string, newBranch: string): Promise<boolean> {
+        let output = await (this.execute(`branch ${newBranch} --track ${remoteBranch}`, uri, false));
+        return !!output;
+    }
 }
-
-// TODO: the following block:
-/*
-
-Allow synchronization only if folder is clean
-For each branch where local tracks remote check `git status --branch --porcelain` to see if it's ahead or behind.
-For each branch that's ahead or behind, ask user if (s)he wants to use local or remote.
-For each remote branch that's being synced, use `git branch <some_random_string> --track <origin/name>`
-
-*/

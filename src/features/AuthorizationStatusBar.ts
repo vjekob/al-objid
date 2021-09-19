@@ -12,7 +12,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
     private constructor() {
         super();
         this.registerDisposable(this._status = window.createStatusBarItem(StatusBarAlignment.Left, 1));
-        this.registerDisposable(window.onDidChangeActiveTextEditor(() => this.updateStatusBar));
+        window.onDidChangeActiveTextEditor(this.updateStatusBar, this);
     }
 
     public static get instance(): AuthorizationStatusBar {

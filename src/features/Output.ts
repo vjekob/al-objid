@@ -1,6 +1,12 @@
 import { OutputChannel, window } from "vscode";
+import { Config } from "../lib/Config";
 import { EXTENSION_NAME } from "../lib/constants";
 import { DisposableHolder } from "./DisposableHolder";
+
+export enum LogLevel {
+    Verbose = "LogLevel.Verbose",
+    Info = "LogLevel.Info",
+}
 
 export class Output extends DisposableHolder {
     private _channel: OutputChannel;
@@ -15,7 +21,16 @@ export class Output extends DisposableHolder {
         return this._instance || (this._instance = new Output());
     }
 
-    public log(message: string) {
+    public log(message: string, level: LogLevel = LogLevel.Verbose) {
+        switch (level) {
+            case LogLevel.Info:
+                // Just log
+                break;
+            case LogLevel.Verbose:
+                if (!Config.instance.useVerboseOutputLogging) return;
+                break;
+        }
+        
         if (message) {
             this._channel.appendLine(`[${new Date().toISOString()}] ${message}`);
         }

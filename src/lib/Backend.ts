@@ -1,9 +1,9 @@
 import { workspace } from "vscode";
-import { Output, output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, ConsumptionInfo, ConsumptionInfoWithTotal, EventLogEntry, FolderAuthorization, FolderEventLogEntries, NextObjectIdInfo } from "./BackendTypes";
+import { output } from "../features/Output";
+import { AuthorizationDeletedInfo, AuthorizationInfo, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, FolderEventLogEntries, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
-import { MeasureTime } from "./MeasureTime";
+import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
@@ -41,7 +41,6 @@ export const API_RESULT = {
  * @returns `HttpResponse` object that contains full information about response, error, and error handling status
  */
 async function sendRequest<T>(path: string, method: HttpMethod, data: any, errorHandler?: ErrorHandler<T>): Promise<HttpResponse<T>> {
-    const config = workspace.getConfiguration("objectIdNinja");
     const url = Config.instance.backEndUrl;
     const key = Config.instance.backEndAPIKey;
 
@@ -57,7 +56,7 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
 
     if (Config.instance.useVerboseOutputLogging) {
         let { authKey, ...log } = data;
-        Output.instance.log(`[Verbose] sending request to https://${hostname}${path}: ${JSON.stringify(log)}`);
+        output.log(`[Verbose] sending request to https://${hostname}${path}: ${JSON.stringify(log)}`);
     }
 
     const request: HttpRequest = { hostname, path, method, data };
@@ -66,24 +65,18 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
         status: API_RESULT.NOT_SENT,
     };
 
-    try {
-        MeasureTime.reset("request");
-        MeasureTime.start("request", `Sending ${method} request to ${path} endpoint`);
-        response.value = await https.send<T>(method, data);
-        MeasureTime.stop("request");
-        MeasureTime.log("request");
-        response.status = API_RESULT.SUCCESS;
-    } catch (error: any) {
-        MeasureTime.stop("request");
-        MeasureTime.log("request");
-
-        output.log(`Sending ${method} request to ${path} endpoint resulted in an error: ${JSON.stringify(error)}`);
-
-        response.error = error;
-        response.status = API_RESULT.ERROR_NOT_HANDLED;
-        if (!errorHandler || !(await errorHandler(response, request))) handleErrorDefault(response, request);
-    }
-    return response;
+    return await executeWithStopwatchAsync(async () => {
+        try {
+            response.value = await https.send<T>(method, data);
+            response.status = API_RESULT.SUCCESS;
+        } catch (error: any) {
+            output.log(`Sending ${method} request to ${path} endpoint resulted in an error: ${JSON.stringify(error)}`);
+            response.error = error;
+            response.status = API_RESULT.ERROR_NOT_HANDLED;
+            if (!errorHandler || !(await errorHandler(response, request))) handleErrorDefault(response, request);
+        }
+        return response;
+    }, `Sending ${method} request to ${path} endpoint`);
 }
 
 function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest): void {

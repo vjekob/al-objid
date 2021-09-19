@@ -11,8 +11,8 @@ export abstract class DisposableHolder {
 
     protected prepareDisposables(): void {}
 
-    public getDisposables(): Disposable[] {
+    public getDisposables(): Disposable {
         this.prepareDisposables();
-        return this._disposables;
+        return Disposable.from(...this._disposables);
     }
 }

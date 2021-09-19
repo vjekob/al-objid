@@ -16,6 +16,8 @@
 			"**/node_modules": true
 		},
 		"cSpell.words": [
+			"alext",
+			"azurewebsites",
 			"codeunit",
 			"Deauthorization",
 			"deauthorize",
@@ -30,6 +32,7 @@
 			"reportextension",
 			"tableextension",
 			"vjeko",
+			"vjekocom",
 			"xmlport"
 		]
 	}
