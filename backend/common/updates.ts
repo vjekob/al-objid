@@ -49,7 +49,7 @@ export async function updateConsumption(appId: string, type: string, ranges: Ran
         }
 
         context.updated = true;
-        return [...ids, context.id].sort();
+        return [...ids, context.id].sort((left, right) => left - right);
     });
 
     return !tooManyAttempts;
@@ -65,7 +65,7 @@ export async function updateConsumptions(appId: string, objectIds: ObjectIds, pa
                 ...(patch ? existing : []),
                 ...ids
             ];
-            return [...new Set(result)].sort();
+            return [...new Set(result)].sort((left, right) => left - right);
         });
     }
     return result;

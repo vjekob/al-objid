@@ -45,6 +45,10 @@ export class BodyWithAppFolders {
     appFolders: FolderAuthorization[];
 
     static get validateAppFolders(): ValidatorRule<BodyWithAppFolders>[] {
+        return this.validateAppFoldersWithCustomProperties();
+    }
+
+    static validateAppFoldersWithCustomProperties(...customAllowed: string[]): ValidatorRule<BodyWithAppFolders>[] {
         return [
             RequestValidator.getPropertyIsArrayValidationRule("appFolders"),
             RequestValidator.getPropertyArrayMinLengthRule("appFolders", 1),
@@ -53,12 +57,12 @@ export class BodyWithAppFolders {
                     for (let appFolder of body.appFolders) {
                         if (!appFolder.appId) return false;
                         for (let prop of Object.keys(appFolder)) {
-                            if (prop !== "appId" && prop !== "authKey") return false;
+                            if (prop !== "appId" && prop !== "authKey" && !customAllowed.includes(prop)) return false;
                         }
                     }
                     return true;
                 },
-                errorMessage: () => "Invalid `appFolders` specification. Each element must contain `appId` and optionally `authKey`. No other properties are allowed"
+                errorMessage: () => `Invalid "appFolders" specification. Each element must contain "appId" and optionally "authKey". ${customAllowed ? `Additional properties allowed are: ${customAllowed}.` : "No other properties are allowed."}`
             }
         ]
     }
@@ -135,12 +139,14 @@ export class BodyWithRanges {
     }
 }
 
-const OBJECT_IDS_VALIDATION_ERROR = {
-    INVALID_TYPE: Symbol(),
-    ARRAY_EXPECTED: Symbol(),
+export const OBJECT_IDS_VALIDATION_ERROR = {
+    MISSING_IDS: Symbol("MISSING_IDS"),
+    INVALID_IDS: Symbol("INVALID_IDS"),
+    INVALID_TYPE: Symbol("INVALID_TYPE"),
+    ARRAY_EXPECTED: Symbol("ARRAY_EXPECTED"),
 };
 
-const INVALID_OBJECT_IDS = "Invalid object ids specification: ";
+export const INVALID_OBJECT_IDS = "Invalid object ids specification: ";
 
 export class BodyWithObjectIds {
     ids: ObjectIds;
@@ -151,10 +157,8 @@ export class BodyWithObjectIds {
             RequestValidator.getPropertyTypeValidationRule("ids", "object"),
             {
                 rule: ({ ids }) => {
-                    let count = 0;
                     for (let type in ids) {
                         if (!OBJECT_TYPES.includes(type)) return OBJECT_IDS_VALIDATION_ERROR.INVALID_TYPE;
-                        count++;
                         if (!Array.isArray(ids[type])) return OBJECT_IDS_VALIDATION_ERROR.ARRAY_EXPECTED;
                         for (let n of ids[type]) {
                             if (typeof n !== "number") return OBJECT_IDS_VALIDATION_ERROR.ARRAY_EXPECTED;

@@ -1,0 +1,22 @@
+### Localhost
+
+patch http://localhost:7071/api/v1/autoSyncIds
+Content-Type: application/json
+X-Forwarded-For: 192.168.0.23
+
+{
+    "appFolders": [
+        {
+            "appId": "0000",
+            "ids": {
+                "codeunit": [-1]
+            }
+        },
+        {
+            "appId": "0001",
+            "ids": {
+                "codeunit": [9, 8, 7]
+            }
+        }
+    ]
+}
