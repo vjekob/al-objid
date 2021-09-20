@@ -23,6 +23,12 @@ export interface FolderAuthorization {
     authKey: string;
 }
 
+export interface AuthorizedAppConsumption {
+    appId: string;
+    authKey: string;
+    ids: ConsumptionInfo;
+}
+
 export interface EventLogEntry {
     eventType: string;
     timestamp: number;

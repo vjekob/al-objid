@@ -1,12 +1,15 @@
+import { ObjIdConfig } from "./../lib/ObjIdConfig";
 import { extensions, ProgressLocation, Uri, window, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { ConsumptionInfo } from "../lib/BackendTypes";
+import { AuthorizedAppConsumption, ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
 import { Git, GitBranchInfo } from "../lib/Git";
 import { getObjectDefinitions, getWorkspaceFolderFiles, updateActualConsumption } from "../lib/ObjectIds";
 import { PropertyBag } from "../lib/PropertyBag";
 import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
+import { getManifest } from "../lib/AppManifest";
+import { Backend } from "../lib/Backend";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -117,7 +120,31 @@ function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>) {
     }
 }
 
+function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, folders: Uri[]): AuthorizedAppConsumption[] {
+    let result: AuthorizedAppConsumption[] = [];
+    for (let key of Object.keys(consumptions)) {
+        let uri = folders.find(folder => folder.fsPath === key)!;
+        let manifest = getManifest(uri)!;
+        result.push({
+            appId: manifest.id,
+            authKey: ObjIdConfig.instance(uri).authKey,
+            ids: consumptions[key]
+        });
+    }
+    return result;
+}
+
 export const autoSyncObjectIds = async () => {
+    let auto = false;
+    switch (await UI.sync.showHowToAutoSync()) {
+        case LABELS.AUTO_SYNC_PICK.FULL_AUTO:
+            auto = true;
+            break;
+        case LABELS.AUTO_SYNC_PICK.LEARN_MORE:
+            // TODO: learn more
+            return;
+    };
+
     await window.withProgress({ location: ProgressLocation.Notification }, async progress => {
         if (!workspace.workspaceFolders || !workspace.workspaceFolders.length) {
             return;
@@ -127,7 +154,9 @@ export const autoSyncObjectIds = async () => {
         const git = gitExtension?.getAPI(1);
 
         // 1. pick folders
-        let folders = await ALWorkspace.pickFolder(true) as Uri[] | undefined;
+        let folders = auto
+            ? ALWorkspace.getALFolders()?.map(workspace => workspace.uri)
+            : await ALWorkspace.pickFolder(true) as Uri[] | undefined;
         if (!folders || !folders.length) return;
 
         // 2. find git repos that match picked folders
@@ -182,7 +211,7 @@ export const autoSyncObjectIds = async () => {
             if (repoBranches === null) continue;
 
             // c. Pick from list of branches
-            if (repoBranches.length > 1) {
+            if (repoBranches.length > 1 && !auto) {
                 progress.report({ message: "Waiting for your branches selection..." });
                 let quickPick = new QuickPickWrapper<GitBranchInfo>(repoBranches.map((branch) => ({
                     label: BranchInfo.getName(branch),
@@ -201,24 +230,29 @@ export const autoSyncObjectIds = async () => {
             for (let branch of repoBranches) {
                 progress.report({ message: `Progressing branch ${branch.name || branch.tracks} of ${getRepoName(repo)}` });
                 if (branch.ahead || branch.behind) {
-                    let picks = [
-                        `Local (${BranchInfo.getChooseLocalText(branch)})`,
-                        `Remote (${BranchInfo.getChooseRemoteText(branch)})`,
-                    ];
-                    if (branch.ahead && branch.behind) picks.push(`Both (includes all information from local and remote)`)
-                    let choice = await window.showQuickPick(picks, { placeHolder: `How do you want to synchronize branch ${branch.name} of ${getRepoName(repo)}?` });
-                    if (!choice) continue;
-                    switch (choice.split(" ")[0]) {
-                        case "Local":
-                            config.branchesLocal.push(branch.name!);
-                            break;
-                        case "Remote":
-                            config.branchesRemote.push(branch.tracks!);
-                            break;
-                        case "Both":
-                            config.branchesRemote.push(branch.tracks!);
-                            config.branchesLocal.push(branch.name!);
-                            break;
+                    if (auto) {
+                        if (branch.ahead) config.branchesLocal.push(branch.name!);
+                        if (branch.behind) config.branchesRemote.push(branch.name!);
+                    } else {
+                        let picks = [
+                            `Local (${BranchInfo.getChooseLocalText(branch)})`,
+                            `Remote (${BranchInfo.getChooseRemoteText(branch)})`,
+                        ];
+                        if (branch.ahead && branch.behind) picks.push(`Both (includes all information from local and remote)`)
+                        let choice = await window.showQuickPick(picks, { placeHolder: `How do you want to synchronize branch ${branch.name} of ${getRepoName(repo)}?` });
+                        if (!choice) continue;
+                        switch (choice.split(" ")[0]) {
+                            case "Local":
+                                config.branchesLocal.push(branch.name!);
+                                break;
+                            case "Remote":
+                                config.branchesRemote.push(branch.tracks!);
+                                break;
+                            case "Both":
+                                config.branchesRemote.push(branch.tracks!);
+                                config.branchesLocal.push(branch.name!);
+                                break;
+                        }
                     }
                 } else {
                     if (branch.name) {
@@ -233,14 +267,18 @@ export const autoSyncObjectIds = async () => {
             config.folders = repoFolders[repo.fsPath];
             setup.push(config);
         }
+
         // e. Prepare a copy of each branch, checkout into it
         // e.2 foreach folder belonging in this repo do sync
         let consumptions: PropertyBag<ConsumptionInfo> = {};
         for (let config of setup) {
-            progress.report({ message: `Syncing ${config.repo ? `repo ${getRepoName(config.repo)}` : "other folders"}...` })
+            progress.report({ message: `Finding object IDs in ${config.repo ? `repo ${getRepoName(config.repo)}` : "workspace"}...` })
             await syncSingleConfiguration(config, consumptions);
         }
         compressConsumptions(consumptions);
-        debugger;
+        let payload = authorizeConsumptions(consumptions, folders);
+
+        await Backend.autoSyncIds(payload, false);
+        UI.sync.showSuccessInfo();
     });
 };

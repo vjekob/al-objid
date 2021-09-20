@@ -1,9 +1,10 @@
 import { workspace } from "vscode";
 import { output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, FolderEventLogEntries, NextObjectIdInfo } from "./BackendTypes";
+import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, FolderEventLogEntries, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
+import { PropertyBag } from "./PropertyBag";
 import { UI } from "./UI";
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
@@ -120,6 +121,15 @@ export class Backend {
             "/api/v1/syncIds",
             patch ? "PATCH" : "POST",
             { appId, ids, authKey }
+        );
+        return !!response.value;
+    }
+
+    static async autoSyncIds(consumptions: AuthorizedAppConsumption[], patch: boolean): Promise<boolean> {
+        const response = await sendRequest<ConsumptionInfo>(
+            "/api/v1/autoSyncIds",
+            patch ? "PATCH" : "POST",
+            { appFolders: consumptions }
         );
         return !!response.value;
     }

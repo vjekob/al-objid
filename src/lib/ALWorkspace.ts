@@ -1,4 +1,4 @@
-import { Uri, window, workspace } from "vscode";
+import { Uri, window, workspace, WorkspaceFolder } from "vscode";
 import { getManifest } from "./AppManifest";
 import { QuickPickWrapper } from "./QuickPickWrapper";
 import { UI } from "./UI";
@@ -9,8 +9,12 @@ export class ALWorkspace {
         return typeof manifest?.id === "string";
     }
 
+    public static getALFolders(): WorkspaceFolder[] | undefined {
+        return workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri))
+    }
+
     public static async pickFolder(multi: boolean): Promise<Uri[] | Uri | undefined> {
-        const workspaces = workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri));
+        const workspaces = this.getALFolders();
         if (!workspaces || workspaces.length === 0) {
             UI.general.showNoWorkspacesOpenInfo();
             return;

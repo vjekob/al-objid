@@ -57,6 +57,10 @@ export const UI = {
                 `Repository ${name} is dirty or has staged content. To perform automatic synchronization, all your repositories must be clean.`,
                 "OK",
                 LABELS.BUTTON_LEARN_MORE),
+        showHowToAutoSync: async () =>
+            window.showQuickPick(Object.values(LABELS.AUTO_SYNC_PICK), {
+                placeHolder: "How do you want to auto-sync your workspace?"
+            }),
     },
 
     nextId: {

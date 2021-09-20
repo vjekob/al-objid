@@ -31,4 +31,10 @@ export const LABELS = {
         YES: "Yes, please replace existing object ID consumptions in the back end",
         NO: "No, I have changed my mind"
     },
+
+    AUTO_SYNC_PICK: {
+        FULL_AUTO: "Fully automated (no questions)",
+        INTERACTIVE: "Interactive (ask about folders and branches)",
+        LEARN_MORE: "Learn more about auto-syncing"
+    }
 };
