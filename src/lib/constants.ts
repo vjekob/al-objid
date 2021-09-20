@@ -4,6 +4,8 @@ export const URLS = {
     AUTHORIZATION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md",
     SYNCHRONIZATION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md",
     EXTENSION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Welcome.md",
+    AUTO_SYNC: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSync.md",
+    AUTO_SYNC_DIRTY: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSyncDirty.md",
 }
 
 export const OBJECT_TYPES = [

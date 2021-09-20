@@ -1,8 +1,8 @@
 import { ObjIdConfig } from "./../lib/ObjIdConfig";
-import { extensions, ProgressLocation, Uri, window, workspace } from "vscode";
+import { env, extensions, ProgressLocation, Uri, window, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { AuthorizedAppConsumption, ConsumptionInfo } from "../lib/BackendTypes";
-import { LABELS } from "../lib/constants";
+import { LABELS, URLS } from "../lib/constants";
 import { Git, GitBranchInfo } from "../lib/Git";
 import { getObjectDefinitions, getWorkspaceFolderFiles, updateActualConsumption } from "../lib/ObjectIds";
 import { PropertyBag } from "../lib/PropertyBag";
@@ -10,6 +10,7 @@ import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
 import { getManifest } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
+import { output } from "../features/Output";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -141,25 +142,26 @@ export const autoSyncObjectIds = async () => {
             auto = true;
             break;
         case LABELS.AUTO_SYNC_PICK.LEARN_MORE:
-            // TODO: learn more
+            env.openExternal(Uri.parse(URLS.AUTO_SYNC));
             return;
     };
 
     await window.withProgress({ location: ProgressLocation.Notification }, async progress => {
         if (!workspace.workspaceFolders || !workspace.workspaceFolders.length) {
+            output.log("[auto-sync-object-ids] No AL folders found in the workspace.");
             return;
         }
 
         const gitExtension = extensions?.getExtension('vscode.git')?.exports;
         const git = gitExtension?.getAPI(1);
 
-        // 1. pick folders
+        // Pick folders
         let folders = auto
             ? ALWorkspace.getALFolders()?.map(workspace => workspace.uri)
             : await ALWorkspace.pickFolder(true) as Uri[] | undefined;
         if (!folders || !folders.length) return;
 
-        // 2. find git repos that match picked folders
+        // Find git repos that match picked folders
         progress.report({ message: "Connecting to Git..." });
         let repos: Uri[] = [];
         let repoFolders: PropertyBag<Uri[]> = {};
@@ -181,23 +183,23 @@ export const autoSyncObjectIds = async () => {
 
             if (!await Git.instance.isClean(root)) {
                 if (await UI.sync.showRepoNotClean(getRepoName(root)) === LABELS.BUTTON_LEARN_MORE) {
-                    // TODO: redirect to some page where auto-sync is explained
+                    env.openExternal(Uri.parse(URLS.AUTO_SYNC_DIRTY));
                 }
                 return;
             }
             repos.push(root);
         }
 
-        // 3. Iterate through all repos to obtain branch information
+        // Iterate through all repos to obtain branch information
         let branches: PropertyBag<GitBranchInfo[] | null> = {};
         let i = 0;
         for (let repo of repos) {
             progress.report({ message: `Fetching branch information for ${getRepoName(repo)} (${++i} of ${repos.length})...` });
 
-            // a. Fetch
+            // Fetch
             await Git.instance.fetch(repo);
 
-            // b. Obtain branches
+            // Obtain branches
             branches[repo.fsPath] = await Git.instance.branches(repo);
             if (branches === null) {
                 // For some reason, repository reports no branches
@@ -205,12 +207,12 @@ export const autoSyncObjectIds = async () => {
             }
         }
 
-        // 4. Iterate through all repos and pick the branches
+        // Iterate through all repos and pick the branches
         for (let repo of repos) {
             let repoBranches = branches[repo.fsPath];
             if (repoBranches === null) continue;
 
-            // c. Pick from list of branches
+            // Pick from list of branches
             if (repoBranches.length > 1 && !auto) {
                 progress.report({ message: "Waiting for your branches selection..." });
                 let quickPick = new QuickPickWrapper<GitBranchInfo>(repoBranches.map((branch) => ({
@@ -225,7 +227,7 @@ export const autoSyncObjectIds = async () => {
                 repoBranches = picked;
             }
 
-            // d. For each branch, if local is ahead/behind, ask whether to use local, remote, or both (and also indicate how many commits is difference)
+            // For each branch, if local is ahead/behind, ask whether to use local, remote, or both (and also indicate how many commits is difference)
             let config: AutoSyncConfiguration = createNewConfig(repo);
             for (let branch of repoBranches) {
                 progress.report({ message: `Progressing branch ${branch.name || branch.tracks} of ${getRepoName(repo)}` });
@@ -268,8 +270,6 @@ export const autoSyncObjectIds = async () => {
             setup.push(config);
         }
 
-        // e. Prepare a copy of each branch, checkout into it
-        // e.2 foreach folder belonging in this repo do sync
         let consumptions: PropertyBag<ConsumptionInfo> = {};
         for (let config of setup) {
             progress.report({ message: `Finding object IDs in ${config.repo ? `repo ${getRepoName(config.repo)}` : "workspace"}...` })
