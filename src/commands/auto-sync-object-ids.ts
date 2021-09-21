@@ -135,6 +135,17 @@ function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, folde
     return result;
 }
 
+const AutoSyncResult = {
+    Success: Symbol("Success"),
+    NoALFolders: Symbol("NoALFolders"),
+    SilentFailure: Symbol("SilentFailure"),
+    GitDirty: Symbol("GitDirty"),
+}
+
+function autoSyncResult(status: symbol, context?: any): { status: symbol, context: any } {
+    return { status, context };
+}
+
 export const autoSyncObjectIds = async () => {
     let auto = false;
     switch (await UI.sync.showHowToAutoSync()) {
@@ -146,11 +157,8 @@ export const autoSyncObjectIds = async () => {
             return;
     };
 
-    await window.withProgress({ location: ProgressLocation.Notification }, async progress => {
-        if (!workspace.workspaceFolders || !workspace.workspaceFolders.length) {
-            output.log("[auto-sync-object-ids] No AL folders found in the workspace.");
-            return;
-        }
+    let result = await window.withProgress({ location: ProgressLocation.Notification }, async progress => {
+        if (!workspace.workspaceFolders || !workspace.workspaceFolders.length) return autoSyncResult(AutoSyncResult.NoALFolders);
 
         const gitExtension = extensions?.getExtension('vscode.git')?.exports;
         const git = gitExtension?.getAPI(1);
@@ -159,7 +167,7 @@ export const autoSyncObjectIds = async () => {
         let folders = auto
             ? ALWorkspace.getALFolders()?.map(workspace => workspace.uri)
             : await ALWorkspace.pickFolder(true) as Uri[] | undefined;
-        if (!folders || !folders.length) return;
+        if (!folders || !folders.length) return autoSyncResult(AutoSyncResult.SilentFailure);
 
         // Find git repos that match picked folders
         progress.report({ message: "Connecting to Git..." });
@@ -181,12 +189,7 @@ export const autoSyncObjectIds = async () => {
 
             if (repos.find(repo => repo.fsPath === repoPath)) continue;
 
-            if (!await Git.instance.isClean(root)) {
-                if (await UI.sync.showRepoNotClean(getRepoName(root)) === LABELS.BUTTON_LEARN_MORE) {
-                    env.openExternal(Uri.parse(URLS.AUTO_SYNC_DIRTY));
-                }
-                return;
-            }
+            if (!await Git.instance.isClean(root)) return autoSyncResult(AutoSyncResult.GitDirty, root);
             repos.push(root);
         }
 
@@ -279,6 +282,23 @@ export const autoSyncObjectIds = async () => {
         let payload = authorizeConsumptions(consumptions, folders);
 
         await Backend.autoSyncIds(payload, false);
-        UI.sync.showSuccessInfo();
+        return autoSyncResult(AutoSyncResult.Success);
     });
+
+    switch (result.status) {
+        case AutoSyncResult.Success:
+            output.log("[auto-sync-object-ids] Completed successfully.");
+            UI.sync.showSuccessInfo();
+            break;
+        case AutoSyncResult.NoALFolders:
+            output.log("[auto-sync-object-ids] No AL folders found in the workspace.");
+            break;
+        case AutoSyncResult.GitDirty:
+            let repoName = getRepoName(result.context);
+            output.log(`[auto-sync-object-ids] Git repository ${repoName} is dirty. Cannot auto sync.`);
+            if (await UI.sync.showRepoNotClean(repoName) === LABELS.BUTTON_LEARN_MORE) {
+                env.openExternal(Uri.parse(URLS.AUTO_SYNC_DIRTY));
+            }
+            break;
+    }
 };

@@ -6,12 +6,17 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 
 ## Unreleased
 ### Added
-- App pools feature (https://github.com/vjekob/al-objid/issues/1).
-- Support for table fields and enum values (coming in 1.1.1).
+- App pools feature (https://github.com/vjekob/al-objid/issues/1) supported in the back end.
+- Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
+
+## [1.2.3] - 2021-09-20
+### Changed
+- AL Object ID Ninja is now compatible with Visual Studio Code 1.50.1 (September 2020) and newer.
 
 ## [1.2.2] - 2021-09-20
 ### Added
 - Auto-synchronization feature is implemented. To read more about this feature, follow [this link](https://github.com/vjekob/al-objid/tree/master/doc/AutoSync.md).
+
 ## [1.2.1] - 2021-09-16
 ### Changed
 - The *Azure back end has no information about consumed object IDs. Do you want to synchronize?* question is now asked only once per VS Code

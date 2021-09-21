@@ -5,10 +5,11 @@ import { Output } from "../features/Output";
 import { stringify, parse } from "comment-json";
 import { PropertyBag } from "./PropertyBag";
 
-export interface ObjIdConfiguration {
-    [key: symbol]: [any];
-    authKey?: string;
-    appPoolId?: string;
+enum ConfigurationProperty {
+    AuthKey = "authKey",
+    AppPoolId = "appPoolId",
+    BackEndUrl = "backEndUrl",
+    BackEndApiKey = "backEndApiKey",
 }
 
 export const CONFIG_FILE_NAME = ".objidconfig";
@@ -33,20 +34,20 @@ export class ObjIdConfig {
 
     private _path: fs.PathLike;
 
-    private read(): ObjIdConfiguration {
+    private read(): any {
         try {
-            return parse(fs.readFileSync(this._path).toString() || "{}") as unknown as ObjIdConfiguration;
+            return parse(fs.readFileSync(this._path).toString() || "{}") as any;
         } catch (e: any) {
             if (e.code !== "ENOENT") Output.instance.log(`Cannot read file ${path}: ${e}`);
-            return {} as ObjIdConfiguration;
+            return {};
         }
     }
 
-    private write(object: ObjIdConfiguration) {
+    private write(object: any) {
         fs.writeFileSync(this._path, stringify(object, null, 2));
     }
 
-    private setComment(config: ObjIdConfiguration, property: string) {
+    private setComment(config: any, property: ConfigurationProperty) {
         let value = COMMENTS[property];
         let key = Symbol.for(`before:${property}`);
         if (!config[key]) config[key] = [{
@@ -55,11 +56,17 @@ export class ObjIdConfig {
         }];
     }
 
-    private removeComment(config: ObjIdConfiguration, property: string) {
+    private removeComment(config: any, property: ConfigurationProperty) {
         delete config[Symbol.for(`before:${property}`)];
     }
 
-    private setProperty<T>(config: ObjIdConfiguration, property: string, value?: T) {
+    private getProperty<T>(property: ConfigurationProperty): T {
+        let config = this.read();
+        return config[property];
+    }
+
+    private setProperty<T>(property: ConfigurationProperty, value?: T) {
+        let config = this.read();
         if (value) {
             (config as any)[property] = value;
             this.setComment(config, property);
@@ -67,16 +74,30 @@ export class ObjIdConfig {
             delete config.authKey;
             this.removeComment(config, property);
         }
+        this.write(config);
     }
 
     get authKey(): string {
-        let config = this.read();
-        return config.authKey || "";
+        return this.getProperty(ConfigurationProperty.AuthKey) || "";
     }
 
     set authKey(value: string) {
-        let config = this.read();
-        this.setProperty(config, "authKey", value);
-        this.write(config);
+        this.setProperty(ConfigurationProperty.AuthKey, value);
+    }
+
+    get backEndUrl(): string {
+        return this.getProperty(ConfigurationProperty.BackEndUrl) || "";
+    }
+
+    set backEndUri(value: string) {
+        this.setProperty(ConfigurationProperty.BackEndUrl, value);
+    }
+
+    get backEndApiKey(): string {
+        return this.getProperty(ConfigurationProperty.BackEndApiKey) || "";
+    }
+
+    set backEndApiKey(value: string) {
+        this.setProperty(ConfigurationProperty.BackEndApiKey, value);
     }
 }
