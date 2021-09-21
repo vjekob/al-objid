@@ -30,7 +30,6 @@ const AUTHORIZATION_TYPE = {
 
 interface HandleOptions {
     authorizationType: symbol;
-    rateLimiter?: boolean;
 }
 
 export class RequestHandler {
@@ -128,9 +127,7 @@ export class RequestHandler {
     }
 
     private static async processRequest<TBindings, TBody>(context: Context, req: HttpRequest, handler: HandlerFunc<TBindings, TBody>, options: HandleOptions, validator?: RequestValidator) {
-        if (options.rateLimiter) {
-            if (!this.handleRateLimiting(req, context)) return;
-        }
+        if (!this.handleRateLimiting(req, context)) return;
 
         if (options.authorizationType === AUTHORIZATION_TYPE.SINGLE) {
             if (!await this.handleAuthorization(req.body, context)) return;
@@ -151,7 +148,6 @@ export class RequestHandler {
             req,
             handler,
             {
-                rateLimiter: true, // TODO: this is only temporary, it should be on for everything
                 authorizationType: AUTHORIZATION_TYPE.MULTI
             },
             validator
