@@ -1,0 +1,26 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "post"
+      ],
+      "route": "v1/joinAppToPool"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "blob",
+      "direction": "in",
+      "name": "pool",
+      "path": "%BlobContainer%/{appId}/_pool.json"
+    }
+  ],
+  "scriptFile": "../dist/src/functions/v1/joinAppToPool/index.js"
+}

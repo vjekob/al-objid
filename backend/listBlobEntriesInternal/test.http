@@ -1,1 +1,0 @@
-get http://localhost:7071/api/listBlobEntriesInternal?perApp=0&sortBy=contentLength
