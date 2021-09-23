@@ -1,9 +1,10 @@
 import { BodyWithAuthorization } from "../../../common/types";
-import { RequestValidator } from "../../../common/RequestValidator";
+import { RequestValidator } from "../RequestValidator";
 import { BodyWithAppId, BodyWithRanges, BodyWithType, Range, TypedContext } from "../../../common/types";
 import { AzureFunction } from "@azure/functions";
 import { areRangesEqual, findFirstAvailableId } from "../../../common/util";
-import { ErrorResponse, RequestHandler } from "../../../common/RequestHandler";
+import { RequestHandler } from "../RequestHandler";
+import { ErrorResponse } from "../../../common/ErrorResponse";
 import { updateConsumption, updateRanges } from "../../../common/updates";
 import { Log } from "../../../common/LogCache";
 

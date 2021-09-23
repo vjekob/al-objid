@@ -1,5 +1,4 @@
 import { Context, HttpRequest } from "@azure/functions";
-import { IPAddress } from "./types";
 import { logRejection } from "./updates";
 
 const CONSTRAINTS = {
@@ -34,6 +33,14 @@ interface PropertyBag<T> {
 const log: PropertyBag<number[]> = {};
 const violations: PropertyBag<number[]> = {};
 const nextRequestAt: PropertyBag<number> = {};
+
+class IPAddress {
+    static fromHeaders(req: HttpRequest) {
+        let raw = req.headers["x-forwarded-for"] || "";
+        let parts = raw.split(":");
+        return parts[0] || "<UNKNOWN>";
+    }
+}
 
 export class RateLimiter {
     private static getContext(req: HttpRequest): RateLimiterContext {

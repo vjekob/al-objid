@@ -1,7 +1,9 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-import { AuthorizationCache } from "./AuthorizationCache";
-import { RateLimiter } from "./RateLimiter";
-import { ErrorResponse } from "./RequestHandler";
+import { AuthorizationCache } from "../../common/AuthorizationCache";
+import { RateLimiter } from "../../common/RateLimiter";
+import { ErrorResponse } from "../../common/ErrorResponse";
+import { PropertyBinder, RequestBinder } from "./RequestBinder";
+import { RequestValidator } from "./RequestValidator";
 
 interface AppRequest {
     appId: string;
@@ -21,39 +23,40 @@ interface RequestHandler<TRequest = any, TResponse = any, TBindings = any> {
 
 export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindings = any> {
     private _handler: HandlerFunc<TRequest, TResponse, TBindings>;
+    private _validator = new RequestValidator();
+    private _binder = new RequestBinder();
 
     public constructor(handler: HandlerFunc<TRequest, TResponse, TBindings>) {
         this._handler = handler;
     }
 
-    private isValidAuthorizationRequest(body: AuthorizedBody, context: Context): boolean {
-        const check = (auth: AuthorizedRequest): boolean => {
+    private isValidAuthorizationRequest(body: AuthorizedBody, context: Context): string | true {
+        const check = (auth: AuthorizedRequest): string | true => {
             if (typeof auth !== "object" || !auth) {
-                context.log("Parameter `appId` is not present.");
-                return false;
+                return "Parameter `appId` is not present.";
             }
 
             let { appId, authKey } = auth;
             if (typeof appId !== "string" || !appId) {
-                context.log("Parameter `appId` must be a non-zero-length string.");
-                return false;
+                return "Parameter `appId` must be a non-zero-length string.";
             }
             if (typeof authKey !== "undefined" && typeof authKey !== "string" || typeof authKey === "string" && !authKey) {
-                context.log("Parameter `authKey` must be undefined or non zero-length-string.")
-                return false;
+                return "Parameter `authKey` must be undefined or non zero-length-string.";
             }
             return true;
         };
 
         if (Array.isArray(body)) {
             for (let app of body) {
-                if (!check(app)) {
-                    return false;
+                let result = check(app);
+                if (result !== true) {
+                    return result;
                 }
             }
         } else {
-            if (!check(body)) {
-                return false;
+            let result = check(body);
+            if (result !== true) {
+                return result;
             }
         }
 
@@ -84,29 +87,30 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
         return result;
     }
 
-    private respondBadRequest(context: Context): void {
+    private respondBadRequest(context: Context, body?: string): void {
         context.res = {
             status: 400,
-            body: "Bad request format"
+            body: { error: body || "Bad request format" }
         };
     }
 
     private respondUnauthorized(context: Context): void {
         context.res = {
             status: 401,
-            body: "Invalid credentials"
+            body: { error: "Invalid credentials" }
         };
     }
 
     private respondTooManyRequests(context: Context): void {
         context.res = {
             status: 429,
-            body: "Chill down, will you please?"
+            body: { error: "Chill down, will you please?" }
         };
     }
 
     private async handleOne(context: Context, req: TRequest): Promise<false | TResponse> {
-        let response = await this._handler(req, {} as TBindings);
+        let bindings = await this._binder.getBindings<TBindings>(context, req);
+        let response = await this._handler(req, bindings);
         if (response instanceof ErrorResponse) {
             context.res = {
                 status: response.status || 400,
@@ -130,30 +134,53 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
     }
 
     private async handleHttpRequest(context: Context, req: HttpRequest): Promise<void> {
+        const { body } = req;
+
         if (!RateLimiter.accept(req, context)) {
             return this.respondTooManyRequests(context);
         }
 
-        if (!this.isValidAuthorizationRequest(req.body, context)) {
-            return this.respondBadRequest(context);
+        let authValidation = this.isValidAuthorizationRequest(body, context);
+        if (authValidation !== true) {
+            return this.respondBadRequest(context, authValidation);
         }
 
-        if (!await this.isAuthorized(req.body)) {
+        if (!await this.isAuthorized(body)) {
             return this.respondUnauthorized(context);
         }
 
-        if (Array.isArray(req.body)) {
+        if (!this.validate(context, body)) return;
+
+        if (Array.isArray(body)) {
             return await this.handleArray(context, req);
         }
 
-        let handleResult = await this.handleOne(context, req.body);
+        let handleResult = await this.handleOne(context, body);
         if (handleResult !== false) {
             context.res.body = handleResult;
         }
     }
 
-    private async validate(req: HttpRequest): Promise<boolean> {
+    private validate(context: Context, body: any): boolean {
+        if (Array.isArray(body)) {
+            for (let one of body) {
+                let result = this._validator.validate(one);
+                if (typeof result === "string") return (this.respondBadRequest(context, result), false);
+            }
+            return true;
+        }
+        let result = this._validator.validate(body);
+        if (typeof result === "string") return (this.respondBadRequest(context, result), false);
+
         return true;
+    }
+
+    public bind(blob: string): PropertyBinder {
+        return this._binder.getPropertyBinder(blob);
+    }
+
+    public get validator() {
+        return this._validator;
     }
 
     public get azureFunction(): AzureFunction {

@@ -4,7 +4,8 @@ one file should be declared and exported from here.
 */
 
 import { Context, HttpRequest } from "@azure/functions";
-import { RequestValidator, ValidatorRule } from "./RequestValidator";
+import { RequestValidator, ValidatorRule } from "../functions/v1/RequestValidator";
+import { AppAuthorization } from "./AppAuthorization";
 
 /**
  * Represents a range of object IDs configurable through `app.json` manifest file.
@@ -197,28 +198,6 @@ export interface AuthorizationContext {
     }
 }
 
-/**
- * Represents an app authorization structure.
- */
-export interface AppAuthorization {
-    key: string;
-    valid: boolean;
-}
-
-/**
- * Represents an entry in the event log
- */
-export interface EventLogEntry {
-    eventType: string;
-    timestamp: number;
-    user: string;
-    data: any;
-}
-
-export interface UserContent {
-    user: string;
-}
-
 export interface PoolInfo {
     ownerApp: string;
     ranges: Range[];
@@ -234,14 +213,6 @@ export interface RejectionInfo {
     ipAddress: string;
     appId: string;
     endpoint: string;
-}
-
-export class IPAddress {
-    static fromHeaders(req: HttpRequest) {
-        let raw = req.headers["x-forwarded-for"] || "";
-        let parts = raw.split(":");
-        return parts[0] || "<UNKNOWN>";
-    }
 }
 
 /**

@@ -1,7 +1,8 @@
 import { BodyWithAuthorization } from "../../../common/types";
 import { AzureFunction } from "@azure/functions";
-import { ErrorResponse, RequestHandler } from "../../../common/RequestHandler";
-import { RequestValidator } from "../../../common/RequestValidator";
+import { RequestHandler } from "../RequestHandler";
+import { ErrorResponse } from "../../../common/ErrorResponse";
+import { RequestValidator } from "../RequestValidator";
 import { BodyWithAppId } from "../../../common/types";
 import { readAppAuthorization, removeAppAuthorization, writeAppAuthorization } from "../../../common/updates";
 import { AuthorizationCache } from "../../../common/AuthorizationCache";

@@ -1,4 +1,4 @@
-import { AppAuthorization } from "./types";
+import { AppAuthorization } from "./AppAuthorization";
 import { readAppAuthorization } from "./updates";
 
 /**

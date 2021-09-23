@@ -1,5 +1,6 @@
 import { Blob } from "./Blob";
-import { AppAuthorization, EventLogEntry, ObjectIds, OBJECT_TYPES, PoolInfo, PoolReference, Range, RejectionInfo } from "./types";
+import { ObjectIds, OBJECT_TYPES, PoolInfo, PoolReference, Range, RejectionInfo } from "./types";
+import { AppAuthorization } from "./AppAuthorization";
 import { findFirstAvailableId, getSha256 } from "./util";
 
 export async function updateRanges(appId: string, ranges: Range[]): Promise<Range[]> {

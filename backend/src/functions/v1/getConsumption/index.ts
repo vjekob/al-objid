@@ -1,7 +1,7 @@
 import { AzureFunction } from "@azure/functions";
 import { Blob } from "../../../common/Blob";
-import { RequestHandler } from "../../../common/RequestHandler";
-import { RequestValidator } from "../../../common/RequestValidator";
+import { RequestHandler } from "../RequestHandler";
+import { RequestValidator } from "../RequestValidator";
 import { BodyWithAppId, ObjectIds, OBJECT_TYPES } from "../../../common/types";
 import { getBlobName } from "../../../common/updates";
 

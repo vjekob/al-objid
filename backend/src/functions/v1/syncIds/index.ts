@@ -1,7 +1,8 @@
 import { AzureFunction } from "@azure/functions";
-import { RequestHandler } from "../../../common/RequestHandler";
-import { RequestValidator } from "../../../common/RequestValidator";
-import { AppAuthorization, BodyWithAppId, BodyWithAuthorization, BodyWithObjectIds } from "../../../common/types";
+import { RequestHandler } from "../RequestHandler";
+import { RequestValidator } from "../RequestValidator";
+import { BodyWithAppId, BodyWithAuthorization, BodyWithObjectIds } from "../../../common/types";
+import { AppAuthorization } from "../../../common/AppAuthorization";
 import { updateConsumptions } from "../../../common/updates";
 
 interface SyncIdsBody extends BodyWithAppId, BodyWithObjectIds, BodyWithAuthorization {};

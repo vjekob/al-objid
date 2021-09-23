@@ -5,9 +5,29 @@ Content-Type: application/json
 
 [
     {
-        "appId": "0000"
+        "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
+        "authKey": "KUSVA73ScpHsrR5HGNeJDk9qVt+bLSWxOPCfkm9PMQI=",
+        "type": "codeunit",
+        "ranges": [
+            {
+                "from": 0,
+                "to": 1
+            }
+        ],
+        "quantity": 1,
+        "fromRange": {
+            "from": 0,
+            "to": 1
+        }
     },
     {
-        "appId": "0001"
+        "appId": "0001",
+        "type": "pageextension",
+        "ranges": [
+            {
+                "from": 50000,
+                "to": 99999
+            }
+        ]
     }
 ]

@@ -1,24 +1,15 @@
 import { Context, HttpRequest } from "@azure/functions";
 import { performance } from "perf_hooks";
-import { AuthorizationCache } from "./AuthorizationCache";
-import { TIMEOUT_TOKEN } from "./Blob";
-import { RateLimiter } from "./RateLimiter";
+import { AuthorizationCache } from "../../common/AuthorizationCache";
+import { TIMEOUT_TOKEN } from "../../common/Blob";
+import { ErrorResponse } from "../../common/ErrorResponse";
+import { RateLimiter } from "../../common/RateLimiter";
 import { RequestValidator } from "./RequestValidator";
-import { BodyWithAppFolders, BodyWithAppId, BodyWithAuthorization, FolderAuthorization, IPAddress, TypedContext, TypedRequest } from "./types";
+import { BodyWithAppFolders, BodyWithAppId, BodyWithAuthorization, FolderAuthorization, TypedContext, TypedRequest } from "../../common/types";
 
 type HandlerFunc<TBindings, TBody> = (context: TypedContext<TBindings>, req: TypedRequest<TBody>) => Promise<any>;
 
 interface AuthorizableBody extends BodyWithAppId, BodyWithAuthorization { }
-
-export class ErrorResponse {
-    public message: string;
-    public status: number;
-
-    constructor(message: string, status: number = 400) {
-        this.message = message;
-        this.status = status;
-    }
-}
 
 const instanceId = Date.now();
 
@@ -33,13 +24,6 @@ interface HandleOptions {
 }
 
 export class RequestHandler {
-    private static getHeaders(req: HttpRequest) {
-        return {
-            "x-object-id-ip-address": IPAddress.fromHeaders(req),
-            "x-object-id-instance": instanceId
-        };
-    }
-
     private static async handleAuthorization(body: AuthorizableBody, context: Context): Promise<boolean> {
         let { appId, authKey } = body;
         if (await AuthorizationCache.checkAuthorization(appId, authKey)) return true;
@@ -73,7 +57,6 @@ export class RequestHandler {
     private static handleValidation(req: HttpRequest, context: Context, validator?: RequestValidator): boolean {
         if (validator instanceof RequestValidator && !validator.validate(req)) {
             context.res = {
-                headers: this.getHeaders(req),
                 status: 400,
                 body: validator.validationError,
             };
@@ -85,7 +68,6 @@ export class RequestHandler {
     private static handleRateLimiting(req: HttpRequest, context: Context): boolean {
         if (RateLimiter.accept(req, context)) return true;
         context.res = {
-            headers: this.getHeaders(req),
             status: 429,
             body: "Chill down, will you please? And while you are at it, shame on you, too!"
         }
@@ -98,28 +80,24 @@ export class RequestHandler {
             const result = await handler(context, req);
             if (result instanceof ErrorResponse) {
                 context.res = {
-                    headers: this.getHeaders(req),
-                    status: result.status || 400,
+                        status: result.status || 400,
                     body: result.message,
                 };
             } else {
                 context.res = {
-                    headers: this.getHeaders(req),
-                    status: 200,
+                        status: 200,
                     body: result,
                 };
             }
         } catch (e) {
             if (e === TIMEOUT_TOKEN) {
                 context.res = {
-                    headers: this.getHeaders(req),
-                    status: 408,
+                        status: 408,
                     body: `Request has timed out after ${performance.now() - start} ms.`
                 }
             } else {
                 context.res = {
-                    headers: this.getHeaders(req),
-                    status: 429,
+                        status: 429,
                     body: `An unexpected error has occurred: ${JSON.stringify(e)}`
                 }
             }

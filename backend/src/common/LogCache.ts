@@ -1,4 +1,4 @@
-import { EventLogEntry, UserContent } from "./types";
+import { EventLogEntry } from "./EventLogEntry";
 
 /**
  * IMPORTANT!
@@ -20,6 +20,10 @@ import { EventLogEntry, UserContent } from "./types";
 
 // Keep log entries cached for 1 hour
 const LOG_CACHE_DURATION = 3600000;
+
+interface UserContent {
+    user: string;
+}
 
 class AppLogCache {
     private _entries: EventLogEntry[] = [];

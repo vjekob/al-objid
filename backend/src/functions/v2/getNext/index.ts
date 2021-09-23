@@ -1,31 +1,12 @@
-import { ALObjectType } from "../../../common/ALObjectType";
-import { AzureFunctionRequestHandler } from "../../../common/RequestHandler.v2";
-import { Range } from "../../../common/types";
-
-interface GetNextRequest {
-    type: ALObjectType;
-    ranges?: Range[];
-    quantity?: number;
-    fromRange?: Range;
-}
-
-interface GetNextResponse {
-    type: ALObjectType;
-    id: number | number[];
-    updated: boolean;
-    available: boolean;
-    updateAttempts: number;
-    hasConsumption: boolean;
-}
-
-interface GetNextBindings {
-    ranges: Range[];
-    ids: number[];
-}
+import { AzureFunctionRequestHandler } from "../RequestHandler";
+import { GetNextBindings, GetNextRequest, GetNextResponse } from "./types";
 
 const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse, GetNextBindings>(async (request, bindings) => {
     const { type } = request;
 
+    if (bindings) {
+        //;
+    }
     return {
         type,
         id: 1,
@@ -34,6 +15,16 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
         updateAttempts: 0,
         hasConsumption: true,
     };
+});
+
+getNext.bind("{appId}/_ranges.json").to("ranges");
+getNext.bind("{appId}/{type}.json").to("ids");
+
+getNext.validator.expect({
+    type: "ALObjectType",
+    ranges: "Range[]",
+    "quantity?": "NonZeroNumber",
+    "fromRange?": "Range",
 });
 
 export default getNext.azureFunction;
