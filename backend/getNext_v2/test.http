@@ -1,0 +1,13 @@
+# Get localhost
+
+get http://localhost:7071/api/v2/getNext
+Content-Type: application/json
+
+[
+    {
+        "appId": "0000"
+    },
+    {
+        "appId": "0001"
+    }
+]

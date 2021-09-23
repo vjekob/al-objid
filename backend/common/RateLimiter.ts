@@ -15,6 +15,9 @@ const CONSTRAINTS = {
 
     // Number of maximum allowed violations
     MAX_VIOLATIONS: 3,
+
+    // Duration of request ban
+    BAN_DURATION: 15000,
 }
 
 interface RateLimiterContext {
@@ -47,7 +50,10 @@ export class RateLimiter {
         let { ipAddress, appId, endpoint } = this.getContext(req);
         const now = Date.now();
 
-        if (nextRequestAt[ipAddress] && now < nextRequestAt[ipAddress]) return false;
+        if (nextRequestAt[ipAddress] && now < nextRequestAt[ipAddress]) {
+            context.log(`${ipAddress} is banned for ${nextRequestAt[ipAddress] - now} more milliseconds`);
+            return false;
+        }
 
         if (!log[ipAddress]) log[ipAddress] = [];
         if (!violations[ipAddress]) violations[ipAddress] = [];
@@ -75,6 +81,7 @@ export class RateLimiter {
             let count = check[interval];
             let max = CONSTRAINTS.INTERVALS[interval];
             if (count > max) {
+                context.log(`Rejecting the call from ${ipAddress} for ${count} calls in ${interval} milliseconds`);
                 violations[ipAddress].push(now);
                 reject = true;
                 break;
@@ -84,9 +91,10 @@ export class RateLimiter {
         log[ipAddress].push(now);
 
         if (violations[ipAddress].length >= 3) {
+            context.log(`Banning ${ipAddress} for ${CONSTRAINTS.BAN_DURATION} milliseconds`);
             violations[ipAddress] = [];
             log[ipAddress] = [];
-            nextRequestAt[ipAddress] = now + 15000;
+            nextRequestAt[ipAddress] = now + CONSTRAINTS.BAN_DURATION;
             logRejection(appId, endpoint, ipAddress);
         }
 
