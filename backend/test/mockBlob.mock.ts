@@ -32,7 +32,7 @@ export const mockBlob = (content: any = {}, api: MockBlobDescriptor = {} as any)
             },
             optimisticUpdate: async (update, timeout) => {
                 api.optimisticUpdate(update, timeout);
-                return content[name] = await update();
+                return content[name] = await update(content[name]);
             },
         };
     });

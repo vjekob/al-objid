@@ -63,7 +63,7 @@ export async function updateConsumptions(appId: string, objectIds: ObjectIds, pa
         let blob = new Blob<number[]>(getBlobName(appId, type));
         result[type] = await blob.optimisticUpdate(existing => {
             let result = [
-                ...(patch ? existing : []),
+                ...(patch ? existing || [] : []),
                 ...ids
             ];
             return [...new Set(result)].sort((left, right) => left - right);
