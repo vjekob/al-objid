@@ -80,25 +80,25 @@ export class RequestHandler {
             const result = await handler(context, req);
             if (result instanceof ErrorResponse) {
                 context.res = {
-                        status: result.status || 400,
+                    status: result.status || 400,
                     body: result.message,
                 };
             } else {
                 context.res = {
-                        status: 200,
+                    status: 200,
                     body: result,
                 };
             }
         } catch (e) {
             if (e === TIMEOUT_TOKEN) {
                 context.res = {
-                        status: 408,
+                    status: 408,
                     body: `Request has timed out after ${performance.now() - start} ms.`
                 }
             } else {
                 context.res = {
-                        status: 429,
-                    body: `An unexpected error has occurred: ${JSON.stringify(e)}`
+                    status: 418,
+                    body: `An entirely unexpected error has occurred: ${JSON.stringify(e)}`
                 }
             }
         }

@@ -1,43 +1,39 @@
 import { Blob } from "../src/common/Blob";
 
-// export const mockBlob = (fn: (...args: any[]) => any) => (Blob as jest.Mock).mockImplementation(fn);
-
-interface BlobDescriptor {
-    read?(ignoreError: boolean): any;
-    delete?(): boolean;
-    readAll?(token?: string): any;
-    optimisticUpdate?(update: Function, timeout?: number);
+export interface MockBlobDescriptor {
+    constructor(name: string): void;
+    read(ignoreError: boolean): Promise<any>;
+    delete(): Promise<boolean>;
+    readAll(token: string): Promise<any>;
+    optimisticUpdate(update: Function, timeout?: number): Promise<any>;
+    canDelete: boolean;
 }
 
-export const mockBlob = (descriptor: BlobDescriptor = {}) => {
-    const blob = {
-        constructor: jest.fn(),
-
-        read: jest.fn(async (ignoreError) => {
-            if (descriptor.read) {
-                return await descriptor.read(ignoreError);
-            }
-            return Promise.resolve(ignoreError ? {} : undefined);
-        }),
-
-        delete: jest.fn(async () => {
-            if (descriptor.delete) {
-                return await descriptor.delete();
-            }
-            return Promise.resolve(false);
-        }),
-
-        optimisticUpdate: jest.fn(async (update, timeout) => {
-            if (descriptor.optimisticUpdate) {
-                return await descriptor.optimisticUpdate(update, timeout);
-            }
-        })
-    };
+export const mockBlob = (content: any = {}, api: MockBlobDescriptor = {} as any) => {
+    api.constructor = jest.fn();
+    api.read = jest.fn();
+    api.delete = jest.fn();
+    api.readAll = jest.fn();
+    api.optimisticUpdate = jest.fn();
+    api.canDelete = true;
 
     (Blob as jest.Mock).mockImplementation((name) => {
-        blob.constructor(name);
-        return blob;
+        api.constructor(name);
+        return {
+            read: async (ignoreError) => {
+                api.read(ignoreError);
+                let result = content[name];
+                return Promise.resolve(result || ignoreError && {} || undefined);
+            },
+            delete: async () => {
+                api.delete();
+                delete content[name];
+                return Promise.resolve(api.canDelete);
+            },
+            optimisticUpdate: async (update, timeout) => {
+                api.optimisticUpdate(update, timeout);
+                return content[name] = await update();
+            },
+        };
     });
-
-    return blob;
 };

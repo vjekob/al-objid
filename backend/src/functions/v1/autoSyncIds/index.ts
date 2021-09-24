@@ -1,9 +1,8 @@
 import { AzureFunction } from "@azure/functions";
-import { Log } from "../../../common/LogCache";
 import { RequestHandler } from "../RequestHandler";
 import { RequestValidator } from "../RequestValidator";
 import { BodyWithAppFolders, BodyWithObjectIds, INVALID_OBJECT_IDS, ObjectIds, OBJECT_IDS_VALIDATION_ERROR, OBJECT_TYPES } from "../../../common/types";
-import { updateConsumption, updateConsumptions } from "../../../common/updates";
+import { updateConsumptions } from "../../../common/updates";
 
 const httpTrigger: AzureFunction = RequestHandler.handleAppFoldersAuthorized<any, BodyWithAppFolders>(
     async (_, req) => {
