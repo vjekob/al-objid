@@ -1,65 +1,35 @@
-import { Blob } from "../src/common/Blob";
-import { RateLimiter } from "../src/common/RateLimiter";
-import azureFunction from "../src/functions/v1/getConsumption";
-import { mockBlob, MockBlobDescriptor } from "./MockBlob.mock";
-import { mockRequest } from "./mockRequest.mock";
+import { AzureTestLibrary } from "./AzureTestLibrary";
 
-jest.mock("../src/common/Blob");
-jest.mock("../src/common/RateLimiter");
-
-RateLimiter.accept = jest.fn().mockReturnValue(true);
+jest.mock("azure-storage");
 
 describe("Testing function api/v1/getConsumption", () => {
-    const appId = "__mock__";
-    const authBlobId = `${appId}/_authorization.json`;
-
-    beforeAll(() => {
-        (Blob as jest.Mock).mockClear();
-    });
+    const appId = AzureTestLibrary.Stub.appId();
+    const azureFunction = new AzureTestLibrary.Fake.AzureFunction("../src/functions/v1/getConsumption");
 
     it("Fails on missing appId", async () => {
-        let { context, req } = mockRequest("GET");
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(400);
+        AzureTestLibrary.Fake.useStorage({});
+        const response = await azureFunction.invoke("GET");
+        expect(response).toBeStatus(400);
     });
 
     it("Fails on missing authorization", async () => {
-        let storage = {
-            [authBlobId]: {
-                key: "__mock_key__",
-                valid: true,
-            }
-        };
-        mockBlob(storage);
-        let { context, req } = mockRequest("GET", { appId });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(401);
+        AzureTestLibrary.Fake.useStorage(AzureTestLibrary.Stub.authenticatedApp(appId));
+        const response = await azureFunction.invoke("GET", { appId });
+        expect(response).toBeStatus(401);
     });
 
     it("Fails on invalid authorization", async () => {
-        let storage = {
-            [authBlobId]: {
-                key: "__mock_key__",
-                valid: true,
-            }
-        };
-        mockBlob(storage);
-        let { context, req } = mockRequest("GET", { appId, authKey: "invalid" });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(401);
+        AzureTestLibrary.Fake.useStorage(AzureTestLibrary.Stub.authenticatedApp(appId));
+        const response = await azureFunction.invoke("GET", { appId, authKey: "invalid" });
+        expect(response).toBeStatus(401);
     });
 
     it("Fails on missing authorization", async () => {
-        let storage = {
-            [authBlobId]: {
-                key: "__mock_key__",
-                valid: true,
-            }
-        };
-        mockBlob(storage);
-        let { context, req } = mockRequest("GET", { appId, authKey: storage[authBlobId].key });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(200);
+        const key = AzureTestLibrary.Stub.authKey();
+        const storage = AzureTestLibrary.Stub.authenticatedApp(appId, key);
+        AzureTestLibrary.Fake.useStorage(storage);
+        const response = await azureFunction.invoke("GET", { appId, authKey: key });
+        expect(response).toBeStatus(200);
     });
 
     it("Fails on missing authorization", async () => {
@@ -68,13 +38,12 @@ describe("Testing function api/v1/getConsumption", () => {
             [`${appId}/codeunit.json`]: [1, 2, 3],
             [`${appId}/page.json`]: [4, 5, 6],
         };
-        mockBlob(storage);
-        let { context, req } = mockRequest("GET", { appId });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(200);
-        expect(context.res.body).toBeDefined();
-        expect(context.res.body.codeunit).toEqual(expect.arrayContaining([1, 2, 3]));
-        expect(context.res.body.page).toEqual(expect.arrayContaining([4, 5, 6]));
-        expect(context.res.body._ranges).toBeUndefined();
+        AzureTestLibrary.Fake.useStorage(storage);
+        const response = await azureFunction.invoke("GET", { appId });
+        expect(response).toBeStatus(200);
+        expect(response.body).toBeDefined();
+        expect(response.body.codeunit).toEqual(expect.arrayContaining([1, 2, 3]));
+        expect(response.body.page).toEqual(expect.arrayContaining([4, 5, 6]));
+        expect(response.body._ranges).toBeUndefined();
     });
 });

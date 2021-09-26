@@ -1,106 +1,63 @@
-import { Blob } from "../src/common/Blob";
-import { RateLimiter } from "../src/common/RateLimiter";
-import azureFunction from "../src/functions/v1/autoSyncIds";
-import { mockBlob, MockBlobDescriptor } from "./MockBlob.mock";
-import { mockRequest } from "./mockRequest.mock";
+import { ALObjectType } from "../src/functions/v2/ALObjectType";
+import { AzureTestLibrary } from "./AzureTestLibrary";
 
-jest.mock("../src/common/Blob");
-jest.mock("../src/common/RateLimiter");
-
-RateLimiter.accept = jest.fn().mockReturnValue(true);
+jest.mock("azure-storage");
 
 describe("Testing function api/v1/autoSyncIds", () => {
-    const appId = "__mock__";
-    const authBlobId = `${appId}/_authorization.json`;
-
-    beforeAll(() => {
-        (Blob as jest.Mock).mockClear();
-    });
+    const azureFunction = new AzureTestLibrary.Fake.AzureFunction("../src/functions/v1/autoSyncIds");
 
     it("Fails on missing appFolders", async() => {
-        let { context, req } = mockRequest("POST");
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(400);
+        await expect(azureFunction).toFail("POST", 400);
     });
 
     it("Fails on invalid appFolders property type", async() => {
-        let { context, req } = mockRequest("POST", { appFolders: 0 });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(400);
+        const response = await azureFunction.invoke("POST", { appFolders: 0 });
+        expect(response).toBeStatus(400);
     });
 
     it("Fails on invalid appFolders missing ids", async() => {
-        let { context, req } = mockRequest("POST", { appFolders: [ {}, {} ] });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(400);
+        const response = await azureFunction.invoke("POST", { appFolders: [ {}, {} ] });
+        expect(response).toBeStatus(400);
     });
 
     it("Fails on invalid appFolders ids not object", async() => {
-        let { context, req } = mockRequest("POST", { appFolders: [ { appId: "0", ids: 1 }, { appId: "1", ids: 1 } ] });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(400);
+        const response = await azureFunction.invoke("POST", { appFolders: [ { appId: "0", ids: 1 }, { appId: "1", ids: 1 } ] });
+        expect(response).toBeStatus(400);
     });
 
     it("Fails on invalid appFolders ids invalid object type", async() => {
-        let { context, req } = mockRequest("POST", { appFolders: [ { appId: "0", ids: { interface: [1, 2, 3] } }, { appId: "1", ids: { interface: [1, 2, 3] } } ] });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(400);
+        const response = await azureFunction.invoke("POST", { appFolders: [ { appId: "0", ids: { interface: [1, 2, 3] } }, { appId: "1", ids: { interface: [1, 2, 3] } } ] });
+        expect(response).toBeStatus(400);
     });
 
     it("Fails on invalid appFolders ids not numbers", async() => {
-        let { context, req } = mockRequest("POST", { appFolders: [ { appId: "0", ids: { codeunit: ["1", "2", "3"] } }, { appId: "1", ids: { codeunit: ["1", "2", "3"] } } ] });
-        await azureFunction(context, req);
-        expect(context.res.status).toBe(400);
+        const response = await azureFunction.invoke("POST", { appFolders: [ { appId: "0", ids: { codeunit: ["1", "2", "3"] } }, { appId: "1", ids: { codeunit: ["1", "2", "3"] } } ] });
+        expect(response).toBeStatus(400);
     });
 
     it("Does not update blob on unauthorized request", async() => {
-        let storage = {
-            [authBlobId]: {
-                key: "__mock_key__",
-                valid: true,
-            }
-        };
-        let api = {} as MockBlobDescriptor;
-        mockBlob(storage, api);
-        let { context, req } = mockRequest("POST", { appFolders: [ { appId, ids: { codeunit: [1, 2, 3] } } ] });
-        await azureFunction(context, req);
-        expect(api.optimisticUpdate).not.toBeCalled();
-        expect(context.res.status).toBe(200);
+        const storage = AzureTestLibrary.Stub.app().authorize();
+        AzureTestLibrary.Fake.useStorage(storage);
+        const response = await azureFunction.invoke("POST", { appFolders: [ { appId: storage.appId, ids: { codeunit: [1, 2, 3] } } ] });
+        expect(response).toBeStatus(200);
+        expect(storage).not.toHaveChanged();
+        expect(storage).not.toHaveConsumption(ALObjectType.codeunit);
     });
 
     it("Overwrites blob on authorized request", async() => {
-        let storage = {
-            [authBlobId]: {
-                key: "__mock_key__",
-                valid: true,
-            },
-            [`${appId}/codeunit.json`]: [4, 5, 6],
-        };
-        let api = {} as MockBlobDescriptor;
-        mockBlob(storage, api);
-        let { context, req } = mockRequest("POST", { appFolders: [ { appId, authKey: "__mock_key__", ids: { codeunit: [1, 2, 3] } } ] });
-        await azureFunction(context, req);
-        expect(api.optimisticUpdate).toBeCalled();
-        expect(storage[`${appId}/codeunit.json`]).toEqual(expect.arrayContaining([1, 2, 3]));
-        expect(storage[`${appId}/page.json`]).toEqual(expect.arrayContaining([]));
-        expect(context.res.status).toBe(200);
+        const storage = AzureTestLibrary.Stub.app().authorize().add(ALObjectType.codeunit, [4, 5, 6]);
+        AzureTestLibrary.Fake.useStorage(storage);
+        const response = await azureFunction.invoke("POST", { appFolders: [ { appId: storage.appId, authKey: storage.authKey, ids: { codeunit: [1, 2, 3] } } ] });
+        expect(storage).toContainIds(ALObjectType.codeunit, [1, 2, 3]);
+        expect(storage).toContainIds(ALObjectType.page, []);
+        expect(response).toBeStatus(200);
     });
 
     it("Merges blob on patch request", async() => {
-        let storage = {
-            [authBlobId]: {
-                key: "__mock_key__",
-                valid: true,
-            },
-            [`${appId}/codeunit.json`]: [4, 5, 6],
-        };
-        let api = {} as MockBlobDescriptor;
-        mockBlob(storage, api);
-        let { context, req } = mockRequest("PATCH", { appFolders: [ { appId, authKey: "__mock_key__", ids: { codeunit: [1, 2, 3] } } ] });
-        await azureFunction(context, req);
-        expect(api.optimisticUpdate).toBeCalled();
-        expect(storage[`${appId}/codeunit.json`]).toEqual(expect.arrayContaining([1, 2, 3, 4, 5, 6]));
-        expect(context.res.status).toBe(200);
+        const storage = AzureTestLibrary.Stub.app().authorize().add(ALObjectType.codeunit, [4, 5, 6]);
+        AzureTestLibrary.Fake.useStorage(storage);
+        const response = await azureFunction.invoke("PATCH", { appFolders: [ { appId: storage.appId, authKey: storage.authKey, ids: { codeunit: [1, 2, 3] } } ] });
+        expect(storage).toContainIds(ALObjectType.codeunit, [1, 2, 3, 4, 5, 6]);
+        expect(response).toBeStatus(200);
     });
-
 });

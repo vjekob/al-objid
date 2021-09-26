@@ -61,6 +61,7 @@ export async function updateConsumptions(appId: string, objectIds: ObjectIds, pa
     for (let type of OBJECT_TYPES) {
         let ids = objectIds[type] || [];
         let blob = new Blob<number[]>(getBlobName(appId, type));
+        // TODO: do not update if length of returned array is 0!!
         result[type] = await blob.optimisticUpdate(existing => {
             let result = [
                 ...(patch ? existing || [] : []),
