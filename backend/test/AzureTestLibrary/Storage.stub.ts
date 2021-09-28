@@ -1,3 +1,4 @@
+import { Range } from "../../src/common/types";
 import { ALObjectType } from "../../src/functions/v2/ALObjectType";
 import { ContentAnalyzer, StubBuilder } from "./Storage.fake.types";
 
@@ -6,15 +7,16 @@ let key = Date.now();
 
 export function authenticatedApp(appId: string, key: string = authKey(), valid: boolean = true) {
     return {
-        [authorization(appId)]: {
+        [authorizationPath(appId)]: {
             key,
             valid
         },
     };
 }
 
-export const authorization = (appId) => `${appId}/_authorization.json`;
-export const objectIds = (appId, objectType) => `${appId}/${objectType}.json`;
+export const rangesPath = (appId: string) => `${appId}/_ranges.json`;
+export const authorizationPath = (appId: string) => `${appId}/_authorization.json`;
+export const objectIdPath = (appId: string, objectType: ALObjectType) => `${appId}/${objectType}.json`;
 export const appId = () => `app-${Date.now()}-${app++}`;
 export const authKey = () => `key-${key--}`;
 
@@ -31,14 +33,21 @@ class AppBuilder extends StubBuilder implements ContentAnalyzer {
     }
 
     add(objectType: ALObjectType, ids: number[]) {
-        this._content[objectIds(this._appId, objectType)] = ids;
+        this._content[objectIdPath(this._appId, objectType)] = ids;
         this._parent.updateContent();
         return this;
     }
 
+    addRanges(ranges: Range | Range[]) {
+        if (!Array.isArray(ranges)) {
+            ranges = [ranges];
+        }
+        this._content[rangesPath(this._appId)] = ranges;
+    }
+
     authorize() {
         this._authKey = authKey();
-        this._content[authorization(this._appId)] = {
+        this._content[authorizationPath(this._appId)] = {
             key: this._authKey,
             valid: true
         };
@@ -59,7 +68,11 @@ class AppBuilder extends StubBuilder implements ContentAnalyzer {
     }
 
     objectIds(objectType: ALObjectType): number[] {
-        return this._content[objectIds(this._appId, objectType)];
+        return this._content[objectIdPath(this._appId, objectType)];
+    }
+
+    ranges(): Range[] {
+        return this._content[rangesPath(this._appId)] || [];
     }
 
     hasChanged(): boolean {
@@ -67,7 +80,7 @@ class AppBuilder extends StubBuilder implements ContentAnalyzer {
     }
 
     isAuthorized(): boolean {
-        const auth = this._content[authorization(this._appId)];
+        const auth = this._content[authorizationPath(this._appId)];
         return !!(auth && auth.key && auth.valid);
     }
 }

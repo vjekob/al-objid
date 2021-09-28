@@ -1,4 +1,5 @@
 import * as azure from "azure-storage";
+import { Range } from "../../src/common/types";
 import { ALObjectType } from "../../src/functions/v2/ALObjectType";
 
 export const mockCreateBlobService = azure.createBlobService as jest.Mock;
@@ -13,6 +14,7 @@ export interface ContentAnalyzer {
     objectIds(objectType: ALObjectType): number[];
     hasChanged(): boolean;
     isAuthorized(): boolean;
+    ranges(): Range[];
 }
 
 export abstract class StubBuilder {

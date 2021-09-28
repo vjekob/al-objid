@@ -51,24 +51,27 @@ export const initializeCustomMatchers = () => {
 
         toHaveConsumption(storage: ContentAnalyzer, type: ALObjectType) {
             const has = storage.objectIds(type) || [];
+            const pass = has.length !== 0;
             return {
-                pass: has.length !== 0,
-                message: () => `Non-matching ${type} ids. Expected: [], received: ${has}`
-            }
+                pass,
+                message: () => `Non-matching ${type} ids. Expected: [${pass ? "" : "...<non_empty>"}], received: ${has}`
+            };
         },
 
         toHaveChanged(storage: ContentAnalyzer) {
+            const pass = storage.hasChanged();
             return {
-                pass: storage.hasChanged(),
-                message: () => `Storage has changed. Expected: not changed.`
-            }
+                pass,
+                message: () => `Storage was${pass ? "" : " not"} changed. Expected:${pass ? " not" : ""} changed.`
+            };
         },
 
         toBeAuthorized(storage: ContentAnalyzer) {
+            const pass = storage.isAuthorized();
             return {
-                pass: storage.isAuthorized(),
-                message: () => `App is not authorized. Expected: authorized.`
-            }
+                pass,
+                message: () => `App is${pass ? "" : " not"} authorized. Expected:${pass ? " not" : ""} authorized.`
+            };
         },
 
         async toFail(azureFunction: FakeAzureFunction, method: HttpMethod, expected?: number) {
@@ -90,6 +93,6 @@ export const initializeCustomMatchers = () => {
                 message: () => `Function did not respond with expected status. Expected: ${expectedStatus}, received: ${response.status}`
             }
         },
-        
+
     });
 };

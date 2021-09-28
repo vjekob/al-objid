@@ -108,5 +108,5 @@ export class SimpleStorage implements IStorageService {
 }
 
 export function useStorage(storage: FakeStorage, options?: StorageOptions) {
-    let a = mockCreateBlobService.mockImplementation(() => new SimpleStorage(storage, options));
+    mockCreateBlobService.mockImplementation(() => new SimpleStorage(storage, options));
 }
