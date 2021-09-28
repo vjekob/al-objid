@@ -3,7 +3,7 @@ import { AzureTestLibrary } from "./AzureTestLibrary";
 
 jest.mock("azure-storage");
 
-describe("Testing function api/v1/getConsumption", () => {
+describe("Testing function api/v1/getNext", () => {
     const azureFunction = new AzureTestLibrary.Fake.AzureFunction("../src/functions/v1/getNext");
 
     it("Fails on missing appId", async () => {
