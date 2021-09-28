@@ -1,15 +1,9 @@
 import { AzureFunction } from "@azure/functions";
-import { Log } from "../../../common/LogCache";
 import { RequestHandler } from "../RequestHandler";
-import { RequestValidator } from "../RequestValidator";
-import { BodyWithAppId } from "../../../common/types";
+import { ErrorResponse } from "../../../common/ErrorResponse";
 
-const httpTrigger: AzureFunction = RequestHandler.handleAuthorized<any, BodyWithAppId>(
-    async (_, req) => {
-        let { appId } = req.body;
-        return Log.read(appId);
-    },
-    new RequestValidator([BodyWithAppId.validateAppId])
+const httpTrigger: AzureFunction = RequestHandler.handle<any, any>(
+    async () => new ErrorResponse("Invoke v2/getLog instead", 410)
 );
 
 export default httpTrigger;
