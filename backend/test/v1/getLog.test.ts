@@ -1,5 +1,4 @@
-import { ALObjectType } from "../src/functions/v2/ALObjectType";
-import { AzureTestLibrary } from "./AzureTestLibrary";
+import { AzureTestLibrary } from "../AzureTestLibrary";
 
 jest.mock("azure-storage");
 

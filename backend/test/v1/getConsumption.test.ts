@@ -1,4 +1,4 @@
-import { AzureTestLibrary } from "./AzureTestLibrary";
+import { AzureTestLibrary } from "../AzureTestLibrary";
 
 jest.mock("azure-storage");
 
