@@ -87,7 +87,7 @@ export class RateLimiter {
         for (let interval of intervals) {
             let count = check[interval];
             let max = CONSTRAINTS.INTERVALS[interval];
-            if (count > max) {
+            if (count >= max) {
                 context.log(`Rejecting the call from ${ipAddress} for ${count} calls in ${interval} milliseconds`);
                 violations[ipAddress].push(now);
                 reject = true;
