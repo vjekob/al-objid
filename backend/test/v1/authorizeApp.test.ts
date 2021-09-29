@@ -5,9 +5,6 @@ jest.mock("azure-storage");
 describe("Testing function api/v1/authorizeApp", () => {
     const azureFunction = new AzureTestLibrary.Fake.AzureFunction("../src/functions/v1/authorizeApp");
 
-    const appId = "__mock__";
-    const authBlobId = `${appId}/_authorization.json`;
-
     it("Fails on missing appId", async () => {
         await expect(azureFunction).toFail("POST", 400);
     });

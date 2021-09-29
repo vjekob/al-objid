@@ -1,4 +1,7 @@
+import { RateLimiter } from "../../src/common/RateLimiter";
+
 export const useContext = (method: string, body: any) => {
+    RateLimiter.accept = jest.fn().mockReturnValue(true);
     return ({
         req: {
             headers: {},
