@@ -45,8 +45,8 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
     };
 });
 
-getNext.bind("{appId}/_ranges.json").to("ranges");
 getNext.bind("{appId}/{type}.json").to("ids");
+getNext.bind("{appId}.json").to("info");
 
 getNext.validator.expect({
     type: "ALObjectType",

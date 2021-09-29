@@ -22,6 +22,10 @@ export class RequestValidator {
     private _expectTemplate: ExpectTemplate;
 
     public validate(body: any): string | undefined {
+        if (!this._expectTemplate) {
+            return;
+        }
+        
         for (let propertyExpected of Object.keys(this._expectTemplate)) {
             let property = propertyExpected;
             let optional = false;

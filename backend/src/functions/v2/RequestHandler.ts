@@ -157,6 +157,7 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
 
         let handleResult = await this.handleOne(context, body);
         if (handleResult !== false) {
+            context.res.status = 200;
             context.res.body = handleResult;
         }
     }

@@ -1,6 +1,7 @@
 import * as _fakeStorage from "./Storage.fake";
 import * as _fakeFunction from "./AzureFunction.fake";
 import * as _stubStorage from "./Storage.stub";
+import * as _fakeContext from "./Context.fake";
 
 import { initializeCustomMatchers } from "./CustomMatchers";
 
@@ -12,6 +13,7 @@ export namespace AzureTestLibrary {
 
         export import useStorage = _fakeStorage.useStorage;
         export import AzureFunction = _fakeFunction.FakeAzureFunction;
+        export import useContext = _fakeContext.useContext;
 
     }
 
