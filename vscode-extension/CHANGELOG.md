@@ -9,6 +9,10 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - App pools feature (https://github.com/vjekob/al-objid/issues/1) supported in the back end.
 - Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
 
+## [1.2.5] - 2021-09-30
+### Changed
+- Minor updates to manifest (keywords, badges, links).
+
 ## [1.2.4] - 2021-09-30
 ### Changed
 - Fixed documentation URLs after repository restructuring.
