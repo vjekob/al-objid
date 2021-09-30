@@ -27,7 +27,7 @@ When you attempt to assign an object ID in an app for the first time, the back e
 that it knows nothing about any object IDs your app may have already used. When this happens, the
 AL Object ID Ninja will automatically suggest to synchronize with the back end.
 
-![Synchronizing for the first time](../images/getting-started.gif)
+![Synchronizing for the first time](./images/getting-started.gif)
 
 From this moment on, whenever developers assign numbers through AL Object ID Ninja, those numbers
 are recorded in the back end and will never be suggested to other developers.

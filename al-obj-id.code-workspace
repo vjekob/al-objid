@@ -8,6 +8,14 @@
 			"name": "Azure Function App",
 			"path": "azure-function-app"
 		},
+		{
+			"name": "Documentation",
+			"path": "doc"
+		},
+		{
+			"name": "Root",
+			"path": "."
+		}
 	],
 	"settings": {
 		"files.exclude": {
