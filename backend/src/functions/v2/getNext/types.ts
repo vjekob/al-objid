@@ -1,10 +1,14 @@
 import { ALObjectType } from "../ALObjectType";
 
-export interface GetNextRequest {
+export interface GetNextSpecification {
     type: ALObjectType;
+    count?: number;
+    perRange?: boolean;
+}
+
+export interface GetNextRequest {
     ranges?: Range[];
-    quantity?: number;
-    fromRange?: Range;
+    request: GetNextSpecification[];
 }
 
 export interface GetNextResponse {

@@ -2,14 +2,12 @@ import { AzureFunctionRequestHandler } from "../RequestHandler";
 import { GetNextBindings, GetNextRequest, GetNextResponse } from "./types";
 
 const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse, GetNextBindings>(async (request, bindings) => {
-    const { type } = request;
-
     /*
         Expected input:
             {
                 appId: string,
                 [authKey: string,]
-                ranges: Range | Range[],
+                ranges: Range[],
                 request: {
                     type: string,
                     count: number,
@@ -35,6 +33,7 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
     if (bindings) {
         //;
     }
+
     return {
         type,
         id: 1,
@@ -45,8 +44,8 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
     };
 });
 
-getNext.bind("{appId}/{type}.json").to("ids");
-getNext.bind("{appId}.json").to("info");
+getNext.bind("{appId}/{type}.json").to("ids"); // TODO: this one should go away once no v1 calls to getNext are placed!
+getNext.bind("{appId}.json").to("app");
 
 getNext.validator.expect({
     type: "ALObjectType",

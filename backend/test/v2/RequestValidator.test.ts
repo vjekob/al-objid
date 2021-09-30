@@ -159,4 +159,6 @@ describe("Testing v2 RequestValidator", () => {
         );
         expect(response.status).toBe(200);
     });
+
+    // TODO: validation of optional request properties.
 });

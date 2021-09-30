@@ -29,3 +29,11 @@ even operation endpoints and methods may change.
 There is full testability in place for v1. Achieving the goals above means that v1 API will have to change
 the internal workings (namely, to support the data format of v2). None of the tests for v1 may fail. The
 existing v1 API must be resilient to any changes introduced to support v2.
+
+## Specific ideas
+
+Blob updates should not happen as a part of a function body. Instead, each function body should return, in
+addition to its regular response, a specification of blobs to be updated. It should be an array of blob
+name and content, plus, perhaps a method - (over)write or update. Then, once all function bodies are processes
+(e.g. in a multi-body request), all blobs are written at once. Also, all blob writes that can be consolidated
+are consolidated.
