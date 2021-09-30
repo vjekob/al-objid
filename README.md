@@ -12,7 +12,7 @@ AL Object ID Ninja solves this problem. It uses a central object ID cache that k
 of all object IDs your team members assigned to their objects. Unlike the AL Language, AL Object ID Ninja
 will never suggest the same object ID to developers working on the same app at the same time.
 
-![Assigning object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/images/assigning-id.gif)
+![Assigning object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/assigning-id.gif)
 
 > In the example above, while the AL extension doesn't see that codeunit ID `50108` is already assigned
 by another developer, AL Object ID Ninja sees it. Also, AL Object ID Ninja sees that somebody even
@@ -37,7 +37,7 @@ needed, and you can use it on your existing projects as well as the new ones wit
 While AL Object ID Ninja back end requires some information to be available before it can start
 assigning new IDs to your team, it will synchronize this information for you automatically.
 
-![Getting started](https://raw.githubusercontent.com/vjekob/al-objid/master/images/getting-started.gif)
+![Getting started](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/getting-started.gif)
 
 That's it! Now everyone on your team can assign objects ID without fear of collision.
 
@@ -95,7 +95,7 @@ is for.
 Whenever another user assigns an object ID from AL Object ID Ninja, everyone working on the same
 app at that time receives notifications.
 
-![Object ID Assignment Notifications](https://raw.githubusercontent.com/vjekob/al-objid/master/images/assigning-id-multiuser.gif)
+![Object ID Assignment Notifications](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/assigning-id-multiuser.gif)
 
 > Note: You can switch the notifications off in your settings.
 
@@ -107,7 +107,7 @@ accidentally by developers accidentally assigning ID multiple times for the same
 synchronize objects at any time your branch is in sync with all other branches (meaning there
 are no active branches on which developers have new objects not yet merged into mainline).
 
-![Synchronizing object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/images/synchronization.gif)
+![Synchronizing object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/synchronization.gif)
 
 > Note: Automatic detection of object deletion and automatic releasing of freed-up object IDs
 is currently in development and will be included in the next version.
@@ -128,7 +128,7 @@ While you are writing code, AL Object ID Ninja will do its job silently in the b
 job is to give you object IDs that won't collide. And that's what it does. It places its object ID
 suggestion right where AL Language used to place theirs: on the top of the IntelliSense list.
 
-![Using IntelliSense](https://raw.githubusercontent.com/vjekob/al-objid/master/images/intellisense.gif)
+![Using IntelliSense](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/intellisense.gif)
 
 Your focus stays on your code while AL Object ID Ninja does its magic for you. And it works in all
 scenarios: plain code, snippets, you name it.
@@ -141,14 +141,14 @@ done in - quite literally - no time!
 
 Getting new object ID won't ever slow you down:
 
-![Crazy fast retrieving object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/images/crazy-fast-1.gif)
+![Crazy fast retrieving object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/crazy-fast-1.gif)
 
 And what about synchronization? When you need to synchronize your object IDs with the back end, AL
 Object ID Ninja must read and parse every single file in your repository. While most other tools
 are notoriously slow at parsing objects, AL Object ID Ninja will do this in a blink of an eye, even
 when there are thousands of files to process:
 
-![Crazy fast parsing](https://raw.githubusercontent.com/vjekob/al-objid/master/images/crazy-fast-2.gif)
+![Crazy fast parsing](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/crazy-fast-2.gif)
 
 And just for the kick of it, you can choose whether you want it fast and reliable, or even faster
 (and still reliable).
@@ -174,16 +174,16 @@ object ID assignment information.
 AL Object ID Ninja has a simple security mechanism to prevent that: App Authorization. You can
 authorize your app with the back end and receive your own per-app authorization key.
 
-![Authorizing your app](https://raw.githubusercontent.com/vjekob/al-objid/master/images/authorization.gif)
+![Authorizing your app](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/authorization.gif)
 
 Once an app is authorized, every request it makes must include this authorization key and back end
 will reject any requests made without or with an invalid authorization key.
 
-![Attempting to use an invalid key](https://raw.githubusercontent.com/vjekob/al-objid/master/images/invalid-key.gif)
+![Attempting to use an invalid key](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/invalid-key.gif)
 
 You can revoke existing authorization keys and request new ones at any time.
 
-![Re-authorizing your app to request new authorization key](https://raw.githubusercontent.com/vjekob/al-objid/master/images/re-authorization.gif)
+![Re-authorizing your app to request new authorization key](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/re-authorization.gif)
 
 Learn more about authorization: https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md
 
@@ -198,7 +198,7 @@ public service, you may want to use your own back end instead. This is possible.
 1. Deploy the Azure Functions application from the `backend` directory onto your own Azure subscription.
 2. Configure the back-end URL and back-end key in your Visual Studio Code settings.
 
-![Configuring back end](https://raw.githubusercontent.com/vjekob/al-objid/master/images/back-end-configuration.png)
+![Configuring back end](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/back-end-configuration.png)
 
 ## Upcoming features
 
