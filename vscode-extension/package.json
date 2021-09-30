@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -17,7 +17,13 @@
 		"vscode": "^1.50.1"
 	},
 	"categories": [
+		"Formatters",
+		"Language Packs",
+		"Linters",
 		"Other"
+	],
+	"tags": [
+		"AL", "AL Extensions", "Auto Suggest", "Best Practices", "Dynamics 365 Business Central", "Dynamics NAV", "ERP", "IntelliSense", "Object IDs"
 	],
 	"activationEvents": [
 		"onLanguage:al",

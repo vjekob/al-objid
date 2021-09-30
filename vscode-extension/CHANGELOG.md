@@ -9,6 +9,11 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - App pools feature (https://github.com/vjekob/al-objid/issues/1) supported in the back end.
 - Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
 
+## [1.2.4] - 2021-09-30
+### Changed
+- Fixed documentation URLs after repository restructuring.
+- Added categories and tags to the extension manifest.
+
 ## [1.2.3] - 2021-09-20
 ### Changed
 - AL Object ID Ninja is now compatible with Visual Studio Code 1.50.1 (September 2020) and newer.
