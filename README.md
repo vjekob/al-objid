@@ -23,7 +23,7 @@ else, just create a pull request. The full process is described [here](https://d
 but it's far less scary than it looks at first.
 
 Some advice before you start creating pull request:
-* Check the [issues section](https://github.com/vjekob/al-objid) to see what are the existing issues and
+* Check the [issues section](https://github.com/vjekob/al-objid/issues) to see what are the existing issues and
 where help is wanted.
 * Create an issue before starting work! This is important. I may already be working on an improvement
 similar (or equal) to what you planned on working. Also, you may want to solicit feedback from other
