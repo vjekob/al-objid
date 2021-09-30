@@ -3,11 +3,13 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "1.2.4",
+	"version": "1.2.5",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
 	},
+	"homepage": "https://github.com/vjekob/al-objid/blob/master/vscode-extension/README.md",
+	"bugs": "https://github.com/vjekob/al-objid/issues",
 	"icon": "images/icon.png",
 	"galleryBanner": {
 		"color": "#505C6D",
@@ -16,14 +18,70 @@
 	"engines": {
 		"vscode": "^1.50.1"
 	},
+	"license": "SEE LICENSE IN ../LICENSE.md",
 	"categories": [
 		"Formatters",
 		"Language Packs",
 		"Linters",
 		"Other"
 	],
-	"tags": [
-		"AL", "AL Extensions", "Auto Suggest", "Best Practices", "Dynamics 365 Business Central", "Dynamics NAV", "ERP", "IntelliSense", "Object IDs"
+	"keywords": [
+		"AL",
+		"AL Extensions",
+		"Auto Suggest",
+		"Best Practices",
+		"Dynamics 365 Business Central",
+		"Dynamics NAV",
+		"ERP",
+		"IntelliSense",
+		"Object IDs"
+	],
+	"badges": [
+		{
+			"url": "https://img.shields.io/github/license/vjekob/al-objid",
+			"href": "https://github.com/vjekob/al-objid/blob/master/LICENSE.md",
+			"description": "AL Object ID Ninja is licensed under MIT License"
+		},
+		{
+			"url": "https://img.shields.io/github/languages/top/vjekob/al-objid",
+			"href": "https://www.typescriptlang.org/",
+			"description": "Learn TypeScript"
+		},
+		{
+			"url": "https://img.shields.io/github/issues/vjekob/al-objid",
+			"href": "https://github.com/vjekob/al-objid/issues",
+			"description": "Follow this link if you want to submit an issue or check on the status of open issues"
+		},
+		{
+			"url": "https://img.shields.io/visual-studio-marketplace/i/vjeko.vjeko-al-objid",
+			"href": "https://marketplace.visualstudio.com/items?itemName=vjeko.vjeko-al-objid",
+			"description": "Number of installed instances of AL Object ID Ninja"
+		},
+		{
+			"url": "https://img.shields.io/visual-studio-marketplace/stars/vjeko.vjeko-al-objid",
+			"href": "https://marketplace.visualstudio.com/items?itemName=vjeko.vjeko-al-objid&ssr=false#review-details",
+			"description": "Share the love! If you like AL Object ID Ninja, give it five stars in Visual Studio Code Marketplace!"
+		},
+		{
+			"url": "https://img.shields.io/github/last-commit/vjekob/al-objid",
+			"href": "https://github.com/vjekob/al-objid/commits/master",
+			"description": "Check the commit history of this repository"
+		},
+		{
+			"url": "https://img.shields.io/visual-studio-marketplace/last-updated/vjeko.vjeko-al-objid",
+			"href": "https://github.com/vjekob/al-objid/blob/master/vscode-extension/CHANGELOG.md",
+			"description": "Check the change log for AL Object ID Ninja"
+		},
+		{
+			"url": "https://img.shields.io/github/forks/vjekob/al-objid?style=social",
+			"href": "https://github.com/vjekob/al-objid/network/members",
+			"description": "Fork this repository and become one of the contributors"
+		},
+		{
+			"url": "https://img.shields.io/github/stars/vjekob/al-objid?style=social",
+			"href": "https://github.com/vjekob/al-objid/stargazers",
+			"description": "Share the love! If you like AL Object ID Ninja, give it a star on GitHub!"
+		}
 	],
 	"activationEvents": [
 		"onLanguage:al",
