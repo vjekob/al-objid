@@ -1,3 +1,4 @@
+import { ALObjectType } from "../ALObjectType";
 import { AzureFunctionRequestHandler } from "../RequestHandler";
 import { GetNextBindings, GetNextRequest, GetNextResponse } from "./types";
 
@@ -19,7 +20,7 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
             {
                 appId: string,
                 response {
-                    type: string,
+                    type: ALObjectType,
                     range: Range,
                     ids: number[],
                     success: boolean, // Indicates whether the requested number of ids was successfully retrieved from the specified range
@@ -35,13 +36,16 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
     }
 
     return {
-        type,
-        id: 1,
-        updated: false,
-        available: true,
-        updateAttempts: 0,
-        hasConsumption: true,
-    };
+        appId: "",
+        response: [
+            {
+                type: ALObjectType.codeunit,
+                range: { from: 50000, to: 50099 },
+                ids: [50000],
+                success: true
+            }
+        ]
+    } as GetNextResponse
 });
 
 getNext.bind("{appId}/{type}.json").to("ids"); // TODO: this one should go away once no v1 calls to getNext are placed!

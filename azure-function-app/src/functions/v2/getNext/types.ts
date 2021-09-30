@@ -1,3 +1,4 @@
+import { Range } from "../../../common/types";
 import { ALObjectType } from "../ALObjectType";
 
 export interface GetNextSpecification {
@@ -6,18 +7,21 @@ export interface GetNextSpecification {
     perRange?: boolean;
 }
 
+export interface GetNextResponseSegment {
+    type: ALObjectType;
+    range: Range;
+    ids: number[];
+    success: boolean;
+}
+
 export interface GetNextRequest {
     ranges?: Range[];
     request: GetNextSpecification[];
 }
 
 export interface GetNextResponse {
-    type: ALObjectType;
-    id: number | number[];
-    updated: boolean;
-    available: boolean;
-    updateAttempts: number;
-    hasConsumption: boolean;
+    appId: string,
+    response: GetNextResponseSegment[]
 }
 
 export interface GetNextBindings {
