@@ -10,6 +10,8 @@
         "azure-function-app": true,
         "vscode-extension": true,
         ".vscode": true,
-        "al-obj-id.code-workspace": true
+        "al-obj-id.code-workspace": true,
+        ".debug": true,
+        ".snapshots": true
     }
 }
