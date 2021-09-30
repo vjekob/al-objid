@@ -1,4 +1,8 @@
-![AL Object ID Ninja is licensed under MIT License](https://img.shields.io/github/license/vjekob/al-objid) ![This extension is written in TypeScript](https://img.shields.io/github/languages/top/vjekob/al-objid) ![Number of installs](https://img.shields.io/visual-studio-marketplace/i/vjeko.vjeko-al-objid) ![Share the love! If you like AL Object ID Ninja, give it 5 stars.](https://img.shields.io/visual-studio-marketplace/stars/vjeko.vjeko-al-objid) ![Last Visual Studio Code Marketplace update](https://img.shields.io/visual-studio-marketplace/last-updated/vjeko.vjeko-al-objid)
+[![AL Object ID Ninja is licensed under MIT License](https://img.shields.io/github/license/vjekob/al-objid)](https://github.com/vjekob/al-objid/blob/master/LICENSE.md)
+[![This extension is written in TypeScript](https://img.shields.io/github/languages/top/vjekob/al-objid)](https://www.typescriptlang.org/)
+ [![Number of installs](https://img.shields.io/visual-studio-marketplace/i/vjeko.vjeko-al-objid)](https://marketplace.visualstudio.com/items?itemName=vjeko.vjeko-al-objid)
+ [![Share the love! If you like AL Object ID Ninja, give it 5 stars.](https://img.shields.io/visual-studio-marketplace/stars/vjeko.vjeko-al-objid)](https://marketplace.visualstudio.com/items?itemName=vjeko.vjeko-al-objid&ssr=false#review-details)
+ [![Last Visual Studio Code Marketplace update](https://img.shields.io/visual-studio-marketplace/last-updated/vjeko.vjeko-al-objid)](https://marketplace.visualstudio.com/items?itemName=vjeko.vjeko-al-objid&ssr=false#version-history)
 
 # AL Object ID Ninja
 
