@@ -2,11 +2,11 @@
 	"folders": [
 		{
 			"name": "VS Code Extension",
-			"path": "."
+			"path": "vscode-extension"
 		},
 		{
-			"name": "Azure Backend",
-			"path": "backend"
+			"name": "Azure Function App",
+			"path": "azure-function-app"
 		},
 	],
 	"settings": {
