@@ -55,4 +55,8 @@ export class Config extends DisposableHolder {
     public get useVerboseOutputLogging(): boolean {
         return this.getWithDefault<boolean>("useVerboseOutputLogging", true);
     }
+
+    public get showReleaseNotes(): boolean {
+        return this.getWithDefault<boolean>("showReleaseNotes", true);
+    }
 }

@@ -16,6 +16,7 @@ import { ObjectIDHighlighter } from "./features/ObjectIDHighlighter";
 import { Output } from "./features/Output";
 import { Config } from "./lib/Config";
 import { HttpGone } from "./features/HttpGone";
+import { ReleaseNotesHandler } from "./features/ReleaseNotesHandler";
 
 export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
@@ -41,6 +42,8 @@ export function activate(context: ExtensionContext) {
 		Disposable.from(new NewsHandler(context)),
 		new HttpGone(context).getDisposables(),
 	);
+
+	new ReleaseNotesHandler().check(context);
 }
 
 export function deactivate() { }

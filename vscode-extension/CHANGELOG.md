@@ -16,6 +16,7 @@ webcasts, upcoming changes, service schedules, etc.
 - Handling of back-end HTTP response 410 Gone. This response is sent by the back end when there is a breaking change in the back
 end. Also, this allows notifications about mandatory updates to be shown to users.
 - AL Object ID Ninja is now ready for the upcoming back-end breaking upgrade to "v2" as [announced here](https://vjeko.com/2021/10/01/important-announcement-for-al-object-id-ninja/).
+- Whenever you update AL Object ID Ninja to an important new version, release notes are automatically shown.
 
 ## [1.2.6] - 2021-09-30
 ### Changed

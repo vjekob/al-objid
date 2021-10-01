@@ -119,6 +119,11 @@
 					"type": "boolean",
 					"default": false,
 					"markdownDescription": "Switch this on if you want very detailed messages in the AL Object ID Ninja output channel."
+				},
+				"objectIdNinja.showReleaseNotes": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Whenever you update AL Object ID Ninja to a new version that includes important updates, we'll show you the release notes. If you prefer not being interrupted, switch this option off."
 				}
 			}
 		},
