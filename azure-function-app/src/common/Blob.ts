@@ -21,17 +21,19 @@ export type UpdateCallback<T> = (data: T, attempts: number) => T;
 export const TIMEOUT_TOKEN = Symbol("TIMEOUT_TOKEN");
 
 export class Blob<T> {
-    private service: azure.BlobService;
-    private blob: string;
+    private _service: azure.BlobService;
+    private _blob: string;
+    private _container: string;
 
-    constructor(blob: string) {
-        this.service = azure.createBlobService(connectionString);
-        this.blob = blob;
+    constructor(blob: string, container?: string) {
+        this._service = azure.createBlobService(connectionString);
+        this._blob = blob;
+        this._container = container || STORAGE_CONTAINER;
     }
 
     async read(ignoreError: boolean = false): Promise<T | null> {
         return new Promise((fulfill) => {
-            this.service.getBlobToText(STORAGE_CONTAINER, this.blob, (error, result) => {
+            this._service.getBlobToText(this._container, this._blob, (error, result) => {
                 error ? fulfill(ignoreError ? {} as T : null) : fulfill(JSON.parse(result) as T);
             });
         });
@@ -39,7 +41,7 @@ export class Blob<T> {
 
     async delete(): Promise<boolean> {
         return new Promise((fulfill) => {
-            this.service.deleteBlob(STORAGE_CONTAINER, this.blob, (error, result) => {
+            this._service.deleteBlob(this._container, this._blob, (error, result) => {
                 fulfill(!error);
             });
         });
@@ -47,7 +49,7 @@ export class Blob<T> {
 
     async readAll(token?: any): Promise<any> {
         return new Promise((fulfill) => {
-            this.service.listBlobsSegmented(STORAGE_CONTAINER, token, (error, result) => {
+            this._service.listBlobsSegmented(this._container, token, (error, result) => {
                 error ? fulfill(null) : fulfill(result)
             });
         });
@@ -63,21 +65,22 @@ export class Blob<T> {
      * @returns Updated data
      */
     optimisticUpdate(update: UpdateCallback<T>, timeout = 2500): Promise<T | null> {
-        var service = this.service;
-        var blob = this.blob;
+        const service = this._service;
+        const blob = this._blob;
+        const container = this._container;
 
         return new Promise((fulfill, reject) => {
-            var attempt = 0;
-            var updatedContent: T | null = null;
-            var fulfilled = false;
-            var timedOut = false;
-            var timeoutHandle = null;
+            let attempt = 0;
+            let updatedContent: T | null = null;
+            let fulfilled = false;
+            let timedOut = false;
+            let timeoutHandle = null;
 
             function readBlob() {
                 if (timedOut) return;
 
-                service.getBlobToText(STORAGE_CONTAINER, blob, (error, result, response) => {
-                    var notFound = false;
+                service.getBlobToText(container, blob, (error, result, response) => {
+                    let notFound = false;
                     if (error) {
                         if ((error as any).statusCode !== 404) {
                             setTimeout(() => readBlob(), 10);
@@ -86,7 +89,7 @@ export class Blob<T> {
                         notFound = true;
                     }
 
-                    var content = notFound ? null : JSON.parse(result);
+                    const content = notFound ? null : JSON.parse(result);
                     try {
                         updatedContent = update(content, attempt++);
                     } catch (error) {
@@ -107,7 +110,7 @@ export class Blob<T> {
                 if (timedOut) return;
 
                 service.createBlockBlobFromText(
-                    STORAGE_CONTAINER,
+                    container,
                     blob,
                     JSON.stringify(content),
                     etag ? { accessConditions: { EtagMatch: etag } } : undefined,

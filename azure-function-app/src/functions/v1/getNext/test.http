@@ -6,7 +6,7 @@ X-Forwarded-For: 192.168.0.23
 
 {
     "appId": "83b9edea7c8a47f8e2307dca527994e7e4d154254839c48f02c4936e89a3fa62",
-    "authKey": "zVBD2a9W6s17fXwMnLBInzVCP+qklPd69W6DLXqQZI0=",
+    "authKey": "UMA7rdzunEWhpzYXRGNJIcK5Zt/PA4nrwDRlnmcqf04=",
     "type": "codeunit",
     "ranges": [
         {
@@ -24,10 +24,11 @@ Content-Type: application/json
 
 {
     "appId": "83b9edea7c8a47f8e2307dca527994e7e4d154254839c48f02c4936e89a3fa62",
+    "authKey": "UMA7rdzunEWhpzYXRGNJIcK5Zt/PA4nrwDRlnmcqf04=",
     "type": "codeunit",
     "ranges": [
         {
-            "from": 50120,
+            "from": 50100,
             "to": 59999
         }
     ],

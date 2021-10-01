@@ -1,0 +1,8 @@
+### Localhost
+
+get http://localhost:7071/api/v2/news
+
+
+### Azure
+
+get https://vjekocom-alext-weu.azurewebsites.net/api/v2/news

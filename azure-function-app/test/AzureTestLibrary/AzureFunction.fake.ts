@@ -9,7 +9,7 @@ export class FakeAzureFunction {
         this._function = require(`../${module}`).default as AzureFunction;
     }
 
-    async invoke(method: string, body: any = {}, bindings: any = {}): Promise<any> {
+    async invoke(method: string, body: any = undefined, bindings: any = {}): Promise<any> {
         const context = {
             req: {
                 headers: {},
@@ -24,7 +24,7 @@ export class FakeAzureFunction {
             bindings,
         } as any;
 
-        await this._function(context, context.req);
+        await this._function(context, context.req && {...context.req});
 
         return context.res;
     }

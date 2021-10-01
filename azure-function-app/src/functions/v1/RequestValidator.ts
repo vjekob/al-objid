@@ -54,7 +54,8 @@ export class RequestValidator {
         }
     }
 
-    validate({ body }: HttpRequest): boolean {
+    validate(req: HttpRequest): boolean {
+        const body = req.body || {};
         for (let rule of this._rules) {
             let result = rule.rule(body);
             if (typeof result === "symbol" || result === false) {

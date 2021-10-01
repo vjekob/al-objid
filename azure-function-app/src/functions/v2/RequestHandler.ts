@@ -25,6 +25,7 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
     private _handler: HandlerFunc<TRequest, TResponse, TBindings>;
     private _validator = new RequestValidator();
     private _binder = new RequestBinder();
+    private _secure: boolean = true;
 
     public constructor(handler: HandlerFunc<TRequest, TResponse, TBindings>) {
         this._handler = handler;
@@ -134,15 +135,17 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
     }
 
     private async handleHttpRequest(context: Context, req: HttpRequest): Promise<void> {
-        const { body } = req;
+        const body = req.body || {};
 
         if (!RateLimiter.accept(req, context)) {
             return this.respondTooManyRequests(context);
         }
 
-        let authValidation = this.isValidAuthorizationRequest(body, context);
-        if (authValidation !== true) {
-            return this.respondBadRequest(context, authValidation);
+        if (this._secure) {
+            let authValidation = this.isValidAuthorizationRequest(body, context);
+            if (authValidation !== true) {
+                return this.respondBadRequest(context, authValidation);
+            }
         }
 
         if (!await this.isAuthorized(body)) {
@@ -176,12 +179,20 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
         return true;
     }
 
-    public bind(blob: string): PropertyBinder {
-        return this._binder.getPropertyBinder(blob);
+    public bind(blob: string, container?: string): PropertyBinder {
+        return this._binder.getPropertyBinder(blob, container);
     }
 
     public get validator() {
         return this._validator;
+    }
+
+    public get secure(): boolean {
+        return this._secure;
+    }
+
+    public set secure(value: boolean) {
+        this._secure = value;
     }
 
     public get azureFunction(): AzureFunction {

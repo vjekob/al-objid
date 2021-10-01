@@ -3,6 +3,7 @@ import { Blob } from "../../common/Blob";
 
 interface Binding {
     path: string;
+    container?: string;
     property: string;
 }
 
@@ -13,7 +14,7 @@ export interface PropertyBinder {
 export class RequestBinder {
     private _bindings: Binding[] = [];
 
-    public getPropertyBinder(path: string): PropertyBinder {
+    public getPropertyBinder(path: string, container?: string): PropertyBinder {
         if (this._bindings.find(binding => binding.path === path)) {
             throw new Error(`Binding for ${path} already exists`);
         }
@@ -23,7 +24,7 @@ export class RequestBinder {
                 if (this._bindings.find(binding => binding.property === property)) {
                     throw new Error(`Binding to ${property} already exists`);
                 }
-                this._bindings.push({ path, property });
+                this._bindings.push({ path, container, property });
             }
         };
     }
@@ -32,7 +33,7 @@ export class RequestBinder {
         let bindings: any = {};
         for (let binding of this._bindings) {
             let value: any = undefined;
-            let { path, property } = binding;
+            let { path, container, property } = binding;
             try {
                 let match: RegExpExecArray;
                 let regex = /\{(?<prop>.+?)\}/;
@@ -45,7 +46,7 @@ export class RequestBinder {
                     path = path.replace(match[0], body[prop]);
                 }
 
-                let blob = new Blob(path);
+                let blob = new Blob(path, container);
                 value = await blob.read();
             } catch (e) {
                 context.log(`Binding exception occurred while binding "${path}" to "${property}": ${e}`);

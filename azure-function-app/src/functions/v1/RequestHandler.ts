@@ -108,7 +108,7 @@ export class RequestHandler {
         if (!this.handleRateLimiting(req, context)) return;
 
         if (options.authorizationType === AUTHORIZATION_TYPE.SINGLE) {
-            if (!await this.handleAuthorization(req.body, context)) return;
+            if (!await this.handleAuthorization(req.body || {}, context)) return;
         }
 
         if (!this.handleValidation(req, context, validator)) return;
