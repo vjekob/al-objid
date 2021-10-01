@@ -8,12 +8,14 @@ import { confirmSyncObjectIds } from "./commands/confirm-sync-object-ids";
 import { deauthorizeApp } from "./commands/deauthorize-app";
 import { learnWelcome } from "./commands/learn-welcome";
 import { syncObjectIds } from "./commands/sync-object-ids";
+import { NewsHandler } from "./features/NewsHandler";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
 import { BackEndLogHandler } from "./features/BackEndLogHandler";
 import { NextObjectIdCompletionProvider } from "./features/NextObjectIdCompletionProvider";
 import { ObjectIDHighlighter } from "./features/ObjectIDHighlighter";
 import { Output } from "./features/Output";
 import { Config } from "./lib/Config";
+import { HttpGone } from "./features/HttpGone";
 
 export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
@@ -35,7 +37,9 @@ export function activate(context: ExtensionContext) {
 		AuthorizationStatusBar.instance.getDisposables(),
 		Output.instance.getDisposables(),
 		Config.instance.getDisposables(),
-		Disposable.from(new BackEndLogHandler())
+		Disposable.from(new BackEndLogHandler()),
+		Disposable.from(new NewsHandler(context)),
+		new HttpGone(context).getDisposables(),
 	);
 }
 

@@ -59,6 +59,6 @@ in place, and you can configure Ninja to use your own endpoints:
 ![Configuration of own Azure function back end](./images/settings-own-back-end.png)
 
 Here's the repository for the back end Azure function app that the public **AL Object ID Ninja** extension is
-using: https://github.com/vjekob/al-objid/tree/master/backend
+using: https://github.com/vjekob/al-objid/tree/master/azure-function-app
 
 If you need help setting it up, I am always available.

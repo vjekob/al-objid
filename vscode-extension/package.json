@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "1.2.6",
+	"version": "1.2.7",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -90,7 +90,7 @@
 			"properties": {
 				"objectIdNinja.backEndUrl": {
 					"type": "string",
-					"markdownDescription": "URL of the back-end API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/backend. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid.azurewebsites.net`, `myids.contoso.com`. Incorrect examples are: `https://my-al-objectid.azurewebsites.net/` or `http://mids.contoso.com/`"
+					"markdownDescription": "URL of the back-end API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/azure-function-app. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid.azurewebsites.net`, `myids.contoso.com`. Incorrect examples are: `https://my-al-objectid.azurewebsites.net/` or `http://mids.contoso.com/`"
 				},
 				"objectIdNinja.backEndAPIKey": {
 					"type": "string",

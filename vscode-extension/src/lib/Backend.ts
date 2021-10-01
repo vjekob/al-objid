@@ -1,10 +1,9 @@
-import { workspace } from "vscode";
+import { HttpGone } from "../features/HttpGone";
 import { output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, FolderEventLogEntries, NextObjectIdInfo } from "./BackendTypes";
+import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, FolderEventLogEntries, NewsEntry, NewsResponse, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
-import { PropertyBag } from "./PropertyBag";
 import { UI } from "./UI";
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
@@ -23,6 +22,7 @@ interface HttpResponse<T> {
 }
 
 const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
+const NEWS_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),
@@ -32,20 +32,17 @@ export const API_RESULT = {
 }
 
 /**
- * Sends a request to the back-end API.
- * 
- * @param path Back-end endpoint
- * @param method HTTP method
- * @param data Data to send to the back-end endpoint
- * @param errorHandler Error handler to execute in case of unsuccessful request
- * @template T Type of response object expected from the back end
- * @returns `HttpResponse` object that contains full information about response, error, and error handling status
- */
-async function sendRequest<T>(path: string, method: HttpMethod, data: any, errorHandler?: ErrorHandler<T>): Promise<HttpResponse<T>> {
-    const url = Config.instance.backEndUrl;
+* Sends a request to the back-end API.
+* 
+* @param path Back-end endpoint
+* @param method HTTP method
+* @param data Data to send to the back-end endpoint
+* @param errorHandler Error handler to execute in case of unsuccessful request
+* @template T Type of response object expected from the back end
+* @returns `HttpResponse` object that contains full information about response, error, and error handling status
+*/
+async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, errorHandler?: ErrorHandler<T>, hostname: string = Config.instance.backEndUrl || DEFAULT_HOST_NAME): Promise<HttpResponse<T>> {
     const key = Config.instance.backEndAPIKey;
-
-    const hostname = url || DEFAULT_HOST_NAME;
     const https = new Https({
         hostname,
         path,
@@ -71,6 +68,11 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
             response.value = await https.send<T>(method, data);
             response.status = API_RESULT.SUCCESS;
         } catch (error: any) {
+            if (preprocessStatusError(error)) {
+                response.error = error;
+                response.status = API_RESULT.ERROR_HANDLED;
+                return response;
+            }
             output.log(`Sending ${method} request to ${path} endpoint resulted in an error: ${JSON.stringify(error)}`);
             response.error = error;
             response.status = API_RESULT.ERROR_NOT_HANDLED;
@@ -78,6 +80,14 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any, error
         }
         return response;
     }, `Sending ${method} request to ${path} endpoint`);
+}
+
+function preprocessStatusError(error: any): boolean {
+    if (typeof error !== "object" || !error || error.statusCode !== 410) {
+        return false;
+    }
+    HttpGone.instance.handleError(error.error || "");
+    return true;
 }
 
 function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest): void {
@@ -171,5 +181,16 @@ export class Backend {
             { appId, authKey },
         );
         return response.value;
+    }
+
+    static async getNews(): Promise<NewsEntry[]> {
+        const response = await sendRequest<NewsResponse>(
+            "/api/v2/news",
+            "GET",
+            {},
+            undefined,
+            NEWS_HOST_NAME
+        );
+        return response.value?.news || [];
     }
 }
