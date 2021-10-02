@@ -1,8 +1,10 @@
 import { ALObjectType } from "../ALObjectType";
 import { AzureFunctionRequestHandler } from "../RequestHandler";
+import { migrateV1toV2 } from "./migrateV2";
 import { GetNextBindings, GetNextRequest, GetNextResponse } from "./types";
 
 const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse, GetNextBindings>(async (request, bindings) => {
+    await migrateV1toV2(request.appId);
     /*
         Expected input:
             {
@@ -48,14 +50,13 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
     } as GetNextResponse
 });
 
-getNext.bind("{appId}/{type}.json").to("ids"); // TODO: this one should go away once no v1 calls to getNext are placed!
 getNext.bind("{appId}.json").to("app");
 
-getNext.validator.expect({
-    type: "ALObjectType",
-    ranges: "Range[]",
-    "quantity?": "NonZeroNumber",
-    "fromRange?": "Range",
-});
+// getNext.validator.expect({
+//     type: "ALObjectType",
+//     ranges: "Range[]",
+//     "quantity?": "NonZeroNumber",
+//     "fromRange?": "Range",
+// });
 
 export default getNext.azureFunction;

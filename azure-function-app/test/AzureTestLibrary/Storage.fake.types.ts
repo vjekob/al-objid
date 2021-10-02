@@ -37,8 +37,11 @@ export interface StorageOptions {
 }
 
 export interface IStorageService {
+    acquireLease(__ignore_container__: string, blob: string, options: any, callback: ErrorFirstFunction<any>): void;
+    getBlobProperties(__ignore_container__: string, blob: string, callback: ErrorFirstFunction<any>): void;
     getBlobToText(__ignore_container__: string, blob: string, callback: ErrorFirstFunction<string>): void;
     createBlockBlobFromText(__ignore_container__: string, blob: string, content: any, options: CreateBlobOptions | undefined, callback: ErrorFirstFunction<void>): void;
-    deleteBlob(__ignore_container__: string, blob: string, callback: ErrorFirstFunction<void>): void;
+    deleteBlob(__ignore_container__: string, blob: string, options: any, callback: ErrorFirstFunction<void>): void;
     listBlobsSegmented(__ignore_container__: string, token: symbol | undefined, callback: ErrorFirstFunction<ListResponse>): void;
+    releaseLease(__ignore_container__: string, blob: string, leaseId: string, callback: ErrorFirstFunction<any>): void;
 }

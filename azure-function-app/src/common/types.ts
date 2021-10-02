@@ -240,3 +240,7 @@ export const EVENT_LOG_ENTRY_TYPES = [
     "authorization",
     "deauthorization"
 ];
+
+export interface RequestBase {
+    appId: string;
+}

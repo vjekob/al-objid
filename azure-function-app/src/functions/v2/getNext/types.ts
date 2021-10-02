@@ -1,4 +1,4 @@
-import { Range } from "../../../common/types";
+import { Range, RequestBase } from "../../../common/types";
 import { ALObjectType } from "../ALObjectType";
 
 export interface GetNextSpecification {
@@ -14,7 +14,7 @@ export interface GetNextResponseSegment {
     success: boolean;
 }
 
-export interface GetNextRequest {
+export interface GetNextRequest extends RequestBase {
     ranges?: Range[];
     request: GetNextSpecification[];
 }

@@ -24,11 +24,57 @@ export class Blob<T> {
     private _service: azure.BlobService;
     private _blob: string;
     private _container: string;
+    private _leaseId?: string;
 
     constructor(blob: string, container?: string) {
         this._service = azure.createBlobService(connectionString);
         this._blob = blob;
         this._container = container || STORAGE_CONTAINER;
+    }
+
+    private async getProperties(): Promise<azure.BlobService.BlobResult> {
+        return new Promise((fulfill) => {
+            this._service.getBlobProperties(this._container, this._blob, (error, result) => {
+                fulfill(result);
+            });
+        });
+    }
+
+    async exists(): Promise<boolean> {
+        const props = await this.getProperties();
+        return !!(props && props.creationTime);
+    }
+
+    async lock(): Promise<boolean> {
+        if (this._leaseId) {
+            return false;
+        }
+        return new Promise((fulfill) => {
+            this._service.acquireLease(this._container, this._blob, { leaseDuration: 15 }, (error, result) => {
+                if (error) {
+                    fulfill(false);
+                    return;
+                }
+                this._leaseId = result.id;
+                fulfill(true);
+            });
+        });
+    }
+
+    async unlock(): Promise<boolean> {
+        if (!this._leaseId) {
+            return false;
+        }
+        return new Promise((fulfill) => {
+            this._service.releaseLease(this._container, this._blob, this._leaseId, (error, result) => {
+                if (error) {
+                    fulfill(false);
+                    return;
+                }
+                this._leaseId = undefined;
+                fulfill(true);
+            });
+        });
     }
 
     async read(ignoreError: boolean = false): Promise<T | null> {
@@ -40,8 +86,12 @@ export class Blob<T> {
     }
 
     async delete(): Promise<boolean> {
+        let options: azure.BlobService.DeleteBlobRequestOptions = {};
+        if (this._leaseId) {
+            options.leaseId = this._leaseId;
+        }
         return new Promise((fulfill) => {
-            this._service.deleteBlob(this._container, this._blob, (error, result) => {
+            this._service.deleteBlob(this._container, this._blob, options, (error, result) => {
                 fulfill(!error);
             });
         });
