@@ -82,6 +82,7 @@ export class RequestHandler {
                 context.res = {
                     status: result.status || 400,
                     body: result.message,
+                    headers: typeof result.headers === "object" && result.headers ? {...result.headers} : {}
                 };
             } else {
                 context.res = {

@@ -2,8 +2,9 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { AuthorizationCache } from "../../common/AuthorizationCache";
 import { RateLimiter } from "../../common/RateLimiter";
 import { ErrorResponse } from "../../common/ErrorResponse";
-import { PropertyBinder, RequestBinder } from "./RequestBinder";
+import { AppBinding, CoreBinding, PropertyBinder, RequestBinder } from "./RequestBinder";
 import { RequestValidator } from "./RequestValidator";
+import { Blob } from "../../common/Blob";
 
 interface AppRequest {
     appId: string;
@@ -15,7 +16,7 @@ interface AuthorizedRequest extends AppRequest {
 
 type AuthorizedBody = AuthorizedRequest | AuthorizedRequest[];
 
-type HandlerFunc<TRequest, TResponse, TBindings> = (request: TRequest, bindings: TBindings) => Promise<ErrorResponse | TResponse>;
+type HandlerFunc<TRequest, TResponse, TBindings> = (request: TRequest, bindings: CoreBinding<TBindings>) => Promise<ErrorResponse | TResponse>;
 
 interface RequestHandler<TRequest = any, TResponse = any, TBindings = any> {
     handle: HandlerFunc<TRequest, TResponse, TBindings>;
@@ -109,13 +110,24 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
         };
     }
 
-    private async handleOne(context: Context, req: TRequest): Promise<false | TResponse> {
-        let bindings = await this._binder.getBindings<TBindings>(context, req);
+    private async getAppInfo(appId: string): Promise<AppBinding> {
+        const blob = new Blob<AppBinding>(`${appId}.json`);
+        const result = await blob.read(true);
+        return result;
+    }
+
+    private async handleOne(context: Context, req: TRequest, fromArray: boolean = false): Promise<false | TResponse> {
+        const appInfo = await this.getAppInfo((req as any).appId);
+        // TODO: Authorization
+        // TODO: Validation
+        let bindings = await this._binder.getBindings<TBindings>(context, req, appInfo);
+        bindings._app = appInfo;
         let response = await this._handler(req, bindings);
         if (response instanceof ErrorResponse) {
             context.res = {
                 status: response.status || 400,
-                body: response.message
+                body: response.message,
+                headers: typeof response.headers === "object" && response.headers ? { ...response.headers } : {}
             };
             return false;
         }
@@ -125,7 +137,7 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
     private async handleArray(context: Context, req: HttpRequest): Promise<void> {
         let body: TResponse[] = [];
         for (let one of req.body) {
-            let handleResult = await this.handleOne(context, one);
+            let handleResult = await this.handleOne(context, one, true);
             if (handleResult === false) {
                 return;
             }
@@ -135,11 +147,11 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
     }
 
     private async handleHttpRequest(context: Context, req: HttpRequest): Promise<void> {
-        const body = req.body || {};
-
         if (!RateLimiter.accept(req, context)) {
             return this.respondTooManyRequests(context);
         }
+
+        const body = req.body || {};
 
         if (this._secure) {
             let authValidation = this.isValidAuthorizationRequest(body, context);
@@ -187,12 +199,8 @@ export class AzureFunctionRequestHandler<TRequest = any, TResponse = any, TBindi
         return this._validator;
     }
 
-    public get secure(): boolean {
-        return this._secure;
-    }
-
-    public set secure(value: boolean) {
-        this._secure = value;
+    public skipAuthorizationCheck() {
+        this._secure = false;
     }
 
     public get azureFunction(): AzureFunction {

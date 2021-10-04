@@ -1,5 +1,16 @@
 import { Context } from "@azure/functions";
 import { Blob } from "../../common/Blob";
+import { ALObjectType } from "./ALObjectType";
+
+export type AppBinding = { [key in ALObjectType]?: number[] } & {
+    _ranges: Range[];
+    _authorization: {
+        key: string;
+        valid: boolean;
+    };
+};
+
+export type CoreBinding<T> = T & { _app: AppBinding };
 
 interface Binding {
     path: string;
@@ -29,8 +40,8 @@ export class RequestBinder {
         };
     }
 
-    public async getBindings<T>(context: Context, body: any): Promise<T> {
-        let bindings: any = {};
+    public async getBindings<T>(context: Context, body: any, app: AppBinding): Promise<CoreBinding<T>> {
+        let bindings = {} as CoreBinding<T>;
         for (let binding of this._bindings) {
             let value: any = undefined;
             let { path, container, property } = binding;
@@ -53,7 +64,7 @@ export class RequestBinder {
             }
             bindings[property] = value;
         }
-
+        bindings._app = app;
         return bindings;
     }
 }

@@ -26,8 +26,8 @@ export class Blob<T> {
     private _container: string;
     private _leaseId?: string;
 
-    constructor(blob: string, container?: string) {
-        this._service = azure.createBlobService(connectionString);
+    constructor(blob: string, container?: string, storage?: string) {
+        this._service = azure.createBlobService(storage ? process.env[storage] : connectionString);
         this._blob = blob;
         this._container = container || STORAGE_CONTAINER;
     }

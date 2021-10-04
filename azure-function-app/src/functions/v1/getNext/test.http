@@ -40,7 +40,7 @@ Content-Type: application/json
 
 ### Remote
 
-post https://vjekocom-alext-weu-2.azurewebsites.net/api/v1/getnext
+get https://vjekocom-alext-weu.azurewebsites.net/api/v1/getnext
 Content-Type: application/json
 
 {

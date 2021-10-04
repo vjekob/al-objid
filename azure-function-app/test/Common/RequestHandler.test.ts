@@ -1,3 +1,4 @@
+import { ErrorResponse } from "../../src/common/ErrorResponse";
 import { AzureFunctionRequestHandler } from "../../src/functions/v2/RequestHandler";
 import { AzureTestLibrary } from "../AzureTestLibrary";
 
@@ -79,5 +80,18 @@ describe("Testing v2 RequestHandler", () => {
         AzureTestLibrary.Fake.useStorage(storage);
         const response = await invokeHandler([{ appId: app1.appId, authKey: app1.authKey }, { appId: app2.appId, authKey: app2.authKey }, { appId: app3.appId, authKey: "__invalid__" }]);
         expect(response.status).toBe(401);
+    });
+
+    it("Responds with headers on 503 Service Unavailable", async () => {
+        const message = "Scheduled maintenance";
+        const handler = new AzureFunctionRequestHandler(async () => {
+            return new ErrorResponse(message, 503, { "retry-after": "3600" });
+        });
+        const context = AzureTestLibrary.Fake.useContext("GET", { appId: "_mock_" });
+        await handler.azureFunction(context, context.req);
+        const response = context.res;
+
+        expect(response.status).toBe(503);
+        expect(response.headers["retry-after"]).toBe("3600");
     });
 });
