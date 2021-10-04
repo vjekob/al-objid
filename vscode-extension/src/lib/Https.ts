@@ -42,7 +42,8 @@ export class Https {
                         if (res.statusCode !== 200) {
                             reject({
                                 error: body,
-                                statusCode: res.statusCode
+                                statusCode: res.statusCode,
+                                headers: res.headers,
                             });
                             return;
                         }

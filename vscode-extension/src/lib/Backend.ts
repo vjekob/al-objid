@@ -1,4 +1,4 @@
-import { HttpGone } from "../features/HttpGone";
+import { HttpStatusHandler } from "../features/HttpStatusHandler";
 import { output } from "../features/Output";
 import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, FolderEventLogEntries, NewsEntry, NewsResponse, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
@@ -83,11 +83,18 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, 
 }
 
 function preprocessStatusError(error: any): boolean {
-    if (typeof error !== "object" || !error || error.statusCode !== 410) {
-        return false;
+    if (typeof error === "object" && error) {
+        switch (error.statusCode) {
+            case 410:
+                HttpStatusHandler.instance.handleError410(error.error || "");
+                return true;
+            case 503:
+                HttpStatusHandler.instance.handleError503(error);
+                return true;
+        }
     }
-    HttpGone.instance.handleError(error.error || "");
-    return true;
+
+    return false;
 }
 
 function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest): void {

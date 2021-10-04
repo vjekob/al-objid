@@ -15,7 +15,7 @@ import { NextObjectIdCompletionProvider } from "./features/NextObjectIdCompletio
 import { ObjectIDHighlighter } from "./features/ObjectIDHighlighter";
 import { Output } from "./features/Output";
 import { Config } from "./lib/Config";
-import { HttpGone } from "./features/HttpGone";
+import { HttpStatusHandler } from "./features/HttpStatusHandler";
 import { ReleaseNotesHandler } from "./features/ReleaseNotesHandler";
 
 export function activate(context: ExtensionContext) {
@@ -40,7 +40,7 @@ export function activate(context: ExtensionContext) {
 		Config.instance.getDisposables(),
 		Disposable.from(new BackEndLogHandler()),
 		Disposable.from(new NewsHandler(context)),
-		new HttpGone(context).getDisposables(),
+		new HttpStatusHandler(context).getDisposables(),
 	);
 
 	new ReleaseNotesHandler().check(context);

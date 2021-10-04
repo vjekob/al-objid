@@ -6,23 +6,26 @@ import { output } from "./Output";
 
 let appUpgradedV2 = false;
 let oldVersion = false;
+let maintenance = false;
 
-export class HttpGone extends DisposableHolder {
-    private static _instance: HttpGone;
+export class HttpStatusHandler extends DisposableHolder {
+    private static _instance: HttpStatusHandler;
     private _context: ExtensionContext;
 
     public constructor(context: ExtensionContext) {
         super();
-        if (HttpGone._instance) {
+        if (HttpStatusHandler._instance) {
             throw new Error("Only a single instance of HttpGone class is allowed! Check the call stack and fix the problem.");
         }
-        HttpGone._instance = this;
+        HttpStatusHandler._instance = this;
         this._context = context;
     }
 
     public static get instance() {
         return this._instance;
     }
+
+    //#region 410 Gone
 
     private async appUpgradedV2() {
         const response = await window.showErrorMessage(`Your app or all apps in your workspace have been upgraded to "v2" version of the back end. The "v2" version of the back end requires latest version of ${EXTENSION_NAME}, but you are using an older one. You must update ${EXTENSION_NAME} to v2.0.0 or newer.`, LABELS.BUTTON_LEARN_MORE);
@@ -31,7 +34,7 @@ export class HttpGone extends DisposableHolder {
         }
     }
 
-    private handlers: PropertyBag<Function> = {
+    private handlers410: PropertyBag<Function> = {
         GENERIC: () => {
             output.log(`You are attempting to access a back-end endpoint that is no longer supported. Please update ${EXTENSION_NAME}.`);
             if (oldVersion) {
@@ -65,14 +68,41 @@ export class HttpGone extends DisposableHolder {
         }
     }
 
-    public handleError(error: string) {
+    public handleError410(error: string) {
         let match = error.match(/\[STATUS_REASON=(?<reason>.+?)\]/);
         let reason = "GENERIC";
         if (match && match.groups && typeof match.groups.reason === "string") {
-            if (typeof this.handlers[match.groups.reason] === "function") {
+            if (typeof this.handlers410[match.groups.reason] === "function") {
                 reason = match.groups.reason;
             }
         }
-        this.handlers[reason]();
+        this.handlers410[reason]();
     }
+
+    //#endregion
+
+    //#region  503 Service Unavailable
+
+    public async handleError503(error: any) {
+        if (maintenance) {
+            return;
+        }
+        maintenance = true;
+        const date = new Date(error.headers["retry-after"]);
+        const diff = date.valueOf() - Date.now();
+        let buttons = ["OK"];
+        if (typeof error.error === "string" && error.error.toLowerCase().startsWith("http")) {
+            buttons.push(LABELS.BUTTON_LEARN_MORE);
+        }
+        let response = await window.showInformationMessage(
+            `AL Object ID Ninja back end is currently undergoing scheduled maintenance. It will be ready again in ${Math.ceil(diff / 60000)} minute(s).`,
+            "OK",
+            LABELS.BUTTON_LEARN_MORE
+        );
+        if (response === LABELS.BUTTON_LEARN_MORE) {
+            env.openExternal(Uri.parse(error.error.toLowerCase()));
+        }
+    }
+
+    //#endregion
 }

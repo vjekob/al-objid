@@ -9,6 +9,11 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - App pools feature (https://github.com/vjekob/al-objid/issues/1) supported in the back end.
 - Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
 
+## [1.2.8] - 2021-10-04
+### Added
+- Handling of back-end HTTP response 503 Service Unavailable. This response is sent by the back end when there is an undergoing
+scheduled maintenance. When receiving this status, Ninja will indicate when (in how many minutes) the service will be back again.
+
 ## [1.2.7] - 2021-10-01
 ### Added
 - News and announcements feature. This allows the author to "push" notifications to all users to notify them of new features,
