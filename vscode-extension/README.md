@@ -185,7 +185,7 @@ You can revoke existing authorization keys and request new ones at any time.
 
 ![Re-authorizing your app to request new authorization key](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/re-authorization.gif)
 
-Learn more about authorization: https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md
+Learn more about authorization: https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md
 
 ### Making it extra secure: configuring your own back end
 
