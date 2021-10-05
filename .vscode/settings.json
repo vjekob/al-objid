@@ -8,6 +8,7 @@
         "**/Thumbs.db": true,
         "doc": true,
         "azure-function-app": true,
+        "azure-polling-app": true,
         "vscode-extension": true,
         ".vscode": true,
         "al-obj-id.code-workspace": true,

@@ -13,14 +13,20 @@ Zero-configuration, dead-simple, no-collision object ID assignment for multi-use
 This is a monorepo containing the following repos:
 * VS Code Extension at [vscode-extension](./vscode-extension)
 * Azure Function App at [azure-function-app](./azure-function-app)
+* Azure Polling App at [azure-polling-app](./azure-polling-app)
 * Documentation at [doc](./doc)
 
 ## Why is this repo structured like this?
 
 It's simple. AL Object ID Ninja is not just a VS Code extension. It also contains Azure Function App
 serverless back end. These two work together and VS Code extension will not work without the back end,
-and back end without the VS Code extension does not make much sense. That's why there are two roots
-in this repo: one for the VS Code Extension, and one for Azure Function App.
+and back end without the VS Code extension does not make much sense.
+
+In addition to these core components, there is a polling app that is in charge of mimicking a push
+notification service until a proper solution (that doesn't cost a fortune) replaces it. The reason why
+polling app is separate from the functional back-end (from version 2.0.0 up) is that this allows for
+notifications that are more just-in-time while keeping infrastructure costs substantially lower than
+they were previously.
 
 ## Contributing to this repository
 
