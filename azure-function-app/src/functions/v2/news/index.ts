@@ -1,8 +1,8 @@
-import { AzureFunctionRequestHandler } from "../RequestHandler";
+import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 import { NewsBindings, NewsResponse } from "./types";
 
-const news = new AzureFunctionRequestHandler<any, NewsResponse, NewsBindings>(async (_, bindings) => bindings);
-news.skipAuthorizationCheck();
+const news = new ALNinjaRequestHandler<any, NewsResponse, NewsBindings>(async (request) => ({ news: request.bindings.news }));
+news.skipAuthorization();
 news.bind("news.json", "infrastructure").to("news");
 
 export default news.azureFunction;

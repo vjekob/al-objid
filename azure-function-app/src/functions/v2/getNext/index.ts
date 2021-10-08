@@ -1,10 +1,9 @@
+import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 import { ALObjectType } from "../ALObjectType";
-import { AzureFunctionRequestHandler } from "../RequestHandler";
 import { migrateV1toV2 } from "./migrateV2";
 import { GetNextBindings, GetNextRequest, GetNextResponse } from "./types";
 
-const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse, GetNextBindings>(async (request, bindings) => {
-    await migrateV1toV2(request.appId);
+const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse, GetNextBindings>(async (request) => {
     /*
         Expected input:
             {
@@ -33,9 +32,9 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
         1. Read everything from a single back-end file named `<appId>.json` (this means: authorization, ranges, consumption)
     */
 
-    if (bindings) {
-        //;
-    }
+    // if (bindings) {
+    //     //;
+    // }
 
     return {
         appId: "",
@@ -49,8 +48,6 @@ const getNext = new AzureFunctionRequestHandler<GetNextRequest, GetNextResponse,
         ]
     } as GetNextResponse
 });
-
-getNext.bind("{appId}.json").to("app");
 
 // getNext.validator.expect({
 //     type: "ALObjectType",

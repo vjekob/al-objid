@@ -5,16 +5,20 @@
 			"path": "vscode-extension"
 		},
 		{
-			"name": "Node module: vjeko-azure-func",
-			"path": "../vjeko-azure-func",
-		},
-		{
-			"name": "Azure Function App",
+			"name": "Azure Function App: Back End",
 			"path": "azure-function-app"
 		},
 		{
-			"name": "Azure Polling App",
+			"name": "Azure Function App: Polling",
 			"path": "azure-polling-app",
+		},
+		{
+			"name": "Node module: @vjeko.com/azure-func",
+			"path": "../@vjeko.com/azure-func",
+		},
+		{
+			"name": "Node module: @vjeko.com/azure-func-test",
+			"path": "../@vjeko.com/azure-func-test",
 		},
 		{
 			"name": "Documentation",

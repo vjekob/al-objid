@@ -11,12 +11,14 @@
   },
   "dependencies": {
     "@types/node": "^16.7.10",
+    "@vjeko.com/azure-func": "file:../../@vjeko.com/azure-func",
     "azure-storage": "^2.10.4"
   },
   "devDependencies": {
     "@azure/functions": "^1.2.3",
     "@jest/types": "^27.2.4",
     "@types/jest": "^27.0.2",
+    "@vjeko.com/azure-func-test": "0.0.2",
     "jest": "^27.2.1",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
