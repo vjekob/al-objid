@@ -1,6 +1,6 @@
 ### Localhost
 
-get http://localhost:7071/api/v1/getConsumption
+get http://localhost:7071/api/v2/getConsumption
 Content-Type: application/json
 
 {
@@ -11,10 +11,10 @@ Content-Type: application/json
 
 ### Remote
 
-get https://vjekocom-alext-weu-2.azurewebsites.net/api/v1/getConsumption
+get https://vjekocom-alext-weu.azurewebsites.net/api/v1/getConsumption
 Content-Type: application/json
 
 {
-    "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3"
+    "appId": "ea950ccb54c7704405a46c9d9eddc05682a4c780c5e2900f69303bf0e4786379"
 }
 

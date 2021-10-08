@@ -1,27 +1,19 @@
-import { Range, RequestBase } from "../../../common/types";
 import { ALObjectType } from "../ALObjectType";
+import { Range } from "../TypesV2";
 
-export interface GetNextSpecification {
+export interface GetNextRequest {
+    ranges: Range[];
     type: ALObjectType;
     count?: number;
     perRange?: boolean;
 }
 
-export interface GetNextResponseSegment {
+export interface GetNextResponse {
+    appId: string,
     type: ALObjectType;
     range: Range;
     ids: number[];
     success: boolean;
-}
-
-export interface GetNextRequest extends RequestBase {
-    ranges?: Range[];
-    request: GetNextSpecification[];
-}
-
-export interface GetNextResponse {
-    appId: string,
-    response: GetNextResponseSegment[]
 }
 
 export interface GetNextBindings {

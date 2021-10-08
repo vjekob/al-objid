@@ -10,9 +10,18 @@ export interface Range {
     to: number;
 }
 
+export type ObjectConsumptions = {
+    [key in ALObjectType]: number[];
+}
+
 export type AppCache = {
     _authorization: Authorization;
     _ranges: Range[];
-} & {
-    [key in ALObjectType]: number[];
+} & ObjectConsumptions;
+
+export interface AppBindings {
+    app: AppCache;
 }
+
+export interface DefaultBindings {};
+export interface DefaultRequest {};

@@ -1,7 +1,7 @@
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 import { NewsBindings, NewsResponse } from "./types";
 
-const news = new ALNinjaRequestHandler<any, NewsResponse, NewsBindings>(async (request) => ({ news: request.bindings.news }));
+const news = new ALNinjaRequestHandler<any, NewsResponse, NewsBindings>(async (request) => ({ news: request.bindings.news }), false);
 news.skipAuthorization();
 news.bind("news.json", "infrastructure").to("news");
 

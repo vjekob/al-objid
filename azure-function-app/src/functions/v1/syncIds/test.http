@@ -26,11 +26,11 @@ Content-Type: application/json
 
 ### Remote
 
-patch https://vjekocom-alext-weu-2.azurewebsites.net/api/v1/syncIds
+patch https://vjekocom-alext-weu.azurewebsites.net/api/v1/syncIds
 Content-Type: application/json
 
 {
-    "appId": "c454e488-56ca-4414-bd68-1d3a2548abf2",
+    "appId": "ea950ccb54c7704405a46c9d9eddc05682a4c780c5e2900f69303bf0e4786379",
     "ids": {
         "codeunit": [50000,50001]
     }

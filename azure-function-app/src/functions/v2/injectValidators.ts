@@ -1,5 +1,6 @@
 import { RequestValidator } from "@vjeko.com/azure-func";
 import { ALObjectType } from "./ALObjectType";
+import { ObjectConsumptions } from "./TypesV2";
 
 export function injectValidators() {
     RequestValidator.defineValidator("ALObjectType", (value: any) => !!ALObjectType[value] || `invalid AL object type "${value}"`);
@@ -8,5 +9,20 @@ export function injectValidators() {
         if (!value.hasOwnProperty("from") || typeof value.from !== "number") return `invalid Range.from specification, "number" expected, received "${typeof value.from}"`;
         if (!value.hasOwnProperty("to") || typeof value.to !== "number") return `invalid Range.to specification, "number" expected, received "${typeof value.to}"`;
         return true;
+    });
+    RequestValidator.defineValidator("ObjectIDs", (value: ObjectConsumptions) => {
+        for (let key of Object.keys(value)) {
+            if (!ALObjectType[key]) {
+                return `invalid AL object type "${value}"`;
+            }
+            if (!Array.isArray(value[key])) {
+                return `array expected for key "${key}"`;
+            }
+            for (let num of value[key]) {
+                if (typeof num !== "number") {
+                    return `"${key}" must be an array of "number", but "${typeof num}" was found`;
+                }
+            }
+        }
     });
 }

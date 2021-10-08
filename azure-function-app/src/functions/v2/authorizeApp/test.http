@@ -1,0 +1,24 @@
+### Localhost - post
+
+post http://localhost:7071/api/v2/authorizeApp
+Content-Type: application/json
+
+
+### Localhost - delete
+
+delete http://localhost:7071/api/v2/authorizeApp
+Content-Type: application/json
+
+{
+    "appId": "0_test",
+    "authKey": "012tv2xkFCoAQgKzFaZH9UO0gXnGjKPx7jJOXsTRVwA="
+}
+
+### Azure
+
+post https://vjekocom-alext-weu.azurewebsites.net/api/v2/authorizeApp
+Content-Type: application/json
+
+{
+    "appId": "c454e488-56ca-4414-bd68-1d3a2548abf2"
+}

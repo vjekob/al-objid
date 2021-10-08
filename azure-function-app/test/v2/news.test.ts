@@ -1,13 +1,14 @@
-import { AzureTestLibrary } from "../AzureTestLibrary";
 import { Mock } from "@vjeko.com/azure-func-test";
 import * as azure from "azure-storage";
 import news from "../../src/functions/v2/news";
+import { Blob } from "@vjeko.com/azure-func";
 
 jest.mock("azure-storage");
+Blob.injectCreateBlobService(azure.createBlobService);
 Mock.initializeStorage(azure.createBlobService);
 
-describe("Testing function api/v2/getNext", () => {
-    it("Succeeds on blank test - temporary", async () => {
+describe("Testing function api/v2/news", () => {
+    it("Succeeds on reading news", async () => {
         Mock.useStorage({
             "news.json": [
                 {

@@ -3,31 +3,19 @@
 get http://localhost:7071/api/v2/getNext
 Content-Type: application/json
 
-[
-    {
-        "appId": "86b923bb85a2958b584a36a47a107f91238747f5938dc41872be4ee5c4ef36c3",
-        "authKey": "KUSVA73ScpHsrR5HGNeJDk9qVt+bLSWxOPCfkm9PMQI=",
-        "type": "codeunit",
-        "ranges": [
-            {
-                "from": 0,
-                "to": 1
-            }
-        ],
-        "quantity": 1,
-        "fromRange": {
-            "from": 0,
-            "to": 1
+{
+    "appId": "002796b13b885be5086555da464f252d760265c2cece94a59a0e3ec4c03f5c82",
+    "authKey": "66PJDY6L7BFcI88SXd4iiGlaxZzb5+Nj9kOphy9Vpog=",
+    "type": "codeunit",
+    "ranges": [
+        {
+            "from": 90000,
+            "to": 90150
         }
-    },
-    {
-        "appId": "0001",
-        "type": "pageextension",
-        "ranges": [
-            {
-                "from": 50000,
-                "to": 99999
-            }
-        ]
+    ],
+    "count": 1,
+    "fromRange": {
+        "from": 90000,
+        "to": 90150
     }
-]
+}
