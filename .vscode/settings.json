@@ -14,5 +14,6 @@
         "al-obj-id.code-workspace": true,
         ".debug": true,
         ".snapshots": true
-    }
+    },
+    "azureFunctions.projectSubpath": "azure-function-app"
 }

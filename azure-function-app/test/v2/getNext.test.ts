@@ -21,7 +21,7 @@ describe("Testing function api/v2/getNext", () => {
         expect(context.res).toBeStatus(400);
     });
 
-    it("Succeeds getting next ID without previous consumption", async () => {
+    it("Succeeds getting next ID from a previously unknown app", async () => {
         const type = ALObjectType.codeunit;
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
@@ -31,6 +31,22 @@ describe("Testing function api/v2/getNext", () => {
         expect(context.res.body.id).toStrictEqual(50000);
         expect(context.res.body.available).toStrictEqual(true);
         expect(context.res.body.hasConsumption).toStrictEqual(false);
+        expect(context.res.body.updated).toStrictEqual(false);
+        expect(storage).not.toHaveChanged();
+        expect(storage.ranges()).toHaveLength(0);
+        expect(storage).not.toHaveConsumption(type);
+    });
+
+    it("Succeeds getting next ID without previous consumption from a known app", async () => {
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("GET", { appId: storage.appId, ranges, type }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual(50000);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(true);
         expect(context.res.body.updated).toStrictEqual(false);
         expect(storage).not.toHaveChanged();
         expect(storage.ranges()).toHaveLength(0);

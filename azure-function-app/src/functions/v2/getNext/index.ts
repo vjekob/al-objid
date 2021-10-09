@@ -14,7 +14,7 @@ const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async
         updated: false,
         available: false,
         updateAttempts: 0,
-        hasConsumption: !!(app[type] && app[type].length)
+        hasConsumption: !!request.bindings.app
     };
     result.available = result.id > 0;
 
