@@ -25,11 +25,6 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
     private _skipAuthorization: boolean = false;
 
     public constructor(handler: ALNinjaHandlerFunc<TRequest, TResponse, TBindings>, withValidation: boolean = true) {
-        // super(() => {
-        //     throw new ErrorResponse("https://vjeko.com/2021/10/04/al-object-id-ninja-scheduled-maintenance-announcement-october-9-at-1900-cet/", 503, { "Retry-After": "Sat, 9 Oct 2021 17:30:00 GMT" });
-        // });
-        // return;
-
         super((request) => {
             const alNinjaRequest = (request as unknown as ALNinjaRequestContext<TRequest, TBindings>);
             alNinjaRequest.markAsChanged = (appId, app) => {
