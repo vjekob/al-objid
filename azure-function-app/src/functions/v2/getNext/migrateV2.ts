@@ -1,4 +1,4 @@
-import { Blob } from "../../../common/Blob";
+import { Blob } from "@vjeko.com/azure-func";
 import { ALObjectType } from "../ALObjectType";
 
 function writeDataToObject(target: any, key: string, data: any) {

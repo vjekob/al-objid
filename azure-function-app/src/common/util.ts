@@ -1,5 +1,5 @@
-import { Range } from "./types";
 import crypto = require("crypto");
+import { Range } from "../functions/v2/TypesV2";
 
 /**
  * Compares to range arrays to determine whether they are equal. Equal means that there is equa number of elements in

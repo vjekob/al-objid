@@ -1,11 +1,12 @@
 import { ErrorResponse } from "@vjeko.com/azure-func";
 import { findFirstAvailableId } from "../../../common/util";
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
+import { AppCache } from "../TypesV2";
 import { GetNextRequest, GetNextResponse } from "./types";
 import { updateConsumption } from "./update";
 
 const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async (request) => {
-    const app = request.bindings.app || {};
+    const app: AppCache = request.bindings.app || {} as AppCache;
     const { appId, ranges, type } = request.body;
     const ids = app[type] || [];
 
@@ -24,6 +25,7 @@ const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async
             throw new ErrorResponse("Too many attempts at updating BLOB", 409);
         }
         result.hasConsumption = true;
+        request.markAsChanged(appId, app);
     }
 
     return result;

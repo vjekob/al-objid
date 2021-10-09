@@ -35,6 +35,9 @@ describe("Testing function api/v2/syncIds", () => {
         expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
         expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
         expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe("_mock_");
     });
 
     it("Inserts new consumptions on PATCH against unknown app", async () => {
@@ -52,6 +55,9 @@ describe("Testing function api/v2/syncIds", () => {
         expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
         expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
         expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe("_mock_");
     });
 
     it("Overwrites existing consumptions on POST against a known app", async () => {
@@ -73,6 +79,9 @@ describe("Testing function api/v2/syncIds", () => {
         expect(app.table).toBeUndefined();
         expect(app.page).toEqual([2, 4, 6]);
         expect(app.report).toEqual([3]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe(storage.appId);
     });
 
     it("Merges new consumptions on PATCH against a known app", async () => {
@@ -94,5 +103,8 @@ describe("Testing function api/v2/syncIds", () => {
         expect(app.table).toEqual([1, 2]);
         expect(app.page).toEqual([2, 3, 4, 5, 6]);
         expect(app.report).toEqual([3]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe(storage.appId);
     });
 });

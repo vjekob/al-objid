@@ -15,18 +15,6 @@
       "type": "http",
       "direction": "out",
       "name": "res"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
-      "name": "ranges",
-      "path": "%BlobContainer%/{appId}/_ranges.json"
-    },
-    {
-      "type": "blob",
-      "direction": "in",
-      "name": "ids",
-      "path": "%BlobContainer%/{appId}/{type}.json"
     }
   ],
   "scriptFile": "../dist/src/functions/v1/getNext/index.js"

@@ -1,11 +1,10 @@
 # Get localhost
 
-get http://localhost:7071/api/v2/getNext
+post http://localhost:7071/api/v2/getNext
 Content-Type: application/json
 
 {
-    "appId": "002796b13b885be5086555da464f252d760265c2cece94a59a0e3ec4c03f5c82",
-    "authKey": "66PJDY6L7BFcI88SXd4iiGlaxZzb5+Nj9kOphy9Vpog=",
+    "appId": "0_test",
     "type": "codeunit",
     "ranges": [
         {

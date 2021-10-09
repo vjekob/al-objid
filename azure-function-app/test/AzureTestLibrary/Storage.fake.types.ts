@@ -1,6 +1,6 @@
 import * as azure from "azure-storage";
-import { Range } from "../../src/common/types";
 import { ALObjectType } from "../../src/functions/v2/ALObjectType";
+import { Range } from "../../src/functions/v2/TypesV2";
 
 export const mockCreateBlobService = azure.createBlobService as jest.Mock;
 export type AzureError = undefined | Error & { statusCode?: number, code?: string };

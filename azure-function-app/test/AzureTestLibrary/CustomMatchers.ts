@@ -1,6 +1,5 @@
 import { HttpMethod } from "@azure/functions";
 import { ALObjectType } from "../../src/functions/v2/ALObjectType";
-import { FakeAzureFunction } from "./AzureFunction.fake";
 import { ContentAnalyzer } from "./Storage.fake.types";
 
 declare global {
@@ -73,26 +72,5 @@ export const initializeCustomMatchers = () => {
                 message: () => `App is${pass ? "" : " not"} authorized. Expected:${pass ? " not" : ""} authorized.`
             };
         },
-
-        async toFail(azureFunction: FakeAzureFunction, method: HttpMethod, expected?: number) {
-            const response = await azureFunction.invoke(method);
-            const expectedStatus = typeof expected === "number" ? expected : "< 200 or > 299";
-            const pass = typeof expected === "number" ? response.status === expected : response.status < 200 || response.status > 299;
-            return {
-                pass,
-                message: () => `Function did not respond with expected status. Expected: ${expectedStatus}, received: ${response.status}`
-            }
-        },
-
-        async toSucceed(azureFunction: FakeAzureFunction, method: HttpMethod, expected?: number) {
-            const response = await azureFunction.invoke(method);
-            const expectedStatus = typeof expected === "number" ? expected : "200..299";
-            const pass = typeof expected === "number" ? response.status === expected : response.status >= 200 && response.status <= 299;
-            return {
-                pass,
-                message: () => `Function did not respond with expected status. Expected: ${expectedStatus}, received: ${response.status}`
-            }
-        },
-
     });
 };

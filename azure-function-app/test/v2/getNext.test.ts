@@ -35,6 +35,7 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage).not.toHaveChanged();
         expect(storage.ranges()).toHaveLength(0);
         expect(storage).not.toHaveConsumption(type);
+        expect(context.bindings.notify).toBeUndefined();
     });
 
     it("Succeeds getting next ID without previous consumption from a known app", async () => {
@@ -51,6 +52,7 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage).not.toHaveChanged();
         expect(storage.ranges()).toHaveLength(0);
         expect(storage).not.toHaveConsumption(type);
+        expect(context.bindings.notify).toBeUndefined();
     });
 
     it("Succeeds getting next ID with previous consumption", async () => {
@@ -68,6 +70,7 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage).not.toHaveChanged();
         expect(storage.ranges()).toHaveLength(0);
         expect(storage.objectIds(type)).toEqual(expect.objectContaining(consumption));
+        expect(context.bindings.notify).toBeUndefined();
     });
 
     it("Succeeds committing next ID against a previously unknown app", async () => {
@@ -88,6 +91,9 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage.ranges()).toEqual(ranges);
         expect(storage).toHaveConsumption(type);
         expect(storage.objectIds(type)).toEqual([50000]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe("_mock_");
     });
 
     it("Succeeds committing next ID without previous consumption", async () => {
@@ -106,6 +112,9 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage.ranges()).toEqual(ranges);
         expect(storage).toHaveConsumption(type);
         expect(storage.objectIds(type)).toEqual([50000]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe(storage.appId);
     });
 
     it("Succeeds committing next ID with previous consumption", async () => {
@@ -124,5 +133,8 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage.ranges()).toHaveLength(1);
         expect(storage.ranges()).toEqual(ranges);
         expect(storage.objectIds(type)).toEqual([50000, 50001, 50002, 50003, 50004]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe(storage.appId);
     });
 });

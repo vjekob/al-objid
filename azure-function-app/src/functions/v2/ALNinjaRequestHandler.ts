@@ -1,6 +1,6 @@
-import { HandlerFunc, RequestHandler } from "@vjeko.com/azure-func";
+import { RequestContext, RequestHandler } from "@vjeko.com/azure-func";
 import { injectValidators } from "./injectValidators";
-import { AppBindings, DefaultBindings } from "./TypesV2";
+import { AppBindings, AppCache, DefaultBindings } from "./TypesV2";
 
 injectValidators();
 
@@ -12,12 +12,31 @@ interface AppIdBody {
 type ALNinjaBindings<T> = AppBindings & T;
 type ALNinjaRequest<T> = AppIdBody & T;
 
+interface ALNinjaRequestContext<TRequest, TBindings> extends RequestContext<TRequest, TBindings> {
+    markAsChanged(appId: string, app: AppCache): void;
+}
+
+interface ALNinjaHandlerFunc<TRequest, TResponse, TBindings> {
+    (context: ALNinjaRequestContext<ALNinjaRequest<TRequest>, ALNinjaBindings<TBindings>>): Promise<TResponse>;
+}
+
 export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindings>
     extends RequestHandler<ALNinjaRequest<TRequest>, TResponse, ALNinjaBindings<TBindings>> {
     private _skipAuthorization: boolean = false;
 
-    public constructor(handler: HandlerFunc<ALNinjaRequest<TRequest>, TResponse, ALNinjaBindings<TBindings>>, withValidation: boolean = true) {
-        super(handler);
+    public constructor(handler: ALNinjaHandlerFunc<TRequest, TResponse, TBindings>, withValidation: boolean = true) {
+        // super(() => {
+        //     throw new ErrorResponse("https://vjeko.com/2021/10/04/al-object-id-ninja-scheduled-maintenance-announcement-october-9-at-1900-cet/", 503, { "Retry-After": "Sat, 9 Oct 2021 17:30:00 GMT" });
+        // });
+        // return;
+
+        super((request) => {
+            const alNinjaRequest = (request as unknown as ALNinjaRequestContext<TRequest, TBindings>);
+            alNinjaRequest.markAsChanged = (appId, app) => {
+                request.rawContext.bindings.notify = { appId, app };
+            }
+            return handler(request as any);
+        });
 
         this.onAuthorization(async (req) => {
             if (this._skipAuthorization) {
@@ -30,7 +49,7 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
                 If there is something wrong with these requests, these apply:
                 - They will fail validation (if appId is required)
                 - Actual function handler should take care of these requests
-                */ 
+                */
                 return true;
             }
 

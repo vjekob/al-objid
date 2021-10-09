@@ -48,6 +48,9 @@ describe("Testing function api/v2/authorizeApp", () => {
         storage.setAppInspectionContext("_mock_");
         expect(storage).toHaveChanged();
         expect(storage).toBeAuthorized();
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe("_mock_");
     });
 
     it("Fails to de-authorizes a previously unknown app", async () => {
@@ -85,5 +88,8 @@ describe("Testing function api/v2/authorizeApp", () => {
         await authorizeApp(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).not.toBeAuthorized();
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe(storage.appId);
     });
 });

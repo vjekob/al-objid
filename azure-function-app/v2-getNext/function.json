@@ -15,6 +15,13 @@
       "type": "http",
       "direction": "out",
       "name": "res"
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "notify",
+      "queueName": "appchange",
+      "connection": "NotifyQueueStorage"
     }
   ],
   "scriptFile": "../dist/src/functions/v2/getNext/index.js"

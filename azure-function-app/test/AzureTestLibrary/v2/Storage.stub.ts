@@ -1,6 +1,5 @@
-import { Range } from "../../../src/common/types";
 import { ALObjectType } from "../../../src/functions/v2/ALObjectType";
-import { AppCache } from "../../../src/functions/v2/TypesV2";
+import { AppCache, Range } from "../../../src/functions/v2/TypesV2";
 import { ContentAnalyzer, StubBuilder } from "../Storage.fake.types";
 
 let app = 0;
