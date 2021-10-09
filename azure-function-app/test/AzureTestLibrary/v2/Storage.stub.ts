@@ -65,7 +65,8 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
     }
 
     objectIds(objectType: ALObjectType): number[] {
-        return this._app[objectType] || [];
+        const app = this._content[`${this._appId}.json`] || {};
+        return app[objectType] || [];
     }
     hasChanged(): boolean {
         return JSON.stringify(this._content) !== this._contentSerialized;
@@ -75,6 +76,7 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
         return !!(app && app._authorization && app._authorization.key && app._authorization.valid);
     }
     ranges(): Range[] {
-        return this._app._ranges || [];
+        const app = this._content[`${this._appId}.json`] || {};
+        return app._ranges || [];
     }
 }

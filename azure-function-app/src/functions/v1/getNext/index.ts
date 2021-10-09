@@ -34,7 +34,7 @@ const httpTrigger: AzureFunction = RequestHandler.handleAuthorized<GetNextBindin
             available: false,
             updateAttempts: 0,
             hasConsumption: !!context.bindings.ids
-        }
+        };
         result.available = result.id > 0;
 
         if (result.id && req.method === "POST") {

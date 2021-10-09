@@ -6,7 +6,6 @@ import { StubStorage } from "../AzureTestLibrary/v2/Storage.stub";
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 import { ALObjectType } from "../../src/functions/v2/ALObjectType";
 
-
 jest.mock("azure-storage");
 Blob.injectCreateBlobService(azure.createBlobService);
 Mock.initializeStorage(azure.createBlobService);

@@ -1,50 +1,32 @@
+import { ErrorResponse } from "@vjeko.com/azure-func";
+import { findFirstAvailableId } from "../../../common/util";
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
-import { ALObjectType } from "../ALObjectType";
 import { GetNextRequest, GetNextResponse } from "./types";
+import { updateConsumption } from "./update";
 
 const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async (request) => {
     const { app } = request.bindings;
-    const { body } = request;
-    debugger;
-    /*
-        Expected input:
-            {
-                appId: string,
-                [authKey: string,]
-                ranges: Range[],
-                request: {
-                    type: string,
-                    count: number,
-                    perRange: boolean;
-                }[]
-            }
+    const { appId, ranges, type } = request.body;
+    const ids = app[type] || [];
 
-        Output:
-            {
-                appId: string,
-                response {
-                    type: ALObjectType,
-                    range: Range,
-                    ids: number[],
-                    success: boolean, // Indicates whether the requested number of ids was successfully retrieved from the specified range
-                }[]
-            }
+    const result = {
+        id: findFirstAvailableId(ranges, ids),
+        updated: false,
+        available: false,
+        updateAttempts: 0,
+        hasConsumption: !!(app[type] && app[type].length)
+    };
+    result.available = result.id > 0;
 
-        Goals:
-        1. Read everything from a single back-end file named `<appId>.json` (this means: authorization, ranges, consumption)
-    */
+    if (result.id && request.method === "POST") {
+        const success = await updateConsumption(appId, type, ranges, result);
+        if (!success) {
+            throw new ErrorResponse("Too many attempts at updating BLOB", 409);
+        }
+        result.hasConsumption = true;
+    }
 
-    // if (bindings) {
-    //     //;
-    // }
-
-    return {
-        appId: "",
-        type: ALObjectType.codeunit,
-        range: { from: 50000, to: 50099 },
-        ids: [50000],
-        success: true
-    } as GetNextResponse
+    return result;
 });
 
 getNext.validator.expect("body", {

@@ -15,3 +15,10 @@ export interface GetNextResponse {
     updateAttempts: number;
     hasConsumption: boolean;
 }
+
+export interface ConsumptionUpdateContext {
+    id: number;
+    available: boolean;
+    updated: boolean;
+    updateAttempts: number;
+}
