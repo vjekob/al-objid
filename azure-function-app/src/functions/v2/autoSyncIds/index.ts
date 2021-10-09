@@ -4,7 +4,7 @@ import { updateConsumptions } from "../syncIds/update";
 import { AppCache } from "../TypesV2";
 import { AutoSyncIdsRequest, AutoSyncIdsResponse } from "./types";
 
-const autoSyncIds = new ALNinjaRequestHandler<AutoSyncIdsRequest, AutoSyncIdsResponse, undefined>(async (request) => {
+const autoSyncIds = new ALNinjaRequestHandler<AutoSyncIdsRequest, AutoSyncIdsResponse>(async (request) => {
     const { appFolders } = request.body;
     let result: AutoSyncIdsResponse = {};
     for (let folder of appFolders) {

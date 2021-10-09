@@ -1,8 +1,8 @@
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 import { ALObjectType } from "../ALObjectType";
-import { GetNextBindings, GetNextRequest, GetNextResponse } from "./types";
+import { GetNextRequest, GetNextResponse } from "./types";
 
-const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse, GetNextBindings>(async (request) => {
+const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async (request) => {
     const { app } = request.bindings;
     const { body } = request;
     debugger;

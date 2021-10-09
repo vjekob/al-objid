@@ -1,6 +1,6 @@
 import { HandlerFunc, RequestHandler } from "@vjeko.com/azure-func";
 import { injectValidators } from "./injectValidators";
-import { AppBindings } from "./TypesV2";
+import { AppBindings, DefaultBindings } from "./TypesV2";
 
 injectValidators();
 
@@ -12,7 +12,7 @@ interface AppIdBody {
 type ALNinjaBindings<T> = AppBindings & T;
 type ALNinjaRequest<T> = AppIdBody & T;
 
-export class ALNinjaRequestHandler<TRequest, TResponse, TBindings>
+export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindings>
     extends RequestHandler<ALNinjaRequest<TRequest>, TResponse, ALNinjaBindings<TBindings>> {
     private _skipAuthorization: boolean = false;
 

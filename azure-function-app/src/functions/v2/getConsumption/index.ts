@@ -1,9 +1,9 @@
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 import { ALObjectType } from "../ALObjectType";
-import { DefaultBindings, DefaultRequest } from "../TypesV2";
+import { DefaultRequest } from "../TypesV2";
 import { GetConsumptionResponse } from "./types";
 
-const getConsumption = new ALNinjaRequestHandler<DefaultRequest, GetConsumptionResponse, DefaultBindings>(async (request) => {
+const getConsumption = new ALNinjaRequestHandler<DefaultRequest, GetConsumptionResponse>(async (request) => {
     const { app } = request.bindings;
     const { _authorization, _ranges, ...response } = app as any;
     response._total = 0;

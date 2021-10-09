@@ -1,10 +1,10 @@
 import { ErrorResponse } from "@vjeko.com/azure-func";
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
-import { DefaultBindings, DefaultRequest } from "../TypesV2";
+import { DefaultRequest } from "../TypesV2";
 import { AuthorizeAppResponse } from "./types";
 import { removeAppAuthorization, writeAppAuthorization } from "./update";
 
-const authorizeApp = new ALNinjaRequestHandler<DefaultRequest, AuthorizeAppResponse, DefaultBindings>(async (request) => {
+const authorizeApp = new ALNinjaRequestHandler<DefaultRequest, AuthorizeAppResponse>(async (request) => {
     const { app } = request.bindings;
     let { appId, authKey } = request.body;
 
