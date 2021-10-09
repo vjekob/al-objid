@@ -21,8 +21,8 @@ interface HttpResponse<T> {
     value?: T,
 }
 
-const DEFAULT_HOST_NAME = "vjekocom-test-20211009.azurewebsites.net";
-const NEWS_HOST_NAME = "vjekocom-test-20211009.azurewebsites.net";
+const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
+const NEWS_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),

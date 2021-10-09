@@ -9,6 +9,14 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - App pools feature (https://github.com/vjekob/al-objid/issues/1) supported in the back end.
 - Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
 
+## [2.0.0] - 2021-10-09
+### Changed
+- AL Object ID Ninja invokes "v2" version of the back end. This allows it to read and write data from/to the new, more efficient
+app cache storage. Read more at
+https://vjeko.com/2021/10/04/al-object-id-ninja-scheduled-maintenance-announcement-october-9-at-1900-cet/
+- Invocation of v2/getLog has been temporarily suspended. It will be reintroduced in v2.0.1 after the new, more efficient
+v2/getLog is fully built.
+
 ## [1.2.8] - 2021-10-04
 ### Added
 - Handling of back-end HTTP response 503 Service Unavailable. This response is sent by the back end when there is an undergoing
