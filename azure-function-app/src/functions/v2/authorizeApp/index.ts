@@ -1,4 +1,4 @@
-import { ErrorResponse } from "@vjeko.com/azure-func/dist";
+import { ErrorResponse } from "@vjeko.com/azure-func";
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 import { DefaultBindings, DefaultRequest } from "../TypesV2";
 import { AuthorizeAppResponse } from "./types";

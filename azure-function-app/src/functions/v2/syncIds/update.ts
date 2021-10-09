@@ -4,6 +4,9 @@ import { Blob } from "@vjeko.com/azure-func";
 export async function updateConsumptions(appId: string, objectIds: ObjectConsumptions, patch: boolean): Promise<ObjectConsumptions> {
     let blob = new Blob<AppCache>(`${appId}.json`);
     const app = await blob.optimisticUpdate(app => {
+        if (!app) {
+            app = {} as AppCache;
+        }
         let { _authorization, _ranges, ...consumptions } = app;
         if (!patch) {
             consumptions = {} as ObjectConsumptions;

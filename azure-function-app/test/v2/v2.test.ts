@@ -59,7 +59,7 @@ describe("Testing generic features of api/v2", () => {
         expect(() => validator.validate(request)).toThrowError();
     });
 
-    it("Fails on validating invalid ObjectIDs specification", () => {
+    it("Fails on validating invalid ObjectIDs specification (numbers, apples, oranges)", () => {
         injectValidators();
         const validator = new RequestValidator();
         validator.expect("body", { "ObjectIDs": "ObjectIDs" });
@@ -67,7 +67,7 @@ describe("Testing generic features of api/v2", () => {
         expect(() => validator.validate(request)).toThrowError();
     });
 
-    it("Fails on validating invalid ObjectIDs specification", () => {
+    it("Fails on validating invalid ObjectIDs specification (incorrect ALObjectType 'record')", () => {
         injectValidators();
         const validator = new RequestValidator();
         validator.expect("body", { "ObjectIDs": "ObjectIDs" });
@@ -80,6 +80,79 @@ describe("Testing generic features of api/v2", () => {
         const validator = new RequestValidator();
         validator.expect("body", { "ObjectIDs": "ObjectIDs" });
         const request = new Mock.Request("GET", { "ObjectIDs": { codeunit: [12, 13], table: [15, 16] } });
+        expect(() => validator.validate(request)).not.toThrowError();
+    });
+
+    it("Fails on validating invalid PerAppObjectIDs specification (ObjectIDs present instead)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "PerAppObjectIDs": "PerAppObjectIDs" });
+        const request = new Mock.Request("GET", { "PerAppObjectIDs": { codeunit: 1, table: [1, "apple", "orange"] } });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid PerAppObjectIDs specification (missing appId property)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "PerAppObjectIDs": "PerAppObjectIDs" });
+        const request = new Mock.Request("GET", {
+            "PerAppObjectIDs": [
+                { test: "app1", ids: { codeunit: [1, 2], table: [1, 2] } },
+                { mock: "app2", ids: "apple" },
+            ],
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid PerAppObjectIDs specification (missing ids property)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "PerAppObjectIDs": "PerAppObjectIDs" });
+        const request = new Mock.Request("GET", {
+            "PerAppObjectIDs": [
+                { appId: "app1", IDs: { codeunit: [1, 2], table: [1, 2] } },
+                { appId: "app2", IDs: "apple" },
+            ],
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid PerAppObjectIDs specification (invalid single ObjectIDs specification inside)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "PerAppObjectIDs": "PerAppObjectIDs" });
+        const request = new Mock.Request("GET", {
+            "PerAppObjectIDs": [
+                { appId: "app1", ids: { codeunit: [1, 2], table: [1, 2] } },
+                { appId: "app2", ids: "apple" },
+            ],
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid PerAppObjectIDs specification (invalid ALObjectType inside)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "PerAppObjectIDs": "PerAppObjectIDs" });
+        const request = new Mock.Request("GET", {
+            "PerAppObjectIDs": [
+                { appId: "app1", ids: { codeunit: [1, 2], table: [1, 2] } },
+                { appId: "app2", ids: { codeunit: [1, 2], record: [1, 2] } },
+            ],
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Succeeds on validating valid PerAppObjectIDs specification", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "PerAppObjectIDs": "PerAppObjectIDs" });
+        const request = new Mock.Request("GET", {
+            "PerAppObjectIDs": [
+                { appId: "app1", ids: { codeunit: [1, 2], table: [1, 2] } },
+                { appId: "app2", ids: { codeunit: [1, 2], page: [1, 2] } },
+            ],
+        });
         expect(() => validator.validate(request)).not.toThrowError();
     });
 });

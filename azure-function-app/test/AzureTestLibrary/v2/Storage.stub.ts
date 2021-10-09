@@ -12,13 +12,14 @@ export const authKey = () => `key-${key--}`;
 export class StubStorage extends StubBuilder implements ContentAnalyzer {
     private _contentSerialized: string = "";
     private _content: Object = {};
-    private _appId: string = appId();
+    private _appId: string;
     private _authKey: string = "";
     private _app: AppCache = {} as AppCache;
 
-    constructor() {
+    constructor(forceAppId?: string) {
         super();
 
+        this._appId = forceAppId || appId();
         this._content = { [`${this._appId}.json`]: this._app };
         this.serializeContent();
     }

@@ -43,7 +43,7 @@ describe("Testing function api/v2/syncIds", () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ids }));
+        const context = new Mock.Context(new Mock.Request("PATCH", { appId: storage.appId, ids }));
         await syncIds(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).toHaveChanged();
