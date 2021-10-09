@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@types/node": "^16.7.10",
-    "@vjeko.com/azure-func": "file:../../@vjeko.com/azure-func",
+    "@vjeko.com/azure-func": "0.0.1",
     "azure-storage": "^2.10.4"
   },
   "devDependencies": {
