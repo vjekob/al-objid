@@ -11,6 +11,9 @@ export function injectValidators() {
         return true;
     });
     RequestValidator.defineValidator("ObjectIDs", (value: ObjectConsumptions) => {
+        if (typeof value !== "object" || !value) {
+            return `object expected, received "${typeof value}"`
+        }
         for (let key of Object.keys(value)) {
             if (!ALObjectType[key]) {
                 return `invalid AL object type "${value}"`;
@@ -24,5 +27,6 @@ export function injectValidators() {
                 }
             }
         }
+        return true;
     });
 }
