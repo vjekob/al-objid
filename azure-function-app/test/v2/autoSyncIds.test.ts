@@ -75,7 +75,7 @@ describe("Testing function api/v2/autoSyncIds", () => {
     });
 
     it("Overwrites existing consumptions on POST against known apps", async () => {
-        const storage = new StubStorage("first")
+        const storage = new StubStorage().app("first")
             .setConsumption(ALObjectType.codeunit, [2, 3, 4])
             .setConsumption(ALObjectType.table, [1, 2])
             .setConsumption(ALObjectType.page, [3, 4, 5]);
@@ -103,7 +103,7 @@ describe("Testing function api/v2/autoSyncIds", () => {
     });
 
     it("Merges new consumptions on PATCH against known apps", async () => {
-        const storage = new StubStorage("first")
+        const storage = new StubStorage().app("first")
             .setConsumption(ALObjectType.codeunit, [2, 3, 4])
             .setConsumption(ALObjectType.table, [1, 2])
             .setConsumption(ALObjectType.page, [3, 4, 5]);
@@ -131,7 +131,7 @@ describe("Testing function api/v2/autoSyncIds", () => {
     });
 
     it("Fails to perform update with unauthorized POST against an authorized app", async () => {
-        const storage = new StubStorage("first")
+        const storage = new StubStorage().app("first")
             .setConsumption(ALObjectType.codeunit, [2, 3, 4])
             .setConsumption(ALObjectType.table, [1, 2])
             .setConsumption(ALObjectType.page, [3, 4, 5])
@@ -144,7 +144,7 @@ describe("Testing function api/v2/autoSyncIds", () => {
     });
 
     it("Successfully performs update with authorized POST against an authorized app", async () => {
-        const storage = new StubStorage("first")
+        const storage = new StubStorage().app("first")
             .setConsumption(ALObjectType.codeunit, [2, 3, 4])
             .setConsumption(ALObjectType.table, [1, 2])
             .setConsumption(ALObjectType.page, [3, 4, 5])

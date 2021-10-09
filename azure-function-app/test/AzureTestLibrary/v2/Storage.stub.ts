@@ -14,18 +14,25 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
     private _content: Object = {};
     private _appId: string;
     private _authKey: string = "";
-    private _app: AppCache = {} as AppCache;
+    private _app: AppCache;
 
-    constructor(forceAppId?: string) {
+    constructor() {
         super();
-
-        this._appId = forceAppId || appId();
-        this._content = { [`${this._appId}.json`]: this._app };
         this.serializeContent();
     }
 
     private serializeContent() {
         this._contentSerialized = JSON.stringify(this._content);
+    }
+
+    app(explicitAppId?: string) {
+        this.serializeContent();
+
+        this._app = {} as AppCache
+        this._appId = explicitAppId || appId();
+        this._content[`${this._appId}.json`] = this._app;
+        this.serializeContent();
+        return this;
     }
 
     authorize() {
@@ -52,6 +59,11 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
         return this;
     }
 
+    setAppInspectionContext(appId: string) {
+        this._appId = appId;
+        this._app = this._content[`${this._appId}.json`];
+    }
+
     get appId(): string {
         return this._appId;
     }
@@ -66,8 +78,9 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
 
     objectIds(objectType: ALObjectType): number[] {
         const app = this._content[`${this._appId}.json`] || {};
-        return app[objectType] || [];
+        return app[objectType];
     }
+
     hasChanged(): boolean {
         return JSON.stringify(this._content) !== this._contentSerialized;
     }

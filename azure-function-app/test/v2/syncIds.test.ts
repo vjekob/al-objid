@@ -24,40 +24,38 @@ describe("Testing function api/v2/syncIds", () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ids }));
+        const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_", ids }));
         await syncIds(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).toHaveChanged();
-        expect(storage).not.toBeAuthorized();
 
-        const app = storage.content[`${storage.appId}.json`];
-        expect(app).toBeDefined();
-        expect(app.codeunit).toEqual([1, 3, 5]);
-        expect(app.table).toBeUndefined();
-        expect(app.page).toEqual([2, 4, 6]);
-        expect(app.report).toEqual([3]);
+        storage.setAppInspectionContext("_mock_");
+        expect(storage).not.toBeAuthorized();
+        expect(storage.objectIds(ALObjectType.codeunit)).toEqual([1, 3, 5]);
+        expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
+        expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
+        expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
     });
 
     it("Inserts new consumptions on PATCH against unknown app", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("PATCH", { appId: storage.appId, ids }));
+        const context = new Mock.Context(new Mock.Request("PATCH", { appId: "_mock_", ids }));
         await syncIds(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).toHaveChanged();
-        expect(storage).not.toBeAuthorized();
 
-        const app = storage.content[`${storage.appId}.json`];
-        expect(app).toBeDefined();
-        expect(app.codeunit).toEqual([1, 3, 5]);
-        expect(app.table).toBeUndefined();
-        expect(app.page).toEqual([2, 4, 6]);
-        expect(app.report).toEqual([3]);
+        storage.setAppInspectionContext("_mock_");
+        expect(storage).not.toBeAuthorized();
+        expect(storage.objectIds(ALObjectType.codeunit)).toEqual([1, 3, 5]);
+        expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
+        expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
+        expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
     });
 
     it("Overwrites existing consumptions on POST against a known app", async () => {
-        const storage = new StubStorage()
+        const storage = new StubStorage().app()
             .setConsumption(ALObjectType.codeunit, [2, 3, 4])
             .setConsumption(ALObjectType.table, [1, 2])
             .setConsumption(ALObjectType.page, [3, 4, 5]);
@@ -78,7 +76,7 @@ describe("Testing function api/v2/syncIds", () => {
     });
 
     it("Merges new consumptions on PATCH against a known app", async () => {
-        const storage = new StubStorage()
+        const storage = new StubStorage().app()
             .setConsumption(ALObjectType.codeunit, [2, 3, 4])
             .setConsumption(ALObjectType.table, [1, 2])
             .setConsumption(ALObjectType.page, [3, 4, 5]);

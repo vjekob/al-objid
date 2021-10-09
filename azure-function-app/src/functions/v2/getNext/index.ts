@@ -5,7 +5,7 @@ import { GetNextRequest, GetNextResponse } from "./types";
 import { updateConsumption } from "./update";
 
 const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async (request) => {
-    const { app } = request.bindings;
+    const app = request.bindings.app || {};
     const { appId, ranges, type } = request.body;
     const ids = app[type] || [];
 

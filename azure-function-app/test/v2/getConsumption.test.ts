@@ -15,7 +15,7 @@ initializeCustomMatchers()
 describe("Testing function api/v2/getConsumption", () => {
 
     it("Correctly retrieves consumptions", async () => {
-        const storage = new StubStorage().authorize();
+        const storage = new StubStorage().app().authorize();
         storage.setConsumption(ALObjectType.codeunit, [1, 2, 3]);
         storage.setConsumption(ALObjectType.page, [4, 5, 6]);
         Mock.useStorage(storage.content);
@@ -28,5 +28,12 @@ describe("Testing function api/v2/getConsumption", () => {
             codeunit: [1, 2, 3],
             page: [4, 5, 6]
         });
+    });
+
+    it("Fails to retrieve consumptions for unknown app", async () => {
+        Mock.useStorage({});
+        const context = new Mock.Context(new Mock.Request("GET", { appId: "_mock_" }));
+        await getConsumption(context, context.req);
+        expect(context.res).toBeStatus(404);
     });
 });

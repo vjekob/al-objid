@@ -21,8 +21,8 @@ interface HttpResponse<T> {
     value?: T,
 }
 
-const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
-const NEWS_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
+const DEFAULT_HOST_NAME = "vjekocom-test-20211009.azurewebsites.net";
+const NEWS_HOST_NAME = "vjekocom-test-20211009.azurewebsites.net";
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),
@@ -125,7 +125,7 @@ export class Backend {
         }
 
         const response = await sendRequest<NextObjectIdInfo>(
-            "/api/v1/getNext",
+            "/api/v2/getNext",
             commit ? "POST" : "GET",
             request
         );
@@ -135,7 +135,7 @@ export class Backend {
 
     static async syncIds(appId: string, ids: ConsumptionInfo, patch: boolean, authKey: string): Promise<boolean> {
         const response = await sendRequest<ConsumptionInfo>(
-            "/api/v1/syncIds",
+            "/api/v2/syncIds",
             patch ? "PATCH" : "POST",
             { appId, ids, authKey }
         );
@@ -144,7 +144,7 @@ export class Backend {
 
     static async autoSyncIds(consumptions: AuthorizedAppConsumption[], patch: boolean): Promise<boolean> {
         const response = await sendRequest<ConsumptionInfo>(
-            "/api/v1/autoSyncIds",
+            "/api/v2/autoSyncIds",
             patch ? "PATCH" : "POST",
             { appFolders: consumptions }
         );
@@ -153,7 +153,7 @@ export class Backend {
 
     static async authorizeApp(appId: string, errorHandler: ErrorHandler<AuthorizationInfo>): Promise<AuthorizationInfo | undefined> {
         const response = await sendRequest<AuthorizationInfo>(
-            "/api/v1/authorizeApp",
+            "/api/v2/authorizeApp",
             "POST",
             { appId },
             errorHandler
@@ -163,7 +163,7 @@ export class Backend {
 
     static async deauthorizeApp(appId: string, authKey: string, errorHandler: ErrorHandler<AuthorizationDeletedInfo>): Promise<boolean> {
         const response = await sendRequest<AuthorizationDeletedInfo>(
-            "/api/v1/authorizeApp",
+            "/api/v2/authorizeApp",
             "DELETE",
             { appId, authKey },
             errorHandler
@@ -183,7 +183,7 @@ export class Backend {
 
     static async getConsumption(appId: string, authKey: string): Promise<ConsumptionInfoWithTotal | undefined> {
         const response = await sendRequest<ConsumptionInfoWithTotal>(
-            "/api/v1/getConsumption",
+            "/api/v2/getConsumption",
             "GET",
             { appId, authKey },
         );

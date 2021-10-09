@@ -25,7 +25,13 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
             }
 
             if (!req.body.appId) {
-                return false;
+                /*
+                We cannot treat requests without appId as unauthorized!
+                If there is something wrong with these requests, these apply:
+                - They will fail validation (if appId is required)
+                - Actual function handler should take care of these requests
+                */ 
+                return true;
             }
 
             await req.bind();
