@@ -63,6 +63,12 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, 
         status: API_RESULT.NOT_SENT,
     };
 
+    if (data && typeof data === "object" && !Array.isArray(data)) {
+        if (Config.instance.includeUserName) {
+            data._user = Config.instance.userName;
+        }
+    }
+
     return await executeWithStopwatchAsync(async () => {
         try {
             response.value = await https.send<T>(method, data);
@@ -113,21 +119,15 @@ function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest):
 
 export class Backend {
     static async getNextNo(appId: string, type: string, ranges: any, commit: boolean, authKey: string): Promise<NextObjectIdInfo | undefined> {
-        let request: any = {
-            appId,
-            type,
-            ranges,
-            authKey,
-        };
-
-        if (Config.instance.includeUserName) {
-            request.content = { user: Config.instance.userName };
-        }
-
         const response = await sendRequest<NextObjectIdInfo>(
             "/api/v2/getNext",
             commit ? "POST" : "GET",
-            request
+            {
+                appId,
+                type,
+                ranges,
+                authKey,
+            }
         );
         if (response.status === API_RESULT.SUCCESS) output.log(`Received next ${type} ID response: ${JSON.stringify(response.value)}`);
         return response.value;
