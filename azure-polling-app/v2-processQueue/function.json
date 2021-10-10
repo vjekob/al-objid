@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "name": "message",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "appchange",
+      "connection": "QueueStorage"
+    }
+  ],
+  "scriptFile": "../dist/v2-processQueue/index.js"
+}

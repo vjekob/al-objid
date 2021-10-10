@@ -1,0 +1,11 @@
+get http://localhost:7071/api/v2/check
+Content-Type: application/json
+
+[
+    {
+        "appId": "f3d68f864ab1d89576b26696cd37388836b6f2111fd6c2e5bb3a7bb934a2cb3a"
+    },
+    {
+        "appId": "c855f6cbfe1d4052f5e841ecd7cc6d1fe8344e546c23f383ea852dde97b8009f"
+    }
+]
