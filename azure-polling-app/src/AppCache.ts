@@ -48,6 +48,10 @@ class AppCache {
         const app = await this.getAuthorizedApp(appId);
         return !app || !app._authorization || !app._authorization.valid || app._authorization.key === authKey;
     }
+
+    public getCachedIds(): string[] {
+        return Object.keys(this._apps);
+    }
 }
 
 export default new AppCache();
