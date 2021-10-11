@@ -1,13 +1,13 @@
-import { AppCache, ObjectConsumptions } from "../TypesV2";
+import { AppInfo, ObjectConsumptions } from "../TypesV2";
 import { Blob } from "@vjeko.com/azure-func";
 
-export async function updateConsumptions(appId: string, objectIds: ObjectConsumptions, patch: boolean): Promise<ObjectConsumptions> {
-    let blob = new Blob<AppCache>(`${appId}.json`);
+export async function updateConsumptions(appId: string, objectIds: ObjectConsumptions, patch: boolean): Promise<AppInfo> {
+    let blob = new Blob<AppInfo>(`${appId}.json`);
     const app = await blob.optimisticUpdate(app => {
         if (!app) {
-            app = {} as AppCache;
+            app = {} as AppInfo;
         }
-        let { _authorization, _ranges, ...consumptions } = app;
+        let { _authorization, _ranges, _log, ...consumptions } = app;
         if (!patch) {
             consumptions = {} as ObjectConsumptions;
         }
@@ -15,8 +15,7 @@ export async function updateConsumptions(appId: string, objectIds: ObjectConsump
             let existing = consumptions[key] || [];
             consumptions[key] = [...new Set([...(patch ? existing : []), ...objectIds[key]])].sort((left, right) => left - right);
         }
-        return { _authorization, _ranges, ...consumptions };
+        return { _authorization, _ranges, _log, ...consumptions };
     });
-    const { _authorization, _ranges, ...result } = app;
-    return result;
+    return app;
 }

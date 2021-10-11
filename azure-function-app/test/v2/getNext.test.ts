@@ -13,7 +13,7 @@ Mock.initializeStorage(azure.createBlobService);
 initializeCustomMatchers()
 
 describe("Testing function api/v2/getNext", () => {
-    const ranges: Range[] = [{ from: 50000, to: 50009}];
+    const ranges: Range[] = [{ from: 50000, to: 50009 }];
 
     it("Fails on invalid request content", async () => {
         const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_" }));
@@ -94,6 +94,7 @@ describe("Testing function api/v2/getNext", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe("_mock_");
+        expect(context.bindings.notify.app.codeunit).toEqual([50000]);
     });
 
     it("Succeeds committing next ID without previous consumption", async () => {
@@ -115,14 +116,17 @@ describe("Testing function api/v2/getNext", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
+        expect(context.bindings.notify.app.codeunit).toEqual([50000]);
     });
 
-    it("Succeeds committing next ID with previous consumption", async () => {
+    it("Succeeds committing next ID with previous consumption and stale log", async () => {
         const consumption = [50000, 50001, 50002, 50004];
         const type = ALObjectType.codeunit;
-        const storage = new StubStorage().app().setConsumption(type, consumption);
+        const storage = new StubStorage().app()
+            .setConsumption(type, consumption)
+            .setLog([{ timestamp: 1, eventType: "getNext", user: "mock", data: { type: "table", id: 50000 } }]);
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type }));
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type, user: "mock" }));
         await getNext(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(context.res.body.id).toStrictEqual(50003);
@@ -136,5 +140,38 @@ describe("Testing function api/v2/getNext", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
+        expect(context.bindings.notify.app.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
+        expect(context.bindings.notify.app._log.length).toStrictEqual(1);
+    });
+
+
+    it("Succeeds committing next ID with previous consumption and fresh log", async () => {
+        const consumption = [50000, 50001, 50002, 50004];
+        const log = [{ timestamp: Date.now(), eventType: "getNext", user: "mock", data: { type: "table", id: 50000 } }];
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app()
+            .setConsumption(type, consumption)
+            .setLog(log);
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type, user: "fake" }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual(50003);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(true);
+        expect(context.res.body.updated).toStrictEqual(true);
+        expect(storage).toHaveChanged();
+        expect(storage.ranges()).toHaveLength(1);
+        expect(storage.ranges()).toEqual(ranges);
+        expect(storage.objectIds(type)).toEqual([50000, 50001, 50002, 50003, 50004]);
+
+        expect(context.bindings.notify).toBeDefined();
+        expect(context.bindings.notify.appId).toBe(storage.appId);
+        expect(context.bindings.notify.app.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
+        expect(context.bindings.notify.app._log.length).toStrictEqual(2);
+        expect(context.bindings.notify.app._log[0]).toEqual(log[0]);
+        expect(context.bindings.notify.app._log[1].eventType).toEqual("getNext");
+        expect(context.bindings.notify.app._log[1].data).toEqual({ type: "codeunit", id: 50003 });
+        expect(context.bindings.notify.app._log[1].user).toEqual("fake");
     });
 });

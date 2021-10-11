@@ -14,13 +14,21 @@ export type ObjectConsumptions = {
     [key in ALObjectType]: number[];
 }
 
-export type AppCache = {
+export interface LogEntry {
+    eventType: string;
+    timestamp: number;
+    user: string;
+    data: any;
+}
+
+export type AppInfo = {
     _authorization: Authorization;
     _ranges: Range[];
+    _log: LogEntry[];
 } & ObjectConsumptions;
 
 export interface AppBindings {
-    app: AppCache;
+    app: AppInfo;
 }
 
 export interface DefaultBindings {};

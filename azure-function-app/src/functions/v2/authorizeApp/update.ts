@@ -1,26 +1,31 @@
 import { Blob } from "@vjeko.com/azure-func";
 import { getSha256 } from "../../../common/util";
-import { AppCache } from "../TypesV2";
+import { AppInfo } from "../TypesV2";
 
-const getBlob = (appId: string) => new Blob<AppCache>(`${appId}.json`);
+const getBlob = (appId: string) => new Blob<AppInfo>(`${appId}.json`);
 
-export async function writeAppAuthorization(appId: string): Promise<string> {
+interface UpdateAppAuthorizationResult {
+    app: AppInfo;
+    success: boolean;
+}
+
+export async function writeAppAuthorization(appId: string): Promise<UpdateAppAuthorizationResult> {
     const key = getSha256(`APP_AUTH_${appId}_${Date.now()}`, "base64");
     const blob = getBlob(appId);
-    const result = await blob.optimisticUpdate(app => {
-        app = { ...(app || {} as AppCache) }
+    const app = await blob.optimisticUpdate(app => {
+        app = { ...(app || {} as AppInfo) }
         app._authorization = { key, valid: true };
         return app;
     });
 
-    return result._authorization.key;
+    return { app, success: app._authorization.key && app._authorization.valid };
 }
 
-export async function removeAppAuthorization(appId: string): Promise<boolean> {
+export async function removeAppAuthorization(appId: string): Promise<UpdateAppAuthorizationResult> {
     const blob = getBlob(appId);
-    const result = await blob.optimisticUpdate(app => {
+    const app = await blob.optimisticUpdate(app => {
         delete app._authorization;
         return { ...app };
     });
-    return !result._authorization;
+    return { app, success: !app._authorization };
 }

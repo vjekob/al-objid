@@ -1,16 +1,21 @@
 import { Blob } from "@vjeko.com/azure-func";
 import { findFirstAvailableId } from "../../../common/util";
 import { ALObjectType } from "../ALObjectType";
-import { AppCache, Range } from "../TypesV2";
+import { AppInfo, Range } from "../TypesV2";
 import { ConsumptionUpdateContext } from "./types";
 
-export async function updateConsumption(appId: string, type: ALObjectType, ranges: Range[], context: ConsumptionUpdateContext): Promise<boolean> {
-    let tooManyAttempts = false;
+interface UpdateResult {
+    app: AppInfo;
+    success: boolean;
+}
 
-    const blob = new Blob<AppCache>(`${appId}.json`);
-    await blob.optimisticUpdate((app, attempts) => {
+export async function updateConsumption(appId: string, type: ALObjectType, ranges: Range[], context: ConsumptionUpdateContext): Promise<UpdateResult> {
+    let success = true;
+
+    const blob = new Blob<AppInfo>(`${appId}.json`);
+    const app = await blob.optimisticUpdate((app, attempts) => {
         if (attempts === 100) {
-            tooManyAttempts = true;
+            success = false;
             return app;
         }
 
@@ -18,7 +23,7 @@ export async function updateConsumption(appId: string, type: ALObjectType, range
         context.updateAttempts = attempts;
 
         if (!app) {
-            app = {} as AppCache;
+            app = {} as AppInfo;
         }
 
         app._ranges = ranges;
@@ -47,5 +52,5 @@ export async function updateConsumption(appId: string, type: ALObjectType, range
         return { ...app };
     });
 
-    return !tooManyAttempts;
+    return { app, success };
 }

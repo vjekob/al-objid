@@ -1,5 +1,5 @@
 import { ALObjectType } from "../../../src/functions/v2/ALObjectType";
-import { AppCache, Range } from "../../../src/functions/v2/TypesV2";
+import { AppInfo, LogEntry, Range } from "../../../src/functions/v2/TypesV2";
 import { ContentAnalyzer, StubBuilder } from "../Storage.fake.types";
 
 let app = 0;
@@ -13,7 +13,7 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
     private _content: Object = {};
     private _appId: string;
     private _authKey: string = "";
-    private _app: AppCache;
+    private _app: AppInfo;
 
     constructor() {
         super();
@@ -27,7 +27,7 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
     app(explicitAppId?: string) {
         this.serializeContent();
 
-        this._app = {} as AppCache
+        this._app = {} as AppInfo
         this._appId = explicitAppId || appId();
         this._content[`${this._appId}.json`] = this._app;
         this.serializeContent();
@@ -55,6 +55,11 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
     setConsumption(objectType: ALObjectType, ids: number[]) {
         this._app[objectType] = ids;
         this.serializeContent();
+        return this;
+    }
+
+    setLog(log: LogEntry[]) {
+        this._app._log = log;
         return this;
     }
 

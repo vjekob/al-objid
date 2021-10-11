@@ -1,14 +1,14 @@
 import { ErrorResponse } from "@vjeko.com/azure-func";
 import { findFirstAvailableId } from "../../../common/util";
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
-import { AppCache } from "../TypesV2";
+import { AppInfo } from "../TypesV2";
 import { GetNextRequest, GetNextResponse } from "./types";
 import { updateConsumption } from "./update";
 
 const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async (request) => {
-    const app: AppCache = request.bindings.app || {} as AppCache;
+    const appInfo: AppInfo = request.bindings.app || {} as AppInfo;
     const { appId, ranges, type } = request.body;
-    const ids = app[type] || [];
+    const ids = appInfo[type] || [];
 
     const result = {
         id: findFirstAvailableId(ranges, ids),
@@ -20,12 +20,12 @@ const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async
     result.available = result.id > 0;
 
     if (result.id && request.method === "POST") {
-        const success = await updateConsumption(appId, type, ranges, result);
+        const { app, success } = await updateConsumption(appId, type, ranges, result);
         if (!success) {
             throw new ErrorResponse("Too many attempts at updating BLOB", 409);
         }
         result.hasConsumption = true;
-        request.markAsChanged(appId, app);
+        request.markAsChanged(appId, app, "getNext", { type, id: result.id });
     }
 
     return result;
