@@ -1,0 +1,53 @@
+{
+	"folders": [
+		{
+			"name": "Azure Function App: Back End",
+			"path": "azure-function-app"
+		},
+		{
+			"name": "Azure Function App: Polling",
+			"path": "azure-polling-app"
+		},
+		{
+			"name": "Node module: @vjeko.com/azure-func",
+			"path": "../@vjeko.com/azure-func"
+		},
+		{
+			"name": "Node module: @vjeko.com/azure-func-test",
+			"path": "../@vjeko.com/azure-func-test"
+		},
+		{
+			"name": "Root",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/dist": true,
+			"**/node_modules": true
+		},
+		"cSpell.words": [
+			"alext",
+			"azurewebsites",
+			"blobservice",
+			"codeunit",
+			"Deauthorization",
+			"deauthorize",
+			"Deauthorizing",
+			"endregion",
+			"enumextension",
+			"etags",
+			"objid",
+			"objidconfig",
+			"pageextension",
+			"permissionset",
+			"permissionsetextension",
+			"reportextension",
+			"tableextension",
+			"vjeko",
+			"vjekocom",
+			"xmlport"
+		]
+	}
+}

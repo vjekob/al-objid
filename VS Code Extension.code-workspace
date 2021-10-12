@@ -1,0 +1,45 @@
+{
+	"folders": [
+		{
+			"name": "VS Code Extension",
+			"path": "vscode-extension"
+		},
+		{
+			"name": "Documentation",
+			"path": "doc"
+		},
+		{
+			"name": "Root",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/dist": true,
+			"**/node_modules": true
+		},
+		"cSpell.words": [
+			"alext",
+			"azurewebsites",
+			"blobservice",
+			"codeunit",
+			"Deauthorization",
+			"deauthorize",
+			"Deauthorizing",
+			"endregion",
+			"enumextension",
+			"etags",
+			"objid",
+			"objidconfig",
+			"pageextension",
+			"permissionset",
+			"permissionsetextension",
+			"reportextension",
+			"tableextension",
+			"vjeko",
+			"vjekocom",
+			"xmlport"
+		]
+	}
+}
