@@ -1,6 +1,6 @@
-import { RequestContext, RequestHandler } from "@vjeko.com/azure-func";
+import { RequestHandler } from "@vjeko.com/azure-func";
 import { injectValidators } from "./injectValidators";
-import { AppBindings, AppInfo, DefaultBindings } from "./TypesV2";
+import { ALNinjaRequestContext, AppBindings, AppInfo, DefaultBindings } from "./TypesV2";
 
 injectValidators();
 
@@ -13,12 +13,6 @@ interface AppIdBody {
 type ALNinjaBindings<T> = AppBindings & T;
 type ALNinjaRequest<T> = AppIdBody & T;
 
-type ChangeOperation = "getNext" | "syncMerge" | "syncFull" | "authorize" | "deauthorize";
-
-interface ALNinjaRequestContext<TRequest, TBindings> extends RequestContext<TRequest, TBindings> {
-    markAsChanged(appId: string, app: AppInfo, operation: ChangeOperation, content?: any): void;
-}
-
 interface ALNinjaHandlerFunc<TRequest, TResponse, TBindings> {
     (context: ALNinjaRequestContext<ALNinjaRequest<TRequest>, ALNinjaBindings<TBindings>>): Promise<TResponse>;
 }
@@ -30,7 +24,7 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
     public constructor(handler: ALNinjaHandlerFunc<TRequest, TResponse, TBindings>, withValidation: boolean = true) {
         super((request) => {
             const alNinjaRequest = (request as unknown as ALNinjaRequestContext<TRequest, TBindings>);
-            alNinjaRequest.markAsChanged = (appId, app, eventType, data) => {
+            alNinjaRequest.log = (app, eventType, data) => {
                 const timestamp = Date.now();
                 const minTimestamp = timestamp - (3600 * 2); // Keep log entries for 2 hours
                 const log = (app._log || []).filter(entry => entry.timestamp > minTimestamp);
@@ -41,8 +35,10 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
                     data
                 });
                 app._log = log;
+            };
+            alNinjaRequest.markAsChanged = (appId, app) => {
                 request.rawContext.bindings.notify = { appId, app };
-            }
+            };
             return handler(request as any);
         });
 

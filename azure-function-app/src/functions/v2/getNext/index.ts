@@ -20,12 +20,12 @@ const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async
     result.available = result.id > 0;
 
     if (result.id && request.method === "POST") {
-        const { app, success } = await updateConsumption(appId, type, ranges, result);
+        const { app, success } = await updateConsumption(appId, request, type, ranges, result);
         if (!success) {
             throw new ErrorResponse("Too many attempts at updating BLOB", 409);
         }
         result.hasConsumption = true;
-        request.markAsChanged(appId, app, "getNext", { type, id: result.id });
+        request.markAsChanged(appId, app);
     }
 
     return result;

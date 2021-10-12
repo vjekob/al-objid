@@ -77,7 +77,7 @@ describe("Testing function api/v2/getNext", () => {
         const type = ALObjectType.codeunit;
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_", ranges, type }));
+        const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_", ranges, type, user: "fake" }));
         await getNext(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(context.res.body.id).toStrictEqual(50000);
@@ -92,16 +92,25 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage).toHaveConsumption(type);
         expect(storage.objectIds(type)).toEqual([50000]);
 
+        expect(storage.log().length).toBe(1);
+        expect(storage.log()[0].eventType).toBe("getNext");
+        expect(storage.log()[0].data).toEqual({ type: "codeunit", id: 50000 });
+        expect(storage.log()[0].user).toBe("fake");
+
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe("_mock_");
         expect(context.bindings.notify.app.codeunit).toEqual([50000]);
+        expect(context.bindings.notify.app._log.length).toStrictEqual(1);
+        expect(context.bindings.notify.app._log[0].eventType).toBe("getNext");
+        expect(context.bindings.notify.app._log[0].data).toEqual({ type: "codeunit", id: 50000 });
+        expect(context.bindings.notify.app._log[0].user).toBe("fake");
     });
 
     it("Succeeds committing next ID without previous consumption", async () => {
         const type = ALObjectType.codeunit;
         const storage = new StubStorage().app();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type }));
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type, user: "fake" }));
         await getNext(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(context.res.body.id).toStrictEqual(50000);
@@ -114,9 +123,18 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage).toHaveConsumption(type);
         expect(storage.objectIds(type)).toEqual([50000]);
 
+        expect(storage.log().length).toBe(1);
+        expect(storage.log()[0].eventType).toBe("getNext");
+        expect(storage.log()[0].data).toEqual({ type: "codeunit", id: 50000 });
+        expect(storage.log()[0].user).toBe("fake");
+
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
         expect(context.bindings.notify.app.codeunit).toEqual([50000]);
+        expect(context.bindings.notify.app._log.length).toStrictEqual(1);
+        expect(context.bindings.notify.app._log[0].eventType).toBe("getNext");
+        expect(context.bindings.notify.app._log[0].data).toEqual({ type: "codeunit", id: 50000 });
+        expect(context.bindings.notify.app._log[0].user).toBe("fake");
     });
 
     it("Succeeds committing next ID with previous consumption and stale log", async () => {
@@ -126,7 +144,7 @@ describe("Testing function api/v2/getNext", () => {
             .setConsumption(type, consumption)
             .setLog([{ timestamp: 1, eventType: "getNext", user: "mock", data: { type: "table", id: 50000 } }]);
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type, user: "mock" }));
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type, user: "fake" }));
         await getNext(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(context.res.body.id).toStrictEqual(50003);
@@ -138,10 +156,18 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage.ranges()).toEqual(ranges);
         expect(storage.objectIds(type)).toEqual([50000, 50001, 50002, 50003, 50004]);
 
+        expect(storage.log().length).toBe(1);
+        expect(storage.log()[0].eventType).toBe("getNext");
+        expect(storage.log()[0].data).toEqual({ type: "codeunit", id: 50003 });
+        expect(storage.log()[0].user).toBe("fake");
+
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
         expect(context.bindings.notify.app.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
         expect(context.bindings.notify.app._log.length).toStrictEqual(1);
+        expect(context.bindings.notify.app._log[0].eventType).toBe("getNext");
+        expect(context.bindings.notify.app._log[0].data).toEqual({ type: "codeunit", id: 50003 });
+        expect(context.bindings.notify.app._log[0].user).toBe("fake");
     });
 
 
@@ -165,13 +191,18 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage.ranges()).toEqual(ranges);
         expect(storage.objectIds(type)).toEqual([50000, 50001, 50002, 50003, 50004]);
 
+        expect(storage.log().length).toBe(2);
+        expect(storage.log()[1].eventType).toBe("getNext");
+        expect(storage.log()[1].data).toEqual({ type: "codeunit", id: 50003 });
+        expect(storage.log()[1].user).toBe("fake");
+
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
         expect(context.bindings.notify.app.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
         expect(context.bindings.notify.app._log.length).toStrictEqual(2);
         expect(context.bindings.notify.app._log[0]).toEqual(log[0]);
-        expect(context.bindings.notify.app._log[1].eventType).toEqual("getNext");
+        expect(context.bindings.notify.app._log[1].eventType).toBe("getNext");
         expect(context.bindings.notify.app._log[1].data).toEqual({ type: "codeunit", id: 50003 });
-        expect(context.bindings.notify.app._log[1].user).toEqual("fake");
+        expect(context.bindings.notify.app._log[1].user).toBe("fake");
     });
 });

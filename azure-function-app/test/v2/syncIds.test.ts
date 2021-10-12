@@ -24,7 +24,7 @@ describe("Testing function api/v2/syncIds", () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_", ids }));
+        const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_", ids, user: "fake" }));
         await syncIds(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).toHaveChanged();
@@ -35,6 +35,10 @@ describe("Testing function api/v2/syncIds", () => {
         expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
         expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
         expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
+
+        expect(storage.log().length).toBe(1);
+        expect(storage.log()[0].eventType).toBe("syncFull");
+        expect(storage.log()[0].user).toBe("fake");
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe("_mock_");
@@ -47,7 +51,7 @@ describe("Testing function api/v2/syncIds", () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("PATCH", { appId: "_mock_", ids }));
+        const context = new Mock.Context(new Mock.Request("PATCH", { appId: "_mock_", ids, user: "fake" }));
         await syncIds(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).toHaveChanged();
@@ -58,6 +62,10 @@ describe("Testing function api/v2/syncIds", () => {
         expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
         expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
         expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
+
+        expect(storage.log().length).toBe(1);
+        expect(storage.log()[0].eventType).toBe("syncMerge");
+        expect(storage.log()[0].user).toBe("fake");
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe("_mock_");
@@ -73,11 +81,15 @@ describe("Testing function api/v2/syncIds", () => {
             .setConsumption(ALObjectType.page, [3, 4, 5]);
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ids }));
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ids, user: "fake" }));
         await syncIds(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).toHaveChanged();
         expect(storage).not.toBeAuthorized();
+
+        expect(storage.log().length).toBe(1);
+        expect(storage.log()[0].eventType).toBe("syncFull");
+        expect(storage.log()[0].user).toBe("fake");
 
         const app = storage.content[`${storage.appId}.json`];
         expect(app).toBeDefined();
@@ -100,7 +112,7 @@ describe("Testing function api/v2/syncIds", () => {
             .setConsumption(ALObjectType.page, [3, 4, 5]);
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("PATCH", { appId: storage.appId, ids }));
+        const context = new Mock.Context(new Mock.Request("PATCH", { appId: storage.appId, ids, user: "fake" }));
         await syncIds(context, context.req);
         expect(context.res).toBeStatus(200);
         expect(storage).toHaveChanged();
@@ -112,6 +124,10 @@ describe("Testing function api/v2/syncIds", () => {
         expect(app.table).toEqual([1, 2]);
         expect(app.page).toEqual([2, 3, 4, 5, 6]);
         expect(app.report).toEqual([3]);
+
+        expect(storage.log().length).toBe(1);
+        expect(storage.log()[0].eventType).toBe("syncMerge");
+        expect(storage.log()[0].user).toBe("fake");
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);

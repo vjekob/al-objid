@@ -4,12 +4,11 @@ import { ObjectConsumptionRequest } from "./types";
 import { updateConsumptions } from "./update";
 
 const syncIds = new ALNinjaRequestHandler<ObjectConsumptionRequest, ObjectConsumptions>(async (request) => {
-    const { app } = request.bindings;
     const { appId, ids } = request.body;
     const merge = request.method === "PATCH";
-    const result = await updateConsumptions(appId, ids, merge);
+    const result = await updateConsumptions(appId, request, ids, merge);
     const { _authorization, _ranges, ...consumptions } = result;
-    request.markAsChanged(appId, result, merge ? "syncMerge" : "syncFull");
+    request.markAsChanged(appId, result);
     return consumptions;
 });
 syncIds.validator.expect("body", {

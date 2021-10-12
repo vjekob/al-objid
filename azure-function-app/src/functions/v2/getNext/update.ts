@@ -1,7 +1,7 @@
 import { Blob } from "@vjeko.com/azure-func";
 import { findFirstAvailableId } from "../../../common/util";
 import { ALObjectType } from "../ALObjectType";
-import { AppInfo, Range } from "../TypesV2";
+import { ALNinjaRequestContext, AppInfo, Range } from "../TypesV2";
 import { ConsumptionUpdateContext } from "./types";
 
 interface UpdateResult {
@@ -9,7 +9,7 @@ interface UpdateResult {
     success: boolean;
 }
 
-export async function updateConsumption(appId: string, type: ALObjectType, ranges: Range[], context: ConsumptionUpdateContext): Promise<UpdateResult> {
+export async function updateConsumption(appId: string, request: ALNinjaRequestContext, type: ALObjectType, ranges: Range[], context: ConsumptionUpdateContext): Promise<UpdateResult> {
     let success = true;
 
     const blob = new Blob<AppInfo>(`${appId}.json`);
@@ -32,7 +32,8 @@ export async function updateConsumption(appId: string, type: ALObjectType, range
         // No ids consumed yet, consume the first one and exit
         if (!consumption || !consumption.length) {
             context.updated = true;
-            app[type] = [context.id]
+            app[type] = [context.id];
+            request.log(app, "getNext", { type, id: context.id });
             return { ...app };
         }
 
@@ -49,6 +50,7 @@ export async function updateConsumption(appId: string, type: ALObjectType, range
 
         context.updated = true;
         app[type] = [...consumption, context.id].sort((left, right) => left - right);
+        request.log(app, "getNext", { type, id: context.id });
         return { ...app };
     });
 

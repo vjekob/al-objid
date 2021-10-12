@@ -96,4 +96,8 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
         const app = this._content[`${this._appId}.json`] || {};
         return app._ranges || [];
     }
+    log(): LogEntry[] {
+        const app = this._content[`${this._appId}.json`] || {};
+        return app._log;
+    }
 }
