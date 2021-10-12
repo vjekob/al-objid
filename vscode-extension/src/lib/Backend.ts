@@ -22,7 +22,7 @@ interface HttpResponse<T> {
 }
 
 const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
-const NEWS_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
+const POLL_HOST_NAME = "vjekocom-alext-weu-poll.azurewebsites.net";
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),
@@ -65,7 +65,7 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, 
 
     if (data && typeof data === "object" && !Array.isArray(data)) {
         if (Config.instance.includeUserName) {
-            data._user = Config.instance.userName;
+            data.user = Config.instance.userName;
         }
     }
 
@@ -176,7 +176,8 @@ export class Backend {
             "/api/v2/getLog",
             "GET",
             { appFolders: payload },
-            async () => true // On error, do nothing (message is logged in the output already)
+            async () => true, // On error, do nothing (message is logged in the output already)
+            POLL_HOST_NAME,
         );
         return response.value;
     }
@@ -196,7 +197,7 @@ export class Backend {
             "GET",
             {},
             undefined,
-            NEWS_HOST_NAME
+            POLL_HOST_NAME
         );
         return response.value?.news || [];
     }
