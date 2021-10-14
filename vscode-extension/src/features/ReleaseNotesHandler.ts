@@ -6,14 +6,32 @@ import { ALREADY_USED, LABELS } from "../lib/constants";
 import { UI } from "../lib/UI";
 
 export class ReleaseNotesHandler {
-    public check(context: ExtensionContext) {
-        const version = extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
+    private static _instance: ReleaseNotesHandler;
+    private _version?: string;
 
-        if (!version) {
+    private constructor() {}
+
+    public static get instance() {
+        return this._instance || (this._instance = new ReleaseNotesHandler());
+    }
+
+    public forceShowReleaseNotes() {
+        if (!this.releaseNotesExist(this.version)) {
+            UI.general.showReleaseNotesNotAvailable(this.version);
+        }
+        this.openReleaseNotesPanel(this.version);
+    }
+
+    public check(context: ExtensionContext) {
+        if (!this.version) {
             return;
         }
 
-        this.checkNotes(version, context);
+        this.checkNotes(this.version, context);
+    }
+
+    private get version() {
+        return this._version || (this._version = extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version);
     }
 
     private stateKey(version: string) {
@@ -44,8 +62,12 @@ export class ReleaseNotesHandler {
         }
 
         if (await UI.general.showReleaseNotes(version) === LABELS.BUTTON_SHOW_RELEASE_NOTES) {
-            commands.executeCommand("markdown.showPreview", this.releaseNotesUri(version));
+            this.openReleaseNotesPanel(version);
         }
+    }
+
+    private openReleaseNotesPanel(version: string) {
+        commands.executeCommand("markdown.showPreview", this.releaseNotesUri(version));
     }
 
     private checkNotes(version: string, context: ExtensionContext) {

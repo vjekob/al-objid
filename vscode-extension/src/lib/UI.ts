@@ -27,6 +27,8 @@ export const UI = {
         showReleaseNotes: (version: string) =>
             window.showInformationMessage(`AL Object ID Ninja has been updated to version ${version}. Happy developing!`,
                 LABELS.BUTTON_SHOW_RELEASE_NOTES),
+        showReleaseNotesNotAvailable: (version: string) =>
+            window.showInformationMessage(`Release notes are not available for version ${version}`),
     },
     
     backend: {

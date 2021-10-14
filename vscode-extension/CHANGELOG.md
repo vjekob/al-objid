@@ -10,6 +10,8 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
 
 ## [2.0.1] - 2021-10-14
+### Added
+- Command `Ninja: Show Release Notes` is included. It shows release notes for the actual version, if they are available.
 ### Changed
 - Notifications polling through the `v2/getLog` endpoint is replaced with `v2/check`. Also, notifications polling is invoking
 a different back-end endpoint.
@@ -19,7 +21,8 @@ also means that news polling is happening at the same intervals as notifications
 interval slightly if there are no notifications or news, until it reaches maximum polling interval which is set at 15 minutes.
 - User name is encrypted before sending it with any back-end calls. Encryption is using a key extrapolated from the app ID, so
 it's not possible for anyone outside the development team to decrypt the username. This means that absolutely no user-identifiable
-(as per GDPR) is stored anywhere.
+(as per GDPR) is stored anywhere. ([Git Issue #2](https://github.com/vjekob/al-objid/issues/2))
+- Commands are renamed from `Vjeko: <Command Text>` to `Ninja: <Command Text>`. ([Git Issue #13](https://github.com/vjekob/al-objid/issues/13))
 
 ### Removed
 - Configuration option `objectIdNinja.includeUserName` is removed. Since user name is now encrypted using a symmetric encryption

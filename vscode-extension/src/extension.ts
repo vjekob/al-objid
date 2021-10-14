@@ -17,6 +17,7 @@ import { Output } from "./features/Output";
 import { Config } from "./lib/Config";
 import { HttpStatusHandler } from "./features/HttpStatusHandler";
 import { ReleaseNotesHandler } from "./features/ReleaseNotesHandler";
+import { showReleaseNotes } from "./commands/show-release-notes";
 
 export function activate(context: ExtensionContext) {
 	context.subscriptions.push(
@@ -25,6 +26,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.confirm-authorize-app", confirmAuthorizeApp),
 		commands.registerCommand("vjeko-al-objid.confirm-deauthorize-app", confirmDeauthorizeApp),
 		commands.registerCommand("vjeko-al-objid.auto-sync-object-ids", autoSyncObjectIds),
+		commands.registerCommand("vjeko-al-objid.show-release-notes", showReleaseNotes),
 
 		// Internal commands
 		commands.registerCommand("vjeko-al-objid.commit-suggestion", commitSuggestionCommand),
@@ -43,7 +45,7 @@ export function activate(context: ExtensionContext) {
 		new HttpStatusHandler(context).getDisposables(),
 	);
 
-	new ReleaseNotesHandler().check(context);
+	ReleaseNotesHandler.instance.check(context);
 }
 
 export function deactivate() { }

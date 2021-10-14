@@ -63,26 +63,31 @@
 		"onCommand:vjeko-al-objid.confirm-sync-object-ids",
 		"onCommand:vjeko-al-objid.confirm-authorize-app",
 		"onCommand:vjeko-al-objid.confirm-deauthorize-app",
-		"onCommand:vjeko-al-objid.auto-sync-object-ids"
+		"onCommand:vjeko-al-objid.auto-sync-object-ids",
+		"onCommand:vjeko-al-objid.show-release-notes"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "vjeko-al-objid.confirm-sync-object-ids",
-				"title": "Vjeko: Synchronize Object IDs with Azure Back End"
+				"title": "Ninja: Synchronize Object IDs with Azure Back End"
 			},
 			{
 				"command": "vjeko-al-objid.confirm-authorize-app",
-				"title": "Vjeko: Authorize AL App"
+				"title": "Ninja: Authorize AL App"
 			},
 			{
 				"command": "vjeko-al-objid.confirm-deauthorize-app",
-				"title": "Vjeko: Deauthorize AL App"
+				"title": "Ninja: Deauthorize AL App"
 			},
 			{
 				"command": "vjeko-al-objid.auto-sync-object-ids",
-				"title": "Vjeko: Automatically Synchronize Object IDs for Entire Workspace"
+				"title": "Ninja: Automatically Synchronize Object IDs for Entire Workspace"
+			},
+			{
+				"command": "vjeko-al-objid.show-release-notes",
+				"title": "Ninja: Show Release Notes"
 			}
 		],
 		"configuration": {
