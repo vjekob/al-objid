@@ -1,3 +1,6 @@
+import { Range } from "vscode";
+import { ALObjectType } from "./constants";
+
 export interface NextObjectIdInfo {
     id: number;
     updated: boolean;
@@ -29,21 +32,33 @@ export interface AuthorizedAppConsumption {
     ids: ConsumptionInfo;
 }
 
+export type EventType = "getNext" | "syncFull" | "syncMerge" | "authorize" | "deauthorize";
+
 export interface EventLogEntry {
-    eventType: string;
+    eventType: EventType;
     timestamp: number;
     user: string;
     data: any;
 }
 
-export interface FolderEventLogEntries {
-    appId: string;
-    entries: EventLogEntry[];
-}
+export type ConsumptionData = {
+    [key in ALObjectType]: number[];
+};
+
+export type AppCacheInfo = {
+    _ranges: Range[],
+    _log: EventLogEntry[],
+} & ConsumptionData;
+
+export type CheckResponse = {
+    [key: string]: AppCacheInfo;
+} & {
+    _news: NewsEntry[];
+};
 
 export type ConsumptionInfoWithTotal = ConsumptionInfo | {
     _total: number;
-}
+};
 
 export enum NewsType {
     announcement = "announcement",

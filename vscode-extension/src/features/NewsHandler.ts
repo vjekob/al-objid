@@ -1,9 +1,6 @@
 import path = require("path");
 import { commands, env, ExtensionContext, Uri, window } from "vscode";
-import { Backend } from "../lib/Backend";
 import { NewsActionType, NewsButton, NewsEntry, NewsType } from "../lib/BackendTypes";
-
-const POLLING_INTERVAL = 3600 * 1000; // One hour
 
 enum NewsEntryStatus {
     shown = 0,
@@ -33,10 +30,20 @@ function snoozeKey(id: string) {
 }
 
 export class NewsHandler {
+    private static _instance: NewsHandler;
+
+    public static get instance() {
+        if (!this._instance) {
+            throw new Error("You must not access NewsHandler.instance before it has been instantiated.");
+        }
+        return this._instance;
+    }
+    
     private _timeout: NodeJS.Timeout | undefined;
     private _snoozeTimeout: NodeJS.Timeout | undefined;
     private _disposed: boolean = false;
     private _context: ExtensionContext;
+    private _firstRun: boolean = true;
 
     private markAsShown(entry: NewsEntry) {
         this._context.globalState.update(statusKey(entry.id), NewsEntryStatus.shown);
@@ -80,17 +87,18 @@ export class NewsHandler {
         [NewsActionType.snooze]: (entry: NewsEntry, button: NewsButton) => this.snooze(entry, button.parameter * 1000 * 60),
     }
 
-    private processNewsEntry(firstRun: boolean, entry: NewsEntry) {
+    private processNewsEntry(entry: NewsEntry): boolean {
         let processFunc = this.process[entry.type];
         const keys = this._context.globalState.keys();
         if (typeof processFunc !== "function" || this._context.globalState.get(statusKey(entry.id)) !== undefined) {
-            return;
+            return false;
         }
-        if (!firstRun && ONLY_ON_FIRST_RUN.includes(entry.type)) {
-            return;
+        if (!this._firstRun && ONLY_ON_FIRST_RUN.includes(entry.type)) {
+            return false;
         }
         this.markAsShown(entry);
         processFunc(entry);
+        return true;
     }
 
     private process: NewsProcessor<void> = {
@@ -129,27 +137,28 @@ export class NewsHandler {
         }
     }
 
+    private async initialize() {
+        this._snoozeTimeout = setInterval(() => this.checkSnoozedEntries(), 1000);
+    }
+
     constructor(context: ExtensionContext) {
+        if (NewsHandler._instance) {
+            throw new Error("Only a single instance of HttpGone class is allowed! Check the call stack and fix the problem.");
+        }
+        NewsHandler._instance = this;
+
         this._context = context;
         this.initialize();
     }
 
-    private async initialize() {
-        await this.checkNews(true);
-
-        // Set up polling interval
-        this._timeout = setInterval(() => this.checkNews(), POLLING_INTERVAL);
-        this._snoozeTimeout = setInterval(() => this.checkSnoozedEntries(), 1000);
-    }
-
-    private async checkNews(firstRun: boolean = false) {
-        if (this._disposed) return;
-
-        let news = await Backend.getNews();
+    public updateNews(news: NewsEntry[]): boolean {
         this.cleanUpCache(news.map(entry => entry.id));
+        let shown = false;
         for (let entry of news) {
-            this.processNewsEntry(firstRun, entry);
+            shown = shown || this.processNewsEntry(entry);
         }
+        this._firstRun = false;
+        return shown;
     }
 
     public dispose() {

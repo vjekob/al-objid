@@ -9,13 +9,29 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - App pools feature (https://github.com/vjekob/al-objid/issues/1) supported in the back end.
 - Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
 
+## [2.0.1] - 2021-10-14
+### Changed
+- Notifications polling through the `v2/getLog` endpoint is replaced with `v2/check`. Also, notifications polling is invoking
+a different back-end endpoint.
+- News poliing through `v2/news` is discontinued. Instead, news information is included in the `v2/check` endpoint calls. This
+also means that news polling is happening at the same intervals as notifications polling.
+- Polling is not happening at fixed 30-seconds interval, but includes an automatic back-off algorithm that increases the polling
+interval slightly if there are no notifications or news, until it reaches maximum polling interval which is set at 15 minutes.
+- User name is encrypted before sending it with any back-end calls. Encryption is using a key extrapolated from the app ID, so
+it's not possible for anyone outside the development team to decrypt the username. This means that absolutely no user-identifiable
+(as per GDPR) is stored anywhere.
+
+### Removed
+- Configuration option `objectIdNinja.includeUserName` is removed. Since user name is now encrypted using a symmetric encryption
+where key is now known to third parties, there are no privacy concerns.
+
 ## [2.0.0] - 2021-10-09
 ### Changed
 - AL Object ID Ninja invokes "v2" version of the back end. This allows it to read and write data from/to the new, more efficient
 app cache storage. Read more at
 https://vjeko.com/2021/10/04/al-object-id-ninja-scheduled-maintenance-announcement-october-9-at-1900-cet/
-- Invocation of v2/getLog has been temporarily suspended. It will be reintroduced in v2.0.1 after the new, more efficient
-v2/getLog is fully built.
+- Invocation of `v2/getLog` has been temporarily suspended. It will be reintroduced in v2.0.1 after the new, more efficient
+`v2/getLog` is fully built.
 
 ## [1.2.8] - 2021-10-04
 ### Added

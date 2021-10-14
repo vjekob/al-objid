@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -96,6 +96,14 @@
 					"type": "string",
 					"markdownDescription": "API key used to access the back-end. This API key is passed as `x-functions-key` header to all of API endpoints. When using Azure Functions, make sure this is the app key that can authorize access to all individual functions in the app."
 				},
+				"objectIdNinja.backEndUrlPoll": {
+					"type": "string",
+					"markdownDescription": "URL of the back-end polling API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/azure-polling-app. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid-poll.azurewebsites.net`, `myids-poll.contoso.com`. Incorrect examples are: `https://my-al-objectid-poll.azurewebsites.net/` or `http://mids-poll.contoso.com/`"
+				},
+				"objectIdNinja.backEndAPIKeyPoll": {
+					"type": "string",
+					"markdownDescription": "API key used to access the polling back-end. This API key is passed as `x-functions-key` header to all of API endpoints. When using Azure Functions, make sure this is the app key that can authorize access to all individual functions in the app."
+				},
 				"objectIdNinja.showEventLogNotifications": {
 					"type": "boolean",
 					"default": true,
@@ -104,11 +112,6 @@
 				"objectIdNinja.overrideUserName": {
 					"type": "string",
 					"description": "Name to be shown in notification messages. If you leave this empty, Object ID Ninja will use your OS user name (or your Git user name in future versions)."
-				},
-				"objectIdNinja.includeUserName": {
-					"type": "boolean",
-					"default": true,
-					"description": "If you don't want your user name to be sent to the back end, you can switch this option off. When you do, other developers on your team won't see notifications about object ID assignments done by you."
 				},
 				"objectIdNinja.useBestPracticesParser": {
 					"type": "boolean",

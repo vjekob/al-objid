@@ -36,16 +36,20 @@ export class Config extends DisposableHolder {
         return this._config.get<string>("backEndAPIKey") || "";
     }
 
+    public get backEndUrlPoll(): string {
+        return this._config.get<string>("backEndUrlForPolling") || "";
+    }
+
+    public get backEndAPIKeyPoll(): string {
+        return this._config.get<string>("backEndAPIKeyForPolling") || "";
+    }
+
     public get showEventLogNotifications(): boolean {
         return this.getWithDefault<boolean>("showEventLogNotifications", true);
     }
 
     public get userName(): string {
         return this._config.get<string>("overrideUserName") || User.username;
-    }
-
-    public get includeUserName(): boolean {
-        return this.getWithDefault<boolean>("includeUserName", true);
     }
 
     public get useBestPracticesParser(): boolean {

@@ -1,8 +1,9 @@
-import { Uri, window } from "vscode";
+import { window } from "vscode";
 import { Output } from "../features/Output";
 import { AppManifest } from "./AppManifest";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { EXTENSION_NAME, LABELS } from "./constants";
+import { EventLogEntry } from "./BackendTypes";
 
 const CONSTANTS = {
     BACKEND: {
@@ -23,7 +24,11 @@ export const UI = {
     general: {
         showNoWorkspacesOpenInfo: () =>
             window.showInformationMessage("There are no AL folders open. Nothing to do."),
+        showReleaseNotes: (version: string) =>
+            window.showInformationMessage(`AL Object ID Ninja has been updated to version ${version}. Happy developing!`,
+                LABELS.BUTTON_SHOW_RELEASE_NOTES),
     },
+    
     backend: {
         showEndpointNotFoundError: (endpoint: string, isDefault: boolean) => {
             let message = CONSTANTS.BACKEND.CANNOT_COMMUNICATE;
@@ -100,10 +105,30 @@ export const UI = {
     },
 
     log: {
-        showObjectConsumptionInfo: (user: string, type: string, id: number, appName: string) => {
-            let message = `${user} created ${type} ${id} in ${appName}.`;
+        showMessage: (event: EventLogEntry, appName: string) => {
+            let message = "";
+            switch (event.eventType) {
+                case "authorize":
+                    message = `${event.user} authorized ${appName}.`;
+                    break;
+                case "deauthorize":
+                    message = `${event.user} authorized ${appName}.`;
+                    break;
+                case "getNext":
+                    message = `${event.user} created ${event.data.type} ${event.data.id} in ${appName}.`;
+                    break;
+                case "syncFull":
+                    message = `${event.user} performed full synchronization for ${appName}.`;
+                    break;
+                case "syncMerge":
+                    message = `${event.user} performed update synchronization for ${appName}.`;
+                    break;
+            }
+            if (!message) {
+                return;
+            }
             Output.instance.log(message);
             window.showInformationMessage(message)
-        }
+        },
     }
 }

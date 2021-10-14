@@ -24,10 +24,28 @@ export const OBJECT_TYPES = [
     "xmlport"
 ];
 
+// TODO replace the array above with the enum below (and make sure to break nothing in the proces)
+export enum ALObjectType {
+    codeunit = "codeunit",
+    enum = "enum",
+    enumextension = "enumextension",
+    page = "page",
+    pageextension = "pageextension",
+    permissionset = "permissionset",
+    permissionsetextension = "permissionsetextension",
+    query = "query",
+    report = "report",
+    reportextension = "reportextension",
+    table = "table",
+    tableextension = "tableextension",
+    xmlport = "xmlport",
+}
+
 export const LABELS = {
     BUTTON_SYNCHRONIZE: "Synchronize",
     BUTTON_LEARN_MORE: "Learn more",
     BUTTON_DONT_ASK: "Stop asking me for this VS Code session",
+    BUTTON_SHOW_RELEASE_NOTES: "What's New?",
 
     SYNC_ARE_YOU_SURE: {
         YES: "Yes, please replace existing object ID consumptions in the back end",
@@ -40,3 +58,9 @@ export const LABELS = {
         LEARN_MORE: "Learn more about auto-syncing"
     }
 };
+
+/**
+ * Indicates that AL Object Ninja has previously been run on this machine. This is needed to
+ * decide whether to show release notes.
+ */
+export const ALREADY_USED = "already_used";

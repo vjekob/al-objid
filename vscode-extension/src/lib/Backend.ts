@@ -1,7 +1,8 @@
 import { HttpStatusHandler } from "../features/HttpStatusHandler";
 import { output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, FolderEventLogEntries, NewsEntry, NewsResponse, NextObjectIdInfo } from "./BackendTypes";
+import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, CheckResponse, NewsEntry, NewsResponse, NextObjectIdInfo } from "./BackendTypes";
 import { Config } from "./Config";
+import { encrypt } from "./Encryption";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
@@ -31,6 +32,27 @@ export const API_RESULT = {
     ERROR_NOT_HANDLED: Symbol("ERROR_NOT_HANDLED"),
 }
 
+interface Endpoint {
+    hostname: string;
+    key: string;
+}
+
+class Endpoints {
+    static get default(): Endpoint {
+        return {
+            hostname: Config.instance.backEndUrl || DEFAULT_HOST_NAME,
+            key: Config.instance.backEndAPIKey
+        };
+    }
+
+    static get polling(): Endpoint {
+        return {
+            hostname: Config.instance.backEndUrlPoll || POLL_HOST_NAME,
+            key: Config.instance.backEndAPIKeyPoll
+        };
+    }
+}
+
 /**
 * Sends a request to the back-end API.
 * 
@@ -41,8 +63,8 @@ export const API_RESULT = {
 * @template T Type of response object expected from the back end
 * @returns `HttpResponse` object that contains full information about response, error, and error handling status
 */
-async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, errorHandler?: ErrorHandler<T>, hostname: string = Config.instance.backEndUrl || DEFAULT_HOST_NAME): Promise<HttpResponse<T>> {
-    const key = Config.instance.backEndAPIKey;
+async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, errorHandler?: ErrorHandler<T>, endpoint: Endpoint = Endpoints.default): Promise<HttpResponse<T>> {
+    const { hostname, key } = endpoint;
     const https = new Https({
         hostname,
         path,
@@ -63,10 +85,8 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, 
         status: API_RESULT.NOT_SENT,
     };
 
-    if (data && typeof data === "object" && !Array.isArray(data)) {
-        if (Config.instance.includeUserName) {
-            data.user = Config.instance.userName;
-        }
+    if (data && typeof data === "object" && !Array.isArray(data) && data.appId) {
+        data.user = encrypt(Config.instance.userName, data.appId);
     }
 
     return await executeWithStopwatchAsync(async () => {
@@ -171,13 +191,13 @@ export class Backend {
         return typeof response.value === "object" && response.value.deleted;
     }
 
-    static async getLog(payload: FolderAuthorization[]): Promise<FolderEventLogEntries[] | undefined> {
-        const response = await sendRequest<FolderEventLogEntries[]>(
-            "/api/v2/getLog",
+    static async check(payload: FolderAuthorization[]): Promise<CheckResponse | undefined> {
+        const response = await sendRequest<CheckResponse>(
+            "/api/v2/check",
             "GET",
-            { appFolders: payload },
+            payload,
             async () => true, // On error, do nothing (message is logged in the output already)
-            POLL_HOST_NAME,
+            Endpoints.polling
         );
         return response.value;
     }
@@ -186,19 +206,8 @@ export class Backend {
         const response = await sendRequest<ConsumptionInfoWithTotal>(
             "/api/v2/getConsumption",
             "GET",
-            { appId, authKey },
+            { appId, authKey }
         );
         return response.value;
-    }
-
-    static async getNews(): Promise<NewsEntry[]> {
-        const response = await sendRequest<NewsResponse>(
-            "/api/v2/news",
-            "GET",
-            {},
-            undefined,
-            POLL_HOST_NAME
-        );
-        return response.value?.news || [];
     }
 }

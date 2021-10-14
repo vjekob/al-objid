@@ -2,6 +2,8 @@ import path = require("path");
 import { commands, ExtensionContext, extensions, Uri } from "vscode";
 import * as fs from "fs";
 import { Config } from "../lib/Config";
+import { ALREADY_USED, LABELS } from "../lib/constants";
+import { UI } from "../lib/UI";
 
 export class ReleaseNotesHandler {
     public check(context: ExtensionContext) {
@@ -31,12 +33,19 @@ export class ReleaseNotesHandler {
         }
     }
 
-    private showReleaseNotes(version: string, context: ExtensionContext) {
+    private async showReleaseNotes(version: string, context: ExtensionContext) {
+        context.globalState.update(this.stateKey(version), true);
+        if (this.isFirstRun(context)) {
+            return;
+        }
+
         if (!Config.instance.showReleaseNotes) {
             return;
         }
-        context.globalState.update(this.stateKey(version), true);
-        commands.executeCommand("markdown.showPreview", this.releaseNotesUri(version));
+
+        if (await UI.general.showReleaseNotes(version) === LABELS.BUTTON_SHOW_RELEASE_NOTES) {
+            commands.executeCommand("markdown.showPreview", this.releaseNotesUri(version));
+        }
     }
 
     private checkNotes(version: string, context: ExtensionContext) {
@@ -46,5 +55,13 @@ export class ReleaseNotesHandler {
         if (this.releaseNotesExist(version)) {
             this.showReleaseNotes(version, context);
         }
+    }
+
+    private isFirstRun(context: ExtensionContext): boolean {
+        if (context.globalState.get(ALREADY_USED)) {
+            return false;
+        }
+        context.globalState.update(ALREADY_USED, true);
+        return true;
     }
 }
