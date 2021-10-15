@@ -22,7 +22,7 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
     private _skipAuthorization: boolean = false;
 
     public constructor(handler: ALNinjaHandlerFunc<TRequest, TResponse, TBindings>, withValidation: boolean = true) {
-        super((request) => {
+        super(async (request) => {
             const alNinjaRequest = (request as unknown as ALNinjaRequestContext<TRequest, TBindings>);
             alNinjaRequest.log = (app, eventType, data) => {
                 const timestamp = Date.now();
@@ -39,7 +39,15 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
             alNinjaRequest.markAsChanged = (appId, app) => {
                 request.rawContext.bindings.notify = { appId, app };
             };
-            return handler(request as any);
+
+            const response = await handler(request as any);
+
+            let app = request.rawContext.bindings?.notify?.app;
+            if (app) {
+                const { _authorization, _ranges, ...appInfo } = app;
+                (response as any)._appInfo = appInfo;
+            }
+            return response;
         });
 
         this.onAuthorization(async (req) => {
