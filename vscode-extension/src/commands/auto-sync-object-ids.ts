@@ -155,6 +155,10 @@ export const autoSyncObjectIds = async () => {
         case LABELS.AUTO_SYNC_PICK.LEARN_MORE:
             env.openExternal(Uri.parse(URLS.AUTO_SYNC));
             return;
+        case LABELS.AUTO_SYNC_PICK.INTERACTIVE:
+            break;
+        default:
+            return;
     };
 
     let result = await window.withProgress({ location: ProgressLocation.Notification }, async progress => {

@@ -63,4 +63,8 @@ export class Config extends DisposableHolder {
     public get showReleaseNotes(): boolean {
         return this.getWithDefault<boolean>("showReleaseNotes", true);
     }
+
+    public get showRangeWarnings(): boolean {
+        return this.getWithDefault<boolean>("showRangeWarnings", true);
+    }
 }

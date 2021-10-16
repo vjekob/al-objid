@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "2.0.1",
+	"version": "2.1.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -64,14 +64,19 @@
 		"onCommand:vjeko-al-objid.confirm-authorize-app",
 		"onCommand:vjeko-al-objid.confirm-deauthorize-app",
 		"onCommand:vjeko-al-objid.auto-sync-object-ids",
-		"onCommand:vjeko-al-objid.show-release-notes"
+		"onCommand:vjeko-al-objid.show-release-notes",
+		"onView:ninja-rangeExplorer"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "vjeko-al-objid.confirm-sync-object-ids",
-				"title": "Ninja: Synchronize Object IDs with Azure Back End"
+				"title": "Ninja: Synchronize Object IDs with Azure Back End",
+				"icon": {
+					"dark": "images/share-dark.svg",
+					"light": "images/share-light.svg"
+				}
 			},
 			{
 				"command": "vjeko-al-objid.confirm-authorize-app",
@@ -83,7 +88,11 @@
 			},
 			{
 				"command": "vjeko-al-objid.auto-sync-object-ids",
-				"title": "Ninja: Automatically Synchronize Object IDs for Entire Workspace"
+				"title": "Ninja: Automatically Synchronize Object IDs for Entire Workspace",
+				"icon": {
+					"dark": "images/share-all-dark.svg",
+					"light": "images/share-all-light.svg"
+				}
 			},
 			{
 				"command": "vjeko-al-objid.show-release-notes",
@@ -132,6 +141,11 @@
 					"type": "boolean",
 					"default": true,
 					"markdownDescription": "Whenever you update AL Object ID Ninja to a new version that includes important updates, we'll show you the release notes. If you prefer not being interrupted, switch this option off."
+				},
+				"objectIdNinja.showRangeWarnings": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Show notifications when the available range is about to run out. **It's a good idea to keep this option switched on!**"
 				}
 			}
 		},
@@ -143,7 +157,43 @@
 					".objidconfig"
 				]
 			}
-		]
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "vjeko-al-objid",
+					"icon": "images/tree-view.svg",
+					"title": "AL Object ID Ninja"
+				}
+			]
+		},
+		"views": {
+			"vjeko-al-objid": [
+				{
+					"id": "ninja-rangeExplorer",
+					"name": "Range Explorer",
+					"icon": "images/tree-view.svg",
+					"contextualTitle": "AL Object ID Ninja Range Explorer",
+					"type": "tree"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "vjeko-al-objid.auto-sync-object-ids",
+					"group": "navigation",
+					"when": "view == ninja-rangeExplorer"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "vjeko-al-objid.confirm-sync-object-ids",
+					"group": "inline",
+					"when": "view == ninja-rangeExplorer && viewItem == ninja-folder"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

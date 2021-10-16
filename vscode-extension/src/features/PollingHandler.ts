@@ -8,8 +8,10 @@ import { PropertyBag } from "../lib/PropertyBag";
 import { FolderAuthorization } from "../lib/BackendTypes";
 import { ConsumptionCache } from "./ConsumptionCache";
 import { NewsHandler } from './NewsHandler';
+import { output } from './Output';
+import { ExplorerTreeDataProvider } from './Explorer/ExplorerTreeDataProvider';
 
-const POLLING_INTERVAL = 30 * 1000; // 30 seconds
+const POLLING_INTERVAL = 5 * 1000; // 30 seconds
 const MAX_POLLING_INTERVAL = 15 * 60 * 1000; // 15 minutes
 
 export class PollingHandler implements Disposable {
@@ -46,11 +48,13 @@ export class PollingHandler implements Disposable {
 
         const { _news, ...apps } = updates;
 
-        let anyUpdates = NewsHandler.instance.updateNews(_news);;
+        let anyUpdates = NewsHandler.instance.updateNews(_news);
+        let consumptionUpdates = false;
         for (let appId of Object.keys(apps)) {
             const { _log, _ranges, ...consumptions } = apps[appId];
             if (ConsumptionCache.instance.updateConsumption(appId, consumptions)) {
                 anyUpdates = true;
+                consumptionUpdates = true;
             }
             if (NotificationsFromLog.instance.updateLog(appId, _log, this._appName[appId])) {
                 anyUpdates = true;
@@ -59,6 +63,10 @@ export class PollingHandler implements Disposable {
 
         if (!anyUpdates) {
             this.backOff();
+        }
+        
+        if (consumptionUpdates) {
+            ExplorerTreeDataProvider.instance.refresh();
         }
     }
 
@@ -72,7 +80,12 @@ export class PollingHandler implements Disposable {
 
     private scheduleNext() {
         this._timeout = setTimeout(async () => {
-            await this.check();
+            try {
+                await this.check();
+            }
+            catch (e: any) {
+                output.log(`An error occurred while executing polling check handler: ${e?.message || e}`)
+            }
 
             this.scheduleNext();
         }, this._pollingInterval);

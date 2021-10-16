@@ -30,7 +30,7 @@ export const UI = {
         showReleaseNotesNotAvailable: (version: string) =>
             window.showInformationMessage(`Release notes are not available for version ${version}`),
     },
-    
+
     backend: {
         showEndpointNotFoundError: (endpoint: string, isDefault: boolean) => {
             let message = CONSTANTS.BACKEND.CANNOT_COMMUNICATE;
@@ -77,6 +77,10 @@ export const UI = {
                 LABELS.BUTTON_SYNCHRONIZE,
                 "No",
                 LABELS.BUTTON_LEARN_MORE),
+        showNumbersAboutToRunOut: (name: string, type: string, remaining: number) =>
+            window.showWarningMessage(`Only ${remaining} IDs remain for ${type} objects in ${name} app.`, "OK", LABELS.BUTTON_DONT_SHOW_AGAIN),
+        showDisabledOnlyForAppAndType: (name: string, type: string) =>
+            window.showInformationMessage(`This warning is now disabled for ${type} objects in ${name} app. You will keep seeing it for other object types and other apps. If you want to disable it completely, switch off the "Show Range Warnings" configuration setting.`, "OK"),
         showNoMoreNumbersWarning: async () =>
             window.showWarningMessage("No more numbers are available for assignment. Do you want to synchronize?", LABELS.BUTTON_SYNCHRONIZE, "No"),
         showNoBackEndConsumptionInfoAlreadySaidNo: async () =>

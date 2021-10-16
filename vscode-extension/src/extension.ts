@@ -18,8 +18,13 @@ import { Config } from "./lib/Config";
 import { HttpStatusHandler } from "./features/HttpStatusHandler";
 import { ReleaseNotesHandler } from "./features/ReleaseNotesHandler";
 import { showReleaseNotes } from "./commands/show-release-notes";
+import { ExplorerTreeDataProvider } from "./features/Explorer/ExplorerTreeDataProvider";
+import { ExplorerDecorationsProvider } from "./features/Explorer/ExplorerDecorationsProvider";
+import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 
 export function activate(context: ExtensionContext) {
+	ConsumptionWarnings.instance.setContext(context);
+
 	context.subscriptions.push(
 		// Commands
 		commands.registerCommand("vjeko-al-objid.confirm-sync-object-ids", confirmSyncObjectIds),
@@ -34,6 +39,11 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 		commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
 		commands.registerCommand("vjeko-al-objid.learn-welcome", learnWelcome),
+
+		// Tree view
+		ExplorerTreeDataProvider.instance,
+		window.registerTreeDataProvider("ninja-rangeExplorer", ExplorerTreeDataProvider.instance),
+		window.registerFileDecorationProvider(ExplorerDecorationsProvider.instance),
 
 		// Other
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),

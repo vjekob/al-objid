@@ -1,4 +1,7 @@
+import { extensions } from "vscode";
+
 export const EXTENSION_NAME = "AL Object ID Ninja";
+export const EXTENSION_VERSION = extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
 
 export const URLS = {
     AUTHORIZATION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md",
@@ -6,7 +9,7 @@ export const URLS = {
     EXTENSION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Welcome.md",
     AUTO_SYNC: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSync.md",
     AUTO_SYNC_DIRTY: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSyncDirty.md",
-}
+};
 
 export const OBJECT_TYPES = [
     "codeunit",
@@ -46,6 +49,7 @@ export const LABELS = {
     BUTTON_LEARN_MORE: "Learn more",
     BUTTON_DONT_ASK: "Stop asking me for this VS Code session",
     BUTTON_SHOW_RELEASE_NOTES: "What's New?",
+    BUTTON_DONT_SHOW_AGAIN: "Don't show again",
 
     SYNC_ARE_YOU_SURE: {
         YES: "Yes, please replace existing object ID consumptions in the back end",
@@ -56,7 +60,7 @@ export const LABELS = {
         FULL_AUTO: "Fully automated (no questions)",
         INTERACTIVE: "Interactive (ask about folders and branches)",
         LEARN_MORE: "Learn more about auto-syncing"
-    }
+    },
 };
 
 /**

@@ -1,11 +1,16 @@
+import { NotificationsFromLog } from './../features/NotificationsFromLog';
 import { HttpStatusHandler } from "../features/HttpStatusHandler";
 import { output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, CheckResponse, NewsEntry, NewsResponse, NextObjectIdInfo } from "./BackendTypes";
+import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, CheckResponse, NewsEntry, NewsResponse, NextObjectIdInfo, EventLogEntry, ConsumptionData } from "./BackendTypes";
 import { Config } from "./Config";
 import { encrypt } from "./Encryption";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
+import { AppIdCache } from './AppIdCache';
+import { ConsumptionCache } from '../features/ConsumptionCache';
+import { getLastKnownAppName } from './AppManifest';
+import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataProvider';
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -93,6 +98,16 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, 
         try {
             response.value = await https.send<T>(method, data);
             response.status = API_RESULT.SUCCESS;
+
+            const appInfo = (response.value as any)?._appInfo;
+            if (appInfo) {
+                const { appId } = data;
+                const { _log, ...consumptions } = appInfo;
+                NotificationsFromLog.instance.updateLog(appId, _log as EventLogEntry[], getLastKnownAppName(appId));
+                if (ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData)) {
+                    ExplorerTreeDataProvider.instance.refresh();
+                }
+            }
         } catch (error: any) {
             if (preprocessStatusError(error)) {
                 response.error = error;

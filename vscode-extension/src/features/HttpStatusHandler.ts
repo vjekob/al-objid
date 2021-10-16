@@ -1,5 +1,5 @@
 import { env, ExtensionContext, extensions, Uri, window } from "vscode";
-import { EXTENSION_NAME, LABELS } from "../lib/constants";
+import { EXTENSION_NAME, EXTENSION_VERSION, LABELS } from "../lib/constants";
 import { PropertyBag } from "../lib/PropertyBag";
 import { DisposableHolder } from "./DisposableHolder";
 import { output } from "./Output";
@@ -45,8 +45,7 @@ export class HttpStatusHandler extends DisposableHolder {
         },
 
         OLD_VERSION: async () => {
-            const version = extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
-            const stateKey = `warnings/OLD_VERSION/${version}`;
+            const stateKey = `warnings/OLD_VERSION/${EXTENSION_VERSION}`;
             const warned = this._context.globalState.get(stateKey);
             if (warned) {
                 return;

@@ -1,4 +1,4 @@
-import { commands, env, Uri, window } from "vscode";
+import { commands, env, TreeItem, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
 
 const OPTION = {
@@ -8,14 +8,14 @@ const OPTION = {
     LEARN: "I am not sure. Tell me more about synchronization.",
 };
 
-export const confirmSyncObjectIds = async () => {
+export const confirmSyncObjectIds = async (item: TreeItem) => {
     let result = await window.showQuickPick(Object.values(OPTION), {
         placeHolder: "How would you like to synchronize object ID assignment information with the back end?"
     });
     switch (result) {
         case OPTION.REPLACE:
         case OPTION.UPDATE:
-            commands.executeCommand("vjeko-al-objid.sync-object-ids", { merge: result === OPTION.UPDATE });
+            commands.executeCommand("vjeko-al-objid.sync-object-ids", { merge: result === OPTION.UPDATE }, item?.resourceUri?.authority);
             break;
         case OPTION.LEARN:
             env.openExternal(Uri.parse(URLS.SYNCHRONIZATION_LEARN));

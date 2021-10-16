@@ -16,7 +16,7 @@ export class NotificationsFromLog {
 
     private _log: { [key: string]: number } = {};
 
-    public updateLog(appId: string, log: EventLogEntry[], appName: string): boolean {
+    public updateLog(appId: string, log: EventLogEntry[] = [], appName: string): boolean {
         const lastTimestamp = this._log[appId];
         if (!lastTimestamp) {
             // On the first call, no notifications should be shown

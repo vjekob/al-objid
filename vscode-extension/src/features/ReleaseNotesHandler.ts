@@ -2,7 +2,7 @@ import path = require("path");
 import { commands, ExtensionContext, extensions, Uri } from "vscode";
 import * as fs from "fs";
 import { Config } from "../lib/Config";
-import { ALREADY_USED, LABELS } from "../lib/constants";
+import { ALREADY_USED, EXTENSION_VERSION, LABELS } from "../lib/constants";
 import { UI } from "../lib/UI";
 
 export class ReleaseNotesHandler {
@@ -31,7 +31,7 @@ export class ReleaseNotesHandler {
     }
 
     private get version() {
-        return this._version || (this._version = extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version);
+        return this._version || (this._version = EXTENSION_VERSION);
     }
 
     private stateKey(version: string) {
