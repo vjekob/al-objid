@@ -2,39 +2,45 @@
 
 All notable changes to the AL Object ID Ninja extension will be documented in this file.
 
-The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows [Semantic Versioning](https://semver.org/).
+The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
+[Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## [2.1.0] - 2021-10-17
 ### Added
-- App pools feature (https://github.com/vjekob/al-objid/issues/1) supported in the back end.
-- Custom back-end URL and app key moved from Visual Studio Code settings to `.objidconfig` file.
+- Range Explorer feature that shows an overview of range consumption per app.
+- Warning toast notifications are shown when a range is about to run out of available IDs.
+- Error at startup when incorrect self-hosted configuration is detected.
 
 ## [2.0.1] - 2021-10-14
 ### Added
-- Command `Ninja: Show Release Notes` is included. It shows release notes for the actual version, if they are available.
+- Command `Ninja: Show Release Notes` is included. It shows release notes for the actual version, if they
+are available.
 ### Changed
-- Notifications polling through the `v2/getLog` endpoint is replaced with `v2/check`. Also, notifications polling is invoking
-a different back-end endpoint.
-- News poliing through `v2/news` is discontinued. Instead, news information is included in the `v2/check` endpoint calls. This
-also means that news polling is happening at the same intervals as notifications polling.
-- Polling is not happening at fixed 30-seconds interval, but includes an automatic back-off algorithm that increases the polling
-interval slightly if there are no notifications or news, until it reaches maximum polling interval which is set at 15 minutes.
-- User name is encrypted before sending it with any back-end calls. Encryption is using a key extrapolated from the app ID, so
-it's not possible for anyone outside the development team to decrypt the username. This means that absolutely no user-identifiable
-(as per GDPR) is stored anywhere. ([Git Issue #2](https://github.com/vjekob/al-objid/issues/2))
-- Commands are renamed from `Vjeko: <Command Text>` to `Ninja: <Command Text>`. ([Git Issue #13](https://github.com/vjekob/al-objid/issues/13))
+- Notifications polling through the `v2/getLog` endpoint is replaced with `v2/check`. Also, notifications
+polling is invoking a different back-end endpoint.
+- News poliing through `v2/news` is discontinued. Instead, news information is included in the `v2/check`
+endpoint calls. This also means that news polling is happening at the same intervals as notifications polling.
+- Polling is not happening at fixed 30-seconds interval, but includes an automatic back-off algorithm that
+increases the polling interval slightly if there are no notifications or news, until it reaches maximum
+polling interval which is set at 15 minutes.
+- User name is encrypted before sending it with any back-end calls. Encryption is using a key extrapolated
+from the app ID, so it's not possible for anyone outside the development team to decrypt the username. This
+means that absolutely no user-identifiable (as per GDPR) is stored anywhere.
+([Git Issue #2](https://github.com/vjekob/al-objid/issues/2))
+- Commands are renamed from `Vjeko: <Command Text>` to `Ninja: <Command Text>`.
+([Git Issue #13](https://github.com/vjekob/al-objid/issues/13))
 
 ### Removed
-- Configuration option `objectIdNinja.includeUserName` is removed. Since user name is now encrypted using a symmetric encryption
-where key is now known to third parties, there are no privacy concerns.
+- Configuration option `objectIdNinja.includeUserName` is removed. Since user name is now encrypted using a
+symmetric encryption where key is now known to third parties, there are no privacy concerns.
 
 ## [2.0.0] - 2021-10-09
 ### Changed
-- AL Object ID Ninja invokes "v2" version of the back end. This allows it to read and write data from/to the new, more efficient
-app cache storage. Read more at
+- AL Object ID Ninja invokes "v2" version of the back end. This allows it to read and write data from/to
+the new, more efficient app cache storage. Read more at
 https://vjeko.com/2021/10/04/al-object-id-ninja-scheduled-maintenance-announcement-october-9-at-1900-cet/
-- Invocation of `v2/getLog` has been temporarily suspended. It will be reintroduced in v2.0.1 after the new, more efficient
-`v2/getLog` is fully built.
+- Invocation of `v2/getLog` has been temporarily suspended. It will be reintroduced in v2.0.1 after the new,
+more efficient `v2/getLog` is fully built.
 
 ## [1.2.8] - 2021-10-04
 ### Added
