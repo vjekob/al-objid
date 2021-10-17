@@ -28,18 +28,20 @@ export class RangeExplorerItem extends ExplorerItem {
     hasChildren = true;
 
     override getChildren(): ExplorerItem[] {
-        const consumption = ConsumptionCache.instance.getConsumption(this._appId) as any;
-
         const children = [];
-        for (var type of Object.keys(consumption).sort()) {
-            const ids = (consumption[type] as number[] || []).filter(id => id >= this._range.from && id <= this._range.to);
-            if (ids.length) {
-                children.push(ExplorerItemFactory.objectType(this._appId, this._range, type, ids, Math.max(this._range.to - this._range.from, 0) + 1));
-            }
-        }
 
-        if (!children.length) {
-            children.push(ExplorerItemFactory.text("No consumption yet.", "No object IDs have been assigned from this range"));
+        const consumption = ConsumptionCache.instance.getConsumption(this._appId) as any;
+        if (consumption) {
+            for (var type of Object.keys(consumption).sort()) {
+                const ids = (consumption[type] as number[] || []).filter(id => id >= this._range.from && id <= this._range.to);
+                if (ids.length) {
+                    children.push(ExplorerItemFactory.objectType(this._appId, this._range, type, ids, Math.max(this._range.to - this._range.from, 0) + 1));
+                }
+            }
+
+            if (!children.length) {
+                children.push(ExplorerItemFactory.text("No consumption yet.", "No object IDs have been assigned from this range"));
+            }
         }
 
         return children;
