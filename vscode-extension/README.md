@@ -80,6 +80,29 @@ Ninja replaces the object ID in the code with the hard-fetched one.
 Seriously. No object ID collisions will happen as long as everyone on your team is using AL Object
 ID Ninja.
 
+### Overview of consumed object IDs, per app, per range
+
+Range Explorer feature shows you an overview of consumed and available object IDs, per app, per
+range, per object type. The view is live, and updates whenever you or your colleagues assign new
+object IDs using AL Object ID Ninja.
+
+![Rnage Explorer](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/range-explorer.png)
+
+### Warnings about running out of available object IDs
+
+Don't you hate when you are out of available IDs to assign to new objects, and you only figure that
+out when you need to assign a new ID?
+
+AL Object ID Ninja takes care of that by warning you ahead of time.
+
+![Warning about running out of IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/run-out-warning.gif)
+
+Not only Ninja will show this warning, it will also be smart about it. No matter how large (or
+small) your available ranges are, Ninja will let you know in time that your range is running out.
+And no worries, it won't bug you with those notifications. You will only see the exact same
+notification only once per session, and you can switch them off altogether if you prefer just
+hitting the wall.
+
 ### Support for multi-root workspaces
 
 AL Object ID Ninja fully supports multi-root workspaces. No matter if you have single AL app or

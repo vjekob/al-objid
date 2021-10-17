@@ -6,9 +6,16 @@ your own resources.
 
 This document explains how to set up your own Azure serverless back-end to use with AL Object ID Ninja.
 
-> Important note: You may have already set up your own infrastructure prior to AL Object ID Ninja v2.0.1.
+> **IMPORTANT** You may have already set up your own infrastructure prior to AL Object ID Ninja v2.0.1.
 Such infrastructure is incompatible with AL Object AL Ninja v2.0.1 and newer and you'll have to deploy a
 new set of back-end services.
+
+> **IMPORTANT** There are certain features that are only available to users connecting to public back-end
+endpoints. For example, the *News and Announcements* feature introduced in v1.2.7 will not work for you
+when you deploy and connect to your own back end. In the future, more features may be added to public
+version which may not work with your custom-deployed back end. Rather than routinely deploying your own
+back end, let us know what exactly that is that you believe public back end is doing wrong, so we can 
+improve on that.
 
 ## Infrastructure Description
 
