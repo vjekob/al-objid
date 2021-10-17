@@ -29,6 +29,8 @@ export const UI = {
                 LABELS.BUTTON_SHOW_RELEASE_NOTES),
         showReleaseNotesNotAvailable: (version: string) =>
             window.showInformationMessage(`Release notes are not available for version ${version}`),
+        showBackEndConfigurationError: () =>
+            window.showErrorMessage("IMPORTANT! You are using a self-hosted back end but you have not configured the polling back-end URL. Your AL Object ID Ninja may not work correctly or may not work at all.", LABELS.BUTTON_LEARN_MORE),
     },
 
     backend: {

@@ -1,16 +1,17 @@
 import { NotificationsFromLog } from './../features/NotificationsFromLog';
 import { HttpStatusHandler } from "../features/HttpStatusHandler";
 import { output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, CheckResponse, NewsEntry, NewsResponse, NextObjectIdInfo, EventLogEntry, ConsumptionData } from "./BackendTypes";
+import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, CheckResponse, NextObjectIdInfo, EventLogEntry, ConsumptionData } from "./BackendTypes";
 import { Config } from "./Config";
 import { encrypt } from "./Encryption";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
-import { AppIdCache } from './AppIdCache';
 import { ConsumptionCache } from '../features/ConsumptionCache';
 import { getLastKnownAppName } from './AppManifest';
 import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataProvider';
+import { LABELS } from './constants';
+import { env, Uri } from 'vscode';
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -57,6 +58,14 @@ class Endpoints {
         };
     }
 }
+
+(async () => {
+    if (Config.instance.backEndUrl && Config.instance.backEndUrl !== DEFAULT_HOST_NAME && !Config.instance.backEndUrlPoll) {
+        if (await UI.general.showBackEndConfigurationError() === LABELS.BUTTON_LEARN_MORE) {
+            env.openExternal(Uri.parse("https://github.com/vjekob/al-objid/blob/master/doc/DeployingBackEnd.md"));
+        }
+    }
+})();
 
 /**
 * Sends a request to the back-end API.

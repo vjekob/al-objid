@@ -130,12 +130,19 @@ your own back end. For this, you'll need the following configuration settings:
 
 | Setting | Description |
 |-|-|
-| `objectIdNinja.backEndUrl` | URL of the business logic app you deployed. |
+| `objectIdNinja.backEndUrl` | Host name of the business logic app you deployed. |
 | `objectIdNinja.backEndAPIKey` | App key used by your business logic app. If your app does not use app keys, do not configure this setting. |
-| `objectIdNinja.backEndUrlPoll` | URL of the polling app you deployed. |
+| `objectIdNinja.backEndUrlPoll` | Host name of the polling app you deployed. |
 | `objectIdNinja.backEndAPIKeyPoll` | App key used by your polling app. If your app does not use app keys, do not configure this setting. |
 
 > Public function apps used by AL Object ID Ninja do not use any app keys. It would be pointless, because
 they are accessed by a public application with publicly available source code. However, you may prefer
 securing your function apps with app keys. The choice is entirely up to you. Just keep in mind that out
 of the box, AL Object ID Ninja does not support any other kind of authorization, except through app keys.
+
+When configuring host names, do not use the full URL. For example, the public business logic app endpoint
+is running at https://vjekocom-alext-weu.azurewebsites.net/. To configure this endpoint, you must set the
+`vjekocom-alext-weu.azurewebsites.net` as the `objectIdNinja.backEndUrl` configuration value.
+
+> **IMPORTANT** AL Object ID Ninja supports only the HTTPS protocol and only endpoints deployed at the
+default HTTPS port. Your back end must not use a custom port number.
