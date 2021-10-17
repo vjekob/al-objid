@@ -190,8 +190,11 @@ Learn more about authorization: https://github.com/vjekob/al-objid/tree/master/d
 ### Making it extra secure: configuring your own back end
 
 The extension uses public Azure Functions endpoints for communication with the back-end service.
-You don't need to configure anything. However, it's okay to be concerned about your information
-being shared over a publicly available API.
+You don't need to configure anything. However, if you are concerned with your information being
+shared across a public network with public services, you may want to deploy your own AL Object
+ID Ninja infrastructure.
+
+If you choose to do so, please read the [Deploying a Self-Maintained Back End](https://github.com/vjekob/al-objid/tree/master/doc/DeployingBackEnd.md) document.
 
 While AL Object ID Ninja does not expose any of your sensitive information, since this is a
 public service, you may want to use your own back end instead. This is possible. In that case, do this:
