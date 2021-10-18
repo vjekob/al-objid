@@ -15,16 +15,6 @@ const instanceId = ((length: number) => {
 let instanceCallNo = 0;
 let lastFlushTimestamp = Date.now();
 
-function addInstanceEvent(event: string) {
-    pending.push({
-        timestamp: Date.now(),
-        instanceId,
-        event,
-    });
-}
-
-addInstanceEvent("start");
-
 const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
     const { ownEndpoints, userSha, appSha, event, context } = request.body;
     const timestamp = Date.now();
@@ -43,7 +33,6 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
 
     // TODO Both of these conditions should be moved to configuration (both size and time)
     if (pending.length === 10 || timestamp - lastFlushTimestamp > 60000) {
-        addInstanceEvent("flush");
         const blob = new Blob(`${instanceId}.json`);
         await blob.optimisticUpdate(() => pending);
         pending = [];
@@ -55,7 +44,7 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
 telemetry.validator.expect("body", {
     ownEndpoints: "boolean",
     userSha: "string",
-    appSha: "string",
+    "appSha?": "string",
     event: "string",
 });
 
