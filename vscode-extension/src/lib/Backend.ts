@@ -30,6 +30,7 @@ interface HttpResponse<T> {
 
 const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
 const POLL_HOST_NAME = "vjekocom-alext-weu-poll.azurewebsites.net";
+const TELEMETRY_HOST_NAME = "vjekocom-alninja-telemetry.azurewebsites.net";
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),
@@ -233,5 +234,9 @@ export class Backend {
             { appId, authKey }
         );
         return response.value;
+    }
+
+    static async telemetry(appId: string, userSha: string, event: string, context?: any) {
+
     }
 }

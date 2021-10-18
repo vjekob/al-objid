@@ -1,12 +1,13 @@
 export interface TelemetryRequest {
-    userSha: string;
-    appSha: string;
+    ownEndpoints?: boolean;
+    userSha?: string;
+    appSha?: string;
     event: string;
-    context: any;
+    context?: any;
 }
 
 export interface TelemetryEntry extends TelemetryRequest {
     timestamp: number;
     instanceId: string;
-    instanceCallNo: number;
+    instanceCallNo?: number;
 };

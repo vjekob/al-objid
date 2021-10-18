@@ -18,19 +18,15 @@ let lastFlushTimestamp = Date.now();
 function addInstanceEvent(event: string) {
     pending.push({
         timestamp: Date.now(),
-        appSha: "",
-        userSha: "",
         instanceId,
-        instanceCallNo: 0,
         event,
-        context: undefined
     });
 }
 
 addInstanceEvent("start");
 
 const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
-    const { userSha, appSha, event, context } = request.body;
+    const { ownEndpoints, userSha, appSha, event, context } = request.body;
     const timestamp = Date.now();
     ++instanceCallNo;
 
@@ -38,6 +34,7 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
         timestamp,
         instanceId,
         instanceCallNo,
+        ownEndpoints,
         userSha,
         appSha,
         event,
@@ -55,6 +52,7 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
 });
 
 telemetry.validator.expect("body", {
+    ownEndpoints: "boolean",
     userSha: "string",
     appSha: "string",
     event: "string",
