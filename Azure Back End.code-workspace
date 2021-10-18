@@ -9,6 +9,10 @@
 			"path": "azure-polling-app"
 		},
 		{
+			"name": "Azure Function App: Telemetry",
+			"path": "azure-telemetry-app"
+		},
+		{
 			"name": "Node module: @vjeko.com/azure-func",
 			"path": "../@vjeko.com/azure-func"
 		},
@@ -48,6 +52,7 @@
 			"vjeko",
 			"vjekocom",
 			"xmlport"
-		]
+		],
+		"debug.internalConsoleOptions": "neverOpen"
 	}
 }

@@ -9,11 +9,17 @@
         "doc": true,
         "azure-function-app": true,
         "azure-polling-app": true,
+        "azure-telemetry-app": true,
         "vscode-extension": true,
         ".vscode": true,
         "al-obj-id.code-workspace": true,
         ".debug": true,
         ".snapshots": true
     },
-    "azureFunctions.projectSubpath": "azure-function-app"
+    "azureFunctions.projectSubpath": "azure-function-app",
+    "azureFunctions.deploySubpath": "azure-function-app",
+    "azureFunctions.postDeployTask": "npm install (functions)",
+    "azureFunctions.projectLanguage": "TypeScript",
+    "azureFunctions.projectRuntime": "~3",
+    "azureFunctions.preDeployTask": "npm prune (functions)"
 }

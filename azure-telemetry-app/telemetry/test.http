@@ -1,0 +1,8 @@
+post http://localhost:7071/api/telemetry
+Content-Type: application/json
+
+{
+    "userSha": "ajfeioj",
+    "appSha": "31ef4wfq",
+    "event": "test"
+}
