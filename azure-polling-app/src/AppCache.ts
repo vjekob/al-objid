@@ -23,7 +23,7 @@ class AppCache {
     }
 
     private async getAuthorizedApp(appId: string): Promise<AuthorizedAppInfo> {
-        if (!this._apps.hasOwnProperty[appId]) {
+        if (!this._apps.hasOwnProperty(appId)) {
             await this.cacheUnknownApp(appId);
         }
         return this._apps[appId];

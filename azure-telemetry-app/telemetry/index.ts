@@ -33,8 +33,8 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
 
     // TODO Both of these conditions should be moved to configuration (both size and time)
     if (pending.length === 10 || timestamp - lastFlushTimestamp > 60000) {
-        const blob = new Blob(`${instanceId}.json`);
-        await blob.optimisticUpdate(() => pending);
+        const blob = new Blob<TelemetryEntry[]>(`${instanceId}.json`);
+        await blob.optimisticUpdate(existing => [...existing, ...pending]);
         pending = [];
         lastFlushTimestamp = timestamp;
     }
