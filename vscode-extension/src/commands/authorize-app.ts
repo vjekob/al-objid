@@ -7,6 +7,7 @@ import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { deauthorizeApp } from "./deauthorize-app";
+import { Telemetry } from "../lib/Telemetry";
 
 export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
     if (!uri) uri = await ALWorkspace.selectWorkspaceFolder();
@@ -19,7 +20,8 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
 
     output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`);
 
-    let response = await Backend.authorizeApp(manifest!.id, async (response) => {
+    Telemetry.instance.log("authorize", manifest.id);
+    let response = await Backend.authorizeApp(manifest.id, async (response) => {
         const { error } = response;
         if (error.statusCode !== 405) return false;
 

@@ -9,6 +9,7 @@ import { ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
 import { getActualConsumption, getObjectDefinitions, getWorkspaceFolderFiles } from "../lib/ObjectIds";
 import { AppIdCache } from "../lib/AppIdCache";
+import { Telemetry } from "../lib/Telemetry";
 
 interface SyncOptions {
     merge: boolean,
@@ -57,6 +58,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     const objects = getObjectDefinitions(uris);
     const consumption: ConsumptionInfo = getActualConsumption(objects);
 
+    Telemetry.instance.log("syncIds", appId);
     if (await Backend.syncIds(appId, consumption, !!(options?.merge), ObjIdConfig.instance(uri).authKey || "")) {
         UI.sync.showSuccessInfo();
     }

@@ -6,6 +6,7 @@ import { getManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
+import { Telemetry } from "../lib/Telemetry";
 
 export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) => {
     if (!uri) uri = await ALWorkspace.selectWorkspaceFolder();
@@ -22,6 +23,7 @@ export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) =>
         return;
     }
 
+    Telemetry.instance.log("deauthorize", manifest.id);
     let response = await Backend.deauthorizeApp(manifest.id, ObjIdConfig.instance(uri).authKey || "", async (response) => {
         switch (response.error.statusCode) {
             case 401:

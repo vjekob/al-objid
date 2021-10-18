@@ -30,7 +30,7 @@ interface HttpResponse<T> {
 
 const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
 const POLL_HOST_NAME = "vjekocom-alext-weu-poll.azurewebsites.net";
-const TELEMETRY_HOST_NAME = "vjekocom-alninja-telemetry.azurewebsites.net";
+const TELEMETRY_HOST_NAME = "alninja-telemetry.azurewebsites.net";
 
 export const API_RESULT = {
     NOT_SENT: Symbol("NOT_SENT"),
@@ -41,7 +41,7 @@ export const API_RESULT = {
 
 interface Endpoint {
     hostname: string;
-    key: string;
+    key?: string;
 }
 
 class Endpoints {
@@ -57,6 +57,12 @@ class Endpoints {
             hostname: Config.instance.backEndUrlPoll || POLL_HOST_NAME,
             key: Config.instance.backEndAPIKeyPoll
         };
+    }
+
+    static get telemetry(): Endpoint {
+        return {
+            hostname: TELEMETRY_HOST_NAME,
+        }
     }
 }
 
@@ -80,13 +86,17 @@ class Endpoints {
 */
 async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, errorHandler?: ErrorHandler<T>, endpoint: Endpoint = Endpoints.default): Promise<HttpResponse<T>> {
     const { hostname, key } = endpoint;
+    const headers: any = {
+        "Content-Type": "application/json",
+    };
+    if (key) {
+        headers["X-Functions-Key"] = key;
+    }
+
     const https = new Https({
         hostname,
         path,
-        headers: {
-            "Content-Type": "application/json",
-            "X-Functions-Key": key
-        }
+        headers
     });
 
     if (Config.instance.useVerboseOutputLogging) {
@@ -231,12 +241,24 @@ export class Backend {
         const response = await sendRequest<ConsumptionInfoWithTotal>(
             "/api/v2/getConsumption",
             "GET",
-            { appId, authKey }
+            { appId, authKey },
         );
         return response.value;
     }
 
-    static async telemetry(appId: string, userSha: string, event: string, context?: any) {
-
+    static async telemetry(appSha: string | undefined, userSha: string, event: string, context?: any) {
+        sendRequest<undefined>(
+            "/api/telemetry",
+            "POST",
+            {
+                ownEndpoints: !!(Config.instance.backEndUrl || Config.instance.backEndUrl !== DEFAULT_HOST_NAME),
+                userSha,
+                appSha,
+                event,
+                context,
+            },
+            async () => true,
+            Endpoints.telemetry
+        );
     }
 }

@@ -5,6 +5,16 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.1.2] - 2021-10-18
+### Added
+- Telemetry feature introduced. This is not a user-level feature.
+### Fixed
+- Bug with invoking custom polling back-end ([Git Issue #17](https://github.com/vjekob/al-objid/issues/17))
+
+## [2.1.1] - 2021-10-17
+### Added
+- Release nots for 2.1.0
+
 ## [2.1.0] - 2021-10-17
 ### Added
 - Range Explorer feature that shows an overview of range consumption per app.
@@ -18,7 +28,7 @@ are available.
 ### Changed
 - Notifications polling through the `v2/getLog` endpoint is replaced with `v2/check`. Also, notifications
 polling is invoking a different back-end endpoint.
-- News poliing through `v2/news` is discontinued. Instead, news information is included in the `v2/check`
+- News polling through `v2/news` is discontinued. Instead, news information is included in the `v2/check`
 endpoint calls. This also means that news polling is happening at the same intervals as notifications polling.
 - Polling is not happening at fixed 30-seconds interval, but includes an automatic back-off algorithm that
 increases the polling interval slightly if there are no notifications or news, until it reaches maximum

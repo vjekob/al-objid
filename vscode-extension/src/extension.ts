@@ -21,9 +21,11 @@ import { showReleaseNotes } from "./commands/show-release-notes";
 import { ExplorerTreeDataProvider } from "./features/Explorer/ExplorerTreeDataProvider";
 import { ExplorerDecorationsProvider } from "./features/Explorer/ExplorerDecorationsProvider";
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
+import { Telemetry } from "./lib/Telemetry";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
+	Telemetry.instance.setContext(context);
 
 	context.subscriptions.push(
 		// Commands

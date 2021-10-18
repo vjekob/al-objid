@@ -4,6 +4,7 @@ import { AppManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
+import { Telemetry } from "../lib/Telemetry";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 
@@ -25,7 +26,9 @@ export class NextObjectIdCompletionItem extends CompletionItem {
                 output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`);
                 const { authKey } = ObjIdConfig.instance(uri);
                 const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, authKey);
-                if (!realId || !realId.available || realId.id === objectId.id) return;
+                const notChanged = !realId || !realId.available || realId.id === objectId.id;
+                Telemetry.instance.log("getNextNo-commit", manifest.id, notChanged ? undefined : "different");
+                if (notChanged) return;
                 output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`);
 
                 let replace = new WorkspaceEdit();

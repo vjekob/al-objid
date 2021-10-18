@@ -9,6 +9,7 @@ import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
+import { Telemetry } from "../lib/Telemetry";
 
 type SymbolInfo = {
     type: string;
@@ -108,6 +109,7 @@ export class NextObjectIdCompletionProvider {
 
         const { authKey } = ObjIdConfig.instance(document.uri);
         const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, authKey);
+        Telemetry.instance.log("getNextNo-fetch", manifest.id);
 
         if (showNotificationsIfNecessary(manifest, objectId) || !objectId) return [];
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);

@@ -4,6 +4,7 @@ import * as fs from "fs";
 import { Config } from "../lib/Config";
 import { ALREADY_USED, EXTENSION_VERSION, LABELS } from "../lib/constants";
 import { UI } from "../lib/UI";
+import { Telemetry } from "../lib/Telemetry";
 
 export class ReleaseNotesHandler {
     private static _instance: ReleaseNotesHandler;
@@ -62,6 +63,7 @@ export class ReleaseNotesHandler {
         }
 
         if (await UI.general.showReleaseNotes(version) === LABELS.BUTTON_SHOW_RELEASE_NOTES) {
+            Telemetry.instance.log("releaseNotes", undefined, version);
             this.openReleaseNotesPanel(version);
         }
     }

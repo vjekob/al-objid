@@ -37,11 +37,11 @@ export class Config extends DisposableHolder {
     }
 
     public get backEndUrlPoll(): string {
-        return this._config.get<string>("backEndUrlForPolling") || "";
+        return this._config.get<string>("backEndUrlPoll") || "";
     }
 
     public get backEndAPIKeyPoll(): string {
-        return this._config.get<string>("backEndAPIKeyForPolling") || "";
+        return this._config.get<string>("backEndAPIKeyPoll") || "";
     }
 
     public get showEventLogNotifications(): boolean {

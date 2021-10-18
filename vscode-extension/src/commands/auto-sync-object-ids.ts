@@ -11,6 +11,7 @@ import { UI } from "../lib/UI";
 import { getManifest } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
 import { output } from "../features/Output";
+import { Telemetry } from "../lib/Telemetry";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -285,6 +286,7 @@ export const autoSyncObjectIds = async () => {
         compressConsumptions(consumptions);
         let payload = authorizeConsumptions(consumptions, folders);
 
+        Telemetry.instance.log("autoSyncIds");
         await Backend.autoSyncIds(payload, false);
         return autoSyncResult(AutoSyncResult.Success);
     });
