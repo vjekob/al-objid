@@ -1,4 +1,4 @@
-get http://localhost:7071/api/v2/showCache
+get http://localhost:7071/api/v2/check
 Content-Type: application/json
 
 [

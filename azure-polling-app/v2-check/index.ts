@@ -37,12 +37,19 @@ check.onAuthorization(async (request) => {
         return true; // A body not being present is not an authorization issue, it's a validation issue
     }
 
+    const validRequests = [];
     const requests = Array.isArray(request.body) ? request.body : [request.body];
     for (let entry of requests) {
-        if (!await AppCache.isAuthorized(entry.appId, entry.authKey)) {
-            return false;
+        if (await AppCache.isAuthorized(entry.appId, entry.authKey)) {
+            validRequests.push(entry);
         }
     }
+
+    if (requests.length === 1 && validRequests.length === 0) {
+        return false;
+    }
+
+    request.rawContext.req.body = validRequests;
     return true;
 });
 
