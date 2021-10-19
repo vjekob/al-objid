@@ -4,6 +4,9 @@ import { User } from "./User";
 
 const CONFIG_SECTION = "objectIdNinja";
 
+const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
+const POLL_HOST_NAME = "vjekocom-alext-weu-poll.azurewebsites.net";
+
 export class Config extends DisposableHolder {
     private _config: WorkspaceConfiguration;
     private static _instance: Config;
@@ -29,7 +32,7 @@ export class Config extends DisposableHolder {
     }
 
     public get backEndUrl(): string {
-        return this._config.get<string>("backEndUrl") || "";
+        return this._config.get<string>("backEndUrl") || DEFAULT_HOST_NAME;
     }
 
     public get backEndAPIKey(): string {
@@ -37,11 +40,20 @@ export class Config extends DisposableHolder {
     }
 
     public get backEndUrlPoll(): string {
-        return this._config.get<string>("backEndUrlPoll") || "";
+        return this._config.get<string>("backEndUrlPoll") || POLL_HOST_NAME;
     }
 
     public get backEndAPIKeyPoll(): string {
         return this._config.get<string>("backEndAPIKeyPoll") || "";
+    }
+
+    public get isDefaultBackEndConfiguration(): boolean {
+        return this.backEndUrl === DEFAULT_HOST_NAME && this.backEndUrlPoll === POLL_HOST_NAME;
+    }
+
+    public get isBackEndConfigInError(): boolean {
+        return (this.backEndUrl === DEFAULT_HOST_NAME && this.backEndUrlPoll !== POLL_HOST_NAME) ||
+            (this.backEndUrl !== DEFAULT_HOST_NAME && this.backEndUrlPoll === POLL_HOST_NAME);
     }
 
     public get showEventLogNotifications(): boolean {

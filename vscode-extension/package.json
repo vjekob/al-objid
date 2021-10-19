@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "2.1.2",
+	"version": "2.1.3",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -64,8 +64,7 @@
 		"onCommand:vjeko-al-objid.confirm-authorize-app",
 		"onCommand:vjeko-al-objid.confirm-deauthorize-app",
 		"onCommand:vjeko-al-objid.auto-sync-object-ids",
-		"onCommand:vjeko-al-objid.show-release-notes",
-		"onView:ninja-rangeExplorer"
+		"onCommand:vjeko-al-objid.show-release-notes"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -174,7 +173,8 @@
 					"name": "Range Explorer",
 					"icon": "images/tree-view.svg",
 					"contextualTitle": "AL Object ID Ninja Range Explorer",
-					"type": "tree"
+					"type": "tree",
+					"when": "vjeko-al-objid.active == true"
 				}
 			]
 		},

@@ -26,6 +26,7 @@ import { Telemetry } from "./lib/Telemetry";
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
 	Telemetry.instance.setContext(context);
+	commands.executeCommand("setContext", "vjeko-al-objid.active", true);
 
 	context.subscriptions.push(
 		// Commands
@@ -60,4 +61,6 @@ export function activate(context: ExtensionContext) {
 	ReleaseNotesHandler.instance.check(context);
 }
 
-export function deactivate() { }
+export function deactivate() {
+	commands.executeCommand("setContext", "vjeko-al-objid.active", false);
+}

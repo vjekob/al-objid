@@ -12,6 +12,7 @@ import { getLastKnownAppName } from './AppManifest';
 import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataProvider';
 import { LABELS } from './constants';
 import { env, Uri } from 'vscode';
+import { Telemetry } from './Telemetry';
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -28,8 +29,6 @@ interface HttpResponse<T> {
     value?: T,
 }
 
-const DEFAULT_HOST_NAME = "vjekocom-alext-weu.azurewebsites.net";
-const POLL_HOST_NAME = "vjekocom-alext-weu-poll.azurewebsites.net";
 const TELEMETRY_HOST_NAME = "alninja-telemetry.azurewebsites.net";
 
 export const API_RESULT = {
@@ -47,14 +46,14 @@ interface Endpoint {
 class Endpoints {
     static get default(): Endpoint {
         return {
-            hostname: Config.instance.backEndUrl || DEFAULT_HOST_NAME,
+            hostname: Config.instance.backEndUrl,
             key: Config.instance.backEndAPIKey
         };
     }
 
     static get polling(): Endpoint {
         return {
-            hostname: Config.instance.backEndUrlPoll || POLL_HOST_NAME,
+            hostname: Config.instance.backEndUrlPoll,
             key: Config.instance.backEndAPIKeyPoll
         };
     }
@@ -67,7 +66,7 @@ class Endpoints {
 }
 
 (async () => {
-    if (Config.instance.backEndUrl && Config.instance.backEndUrl !== DEFAULT_HOST_NAME && !Config.instance.backEndUrlPoll) {
+    if (Config.instance.isBackEndConfigInError) {
         if (await UI.general.showBackEndConfigurationError() === LABELS.BUTTON_LEARN_MORE) {
             env.openExternal(Uri.parse("https://github.com/vjekob/al-objid/blob/master/doc/DeployingBackEnd.md"));
         }
@@ -162,12 +161,12 @@ function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest):
     const { error } = response;
     const { hostname } = request;
     if (error.error && error.error.code === "ENOTFOUND") {
-        UI.backend.showEndpointNotFoundError(hostname, hostname === DEFAULT_HOST_NAME);
+        UI.backend.showEndpointNotFoundError(hostname, Config.instance.isDefaultBackEndConfiguration);
     }
     if (error.statusCode) {
         switch (error.statusCode) {
             case 401:
-                UI.backend.showEndpointUnauthorizedError(hostname === DEFAULT_HOST_NAME);
+                UI.backend.showEndpointUnauthorizedError(Config.instance.isDefaultBackEndConfiguration);
         }
     }
 }
@@ -227,6 +226,12 @@ export class Backend {
     }
 
     static async check(payload: FolderAuthorization[]): Promise<CheckResponse | undefined> {
+        if (Config.instance.isBackEndConfigInError) {
+            // We are not calling the polling endpoint if it's misconfigured. Either both URLs are default, or polling is pointless.
+            Telemetry.instance.logOnce("invalidBackendConfig");
+            return;
+        }
+
         const response = await sendRequest<CheckResponse>(
             "/api/v2/check",
             "GET",
@@ -251,7 +256,7 @@ export class Backend {
             "/api/telemetry",
             "POST",
             {
-                ownEndpoints: !!(Config.instance.backEndUrl || Config.instance.backEndUrl !== DEFAULT_HOST_NAME),
+                ownEndpoints: !Config.instance.isDefaultBackEndConfiguration,
                 userSha,
                 appSha,
                 event,

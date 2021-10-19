@@ -21,6 +21,7 @@ export class Telemetry {
     private _context?: ExtensionContext;
     private _userSha?: string;
     private _appSha: PropertyBag<string | undefined> = {};
+    private _loggedOnce: PropertyBag<boolean> = {};
 
     private getAppShaGlobalStateKey(appId: string): string {
         return `${TELEMETRY_APP_SHA}.${appId}`;
@@ -57,5 +58,14 @@ export class Telemetry {
 
     public log(event: string, appId?: string, context?: any): void {
         Backend.telemetry(appId && this.getAppSha(appId), this.userSha, event, context);
+    }
+
+    public logOnce(event: string, appId?: string, context?: any): void {
+        const logKey = `${appId || ""}.${event}`;
+        if (this._loggedOnce[logKey]) {
+            return;
+        }
+        this._loggedOnce[logKey] = true;
+        this.log(event, appId, context);
     }
 }

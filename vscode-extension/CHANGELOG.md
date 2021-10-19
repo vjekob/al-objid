@@ -5,6 +5,11 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.1.3] - 2021-10-19
+### Changed
+- Polling back end is not invoked if it's misconfigured (custom main back end, but default polling back-end).
+- Ninja icon shows in activity bar only when the extension is active.
+
 ## [2.1.2] - 2021-10-18
 ### Added
 - Telemetry feature introduced. This is not a user-level feature.
