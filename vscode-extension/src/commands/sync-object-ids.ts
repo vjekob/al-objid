@@ -55,7 +55,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     output.log("Starting syncing object ID consumption with the back end");
 
     const uris = await getWorkspaceFolderFiles(uri);
-    const objects = getObjectDefinitions(uris);
+    const objects = await getObjectDefinitions(uris);
     const consumption: ConsumptionInfo = getActualConsumption(objects);
 
     Telemetry.instance.log("syncIds", appId);

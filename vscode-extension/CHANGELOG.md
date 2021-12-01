@@ -5,6 +5,17 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - WIP
+### Changed
+- Old built-in parser is replaced with @vjeko.com/al-parser-ninja. This, in turn, is based on a separate
+  project @vjeko.com/al-parser (not yet public as of time of this change log update). The new parser is
+  much faster than the previous one, and it provides information about all field IDs (for tables and table
+  extensions) and value IDs (for enums and enum extensions).
+### Removed
+- The `useBestPracticesParser` setting and all related business logic is removed. Its purpose was primarily
+  to allow using a faster parser. The new parser is 2.5x faster than the previous "best-practices" parser,
+  6x fastere than the previous slow parser, and it parses full content (rather than just the first object).
+
 ## [2.1.3] - 2021-10-19
 ### Changed
 - Polling back end is not invoked if it's misconfigured (custom main back end, but default polling back-end).

@@ -1,10 +1,8 @@
 import { RelativePattern, Uri, workspace } from "vscode";
-import { Output } from "../features/Output";
-import { Config } from "./Config";
-import { ALObject, parseObjects } from "./parser";
 import { ConsumptionInfo } from "./BackendTypes";
-import { executeWithStopwatch, executeWithStopwatchAsync } from "./MeasureTime";
-import * as fs from "fs";
+import { executeWithStopwatchAsync } from "./MeasureTime";
+import { ALObject } from "@vjeko.com/al-parser-types-ninja";
+import { ParserConnector } from "../features/ParserConnector";
 
 export async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
     let folderPath: string = uri.fsPath;
@@ -12,21 +10,8 @@ export async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
     return await executeWithStopwatchAsync(() => workspace.findFiles(pattern, null), `Retrieving list of files in ${uri}`);
 }
 
-export function getObjectDefinitions(uris: Uri[]): ALObject[] {
-    return executeWithStopwatch(() => {
-        const objects: ALObject[] = [];
-        const bestPractice = Config.instance.useBestPracticesParser;
-        Output.instance.log(
-            bestPractice
-                ? "Using best-practices parser (this is slightly faster because it only looks for one object per file)"
-                : "Using slower parser (this is slightly slower because it parses each file entirely looking for as many objects as it defines)"
-        );
-        for (let uri of uris) {
-            let file = fs.readFileSync(uri.fsPath).toString();
-            objects.push(...parseObjects(file, bestPractice));
-        }
-        return objects;
-    }, `Parsing ${uris.length} object files`);
+export async function getObjectDefinitions(uris: Uri[]): Promise<ALObject[]> {
+    return executeWithStopwatchAsync(() => ParserConnector.instance.parse(uris), `Parsing ${uris.length} object files`);
 }
 
 export function updateActualConsumption(objects: ALObject[], consumption: ConsumptionInfo): void {

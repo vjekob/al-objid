@@ -1,4 +1,4 @@
-import { ALObject } from './../lib/parser';
+import { ALObject } from "@vjeko.com/al-parser-types-ninja";
 import { Diagnostic, DiagnosticCollection, DiagnosticSeverity, languages, Position, Range, window } from "vscode";
 import { DisposableHolder } from "./DisposableHolder";
 

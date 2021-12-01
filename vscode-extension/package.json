@@ -126,11 +126,6 @@
 					"type": "string",
 					"description": "Name to be shown in notification messages. If you leave this empty, Object ID Ninja will use your OS user name (or your Git user name in future versions)."
 				},
-				"objectIdNinja.useBestPracticesParser": {
-					"type": "boolean",
-					"default": false,
-					"markdownDescription": "AL Object ID Ninja understands every AL syntax, even when it doesn't follow best practices. When [synchronizing objects](https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md), AL Object Ninja will only look for one object per file if this setting is switched on. Otherwise, it will parse each file entirely looking for all objects. Best practice is to have one object per file. The speed difference is minimal, AL Object Ninja is blazing fast either way."
-				},
 				"objectIdNinja.useVerboseOutputLogging": {
 					"type": "boolean",
 					"default": false,
@@ -217,6 +212,8 @@
 		"vscode-test": "^1.5.2"
 	},
 	"dependencies": {
+		"@vjeko.com/al-parser-ninja": "^1.0.2",
+		"@vjeko.com/al-parser-types-ninja": "^1.0.4",
 		"comment-json": "^4.1.1"
 	}
 }

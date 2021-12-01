@@ -22,6 +22,7 @@ import { ExplorerTreeDataProvider } from "./features/Explorer/ExplorerTreeDataPr
 import { ExplorerDecorationsProvider } from "./features/Explorer/ExplorerDecorationsProvider";
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { Telemetry } from "./lib/Telemetry";
+import { ParserConnector } from "./features/ParserConnector";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -56,6 +57,7 @@ export function activate(context: ExtensionContext) {
 		Disposable.from(new PollingHandler()),
 		Disposable.from(new NewsHandler(context)),
 		new HttpStatusHandler(context).getDisposables(),
+		ParserConnector.instance,
 	);
 
 	ReleaseNotesHandler.instance.check(context);
