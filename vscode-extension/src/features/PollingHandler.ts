@@ -11,7 +11,7 @@ import { NewsHandler } from './NewsHandler';
 import { output } from './Output';
 import { ExplorerTreeDataProvider } from './Explorer/ExplorerTreeDataProvider';
 
-const POLLING_INTERVAL = 5 * 1000; // 30 seconds
+const POLLING_INTERVAL = 15 * 1000; // 15 seconds
 const MAX_POLLING_INTERVAL = 15 * 60 * 1000; // 15 minutes
 
 export class PollingHandler implements Disposable {

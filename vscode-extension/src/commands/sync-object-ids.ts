@@ -8,7 +8,6 @@ import { output } from "../features/Output";
 import { ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
 import { getActualConsumption, getObjectDefinitions, getWorkspaceFolderFiles } from "../lib/ObjectIds";
-import { AppIdCache } from "../lib/AppIdCache";
 import { Telemetry } from "../lib/Telemetry";
 
 interface SyncOptions {

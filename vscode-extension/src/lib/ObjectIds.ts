@@ -20,6 +20,23 @@ export function updateActualConsumption(objects: ALObject[], consumption: Consum
         if (!id) continue;
         if (!consumption[type]) consumption[type] = [];
         consumption[type].push(id);
+
+        if (object.fields) {
+            type = `${type}_${id}`;
+            consumption[type] = [];
+            for (let field of object.fields) {
+                consumption[type].push(field.id);
+            }
+            continue;
+        }
+
+        if (object.values) {
+            type = `${type}_${id}`;
+            consumption[type] = [];
+            for (let value of object.values) {
+                consumption[type].push(value.id);
+            }
+        }
     }
 }
 
