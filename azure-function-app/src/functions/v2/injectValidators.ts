@@ -17,15 +17,26 @@ export function injectValidators() {
             return `object expected, received "${typeof value}"`;
         }
         for (let key of Object.keys(value)) {
+            let keyForIds = key;
+            let keyParts = key.split("_");
+            if (keyParts.length === 2) {
+                key = keyParts[0];
+                if (key !== "table" && key !== "tableextension" && key !== "enum" && key !== "enumextension") {
+                    return `${keyForIds} has nothing of interest (fields, or ids) to keep track of`;
+                }
+                if (!parseInt(keyParts[1])) {
+                    return `${key} id must be a non-zero number`;
+                }
+            }
             if (!ALObjectType[key]) {
-                return `invalid AL object type "${value}"`;
+                return `invalid AL object type "${key}"`;
             }
-            if (!Array.isArray(value[key])) {
-                return `array expected for key "${key}"`;
+            if (!Array.isArray(value[keyForIds])) {
+                return `array expected for key "${keyForIds}"`;
             }
-            for (let num of value[key]) {
+            for (let num of value[keyForIds]) {
                 if (typeof num !== "number") {
-                    return `"${key}" must be an array of "number", but "${typeof num}" was found`;
+                    return `"${keyForIds}" must be an array of "number", but "${typeof num}" was found`;
                 }
             }
         }

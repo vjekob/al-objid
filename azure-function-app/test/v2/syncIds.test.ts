@@ -12,7 +12,7 @@ Mock.initializeStorage(azure.createBlobService);
 initializeCustomMatchers()
 
 describe("Testing function api/v2/syncIds", () => {
-    const ids = { codeunit: [1, 3, 5], page: [2, 4, 6], report: [3] };
+    const ids = { codeunit: [1, 3, 5], page: [2, 4, 6], report: [3], table_2: [7, 8], enumextension_3: [8, 9] };
 
     it("Fails on missing consumption specification", async () => {
         const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_" }));
@@ -35,6 +35,8 @@ describe("Testing function api/v2/syncIds", () => {
         expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
         expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
         expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
+        expect(storage.objectIds(storage.toALObjectType("table_2"))).toEqual([7, 8]);
+        expect(storage.objectIds(storage.toALObjectType("enumextension_3"))).toEqual([8, 9]);
 
         expect(storage.log().length).toBe(1);
         expect(storage.log()[0].eventType).toBe("syncFull");
@@ -62,6 +64,8 @@ describe("Testing function api/v2/syncIds", () => {
         expect(storage.objectIds(ALObjectType.table)).toBeUndefined();
         expect(storage.objectIds(ALObjectType.page)).toEqual([2, 4, 6]);
         expect(storage.objectIds(ALObjectType.report)).toEqual([3]);
+        expect(storage.objectIds(storage.toALObjectType("table_2"))).toEqual([7, 8]);
+        expect(storage.objectIds(storage.toALObjectType("enumextension_3"))).toEqual([8, 9]);
 
         expect(storage.log().length).toBe(1);
         expect(storage.log()[0].eventType).toBe("syncMerge");
@@ -97,6 +101,8 @@ describe("Testing function api/v2/syncIds", () => {
         expect(app.table).toBeUndefined();
         expect(app.page).toEqual([2, 4, 6]);
         expect(app.report).toEqual([3]);
+        expect(app.table_2).toEqual([7, 8]);
+        expect(app.enumextension_3).toEqual([8, 9]);
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
@@ -124,6 +130,8 @@ describe("Testing function api/v2/syncIds", () => {
         expect(app.table).toEqual([1, 2]);
         expect(app.page).toEqual([2, 3, 4, 5, 6]);
         expect(app.report).toEqual([3]);
+        expect(app.table_2).toEqual([7, 8]);
+        expect(app.enumextension_3).toEqual([8, 9]);
 
         expect(storage.log().length).toBe(1);
         expect(storage.log()[0].eventType).toBe("syncMerge");

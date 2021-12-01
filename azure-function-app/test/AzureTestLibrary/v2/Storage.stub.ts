@@ -100,4 +100,8 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
         const app = this._content[`${this._appId}.json`] || {};
         return app._log;
     }
+
+    toALObjectType(value: string): ALObjectType {
+        return value as ALObjectType;
+    }
 }

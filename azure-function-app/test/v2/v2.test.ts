@@ -75,11 +75,35 @@ describe("Testing generic features of api/v2", () => {
         expect(() => validator.validate(request)).toThrowError();
     });
 
+    it("Fails on validating invalid extended ObjectIDs specification (incorrect ALObjectType 'table_0')", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ObjectIDs": "ObjectIDs" });
+        const request = new Mock.Request("GET", { "ObjectIDs": { codeunit: [1, 2], table_0: [1, 2] } });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid extended ObjectIDs specification (incorrect ALObjectType 'codeunit_1')", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ObjectIDs": "ObjectIDs" });
+        const request = new Mock.Request("GET", { "ObjectIDs": { codeunit: [1, 2], codeunit_1: [1, 2] } });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
     it("Succeeds on validating valid ObjectIDs specification", () => {
         injectValidators();
         const validator = new RequestValidator();
         validator.expect("body", { "ObjectIDs": "ObjectIDs" });
         const request = new Mock.Request("GET", { "ObjectIDs": { codeunit: [12, 13], table: [15, 16] } });
+        expect(() => validator.validate(request)).not.toThrowError();
+    });
+
+    it("Succeeds on validating valid extended ObjectIDs specification", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ObjectIDs": "ObjectIDs" });
+        const request = new Mock.Request("GET", { "ObjectIDs": { table_1: [12, 13], tableextension_2: [15, 16], enum_1: [12, 13], enumextension_2: [15, 16] } });
         expect(() => validator.validate(request)).not.toThrowError();
     });
 

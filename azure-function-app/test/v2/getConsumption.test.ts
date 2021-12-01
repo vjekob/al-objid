@@ -18,6 +18,7 @@ describe("Testing function api/v2/getConsumption", () => {
         const storage = new StubStorage().app().authorize();
         storage.setConsumption(ALObjectType.codeunit, [1, 2, 3]);
         storage.setConsumption(ALObjectType.page, [4, 5, 6]);
+        storage.setConsumption(storage.toALObjectType("table_2"), [7, 8]);
         Mock.useStorage(storage.content);
         const context = new Mock.Context(new Mock.Request("GET", { appId: storage.appId, authKey: storage.authKey }));
         await getConsumption(context, context.req);
@@ -26,7 +27,8 @@ describe("Testing function api/v2/getConsumption", () => {
         expect(context.res.body).toEqual({
             _total: 6,
             codeunit: [1, 2, 3],
-            page: [4, 5, 6]
+            page: [4, 5, 6],
+            [storage.toALObjectType("table_2")]: [7, 8]
         });
     });
 
