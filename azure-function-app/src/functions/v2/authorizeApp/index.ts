@@ -16,7 +16,7 @@ const authorizeApp = new ALNinjaRequestHandler<DefaultRequest, AuthorizeAppRespo
             const writeResult = await writeAppAuthorization(appId, request);
             authKey = writeResult.app._authorization.key;
 
-            request.markAsChanged(appId, writeResult.app);
+            request.markAsChanged(appId, writeResult.app, writeResult.app._authorization);
             return { authKey };
 
         case "DELETE":
@@ -28,7 +28,7 @@ const authorizeApp = new ALNinjaRequestHandler<DefaultRequest, AuthorizeAppRespo
             }
             const removeResult = await removeAppAuthorization(appId, request);
             if (removeResult.success) {
-                request.markAsChanged(appId, removeResult.app);
+                request.markAsChanged(appId, removeResult.app, removeResult.app._authorization);
                 return { deleted: true };
             }
             throw new ErrorResponse(`An error occurred while de-authorizing app ${appId}. Try again later.`);

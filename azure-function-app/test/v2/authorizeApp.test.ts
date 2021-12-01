@@ -43,9 +43,9 @@ describe("Testing function api/v2/authorizeApp", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
-        expect(context.bindings.notify.app._authorization).toBeDefined();
-        expect(context.bindings.notify.app._authorization.key).toBeDefined();
-        expect(context.bindings.notify.app._authorization.valid).toStrictEqual(true);
+        expect(context.bindings.notify.authorization).toBeDefined();
+        expect(context.bindings.notify.authorization.key).toBeDefined();
+        expect(context.bindings.notify.authorization.valid).toStrictEqual(true);
     });
 
     it("Authorizes a previously unknown app", async () => {
@@ -65,9 +65,9 @@ describe("Testing function api/v2/authorizeApp", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe("_mock_");
-        expect(context.bindings.notify.app._authorization).toBeDefined();
-        expect(context.bindings.notify.app._authorization.key).toBeDefined();
-        expect(context.bindings.notify.app._authorization.valid).toStrictEqual(true);
+        expect(context.bindings.notify.authorization).toBeDefined();
+        expect(context.bindings.notify.authorization.key).toBeDefined();
+        expect(context.bindings.notify.authorization.valid).toStrictEqual(true);
     });
 
     it("Fails to de-authorizes a previously unknown app", async () => {
@@ -112,6 +112,6 @@ describe("Testing function api/v2/authorizeApp", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
-        expect(context.bindings.notify.app._authorization).toBeUndefined();
+        expect(context.bindings.notify.authorization).toBeUndefined();
     });
 });

@@ -13,7 +13,9 @@ const autoSyncIds = new ALNinjaRequestHandler<AutoSyncIdsRequest, AutoSyncIdsRes
         if (app && app._authorization && app._authorization.valid && app._authorization.key !== folder.authKey) {
             throw new ErrorResponse(`Invalid credentials for app ${folder.appId}`, 401);
         }
-        result[folder.appId] = await updateConsumptions(folder.appId, request, folder.ids, request.method === "PATCH");
+        const updatedApp = await updateConsumptions(folder.appId, request, folder.ids, request.method === "PATCH");
+        result[folder.appId] = updatedApp;
+        request.markAsChanged(folder.appId, updatedApp);
     }
     return result;
 }, false);

@@ -40,5 +40,5 @@ export type ChangeOperation = "getNext" | "syncMerge" | "syncFull" | "authorize"
 
 export interface ALNinjaRequestContext<TRequest = any, TBindings = any> extends RequestContext<TRequest, TBindings> {
     log(app: AppInfo, operation: ChangeOperation, content?: any): void;
-    markAsChanged(appId: string, app: AppInfo): void;
+    markAsChanged(appId: string, app: AppInfo, authorization?: Authorization): void;
 }

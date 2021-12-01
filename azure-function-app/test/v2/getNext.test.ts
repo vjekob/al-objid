@@ -101,11 +101,6 @@ describe("Testing function api/v2/getNext", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe("_mock_");
-        expect(context.bindings.notify.app.codeunit).toEqual([50000]);
-        expect(context.bindings.notify.app._log.length).toStrictEqual(1);
-        expect(context.bindings.notify.app._log[0].eventType).toBe("getNext");
-        expect(context.bindings.notify.app._log[0].data).toEqual({ type: "codeunit", id: 50000 });
-        expect(context.bindings.notify.app._log[0].user).toBe("fake");
 
         expect(context.res.body._appInfo).toBeDefined();
         expect(context.res.body._appInfo._authorization).toBeUndefined();
@@ -136,11 +131,6 @@ describe("Testing function api/v2/getNext", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
-        expect(context.bindings.notify.app.codeunit).toEqual([50000]);
-        expect(context.bindings.notify.app._log.length).toStrictEqual(1);
-        expect(context.bindings.notify.app._log[0].eventType).toBe("getNext");
-        expect(context.bindings.notify.app._log[0].data).toEqual({ type: "codeunit", id: 50000 });
-        expect(context.bindings.notify.app._log[0].user).toBe("fake");
 
         expect(context.res.body._appInfo).toBeDefined();
         expect(context.res.body._appInfo._authorization).toBeUndefined();
@@ -173,11 +163,6 @@ describe("Testing function api/v2/getNext", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
-        expect(context.bindings.notify.app.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
-        expect(context.bindings.notify.app._log.length).toStrictEqual(1);
-        expect(context.bindings.notify.app._log[0].eventType).toBe("getNext");
-        expect(context.bindings.notify.app._log[0].data).toEqual({ type: "codeunit", id: 50003 });
-        expect(context.bindings.notify.app._log[0].user).toBe("fake");
 
         expect(context.res.body._appInfo).toBeDefined();
         expect(context.res.body._appInfo._authorization).toBeUndefined();
@@ -212,12 +197,6 @@ describe("Testing function api/v2/getNext", () => {
 
         expect(context.bindings.notify).toBeDefined();
         expect(context.bindings.notify.appId).toBe(storage.appId);
-        expect(context.bindings.notify.app.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
-        expect(context.bindings.notify.app._log.length).toStrictEqual(2);
-        expect(context.bindings.notify.app._log[0]).toEqual(log[0]);
-        expect(context.bindings.notify.app._log[1].eventType).toBe("getNext");
-        expect(context.bindings.notify.app._log[1].data).toEqual({ type: "codeunit", id: 50003 });
-        expect(context.bindings.notify.app._log[1].user).toBe("fake");
 
         expect(context.res.body._appInfo).toBeDefined();
         expect(context.res.body._appInfo._authorization).toBeUndefined();

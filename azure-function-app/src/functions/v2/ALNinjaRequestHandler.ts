@@ -36,15 +36,20 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
                 });
                 app._log = log;
             };
-            alNinjaRequest.markAsChanged = (appId, app) => {
-                request.rawContext.bindings.notify = { appId, app };
+            let appUpdated: AppInfo | null = null;
+            alNinjaRequest.markAsChanged = (appId, app, authorization) => {
+                appUpdated = app;
+                const payload: any = { appId };
+                if (authorization) {
+                    payload.authorization = authorization;
+                }
+                request.rawContext.bindings.notify = payload;
             };
 
             const response = await handler(request as any);
 
-            let app = request.rawContext.bindings?.notify?.app;
-            if (app) {
-                const { _authorization, _ranges, ...appInfo } = app;
+            if (appUpdated) {
+                const { _authorization, _ranges, ...appInfo } = appUpdated;
                 (response as any)._appInfo = appInfo;
             }
             return response;
