@@ -6,20 +6,18 @@ import { NewsEntry } from "../src/types";
 
 interface QueueItem {
     appId: string;
-    app: AuthorizedAppInfo;
+    authorization: AuthorizedAppInfo;
     news: NewsEntry[];
 }
 
-const queueTrigger: AzureFunction = async function (context, message: QueueItem): Promise<void> {
-    const { appId, app, news } = message;
+const queueTrigger: AzureFunction = async function (_, message: QueueItem): Promise<void> {
+    const { appId, news } = message;
     if (news) {
         NewsCache.updateNews(news);
         return;
     }
 
-    const timestamp = Date.parse(context.bindingData?.insertionTime) || Date.now();
-
-    AppCache.updateCache(appId, app, timestamp);
+    AppCache.invalidateCache(appId);
 };
 
 export default queueTrigger;

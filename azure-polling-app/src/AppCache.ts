@@ -29,14 +29,18 @@ class AppCache {
         return this._apps[appId];
     }
 
-    public updateCache(appId: string, app: AuthorizedAppInfo, timestamp: number): void {
+    private updateCache(appId: string, app: AuthorizedAppInfo, timestamp: number): void {
         if (!app) {
-            delete this._apps[appId];
+            this.invalidateCache(appId);
             return;
         }
         if (!this._apps[appId] || this._apps[appId]._timestamp < timestamp) {
             this._apps[appId] = { ...app, _timestamp: timestamp };
         }
+    }
+
+    public invalidateCache(appId: string) {
+        delete this._apps[appId];
     }
 
     public async getApp(appId: string): Promise<AppInfo> {
