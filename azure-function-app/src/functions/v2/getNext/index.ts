@@ -63,4 +63,4 @@ getNext.validator.expect("body", {
 
 export const disableGetNextRateLimit = () => getNext.noRateLimit();
 
-export default getNext.azureFunction;
+export const run = getNext.azureFunction;

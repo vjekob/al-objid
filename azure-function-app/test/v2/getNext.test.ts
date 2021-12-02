@@ -1,7 +1,7 @@
 import { Mock } from "@vjeko.com/azure-func-test";
 import * as azure from "azure-storage";
 import { Blob } from "@vjeko.com/azure-func";
-import getNext, { disableGetNextRateLimit } from "../../src/functions/v2/getNext";
+import { disableGetNextRateLimit, run as getNext} from "../../src/functions/v2/getNext";
 import { StubStorage } from "../AzureTestLibrary/v2/Storage.stub";
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 import { ALObjectType } from "../../src/functions/v2/ALObjectType";

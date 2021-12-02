@@ -24,5 +24,6 @@
       "connection": "NotifyQueueStorage"
     }
   ],
-  "scriptFile": "../dist/src/functions/v2/getNext/index.js"
+  "scriptFile": "../dist/src/functions/v2/getNext/index.js",
+  "entryPoint": "run"
 }
