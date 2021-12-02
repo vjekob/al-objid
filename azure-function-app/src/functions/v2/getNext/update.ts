@@ -9,7 +9,7 @@ interface UpdateResult {
     success: boolean;
 }
 
-export async function updateConsumption(appId: string, request: ALNinjaRequestContext, type: ALObjectType, ranges: Range[], context: ConsumptionUpdateContext): Promise<UpdateResult> {
+export async function updateConsumption(appId: string, request: ALNinjaRequestContext, type: ALObjectType, assignFromRanges: Range[], appRanges: Range[], context: ConsumptionUpdateContext): Promise<UpdateResult> {
     let success = true;
 
     const blob = new Blob<AppInfo>(`${appId}.json`);
@@ -26,7 +26,7 @@ export async function updateConsumption(appId: string, request: ALNinjaRequestCo
             app = {} as AppInfo;
         }
 
-        app._ranges = ranges;
+        app._ranges = appRanges;
         const consumption = app[type];
 
         // No ids consumed yet, consume the first one and exit
@@ -39,7 +39,7 @@ export async function updateConsumption(appId: string, request: ALNinjaRequestCo
 
         if (consumption.indexOf(context.id) >= 0) {
             // Somebody has consumed this id in the meantime, retrieve the new one
-            context.id = findFirstAvailableId(ranges, consumption);
+            context.id = findFirstAvailableId(assignFromRanges, consumption);
 
             // If id is 0, then there are no numbers left, return the same array
             if (context.id === 0) {

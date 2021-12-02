@@ -51,6 +51,46 @@ describe("Testing generic features of api/v2", () => {
         expect(() => validator.validate(request)).not.toThrowError();
     });
 
+    it("Fails on validating invalid type: specific page with id", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ALObjectType": "ALObjectType" });
+        const request = new Mock.Request("GET", { "ALObjectType": "page_12" });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Succeeds on validating valid type: specific table with id", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ALObjectType": "ALObjectType" });
+        const request = new Mock.Request("GET", { "ALObjectType": "table_12" });
+        expect(() => validator.validate(request)).not.toThrowError();
+    });
+
+    it("Fails on validating invalid type: specific table with non-number id", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ALObjectType": "ALObjectType" });
+        const request = new Mock.Request("GET", { "ALObjectType": "table_fail" });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid type: specific table with zero id", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ALObjectType": "ALObjectType" });
+        const request = new Mock.Request("GET", { "ALObjectType": "table_0" });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Succeeds on validating valid types that include ID", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "ALObjectType": "ALObjectType[]" });
+        const request = new Mock.Request("GET", { "ALObjectType": ["table_1", "tableextension_2", "enum_3", "enumextension_4"] });
+        expect(() => validator.validate(request)).not.toThrowError();
+    });
+
     it("Fails on validating invalid ObjectIDs type", () => {
         injectValidators();
         const validator = new RequestValidator();

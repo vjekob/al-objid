@@ -2,8 +2,29 @@ import { RequestValidator } from "@vjeko.com/azure-func";
 import { ALObjectType } from "./ALObjectType";
 import { ObjectConsumptions } from "./TypesV2";
 
+
+function isExtendedIdType(type: string) {
+    return (type === "table" || type === "tableextension" || type === "enum" || type === "enumextension");
+}
+
 export function injectValidators() {
-    RequestValidator.defineValidator("ALObjectType", (value: any) => !!ALObjectType[value] || `invalid AL object type "${value}"`);
+    RequestValidator.defineValidator("ALObjectType", (value: any) => {
+        if (ALObjectType[value]) {
+            return true;
+        }
+
+        let parts = value.split("_");
+        if (parts.length === 2) {
+            if (!isExtendedIdType(parts[0])) {
+                return `${value} has nothing of interest (fields, or ids) to keep track of`;
+            }
+            if (!parseInt(parts[1])) {
+                return `${parts[0]} id must be a non-zero number`;
+            }
+            return true;
+        }
+        return `invalid AL object type "${value}"`;
+    });
 
     RequestValidator.defineValidator("Range", (value: any) => {
         if (typeof value !== "object" || !value) return `Range expected, received "${typeof value}"`;
@@ -21,7 +42,7 @@ export function injectValidators() {
             let keyParts = key.split("_");
             if (keyParts.length === 2) {
                 key = keyParts[0];
-                if (key !== "table" && key !== "tableextension" && key !== "enum" && key !== "enumextension") {
+                if (!isExtendedIdType(key)) {
                     return `${keyForIds} has nothing of interest (fields, or ids) to keep track of`;
                 }
                 if (!parseInt(keyParts[1])) {
