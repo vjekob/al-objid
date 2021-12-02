@@ -25,12 +25,14 @@
 			"azurewebsites",
 			"blobservice",
 			"codeunit",
+			"contoso",
 			"Deauthorization",
 			"deauthorize",
 			"Deauthorizing",
 			"endregion",
 			"enumextension",
 			"etags",
+			"myids",
 			"objid",
 			"objidauth",
 			"objidconfig",
@@ -42,6 +44,7 @@
 			"vjeko",
 			"vjekocom",
 			"xmlport"
-		]
+		],
+		"typescript.referencesCodeLens.enabled": true
 	}
 }

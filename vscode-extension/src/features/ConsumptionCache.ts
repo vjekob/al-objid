@@ -1,4 +1,5 @@
 import { ConsumptionData } from "../lib/BackendTypes";
+import { OBJECT_TYPES } from "../lib/constants";
 import { PropertyBag } from '../lib/PropertyBag';
 import { ConsumptionWarnings } from "./ConsumptionWarnings";
 
@@ -16,6 +17,12 @@ export class ConsumptionCache {
     private _cache: PropertyBag<ConsumptionData> = {};
 
     public updateConsumption(appId: string, consumption: ConsumptionData): boolean {
+        const keys = Object.keys(consumption);
+        for (let key of keys) {
+            if (!OBJECT_TYPES.includes(key)) {
+                delete (consumption as any)[key];
+            }
+        }
         let updated = JSON.stringify(this._cache[appId]) !== JSON.stringify(consumption);
         this._cache[appId] = consumption;
         ConsumptionWarnings.instance.checkRemainingIds(appId, consumption);
