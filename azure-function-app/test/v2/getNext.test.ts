@@ -281,10 +281,10 @@ describe("Testing function api/v2/getNext", () => {
     });
 
 
-    it("Succeeds committing next field ID to third-party table with previous consumption", async () => {
+    it("Succeeds committing next field ID to third-party enum with previous consumption", async () => {
         const consumption = [50000, 50001, 50002, 50004];
         const storage = new StubStorage().app();
-        const type = storage.toALObjectType("table_18");
+        const type = storage.toALObjectType("enum_18");
         storage.setConsumption(type, consumption);
         Mock.useStorage(storage.content);
         const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type }));
@@ -299,10 +299,10 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage.objectIds(type)).toEqual([50000, 50001, 50002, 50003, 50004]);
     });
 
-    it("Succeeds committing next field ID to own table with previous consumption", async () => {
+    it("Succeeds committing next field ID to own enumextension with previous consumption", async () => {
         const consumption = [1, 2, 4, 5, 6, 50000, 50001, 50002, 50004];
         const storage = new StubStorage().app();
-        const type = storage.toALObjectType("table_50000");
+        const type = storage.toALObjectType("enumextension_50000");
         storage.setConsumption(type, consumption);
         Mock.useStorage(storage.content);
         const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type }));
