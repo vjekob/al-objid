@@ -48,6 +48,11 @@ export class Https {
                             return;
                         }
 
+                        if (!body) {
+                            fulfill(undefined as unknown as T);
+                            return;
+                        }
+
                         fulfill(JSON.parse(body) as T);
                     } catch (e) {
                         console.log(`${JSON.stringify(this.options)} - ${serialized}: ${e}`);
