@@ -5,17 +5,22 @@ import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
+import { NextIdContext } from "./ParserConnector";
+import { OBJECT_TYPES } from "../lib/constants";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 
 export class NextObjectIdCompletionItem extends CompletionItem {
-    constructor(type: string, objectId: NextObjectIdInfo, manifest: AppManifest, position: Position, uri: Uri,) {
-        super(`${objectId.id}`, CompletionItemKind.Constant);
+    private _injectSemicolon: boolean = false;
+    constructor(type: string, objectId: NextObjectIdInfo, manifest: AppManifest, position: Position, uri: Uri, nextIdContext: NextIdContext) {
+        super(`${objectId.id}${nextIdContext.injectSemicolon ? ";" : ""}`, CompletionItemKind.Constant);
+
+        this._injectSemicolon = nextIdContext.injectSemicolon;
 
         this.sortText = "0";
         this.command = this.getCompletionCommand(position, uri, type, manifest, objectId);
         this.documentation = this.getCompletionDocumentation(type, objectId);
-        this.insertText = `${objectId.id}`;
+        this.insertText = `${objectId.id}${this._injectSemicolon ? ";" : ""}`;
     }
 
     getCompletionCommand(position: Position, uri: Uri, type: string, manifest: AppManifest, objectId: NextObjectIdInfo): Command {
@@ -32,15 +37,44 @@ export class NextObjectIdCompletionItem extends CompletionItem {
                 output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`);
 
                 let replace = new WorkspaceEdit();
-                replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId.id}`)]);
+                replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId.id}${this._injectSemicolon ? ";" : ""}`)]);
                 workspace.applyEdit(replace);
             }]
         };
     }
 
+    private nextIdDescription(type: string): string {
+        const parts = type.split("_");
+
+        if (parts.length === 1) {
+            return type;
+        }
+
+        let id = "";
+        switch (parts[0]) {
+            case "table":
+                id = "field ID";
+                break;
+            case "enum":
+                id = "value ID";
+                break;
+        }
+
+        return `${id} from ${parts[0]} ${parts[1]}`;
+    }
+
     getCompletionDocumentation(type: string, objectId: NextObjectIdInfo): MarkdownString {
-        const message = new MarkdownString("Assigns the next available object ID from the Azure back end.");
-        message.appendCodeblock(`${type} ${objectId.id}`, "al");
+        const firstLine = `Assigns the next available ${this.nextIdDescription(type)} from the Azure back end.`;
+        let typeDesc = `${type} ${objectId.id}`;
+        if (type.startsWith("table_")) {
+            typeDesc = `field(${objectId.id}; ...)`;
+        } else if (type.startsWith("enum_")) {
+            typeDesc = `value(${objectId.id}; ...)`;
+        }
+
+
+        const message = new MarkdownString(firstLine);
+        message.appendCodeblock(typeDesc, "al");
         if (!objectId.hasConsumption) {
             message.appendMarkdown("**Important:** The back end has no object ID consumption information. Please, run `Vjeko: Synchronize object IDs with the Azure back end` command before accepting this object ID.");
             return message;

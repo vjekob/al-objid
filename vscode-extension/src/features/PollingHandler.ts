@@ -11,14 +11,14 @@ import { NewsHandler } from './NewsHandler';
 import { output } from './Output';
 import { ExplorerTreeDataProvider } from './Explorer/ExplorerTreeDataProvider';
 
-const POLLING_INTERVAL = 15 * 1000; // 15 seconds
+const DEFAULT_POLLING_INTERVAL = 15 * 1000; // 15 seconds
 const MAX_POLLING_INTERVAL = 15 * 60 * 1000; // 15 minutes
 
 export class PollingHandler implements Disposable {
     private _timeout: NodeJS.Timeout | undefined;
     private _disposed: boolean = false;
     private _appName: PropertyBag<string> = {};
-    private _pollingInterval: number = POLLING_INTERVAL;
+    private _pollingInterval: number = DEFAULT_POLLING_INTERVAL;
 
     constructor() {
         this.initialize();
@@ -44,7 +44,10 @@ export class PollingHandler implements Disposable {
         }
 
         let updates = await Backend.check(payload);
-        if (!updates) return;
+        if (!updates) {
+            this.backOff();
+            return;
+        };
 
         const { _news, ...apps } = updates;
 
@@ -63,16 +66,22 @@ export class PollingHandler implements Disposable {
 
         if (!anyUpdates) {
             this.backOff();
+        } else {
+            this._pollingInterval = DEFAULT_POLLING_INTERVAL;
         }
-        
+
         if (consumptionUpdates) {
             ExplorerTreeDataProvider.instance.refresh();
         }
     }
 
-    // TODO This must not be automatic, but should attempt to follow some historic update rates (e.g. polling every 1 minute during work hours, every 120 minutes in off-hours)
     private backOff() {
         this._pollingInterval *= 1.25;
+
+        // Make sure it's never shorter than minimum
+        if (this._pollingInterval < DEFAULT_POLLING_INTERVAL) {
+            this._pollingInterval = DEFAULT_POLLING_INTERVAL;
+        }
         if (this._pollingInterval > MAX_POLLING_INTERVAL) {
             this._pollingInterval = MAX_POLLING_INTERVAL;
         }

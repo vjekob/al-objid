@@ -1,4 +1,4 @@
-import { CancellationToken, commands, CompletionContext, CompletionItem, DocumentSymbol, Position, TextDocument, Uri, window, workspace } from "vscode";
+import { CancellationToken, commands, CompletionContext, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS, OBJECT_TYPES } from "../lib/constants";
@@ -10,6 +10,7 @@ import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
 import { Telemetry } from "../lib/Telemetry";
+import { NextIdContext, ParserConnector } from "./ParserConnector";
 
 type SymbolInfo = {
     type: string;
@@ -42,18 +43,93 @@ async function syncIfChosen(manifest: AppManifest, choice: Promise<string | unde
     }
 }
 
-async function getSymbolAtPosition(uri: Uri, position: Position): Promise<DocumentSymbol | null> {
+function getBestMatch(checkSymbol: DocumentSymbol, bestMatch: DocumentSymbol | null): DocumentSymbol {
+    if (!bestMatch) {
+        return checkSymbol;
+    }
+    return checkSymbol.range.start.isAfterOrEqual(bestMatch.range.start) && checkSymbol.range.end.isBeforeOrEqual(bestMatch.range.end)
+        ? checkSymbol
+        : bestMatch;
+}
+
+function getSymbolInChildren(position: Position, symbols: DocumentSymbol[], bestMatch: DocumentSymbol | null, matches: DocumentSymbol[]): DocumentSymbol | null {
+    for (let symbol of symbols) {
+        if (symbol.range.start.isBefore(position) && symbol.range.end.isAfter(position)) {
+            matches.push(symbol);
+            bestMatch = getBestMatch(symbol, bestMatch);
+        }
+    }
+    for (let symbol of symbols) {
+        if (!symbol.children || !symbol.children.length) continue;
+        let result = getSymbolInChildren(position, symbol.children, bestMatch, matches);
+        if (result) {
+            bestMatch = getBestMatch(result, bestMatch);
+        };
+    }
+    return bestMatch;
+}
+
+async function getSymbolAtPosition(uri: Uri, position: Position, matches: DocumentSymbol[]): Promise<DocumentSymbol | null> {
     try {
         const symbols: DocumentSymbol[] = await commands.executeCommand("vscode.executeDocumentSymbolProvider", uri) as DocumentSymbol[];
-        for (let symbol of symbols) {
-            if (symbol.range.start.isBefore(position) && symbol.range.end.isAfter(position)) return symbol;
-        }
+        return getSymbolInChildren(position, symbols, null, matches);
     } catch { }
     return null;
 }
 
-async function getTypeAtPositionRaw(document: TextDocument, position: Position): Promise<string | null> {
-    const symbol = await getSymbolAtPosition(document.uri, position);
+function isTableOrEnum(type: string) {
+    return (type.startsWith("table_") || type.startsWith("tableextension_") || type.startsWith("enum_") || type.startsWith("enumextension_"));
+}
+
+function getSymbols(uri: Uri): string[] {
+    const manifest = getManifest(uri);
+    return manifest?.preprocessorSymbols || [];
+}
+
+async function isTableField(document: TextDocument, position: Position, context: NextIdContext): Promise<boolean | string> {
+    return await ParserConnector.instance.checkField(document.getText(), position, getSymbols(document.uri), context);
+}
+
+async function isEnumValue(document: TextDocument, position: Position, context: NextIdContext): Promise<boolean | string> {
+    return await ParserConnector.instance.checkValue(document.getText(), position, getSymbols(document.uri), context);
+}
+
+async function getTypeAtPositionRaw(document: TextDocument, position: Position, context: NextIdContext): Promise<string | null> {
+    const matches: DocumentSymbol[] = [];
+    const symbol = await getSymbolAtPosition(document.uri, position, matches);
+
+    // Check for table fields
+    if (matches.length > 1 && matches[0].name.toLowerCase().startsWith("table") && matches[1].name.toLowerCase() === "fields") {
+        const objectParts = matches[0].name.toLowerCase().split(" ");
+        const isField = await isTableField(document, position, context);
+        if (!isField) {
+            return null;
+        }
+        if (objectParts[1] !== "0") {
+            if (isField === ";") {
+                context.injectSemicolon = true;
+            }
+            return `${objectParts[0]}_${objectParts[1]}`;
+        }
+        return null;
+    }
+
+    // Check for enum values
+    if (matches.length > 0 && matches[0].name.toLowerCase().startsWith("enum")) {
+        const objectParts = matches[0].name.toLowerCase().split(" ");
+        const isValue = await isEnumValue(document, position, context);
+        if (!isValue) {
+            return null;
+        }
+        if (objectParts[1] !== "0") {
+            if (isValue === ";") {
+                context.injectSemicolon = true;
+            }
+            return `${objectParts[0]}_${objectParts[1]}`;
+        }
+        return null;
+    }
+
     if (!symbol) {
         const line = document.lineAt(position.line).text.substring(0, position.character).trim();
         return line;
@@ -73,12 +149,12 @@ async function getTypeAtPositionRaw(document: TextDocument, position: Position):
     return null;
 }
 
-async function getTypeAtPosition(document: TextDocument, position: Position): Promise<string | null> {
-    let type = await getTypeAtPositionRaw(document, position);
+async function getTypeAtPosition(document: TextDocument, position: Position, context: NextIdContext): Promise<string | null> {
+    let type = await getTypeAtPositionRaw(document, position, context);
     if (type === null) return null;
 
     type = type.toLowerCase();
-    return OBJECT_TYPES.includes(type) ? type : null;
+    return OBJECT_TYPES.includes(type) || isTableOrEnum(type) ? type : null;
 }
 
 function showNotificationsIfNecessary(manifest: AppManifest, objectId?: NextObjectIdInfo): boolean {
@@ -101,7 +177,8 @@ function showNotificationsIfNecessary(manifest: AppManifest, objectId?: NextObje
 
 export class NextObjectIdCompletionProvider {
     async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
-        const type = await getTypeAtPosition(document, position);
+        const nextIdContext: NextIdContext = { injectSemicolon: false };
+        const type = await getTypeAtPosition(document, position, nextIdContext);
         if (!type) return;
 
         const manifest = getManifest(document.uri);
@@ -114,6 +191,6 @@ export class NextObjectIdCompletionProvider {
         if (showNotificationsIfNecessary(manifest, objectId) || !objectId) return [];
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
 
-        return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri)];
+        return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri, nextIdContext)];
     }
 }

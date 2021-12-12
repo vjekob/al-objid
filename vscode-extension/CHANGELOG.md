@@ -5,7 +5,10 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## [2.2.0] - WIP
+## [2.2.0] - 2021-12-12
+### Added
+- Field IDs (for `table` and `tableextension` objects) and value IDs (for `enum` and `enumextension` objects)
+  are now assigned from the back-end.
 ### Changed
 - Old built-in parser is replaced with @vjeko.com/al-parser-ninja. This, in turn, is based on a separate
   project @vjeko.com/al-parser (not yet public as of time of this change log update). The new parser is
@@ -55,7 +58,6 @@ means that absolutely no user-identifiable (as per GDPR) is stored anywhere.
 ([Git Issue #2](https://github.com/vjekob/al-objid/issues/2))
 - Commands are renamed from `Vjeko: <Command Text>` to `Ninja: <Command Text>`.
 ([Git Issue #13](https://github.com/vjekob/al-objid/issues/13))
-
 ### Removed
 - Configuration option `objectIdNinja.includeUserName` is removed. Since user name is now encrypted using a
 symmetric encryption where key is now known to third parties, there are no privacy concerns.

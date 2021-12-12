@@ -18,6 +18,7 @@ export interface AppManifest {
     name: string;
     version: string;
     idRanges: ALRange[];
+    preprocessorSymbols: string[];
 }
 
 interface AppManifestInternal extends AppManifest {
