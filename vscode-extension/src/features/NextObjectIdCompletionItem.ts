@@ -37,7 +37,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
                 output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`);
 
                 let replace = new WorkspaceEdit();
-                replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId.id}${this._injectSemicolon ? ";" : ""}`)]);
+                replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId.id}`)]);
                 workspace.applyEdit(replace);
             }]
         };
