@@ -1,0 +1,27 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get"
+      ],
+      "route": "v2/checkApp"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "notify",
+      "queueName": "appchange",
+      "connection": "NotifyQueueStorage"
+    }
+  ],
+  "scriptFile": "../dist/src/functions/v2/checkApp/index.js"
+}
