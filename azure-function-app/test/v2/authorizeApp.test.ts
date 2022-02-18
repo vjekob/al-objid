@@ -1,7 +1,7 @@
 import { Mock } from "@vjeko.com/azure-func-test";
 import * as azure from "azure-storage";
 import { Blob } from "@vjeko.com/azure-func";
-import authorizeApp, { disableAuthorizeAppRateLimit } from "../../src/functions/v2/authorizeApp";
+import { run as authorizeApp, disableAuthorizeAppRateLimit } from "../../src/functions/v2/authorizeApp";
 import { StubStorage } from "../AzureTestLibrary/v2/Storage.stub";
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 

@@ -30,9 +30,9 @@ Content-Type: application/json
 
 ### Azure
 
-post https://vjekocom-alext-weu.azurewebsites.net/api/v2/authorizeApp
+get https://vjekocom-alext-weu.azurewebsites.net/api/v2/authorizeApp
 Content-Type: application/json
 
 {
-    "appId": "c454e488-56ca-4414-bd68-1d3a2548abf2"
+    "appId": "0_test"
 }

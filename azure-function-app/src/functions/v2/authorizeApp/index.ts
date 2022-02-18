@@ -11,7 +11,6 @@ const authorizeApp = new ALNinjaRequestHandler<AuthorizeAppRequest, AuthorizeApp
         case "GET":
             return {
                 authorized: !!app?._authorization,
-                key: app?._authorization?.key || null,
                 user: app?._authorization?.user || null,
             };
 
@@ -45,4 +44,4 @@ authorizeApp.skipAuthorization();
 
 export const disableAuthorizeAppRateLimit = () => authorizeApp.noRateLimit();
 
-export default authorizeApp.azureFunction;
+export const run = authorizeApp.azureFunction;
