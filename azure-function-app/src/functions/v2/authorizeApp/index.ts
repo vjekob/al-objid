@@ -1,19 +1,25 @@
 import { ErrorResponse } from "@vjeko.com/azure-func";
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
-import { DefaultRequest } from "../TypesV2";
-import { AuthorizeAppResponse } from "./types";
+import { AuthorizeAppRequest, AuthorizeAppResponse } from "./types";
 import { removeAppAuthorization, writeAppAuthorization } from "./update";
 
-const authorizeApp = new ALNinjaRequestHandler<DefaultRequest, AuthorizeAppResponse>(async (request) => {
+const authorizeApp = new ALNinjaRequestHandler<AuthorizeAppRequest, AuthorizeAppResponse>(async (request) => {
     const { app } = request.bindings;
-    let { appId, authKey } = request.body;
+    let { appId, authKey, gitUser, gitEMail } = request.body;
 
     switch (request.method) {
+        case "GET":
+            return {
+                authorized: !!app?._authorization,
+                key: app?._authorization?.key || null,
+                user: app?._authorization?.user || null,
+            };
+
         case "POST":
             if (app?._authorization?.valid) {
                 throw new ErrorResponse(`You cannot authorize app ${appId} because it is already authorized.`, 405);
             }
-            const writeResult = await writeAppAuthorization(appId, request);
+            const writeResult = await writeAppAuthorization(appId, gitUser, gitEMail, request);
             authKey = writeResult.app._authorization.key;
 
             request.markAsChanged(appId, writeResult.app, writeResult.app._authorization);
@@ -36,5 +42,7 @@ const authorizeApp = new ALNinjaRequestHandler<DefaultRequest, AuthorizeAppRespo
 });
 
 authorizeApp.skipAuthorization();
+
+export const disableAuthorizeAppRateLimit = () => authorizeApp.noRateLimit();
 
 export default authorizeApp.azureFunction;

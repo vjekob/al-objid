@@ -9,12 +9,20 @@ interface UpdateAppAuthorizationResult {
     success: boolean;
 }
 
-export async function writeAppAuthorization(appId: string, request: ALNinjaRequestContext): Promise<UpdateAppAuthorizationResult> {
+export async function writeAppAuthorization(appId: string, gitUser: string, gitEMail: string, request: ALNinjaRequestContext): Promise<UpdateAppAuthorizationResult> {
     const key = getSha256(`APP_AUTH_${appId}_${Date.now()}`, "base64");
     const blob = getBlob(appId);
     const app = await blob.optimisticUpdate(app => {
         app = { ...(app || {} as AppInfo) }
-        app._authorization = { key, valid: true };
+        app._authorization = {
+            key,
+            valid: true,
+            user: {
+                name: gitUser,
+                email: gitEMail,
+                timestamp: Date.now(),
+            },
+        };
 
         request.log(app, "authorize");
 
@@ -30,7 +38,7 @@ export async function removeAppAuthorization(appId: string, request: ALNinjaRequ
         delete app._authorization;
 
         request.log(app, "deauthorize");
-        
+
         return { ...app };
     });
     return { app, success: !app._authorization };
