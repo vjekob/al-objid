@@ -1,9 +1,9 @@
 import { NotificationsFromLog } from './../features/NotificationsFromLog';
 import { HttpStatusHandler } from "../features/HttpStatusHandler";
 import { output } from "../features/Output";
-import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, CheckResponse, NextObjectIdInfo, EventLogEntry, ConsumptionData } from "./BackendTypes";
+import { AuthorizationDeletedInfo, AuthorizationInfo, AuthorizedAppConsumption, ConsumptionInfo, ConsumptionInfoWithTotal, FolderAuthorization, CheckResponse, NextObjectIdInfo, EventLogEntry, ConsumptionData, AuthorizedAppResponse } from "./BackendTypes";
 import { Config } from "./Config";
-import { encrypt } from "./Encryption";
+import { decrypt, encrypt } from "./Encryption";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
@@ -205,14 +205,32 @@ export class Backend {
         return !!response.value;
     }
 
-    static async authorizeApp(appId: string, errorHandler: ErrorHandler<AuthorizationInfo>): Promise<AuthorizationInfo | undefined> {
+    static async authorizeApp(appId: string, gitUser: string, gitEMail: string, errorHandler: ErrorHandler<AuthorizationInfo>): Promise<AuthorizationInfo | undefined> {
         const response = await sendRequest<AuthorizationInfo>(
             "/api/v2/authorizeApp",
             "POST",
-            { appId },
+            {
+                appId,
+                gitUser: encrypt(gitUser, appId),
+                gitEMail: encrypt(gitEMail, appId),
+            },
             errorHandler
         );
         return response.value;
+    }
+
+    static async getAuthInfo(appId: string): Promise<AuthorizedAppResponse | undefined> {
+        const response = await sendRequest<AuthorizedAppResponse>(
+            "/api/v2/authorizeApp",
+            "GET",
+            { appId },
+        );
+        const result = response.value;
+        if (result && result.user) {
+            result.user.name = decrypt(result.user.name, appId) || "";
+            result.user.email = decrypt(result.user.email, appId) || "";
+        }
+        return result;
     }
 
     static async deauthorizeApp(appId: string, authKey: string, errorHandler: ErrorHandler<AuthorizationDeletedInfo>): Promise<boolean> {

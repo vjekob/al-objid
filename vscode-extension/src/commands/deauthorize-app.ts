@@ -1,21 +1,14 @@
 import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { output } from "../features/Output";
-import { ALWorkspace } from "../lib/ALWorkspace";
-import { getManifest } from "../lib/AppManifest";
+import { AppManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
+import { authorization } from "../lib/Authorization";
 
-export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) => {
-    if (!uri) uri = await ALWorkspace.selectWorkspaceFolder();
-    if (!uri) {
-        UI.general.showNoWorkspacesOpenInfo();
-        return;
-    }
-
-    const manifest = getManifest(uri)!;
+export const deauthorizeApp = async (uri: Uri, manifest: AppManifest, token?: { success: boolean }) => {
     output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`);
 
     if (!ObjIdConfig.instance(uri).authKey) {
@@ -44,6 +37,8 @@ export const deauthorizeApp = async (uri?: Uri, token?: { success: boolean }) =>
             UI.authorization.showDeauthorizationSuccessfulInfo(manifest);
         }
     }
+
+    await authorization.commitAuthorization(uri, "deauthorizing");
 
     AuthorizationStatusBar.instance.updateStatusBar();
 };

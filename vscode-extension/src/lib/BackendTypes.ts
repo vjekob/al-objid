@@ -17,6 +17,15 @@ export interface AuthorizationInfo {
     authKey: string;
 }
 
+export interface AuthorizedAppResponse {
+    authorized: boolean;
+    user: {
+        name: string;
+        email: string;
+        timestamp: number;
+    }
+}
+
 export interface AuthorizationDeletedInfo {
     deleted: boolean;
 }

@@ -97,7 +97,7 @@ export const UI = {
         showAlreadyAuthorizedWarning: async (manifest: AppManifest) =>
             window.showWarningMessage(`Application "${manifest.name}" is already authorized. Do you want to re-authorize it?`, "Yes", "No"),
         showReauthorizedInfo: (manifest: AppManifest) =>
-            window.showInformationMessage(`You have re-authorized app "${manifest.name}". Please make sure to share your authorization file with your team members to avoid disruption of service.`),
+            window.showInformationMessage(`You have successfully re-authorized app "${manifest.name}".  Please, push your changes to remote and create a pull request (if necessary) to share the authorization key with other developers on your team.`),
         showIncorrectKeyWarning: (manifest: AppManifest) =>
             window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} "${manifest.name}".`),
         showNotAuthorizedWarning: (manifest: AppManifest) =>
@@ -105,11 +105,17 @@ export const UI = {
         showNoKeyError: (manifest: AppManifest) =>
             window.showErrorMessage(`You do not have an authorization key configured for app "${manifest.name}". Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`),
         showAuthorizationSuccessfulInfo: (manifest: AppManifest) =>
-            window.showInformationMessage(`You have successfully authorized app "${manifest.name}". Please commit the ${CONFIG_FILE_NAME} file to your repository or otherwise share it with your team members as soon as possible.`),
+            window.showInformationMessage(`You have successfully authorized app "${manifest.name}" and we have committed it to your local Git repository. Please, push your changes to remote and create a pull request (if necessary) to share the authorization key with other developers on your team.`),
         showDeauthorizationSuccessfulInfo: (manifest: AppManifest) =>
-            window.showInformationMessage(`You have successfully deauthorized app "${manifest.name}".`),
+            window.showInformationMessage(`You have successfully deauthorized app "${manifest.name}". Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`),
         showDeauthorizationFailedWarning: (manifest: AppManifest, error: string) =>
-            window.showWarningMessage(`An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`)
+            window.showWarningMessage(`An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`),
+        showNotGitRepoWarning: async (manifest: AppManifest) =>
+            window.showWarningMessage(`There is no Git repository for application "${manifest.name}. You cannot change authorization for an app unless you use Git to track it.`, LABELS.BUTTON_LEARN_MORE),
+        showGitNotCleanWarning: async (manifest: AppManifest) =>
+            window.showWarningMessage(`Git repository for application "${manifest.name}" is not clean. Please commit, stash, or undo your changes before authorizing the app."`, LABELS.BUTTON_LEARN_MORE),
+        showNoCurrentBranch: async(manifest: AppManifest) => 
+            window.showErrorMessage(`We could not detect your current branch. Your repository could be in detached head state. Please, check out to an actual branch, and then retry.`),
     },
 
     log: {

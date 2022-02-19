@@ -1,27 +1,21 @@
 import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { output } from "../features/Output";
-import { ALWorkspace } from "../lib/ALWorkspace";
-import { getManifest } from "../lib/AppManifest";
+import { AppManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { deauthorizeApp } from "./deauthorize-app";
 import { Telemetry } from "../lib/Telemetry";
+import { authorization } from '../lib/Authorization';
+import { Git } from "../lib/Git";
 
-export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
-    if (!uri) uri = await ALWorkspace.selectWorkspaceFolder();
-    if (!uri) {
-        UI.general.showNoWorkspacesOpenInfo();
-        return;
-    }
-
-    const manifest = getManifest(uri)!;
-
+export const authorizeApp = async (uri: Uri, manifest: AppManifest, repeat: boolean = false) => {
     output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`);
 
     Telemetry.instance.log("authorize", manifest.id);
-    let response = await Backend.authorizeApp(manifest.id, async (response) => {
+    const gitUser = await Git.instance.getUserInfo(uri);
+    let response = await Backend.authorizeApp(manifest.id, gitUser.name, gitUser.email, async (response) => {
         const { error } = response;
         if (error.statusCode !== 405) return false;
 
@@ -32,9 +26,9 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
                 UI.authorization.showNoKeyError(manifest);
             }
             let token = { success: false };
-            await deauthorizeApp(uri, token);
+            await deauthorizeApp(uri, manifest, token);
             if (token.success) {
-                authorizeApp(uri, true);
+                authorizeApp(uri, manifest, true);
             }
         }
         return true;
@@ -49,5 +43,8 @@ export const authorizeApp = async (uri?: Uri, repeat: boolean = false) => {
         UI.authorization.showAuthorizationSuccessfulInfo(manifest);
     }
 
+    await authorization.commitAuthorization(uri, "authorizing");
+
     AuthorizationStatusBar.instance.updateStatusBar();
+    authorization.showAuthorizedDoc();
 };

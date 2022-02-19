@@ -1,4 +1,5 @@
 import { commands, env, Uri, window } from "vscode";
+import { authorization } from "../lib/Authorization";
 import { URLS } from "../lib/constants";
 
 const OPTION = {
@@ -7,13 +8,21 @@ const OPTION = {
     LEARN: "I am not sure, tell me more about authorization",
 };
 
+async function executeDeuthorization() {
+    const context = await authorization.getAuthorizationContext();
+    if (!context) {
+        return;
+    }
+    commands.executeCommand("vjeko-al-objid.deauthorize-app", context.uri, context.manifest);
+}
+
 export const confirmDeauthorizeApp = async () => {
     let result = await window.showQuickPick(Object.values(OPTION), {
         placeHolder: "Are you sure you want to deauthorize your app?"
     });
     switch (result) {
         case OPTION.YES:
-            commands.executeCommand("vjeko-al-objid.deauthorize-app");
+            executeDeuthorization();
             break;
         case OPTION.LEARN:
             env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));

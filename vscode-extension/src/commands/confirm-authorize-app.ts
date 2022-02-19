@@ -1,4 +1,5 @@
 import { commands, env, Uri, window } from "vscode";
+import { authorization } from "../lib/Authorization";
 import { URLS } from "../lib/constants";
 
 const OPTION = {
@@ -7,13 +8,41 @@ const OPTION = {
     LEARN: "I am not sure, tell me more about authorization",
 };
 
+const OPTION_AGAIN = {
+    YES: "Yes, I am sure, please let's authorize this app",
+    NO: "No, I've changed my mind",
+    LEARN: "I am actually not sure, show me documentation",
+};
+
+async function executeAuthorization() {
+    const context = await authorization.getAuthorizationContext();
+    if (!context) {
+        return;
+    }
+    commands.executeCommand("vjeko-al-objid.authorize-app", context.uri, context.manifest);
+}
+
+async function confirmAgain() {
+    let result = await window.showQuickPick(Object.values(OPTION_AGAIN), {
+        placeHolder: "Sorry for asking, but are you *REALLY* sure?"
+    });
+    switch (result) {
+        case OPTION_AGAIN.YES:
+            await executeAuthorization();
+            break;
+        case OPTION_AGAIN.LEARN:
+            env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
+            break;   
+    }
+}
+
 export const confirmAuthorizeApp = async () => {
     let result = await window.showQuickPick(Object.values(OPTION), {
         placeHolder: "Are you sure you want to authorize your app?"
     });
     switch (result) {
         case OPTION.YES:
-            commands.executeCommand("vjeko-al-objid.authorize-app");
+            confirmAgain();
             break;
         case OPTION.LEARN:
             env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));

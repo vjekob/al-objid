@@ -76,6 +76,25 @@ export class Git {
         return Array.isArray(result) && result.filter(line => line).length === 0;
     }
 
+    public async commit(uri: Uri, message: string): Promise<void> {
+        await this.execute(`commit -m "${message}"`, uri);
+        return;
+    }
+
+    public async stageFile(uri: Uri, filePath: string): Promise<void> {
+        await this.execute(`add ${filePath}`, uri);
+        return;
+    }
+
+    public async getUserInfo(uri: Uri): Promise<{ name: string, email: string }> {
+        const name = ((await this.execute("config user.name", uri, false) as string) || "").trim();
+        const email = ((await this.execute("config user.email", uri, false) as string) || "").trim();
+        return {
+            name,
+            email
+        };
+    }
+
     public async getRepositoryRootUri(git: any, uri: Uri): Promise<Uri | undefined> {
         // If git extension is active, we can use it to obtain the results faster
         if (git) {
