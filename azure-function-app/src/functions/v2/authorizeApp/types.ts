@@ -2,6 +2,7 @@ export interface AuthorizeAppResponse {
     authorized?: boolean;
     authKey?: string;
     deleted?: boolean;
+    valid?: boolean;
     user?: {
         name: string; // This is always encrypted
         email: string; // This is always encrypted

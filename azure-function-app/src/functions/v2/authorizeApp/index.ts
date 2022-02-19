@@ -9,10 +9,14 @@ const authorizeApp = new ALNinjaRequestHandler<AuthorizeAppRequest, AuthorizeApp
 
     switch (request.method) {
         case "GET":
-            return {
+            const result = {
                 authorized: !!app?._authorization,
                 user: app?._authorization?.user || null,
-            };
+            } as AuthorizeAppResponse;
+            if (app?._authorization?.key) {
+                result.valid = authKey === app?._authorization?.key;
+            }
+            return result;
 
         case "POST":
             if (app?._authorization?.valid) {
