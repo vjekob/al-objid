@@ -1,6 +1,6 @@
 # AL Object ID Ninja
 
-Welcome to AL Object ID Ninja version 1.0.4!
+Welcome to AL Object ID Ninja!
 
 This extension manages object IDs in multi-developer environments with mind-boggling simplicity.
 Never again find yourself resolving another object ID collision when your pull request was too

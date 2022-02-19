@@ -5,6 +5,7 @@ import { Git } from "./Git";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { UI } from "./UI";
 import path = require("path");
+import { LABELS } from "./constants";
 
 export namespace authorization {
     interface AuthorizationContext {
@@ -35,19 +36,25 @@ export namespace authorization {
         const manifest = getManifest(uri)!;
 
         if (!await Git.instance.isInitialized(uri)) {
-            UI.authorization.showNotGitRepoWarning(manifest);
+            if (await UI.authorization.showNotGitRepoWarning(manifest) === LABELS.BUTTON_LEARN_MORE) {
+                showAuthorizationGitDoc();
+            } 
             return;
         }
 
         if (!await Git.instance.isClean(uri)) {
-            UI.authorization.showGitNotCleanWarning(manifest);
+            if (await UI.authorization.showGitNotCleanWarning(manifest) === LABELS.BUTTON_LEARN_MORE) {
+                showAuthorizationGitDoc();
+            }
             return;
         }
 
         const branch = await Git.instance.getCurrentBranchName(uri);
 
         if (!branch) {
-            UI.authorization.showNoCurrentBranch(manifest);
+            if (await UI.authorization.showNoCurrentBranch() === LABELS.BUTTON_LEARN_MORE) {
+                showAuthorizationGitDoc();
+            };
             return;
         }
 
@@ -63,7 +70,23 @@ export namespace authorization {
         await Git.instance.commit(uri, `Changing AL Object ID Ninja app authorization (${operation})`);
     }
 
+    function showDocument(document: string) {
+        commands.executeCommand("markdown.showPreview", Uri.file(path.join(__dirname, `../../docs/${document}.md`)));
+    }
+
     export function showAuthorizedDoc() {
-        commands.executeCommand("markdown.showPreview", Uri.file(path.join(__dirname, `../../docs/authorized.md`)));
+        showDocument("authorized");
+    }
+
+    export function showAuthorizationGitDoc() {
+        showDocument("authorization-git");
+    }
+
+    export function showAuthorizationDeletedDoc() {
+        showDocument("authorization-deleted");
+    }
+
+    export function showAuthorizationBranchChangeDoc() {
+        showDocument("authorization-branch-change");
     }
 }
