@@ -1,5 +1,5 @@
 import path = require("path");
-import { commands, env, ExtensionContext, Uri, window } from "vscode";
+import { commands, Disposable, env, ExtensionContext, Uri, window } from "vscode";
 import { NewsActionType, NewsButton, NewsEntry, NewsType } from "../lib/BackendTypes";
 
 enum NewsEntryStatus {
@@ -29,7 +29,7 @@ function snoozeKey(id: string) {
     return `${ENTRY_SNOOZED}/${id}`;
 }
 
-export class NewsHandler {
+export class NewsHandler implements Disposable {
     private static _instance: NewsHandler;
 
     public static get instance() {

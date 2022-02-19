@@ -1,7 +1,7 @@
-import { CancellationToken, commands, CompletionContext, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
+import { CancellationToken, commands, CompletionContext, DocumentSymbol, env, Position, TextDocument, Uri } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
-import { LABELS, OBJECT_TYPES } from "../lib/constants";
+import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
 import { Backend } from "../lib/Backend";
 import { AppManifest, getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
@@ -30,7 +30,8 @@ async function syncIfChosen(manifest: AppManifest, choice: Promise<string | unde
             });
             break;
         case LABELS.BUTTON_LEARN_MORE:
-            commands.executeCommand("vjeko-al-objid.learn-welcome");
+            Telemetry.instance.log("docs.learnExtension");
+            env.openExternal(Uri.parse(URLS.EXTENSION_LEARN));
             break;
         default:
             syncDisabled[manifest.id] = true;

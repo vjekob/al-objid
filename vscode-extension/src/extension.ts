@@ -6,7 +6,6 @@ import { confirmAuthorizeApp } from "./commands/confirm-authorize-app";
 import { confirmDeauthorizeApp } from "./commands/confirm-deauthorize-app";
 import { confirmSyncObjectIds } from "./commands/confirm-sync-object-ids";
 import { deauthorizeApp } from "./commands/deauthorize-app";
-import { learnWelcome } from "./commands/learn-welcome";
 import { syncObjectIds } from "./commands/sync-object-ids";
 import { NewsHandler } from "./features/NewsHandler";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
@@ -23,6 +22,7 @@ import { ExplorerDecorationsProvider } from "./features/Explorer/ExplorerDecorat
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { Telemetry } from "./lib/Telemetry";
 import { ParserConnector } from "./features/ParserConnector";
+import { ObjIdConfigMonitor } from "./features/ObjIdConfigMonitor";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -42,7 +42,6 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
 		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 		commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
-		commands.registerCommand("vjeko-al-objid.learn-welcome", learnWelcome),
 
 		// Tree view
 		ExplorerTreeDataProvider.instance,
@@ -54,8 +53,9 @@ export function activate(context: ExtensionContext) {
 		AuthorizationStatusBar.instance.getDisposables(),
 		Output.instance.getDisposables(),
 		Config.instance.getDisposables(),
-		Disposable.from(new PollingHandler()),
-		Disposable.from(new NewsHandler(context)),
+		new PollingHandler(),
+		new NewsHandler(context),
+		new ObjIdConfigMonitor(),
 		new HttpStatusHandler(context).getDisposables(),
 		ParserConnector.instance,
 	);

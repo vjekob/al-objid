@@ -219,11 +219,11 @@ export class Backend {
         return response.value;
     }
 
-    static async getAuthInfo(appId: string): Promise<AuthorizedAppResponse | undefined> {
+    static async getAuthInfo(appId: string, authKey: string): Promise<AuthorizedAppResponse | undefined> {
         const response = await sendRequest<AuthorizedAppResponse>(
             "/api/v2/authorizeApp",
             "GET",
-            { appId },
+            { appId, authKey },
         );
         const result = response.value;
         if (result && result.user) {

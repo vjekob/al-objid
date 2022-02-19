@@ -31,10 +31,16 @@ export class AuthorizationStatusBar extends DisposableHolder {
         return info && info.user ? `${info.user.name} (${info.user.email}) at ${new Date(info.user.timestamp).toLocaleString()}` : "";
     }
 
-    private async readUserInfo(manifest: AppManifest, authorized: boolean) {
-        const info = await Backend.getAuthInfo(manifest.id);
+    private async readUserInfo(manifest: AppManifest, authKey: string) {
+        const authorized = !!authKey;
+        const info = await Backend.getAuthInfo(manifest.id, authKey);
         if (info) {
             if (info.authorized === authorized) {
+                if (!info.valid) {
+                    this._status.text = `$(error) Invalid authorization`;
+                    this._status.tooltip = new MarkdownString("Your authorization is ***invalid***. The authorization key stored in `.objidconfig` is not accepted by the back end. If you switched branches, make sure the current branch has the latest `.objidconfig` from your main branch.");
+                    return;
+                }
                 this.updateTooltip(manifest!.name, authorized, this.getUserInfoText(info));
             } else {
                 this._status.text = `$(${authorized ? "warning" : "error"}) Invalid authorization`;
@@ -54,7 +60,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
         let manifest = getManifest(document.uri);
 
         if (manifest) {
-            this.readUserInfo(manifest, !!authKey);
+            this.readUserInfo(manifest, authKey);
         }
 
         this._status.text = `$(${authKey ? "lock" : "unlock"}) ${authKey ? "Authorized" : "Unauthorized"}`;

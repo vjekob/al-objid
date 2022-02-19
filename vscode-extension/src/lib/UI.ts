@@ -114,8 +114,12 @@ export const UI = {
             window.showWarningMessage(`There is no Git repository for application "${manifest.name}. You cannot change authorization for an app unless you use Git to track it.`, LABELS.BUTTON_LEARN_MORE),
         showGitNotCleanWarning: async (manifest: AppManifest) =>
             window.showWarningMessage(`Git repository for application "${manifest.name}" is not clean. Please commit, stash, or undo your changes before authorizing the app."`, LABELS.BUTTON_LEARN_MORE),
-        showNoCurrentBranch: async(manifest: AppManifest) => 
+        showNoCurrentBranch: async (manifest: AppManifest) =>
             window.showErrorMessage(`We could not detect your current branch. Your repository could be in detached head state. Please, check out to an actual branch, and then retry.`),
+        showDeletedAuthorization: async (manifest: AppManifest) =>
+            window.showErrorMessage(`Authorization file for ${manifest.name} was just deleted, and the app is still authorized. Please, make sure you understand the consequences.`),
+        showUnauthorizedBranch: async (branch: string, manifest: AppManifest) =>
+            window.showWarningMessage(`The ${branch} branch of ${manifest.name} does not contain authorization file and you won't be able to assign new object IDs.`),
     },
 
     log: {

@@ -110,6 +110,11 @@ export class Git {
         return repoUri;
     }
 
+    public async getTopLevelPath(uri: Uri): Promise<string> {
+        const path = await this.execute("rev-parse --show-toplevel", uri, false) as string;
+        return path ? path.trim() : "";
+    }
+
     public async fetch(uri: Uri): Promise<boolean> {
         let result = await this.execute("fetch", uri, false);
         return result !== null;
@@ -176,7 +181,7 @@ export class Git {
     }
 
     public async getCurrentBranchName(uri: Uri): Promise<string> {
-        let output = await this.execute("rev-parse --abbrev-ref HEAD", uri, false) as string | undefined;
+        let output = await this.execute("branch --show-current", uri, false) as string | undefined;
         return (output && output.trim()) || "";
     }
 

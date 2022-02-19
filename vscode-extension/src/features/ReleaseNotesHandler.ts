@@ -1,5 +1,5 @@
 import path = require("path");
-import { commands, ExtensionContext, extensions, Uri } from "vscode";
+import { commands, ExtensionContext, Uri } from "vscode";
 import * as fs from "fs";
 import { Config } from "../lib/Config";
 import { ALREADY_USED, EXTENSION_VERSION, LABELS } from "../lib/constants";
