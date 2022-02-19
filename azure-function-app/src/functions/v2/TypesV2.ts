@@ -4,6 +4,11 @@ import { ALObjectType } from "./ALObjectType";
 export interface Authorization {
     key: string;
     valid: boolean;
+    user?: {
+        name: string;
+        email: string;
+        timestamp: number;
+    }
 }
 
 export interface Range {

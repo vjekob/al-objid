@@ -1,7 +1,7 @@
 import { Mock } from "@vjeko.com/azure-func-test";
 import * as azure from "azure-storage";
 import { Blob } from "@vjeko.com/azure-func";
-import authorizeApp from "../../src/functions/v2/authorizeApp";
+import { run as authorizeApp, disableAuthorizeAppRateLimit } from "../../src/functions/v2/authorizeApp";
 import { StubStorage } from "../AzureTestLibrary/v2/Storage.stub";
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 
@@ -9,7 +9,8 @@ import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 jest.mock("azure-storage");
 Blob.injectCreateBlobService(azure.createBlobService);
 Mock.initializeStorage(azure.createBlobService);
-initializeCustomMatchers()
+initializeCustomMatchers();
+disableAuthorizeAppRateLimit();
 
 describe("Testing function api/v2/authorizeApp", () => {
 
@@ -114,4 +115,36 @@ describe("Testing function api/v2/authorizeApp", () => {
         expect(context.bindings.notify.appId).toBe(storage.appId);
         expect(context.bindings.notify.authorization).toBeUndefined();
     });
+
+    it("Stores username, password, and timestamp in authorization log", async () => {
+        const gitUser = "_FAKE_";
+        const gitEMail = "_FAKE@MAIL_";
+        let storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const contextPOST = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, user: "fake", gitUser, gitEMail }));
+        await authorizeApp(contextPOST, contextPOST.req);
+        expect(contextPOST.res).toBeStatus(200);
+        expect(storage).toHaveChanged();
+
+        const contextGET = new Mock.Context(new Mock.Request("GET", { appId: storage.appId }));
+        await authorizeApp(contextGET, contextGET.req);
+        expect(contextGET.res).toBeStatus(200);
+        expect(contextGET.res.body).toBeDefined();
+        expect(contextGET.res.body.authorized).toStrictEqual(true);
+        expect(contextGET.res.body.user).toBeDefined();
+        expect(contextGET.res.body.user.name).toStrictEqual(gitUser);
+        expect(contextGET.res.body.user.email).toStrictEqual(gitEMail);
+        expect(typeof contextGET.res.body.user.timestamp).toStrictEqual("number");
+    });
+
+
+    it("Retrieves unauthorized app info", async () => {
+        let storage = new StubStorage().app();
+        const contextGET = new Mock.Context(new Mock.Request("GET", { appId: storage.appId }));
+        await authorizeApp(contextGET, contextGET.req);
+        expect(contextGET.res).toBeStatus(200);
+        expect(contextGET.res.body).toBeDefined();
+        expect(contextGET.res.body.authorized).toStrictEqual(false);
+        expect(contextGET.res.body.user).toStrictEqual(null);
+    })
 });
