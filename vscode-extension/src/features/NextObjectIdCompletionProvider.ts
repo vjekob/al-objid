@@ -119,16 +119,15 @@ async function getTypeAtPositionRaw(document: TextDocument, position: Position, 
     if (matches.length > 0 && matches[0].name.toLowerCase().startsWith("enum")) {
         const objectParts = matches[0].name.toLowerCase().split(" ");
         const isValue = await isEnumValue(document, position, context);
-        if (!isValue) {
+        if (isValue) {
+            if (objectParts[1] !== "0") {
+                if (isValue === ";") {
+                    context.injectSemicolon = true;
+                }
+                return `${objectParts[0]}_${objectParts[1]}`;
+            }
             return null;
         }
-        if (objectParts[1] !== "0") {
-            if (isValue === ";") {
-                context.injectSemicolon = true;
-            }
-            return `${objectParts[0]}_${objectParts[1]}`;
-        }
-        return null;
     }
 
     if (!symbol) {

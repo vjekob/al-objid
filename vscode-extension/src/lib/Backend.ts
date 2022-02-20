@@ -186,11 +186,9 @@ async function isKnownManagedApp(appId: string, forceCheck: boolean = false): Pr
 
 export class Backend {
     static async getNextNo(appId: string, type: string, ranges: any, commit: boolean, authKey: string): Promise<NextObjectIdInfo | undefined> {
-        if (!await isKnownManagedApp(appId, true)) {
+        if (!await isKnownManagedApp(appId)) {
             if (!commit) {
-                return {
-                    hasConsumption: false
-                } as NextObjectIdInfo;
+                knownManagedApps[appId] = Promise.resolve(true);
             }
         }
 
