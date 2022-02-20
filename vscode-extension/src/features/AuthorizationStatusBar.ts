@@ -24,7 +24,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
     private updateTooltip(name: string, authorized: boolean, userInfo: string) {
         this._status.tooltip = authorized
             ? new MarkdownString(`The "${name}" application is ***authorized*** with ${EXTENSION_NAME} back end. Your data exchange is secure.${userInfo ? " " + `\n\nAuthorized by ${userInfo}` : ""}`)
-            : new MarkdownString(`The "${name}" application is ***not authorized***.\n\nTo authorize your app, please run the \`Vjeko: Authorize AL App\` command or click this status bar item.\n\nTo learn more about authorization [click here](${URLS.AUTHORIZATION_LEARN})`);
+            : new MarkdownString(`The "${name}" application is ***not authorized***.\n\nTo authorize your app, please run the \`Ninja: Authorize AL App\` command or click this status bar item.\n\nTo learn more about authorization [click here](${URLS.AUTHORIZATION_LEARN})`);
     }
 
     private getUserInfoText(info: AuthorizedAppResponse | undefined) {

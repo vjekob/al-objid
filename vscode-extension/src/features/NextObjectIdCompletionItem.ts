@@ -76,7 +76,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
         const message = new MarkdownString(firstLine);
         message.appendCodeblock(typeDesc, "al");
         if (!objectId.hasConsumption) {
-            message.appendMarkdown("**Important:** The back end has no object ID consumption information. Please, run `Vjeko: Synchronize object IDs with the Azure back end` command before accepting this object ID.");
+            message.appendMarkdown("**Important:** The back end has no object ID consumption information. Please, run `Ninja: Synchronize object IDs with the Azure back end` command before accepting this object ID.");
             return message;
         }
         message.appendMarkdown("This number is **temporary**. The actual number will be assigned when you select this auto-complete entry.")
