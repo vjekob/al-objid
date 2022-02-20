@@ -5,6 +5,18 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] - 2022-02-19
+### Added
+- Name and e-mail address of the person who authorized an app is shown in the status bar.
+- Ninja does not communicate with the back end for apps that are not using it for object ID assignment.
+- Ninja monitors the `.objidconfig` file to make sure it is not accidentally deleted.
+### Changed
+- Authorization process is more robust: it requires Git repository to be clean, and it auto-commits
+the `.objidconfig` authorization key file.
+- Output logging distinguishes between verbose (very detailed) and normal log levels.
+### Fixed
+- Ninja suggests enum IDs when enum is already named [Git issue #23](https://github.com/vjekob/al-objid/issues/23)
+
 ## [2.2.0] - 2021-12-12
 ### Added
 - Field IDs (for `table` and `tableextension` objects) and value IDs (for `enum` and `enumextension` objects)
