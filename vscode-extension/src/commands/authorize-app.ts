@@ -1,6 +1,6 @@
 import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
-import { output } from "../features/Output";
+import { LogLevel, output } from "../features/Output";
 import { AppManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
@@ -11,7 +11,7 @@ import { authorization } from '../lib/Authorization';
 import { Git } from "../lib/Git";
 
 export const authorizeApp = async (uri: Uri, manifest: AppManifest, repeat: boolean = false) => {
-    output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`);
+    output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
 
     Telemetry.instance.log("authorize", manifest.id);
     const gitUser = await Git.instance.getUserInfo(uri);

@@ -1,5 +1,5 @@
 import { window } from "vscode";
-import { Output } from "../features/Output";
+import { LogLevel, Output } from "../features/Output";
 import { AppManifest } from "./AppManifest";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { EXTENSION_NAME, LABELS } from "./constants";
@@ -145,7 +145,7 @@ export const UI = {
             if (!message) {
                 return;
             }
-            Output.instance.log(message);
+            Output.instance.log(message, LogLevel.Info);
             window.showInformationMessage(message)
         },
     }

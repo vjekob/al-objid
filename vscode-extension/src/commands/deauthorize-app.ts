@@ -1,6 +1,6 @@
 import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
-import { output } from "../features/Output";
+import { LogLevel, output } from "../features/Output";
 import { AppManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
@@ -9,7 +9,7 @@ import { Telemetry } from "../lib/Telemetry";
 import { authorization } from "../lib/Authorization";
 
 export const deauthorizeApp = async (uri: Uri, manifest: AppManifest, token?: { success: boolean }) => {
-    output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`);
+    output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
 
     if (!ObjIdConfig.instance(uri).authKey) {
         UI.authorization.showNotAuthorizedWarning(manifest);

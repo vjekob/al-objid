@@ -2,7 +2,7 @@ import { Command, CompletionItem, CompletionItemKind, MarkdownString, Position, 
 import { Backend } from "../lib/Backend";
 import { AppManifest } from "../lib/AppManifest";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
-import { output } from "./Output";
+import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext } from "./ParserConnector";
@@ -28,13 +28,13 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             command: "vjeko-al-objid.commit-suggestion",
             title: "",
             arguments: [async () => {
-                output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`);
+                output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`, LogLevel.Info);
                 const { authKey } = ObjIdConfig.instance(uri);
                 const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, authKey);
                 const notChanged = !realId || !realId.available || realId.id === objectId.id;
                 Telemetry.instance.log("getNextNo-commit", manifest.id, notChanged ? undefined : "different");
                 if (notChanged) return;
-                output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`);
+                output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`, LogLevel.Info);
 
                 let replace = new WorkspaceEdit();
                 replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId.id}`)]);

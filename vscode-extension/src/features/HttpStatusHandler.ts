@@ -2,7 +2,7 @@ import { env, ExtensionContext, extensions, Uri, window } from "vscode";
 import { EXTENSION_NAME, EXTENSION_VERSION, LABELS } from "../lib/constants";
 import { PropertyBag } from "../lib/PropertyBag";
 import { DisposableHolder } from "./DisposableHolder";
-import { output } from "./Output";
+import { LogLevel, output } from "./Output";
 
 let appUpgradedV2 = false;
 let oldVersion = false;
@@ -36,7 +36,7 @@ export class HttpStatusHandler extends DisposableHolder {
 
     private handlers410: PropertyBag<Function> = {
         GENERIC: () => {
-            output.log(`You are attempting to access a back-end endpoint that is no longer supported. Please update ${EXTENSION_NAME}.`);
+            output.log(`You are attempting to access a back-end endpoint that is no longer supported. Please update ${EXTENSION_NAME}.`, LogLevel.Info);
             if (oldVersion) {
                 return;
             }
@@ -50,6 +50,7 @@ export class HttpStatusHandler extends DisposableHolder {
             if (warned) {
                 return;
             }
+            output.log(`You are using an old version of ${EXTENSION_NAME}.`, LogLevel.Info);
             this._context.globalState.update(stateKey, true);
             const response = await window.showWarningMessage(`You are using an old version of ${EXTENSION_NAME}, and a back-end feature you called is no longer available. Please update ${EXTENSION_NAME} to the latest version.`, "OK", LABELS.BUTTON_LEARN_MORE);
             if (response === LABELS.BUTTON_LEARN_MORE) {

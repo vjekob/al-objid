@@ -1,7 +1,7 @@
 import { Uri, workspace } from "vscode";
 import path = require("path");
 import * as fs from "fs";
-import { Output } from "../features/Output";
+import { LogLevel, Output } from "../features/Output";
 import { stringify, parse } from "comment-json";
 import { PropertyBag } from "./PropertyBag";
 
@@ -38,7 +38,7 @@ export class ObjIdConfig {
         try {
             return parse(fs.readFileSync(this._path).toString() || "{}") as any;
         } catch (e: any) {
-            if (e.code !== "ENOENT") Output.instance.log(`Cannot read file ${path}: ${e}`);
+            if (e.code !== "ENOENT") Output.instance.log(`Cannot read file ${path}: ${e}`, LogLevel.Info);
             return {};
         }
     }

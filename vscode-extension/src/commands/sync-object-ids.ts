@@ -4,7 +4,7 @@ import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
-import { output } from "../features/Output";
+import { LogLevel, output } from "../features/Output";
 import { ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
 import { getActualConsumption, getObjectDefinitions, getWorkspaceFolderFiles } from "../lib/ObjectIds";
@@ -51,7 +51,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
         }
     }
 
-    output.log("Starting syncing object ID consumption with the back end");
+    output.log("Starting syncing object ID consumption with the back end", LogLevel.Info);
 
     const uris = await getWorkspaceFolderFiles(uri);
     const objects = await getObjectDefinitions(uris);

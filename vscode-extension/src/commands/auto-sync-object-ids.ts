@@ -10,7 +10,7 @@ import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
 import { getManifest } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
-import { output } from "../features/Output";
+import { LogLevel, output } from "../features/Output";
 import { Telemetry } from "../lib/Telemetry";
 
 const BranchInfo = {
@@ -293,15 +293,15 @@ export const autoSyncObjectIds = async () => {
 
     switch (result.status) {
         case AutoSyncResult.Success:
-            output.log("[auto-sync-object-ids] Completed successfully.");
+            output.log("[auto-sync-object-ids] Completed successfully.", LogLevel.Info);
             UI.sync.showSuccessInfo();
             break;
         case AutoSyncResult.NoALFolders:
-            output.log("[auto-sync-object-ids] No AL folders found in the workspace.");
+            output.log("[auto-sync-object-ids] No AL folders found in the workspace.", LogLevel.Info);
             break;
         case AutoSyncResult.GitDirty:
             let repoName = getRepoName(result.context);
-            output.log(`[auto-sync-object-ids] Git repository ${repoName} is dirty. Cannot auto sync.`);
+            output.log(`[auto-sync-object-ids] Git repository ${repoName} is dirty. Cannot auto sync.`, LogLevel.Info);
             if (await UI.sync.showRepoNotClean(repoName) === LABELS.BUTTON_LEARN_MORE) {
                 env.openExternal(Uri.parse(URLS.AUTO_SYNC_DIRTY));
             }
