@@ -1,5 +1,6 @@
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 
-const syncIds = new ALNinjaRequestHandler<{}, boolean>(async (request) => !!request.bindings.app);
+// Have to return string.toLowerCase() because returning boolean results in True/False rather than true/false
+const syncIds = new ALNinjaRequestHandler<{}, string>(async (request) => `${!!request.bindings.app}`.toLowerCase());
 
 export default syncIds.azureFunction;

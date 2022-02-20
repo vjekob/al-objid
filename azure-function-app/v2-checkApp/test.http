@@ -1,39 +1,18 @@
-### Localhost - POST
+### Localhost
 
-post http://localhost:7071/api/v2/syncIds
+get http://localhost:7071/api/v2/checkApp
 Content-Type: application/json
 
 {
-    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf",
-    "ids": {
-        "codeunit": [1, 2, 3],
-        "table_1": [1, 2, 3]
-    } 
-}
-
-
-### Localhost - PATCH
-
-patch http://localhost:7071/api/v2/syncIds
-Content-Type: application/json
-
-{
-    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf",
-    "ids": {
-        "codeunit": [4,5]
-    } 
+    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf"
 }
 
 
 ### Remote
 
-patch https://vjekocom-alext-weu.azurewebsites.net/api/v2/syncIds
+get https://vjekocom-alext-weu.azurewebsites.net/api/v2/checkApp
 Content-Type: application/json
 
 {
-    "appId": "3a4a7e9d73ca881f8708427acf6754bf69c4a7f22a2c991400823838218888cf",
-    "ids": {
-        "codeunit": [1, 2, 3],
-        "table_1": [1, 2, 3]
-    } 
+    "appId": "ea0e6064136305c7fb283d3388a297d4f39497fde175ecf269244d28f0cd59b5"
 }
