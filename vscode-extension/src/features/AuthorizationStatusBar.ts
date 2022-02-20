@@ -36,7 +36,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
         const info = await Backend.getAuthInfo(manifest.id, authKey);
         if (info) {
             if (info.authorized === authorized) {
-                if (!info.valid) {
+                if (!info.valid && info.authorized) {
                     this._status.text = `$(error) Invalid authorization`;
                     this._status.tooltip = new MarkdownString("Your authorization is ***invalid***. The authorization key stored in `.objidconfig` is not accepted by the back end. If you switched branches, make sure the current branch has the latest `.objidconfig` from your main branch.");
                     return;

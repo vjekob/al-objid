@@ -171,8 +171,29 @@ function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest):
     }
 }
 
+const knownManagedApps: { [key: string]: Promise<boolean> | undefined } = {};
+
+async function isKnownManagedApp(appId: string, forceCheck: boolean = false): Promise<boolean> {
+    if (!knownManagedApps[appId]) {
+        if (!forceCheck) {
+            return false;
+        }
+        return await (knownManagedApps[appId] = Backend.checkApp(appId));
+    }
+
+    return await knownManagedApps[appId]!;
+}
+
 export class Backend {
     static async getNextNo(appId: string, type: string, ranges: any, commit: boolean, authKey: string): Promise<NextObjectIdInfo | undefined> {
+        if (!await isKnownManagedApp(appId, true)) {
+            if (!commit) {
+                return {
+                    hasConsumption: false
+                } as NextObjectIdInfo;
+            }
+        }
+
         const response = await sendRequest<NextObjectIdInfo>(
             "/api/v2/getNext",
             commit ? "POST" : "GET",
@@ -188,6 +209,8 @@ export class Backend {
     }
 
     static async syncIds(appId: string, ids: ConsumptionInfo, patch: boolean, authKey: string): Promise<boolean> {
+        knownManagedApps[appId] = Promise.resolve(true);
+
         const response = await sendRequest<ConsumptionInfo>(
             "/api/v2/syncIds",
             patch ? "PATCH" : "POST",
@@ -197,6 +220,9 @@ export class Backend {
     }
 
     static async autoSyncIds(consumptions: AuthorizedAppConsumption[], patch: boolean): Promise<boolean> {
+        for (let app of consumptions) {
+            knownManagedApps[app.appId] = Promise.resolve(true);
+        }
         const response = await sendRequest<ConsumptionInfo>(
             "/api/v2/autoSyncIds",
             patch ? "PATCH" : "POST",
@@ -206,6 +232,7 @@ export class Backend {
     }
 
     static async authorizeApp(appId: string, gitUser: string, gitEMail: string, errorHandler: ErrorHandler<AuthorizationInfo>): Promise<AuthorizationInfo | undefined> {
+        knownManagedApps[appId] = Promise.resolve(true);
         const response = await sendRequest<AuthorizationInfo>(
             "/api/v2/authorizeApp",
             "POST",
@@ -220,6 +247,11 @@ export class Backend {
     }
 
     static async getAuthInfo(appId: string, authKey: string): Promise<AuthorizedAppResponse | undefined> {
+        // If the app is known to not be managed by the back end, then we exit
+        if (!await isKnownManagedApp(appId, true)) {
+            return;
+        }
+
         const response = await sendRequest<AuthorizedAppResponse>(
             "/api/v2/authorizeApp",
             "GET",
@@ -244,16 +276,44 @@ export class Backend {
     }
 
     static async check(payload: FolderAuthorization[]): Promise<CheckResponse | undefined> {
+        // We are not calling the polling endpoint if it's misconfigured. Either both URLs are default, or polling is pointless.
         if (Config.instance.isBackEndConfigInError) {
-            // We are not calling the polling endpoint if it's misconfigured. Either both URLs are default, or polling is pointless.
             Telemetry.instance.logOnce("invalidBackendConfig");
             return;
         }
 
+        // Are app IDs known?
+        const actualPayload: FolderAuthorization[] = [];
+        const promises: Promise<boolean>[] = [];
+        for (let folder of payload) {
+            let knownApp = knownManagedApps[folder.appId];
+            if (knownApp) {
+                if (await knownApp) {
+                    actualPayload.push(folder);
+                }
+                continue;
+            }
+
+            promises.push(((appFolder: FolderAuthorization) => {
+                const checkApp = isKnownManagedApp(appFolder.appId, true);
+                checkApp.then(result => result && actualPayload.push(appFolder));
+                return checkApp;
+            })(folder));
+        }
+
+        // Let's await on any pending promises
+        await Promise.all(promises);
+
+        // If we have no apps to check, we exit
+        if (actualPayload.length === 0) {
+            return;
+        }
+
+        // We check only those apps that we know are managed by the back end
         const response = await sendRequest<CheckResponse>(
             "/api/v2/check",
             "GET",
-            payload,
+            actualPayload,
             async () => true, // On error, do nothing (message is logged in the output already)
             Endpoints.polling
         );
@@ -261,6 +321,10 @@ export class Backend {
     }
 
     static async getConsumption(appId: string, authKey: string): Promise<ConsumptionInfoWithTotal | undefined> {
+        if (!await isKnownManagedApp(appId)) {
+            return;
+        }
+
         const response = await sendRequest<ConsumptionInfoWithTotal>(
             "/api/v2/getConsumption",
             "GET",
@@ -269,7 +333,21 @@ export class Backend {
         return response.value;
     }
 
+    static async checkApp(appId: string): Promise<boolean> {
+        const response = await sendRequest<boolean>(
+            "/api/v2/checkApp",
+            "GET",
+            { appId },
+        );
+        return response.value ?? false;
+    }
+
     static async telemetry(appSha: string | undefined, userSha: string, event: string, context?: any) {
+        if (appSha && !await isKnownManagedApp(appSha)) {
+            // No telemetry is logged for non-managed apps
+            return;
+        }
+
         sendRequest<undefined>(
             "/api/telemetry",
             "POST",

@@ -9,6 +9,7 @@ import { Git } from "../lib/Git";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Telemetry } from "../lib/Telemetry";
 import { UI } from "../lib/UI";
+import { AuthorizationStatusBar } from "./AuthorizationStatusBar";
 
 export class ObjIdConfigMonitor implements Disposable {
     private static _instance: ObjIdConfigMonitor;
@@ -82,6 +83,7 @@ export class ObjIdConfigMonitor implements Disposable {
     private async setUpWatcher(manifest: AppManifest, uri: Uri) {
         const watcher = workspace.createFileSystemWatcher(path.join(uri.fsPath, ".objidconfig"));
         watcher.onDidDelete(() => this.onDeleted(manifest, uri));
+        watcher.onDidChange(() => AuthorizationStatusBar.instance.updateStatusBar());
         this._watchers.push(watcher);
 
         const gitRoot = await Git.instance.getTopLevelPath(uri);

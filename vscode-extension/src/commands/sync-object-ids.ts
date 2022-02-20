@@ -43,7 +43,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     }
     let authKey = ObjIdConfig.instance(uri).authKey;
 
-    if (!options?.merge) {
+    if (!options?.merge && !options?.skipQuestion) {
         let consumption = await Backend.getConsumption(appId, authKey);
         if (consumption?._total) {
             let answer = await UI.sync.showAreYouSure();
