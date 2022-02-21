@@ -11,6 +11,10 @@ const getRealRanges = (type: string, ranges: Range[]) => {
     }
 
     const parts = type.split("_");
+    if (parts[0].toLowerCase() === "tableextension") {
+        return ranges;
+    }
+    
     const id = parseInt(parts[1]);
     let ownObject = false;
     for (let range of ranges) {
