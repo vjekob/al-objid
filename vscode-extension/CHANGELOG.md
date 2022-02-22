@@ -5,6 +5,13 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.3.1] - 2022-02-22
+### Fixed
+- Parser passes through all directives correctly so all objects are returned from all possible paths through
+all #if..#elif..#else..#endif directives. [Git issue #12](https://github.com/vjekob/al-objid/issues/12)
+- Consumption warnings are correctly calculating consumptions when there are registered object IDs that fall
+outside ranges defined in the `app.json` file. [Git issue #27](https://github.com/vjekob/al-objid/issues/27)
+
 ## [2.3.0] - 2022-02-19
 ### Added
 - Name and e-mail address of the person who authorized an app is shown in the status bar.
