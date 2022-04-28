@@ -12,6 +12,21 @@ export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectId
 
 export class NextObjectIdCompletionItem extends CompletionItem {
     private _injectSemicolon: boolean = false;
+
+    private isIdEqual(left: number | number[], right: number) {
+        let leftAsArray = left as number[];
+
+        switch (true) {
+            case typeof (left) === "number":
+                return left === right;
+
+            case Array.isArray(left):
+                return leftAsArray.length === 1 && leftAsArray[0] === right;
+        }
+
+        return false;
+    }
+
     constructor(type: string, objectId: NextObjectIdInfo, manifest: AppManifest, position: Position, uri: Uri, nextIdContext: NextIdContext) {
         super(`${objectId.id}${nextIdContext.injectSemicolon ? ";" : ""}`, CompletionItemKind.Constant);
 
@@ -30,8 +45,8 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             arguments: [async () => {
                 output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`, LogLevel.Info);
                 const { authKey } = ObjIdConfig.instance(uri);
-                const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, authKey);
-                const notChanged = !realId || !realId.available || realId.id === objectId.id;
+                const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, authKey, objectId.id as number);
+                const notChanged = !realId || !realId.available || this.isIdEqual(realId.id, objectId.id as number);
                 Telemetry.instance.log("getNextNo-commit", manifest.id, notChanged ? undefined : "different");
                 if (notChanged) return;
                 output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`, LogLevel.Info);

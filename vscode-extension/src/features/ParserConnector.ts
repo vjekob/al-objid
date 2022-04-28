@@ -6,6 +6,7 @@ import { CheckType } from "@vjeko.com/al-parser-ninja/dist/CheckType";
 
 export interface NextIdContext {
     injectSemicolon: boolean;
+    requireId?: number;
 }
 
 export class ParserConnector implements Disposable {

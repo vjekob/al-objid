@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "2.3.1",
+	"version": "2.4.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -140,6 +140,11 @@
 					"type": "boolean",
 					"default": true,
 					"markdownDescription": "Show notifications when the available range is about to run out. **It's a good idea to keep this option switched on!**"
+				},
+				"objectIdNinja.requestPerRange": {
+					"type": "boolean",
+					"default": false,
+					"description": "Requires that next IDs are retrieved per range. For example, if an app declares multiple ranges, Ninja will suggest the next ID from each range where IDs are available. User can then choose the range from which the ID will be assigned."
 				}
 			}
 		},

@@ -185,10 +185,18 @@ async function isKnownManagedApp(appId: string, forceCheck: boolean = false): Pr
 }
 
 export class Backend {
-    static async getNextNo(appId: string, type: string, ranges: any, commit: boolean, authKey: string): Promise<NextObjectIdInfo | undefined> {
+    static async getNextNo(appId: string, type: string, ranges: any, commit: boolean, authKey: string, require?: number): Promise<NextObjectIdInfo | undefined> {
         if (!await isKnownManagedApp(appId)) {
             if (!commit) {
                 knownManagedApps[appId] = Promise.resolve(true);
+            }
+        }
+
+        const additionalOptions = {} as NextObjectIdInfo;
+        if (Config.instance.requestPerRange) {
+            additionalOptions.perRange = true;
+            if (commit && require) {
+                additionalOptions.require = require;
             }
         }
 
@@ -200,6 +208,7 @@ export class Backend {
                 type,
                 ranges,
                 authKey,
+                ...additionalOptions
             }
         );
         if (response.status === API_RESULT.SUCCESS) output.log(`Received next ${type} ID response: ${JSON.stringify(response.value)}`);

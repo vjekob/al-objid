@@ -75,4 +75,8 @@ export class Config extends DisposableHolder {
     public get showRangeWarnings(): boolean {
         return this.getWithDefault<boolean>("showRangeWarnings", true);
     }
+
+    public get requestPerRange(): boolean {
+        return this.getWithDefault<boolean>("requestPerRange", false);
+    }
 }

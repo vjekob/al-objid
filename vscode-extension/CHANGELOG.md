@@ -5,6 +5,10 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] - 2022-04-28
+### Added
+- Requesting and assigning IDs from multiple ranges (https://github.com/vjekob/al-objid/issues/11)
+
 ## [2.3.1] - 2022-02-22
 ### Fixed
 - Parser passes through all directives correctly so all objects are returned from all possible paths through

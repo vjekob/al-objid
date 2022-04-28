@@ -2,11 +2,13 @@ import { Range } from "vscode";
 import { ALObjectType } from "./constants";
 
 export interface NextObjectIdInfo {
-    id: number;
+    id: number | number[];
     updated: boolean;
     available: boolean;
     updateAttempts: number;
     hasConsumption: boolean;
+    perRange?: boolean;
+    require?: number;
 }
 
 export interface ConsumptionInfo {

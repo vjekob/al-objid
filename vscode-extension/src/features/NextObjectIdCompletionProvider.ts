@@ -191,6 +191,19 @@ export class NextObjectIdCompletionProvider {
         if (showNotificationsIfNecessary(manifest, objectId) || !objectId) return [];
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
 
-        return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri, nextIdContext)];
+        if (Array.isArray(objectId.id)) {
+            if (!objectId.id.length) {
+                objectId.id.push(0);
+            }
+
+            const items: NextObjectIdCompletionItem[] = [];
+            for (let id of objectId.id) {
+                const objectIdCopy = { ...objectId, id };
+                items.push(new NextObjectIdCompletionItem(type, objectIdCopy, manifest, position, document.uri, { ...nextIdContext, requireId: id }));
+            }
+            return items;
+        } else {
+            return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri, nextIdContext)];
+        }
     }
 }
