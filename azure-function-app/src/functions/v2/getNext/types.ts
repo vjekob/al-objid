@@ -4,12 +4,12 @@ import { Range } from "../TypesV2";
 export interface GetNextRequest {
     type: ALObjectType;
     ranges: Range[];
-    count?: number;
     perRange?: boolean;
+    require?: number;
 }
 
 export interface GetNextResponse {
-    id: number,
+    id: number | number[];
     updated: boolean;
     available: boolean;
     updateAttempts: number;

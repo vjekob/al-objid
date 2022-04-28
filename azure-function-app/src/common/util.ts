@@ -48,6 +48,17 @@ export function findFirstAvailableId(ranges: Range[], ids: number[]): number {
     return 0;
 }
 
+export function findAvailablePerRange(ranges: Range[], ids: number[]): number[] {
+    const results = [];
+    for (let range of ranges) {
+        let result = findFirstAvailableId([range], ids);
+        if (result >= range.from && result <= range.to) {
+            results.push(result);
+        }
+    }
+    return results;
+}
+
 /**
  * Calculates the SHA256 hash of specified content and returns it in specified encoding.
  * 

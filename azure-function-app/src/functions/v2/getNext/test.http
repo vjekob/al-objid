@@ -1,20 +1,66 @@
-# Get localhost
+### Request a next number
+
+get http://localhost:7071/api/v2/getNext
+Content-Type: application/json
+
+{
+    "appId": "test_ninja",
+    "type": "codeunit",
+    "ranges": [
+        {
+            "from": 50000,
+            "to": 50150
+        }
+    ]
+}
+
+### Request a next number from multiple ranges
+
+get http://localhost:7071/api/v2/getNext
+Content-Type: application/json
+
+{
+    "appId": "test_ninja",
+    "type": "codeunit",
+    "ranges": [
+        {
+            "from": 50000,
+            "to": 50150
+        },
+        {
+            "from": 60000,
+            "to": 60009
+        },
+        {
+            "from": 90000,
+            "to": 90099
+        }
+    ],
+    "perRange": true
+}
+
+### Assign a next number from a specific range in a multi-range scenario
 
 post http://localhost:7071/api/v2/getNext
 Content-Type: application/json
 
 {
-    "appId": "0_test",
+    "appId": "test_ninja",
     "type": "codeunit",
     "ranges": [
         {
+            "from": 50000,
+            "to": 50150
+        },
+        {
+            "from": 60000,
+            "to": 60009
+        },
+        {
             "from": 90000,
-            "to": 90150
+            "to": 90099
         }
     ],
-    "count": 1,
-    "fromRange": {
-        "from": 90000,
-        "to": 90150
-    }
+    "perRange": true,
+    "require": 60000
 }

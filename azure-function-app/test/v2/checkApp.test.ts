@@ -24,7 +24,7 @@ describe("Testing function api/v2/checkApp", () => {
         const context = new Mock.Context(new Mock.Request("GET", { appId: storage.appId }));
         await checkApp(context, context.req);
         expect(context.res).toBeStatus(200);
-        expect(context.res.body).toStrictEqual(true);
+        expect(context.res.body).toStrictEqual("true");
     });
 
     it("Succeeds checking a missing app", async () => {
@@ -33,6 +33,6 @@ describe("Testing function api/v2/checkApp", () => {
         const context = new Mock.Context(new Mock.Request("GET", { appId: "_non_existing_" }));
         await checkApp(context, context.req);
         expect(context.res).toBeStatus(200);
-        expect(context.res.body).toStrictEqual(false);
+        expect(context.res.body).toStrictEqual("false");
     });
 });

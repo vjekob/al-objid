@@ -1,0 +1,8 @@
+### Check an existing app
+
+get http://localhost:7071/api/v2/checkApp
+Content-Type: application/json
+
+{
+    "appId": "test_ninjad"
+}

@@ -15,6 +15,7 @@ disableGetNextRateLimit();
 
 describe("Testing function api/v2/getNext", () => {
     const ranges: Range[] = [{ from: 50000, to: 50009 }];
+    const rangesMulti: Range[] = [{ from: 50000, to: 50009 }, {from: 60000, to: 60009}];
 
     it("Fails on invalid request content", async () => {
         const context = new Mock.Context(new Mock.Request("POST", { appId: "_mock_" }));
@@ -315,5 +316,126 @@ describe("Testing function api/v2/getNext", () => {
         expect(storage.ranges()).toHaveLength(1);
         expect(storage.ranges()).toEqual(ranges);
         expect(storage.objectIds(type)).toEqual([1, 2, 3, 4, 5, 6, 50000, 50001, 50002, 50004]);
+    });
+
+    it("Succeeds getting next ID from multiple ranges from a previously unknown app", async () => {
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("GET", { appId: "_mock_", ranges: rangesMulti, perRange: true, type }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual([50000, 60000]);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(false);
+        expect(context.res.body.updated).toStrictEqual(false);
+        expect(storage).not.toHaveChanged();
+        expect(storage.ranges()).toHaveLength(0);
+        expect(storage).not.toHaveConsumption(type);
+        expect(context.bindings.notify).toBeUndefined();
+    });
+
+    it("Succeeds getting next ID from multiple ranges with previous consumption", async () => {
+        const consumption = [50000, 50001, 50002, 50004, 60000, 60002];
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app().setConsumption(type, consumption);
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("GET", { appId: storage.appId, ranges: rangesMulti, perRange: true, type }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual([50003, 60001]);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(true);
+        expect(context.res.body.updated).toStrictEqual(false);
+        expect(storage).not.toHaveChanged();
+        expect(storage.ranges()).toHaveLength(0);
+        expect(context.bindings.notify).toBeUndefined();
+    });
+
+    it("Succeeds getting next ID from multiple ranges with previous consumption, with one range fully consumed", async () => {
+        const consumption = [50000, 50001, 50002, 50003, 50004, 50004, 50005, 50006, 50007, 50008, 50009, 60000];
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app().setConsumption(type, consumption);
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("GET", { appId: storage.appId, ranges: rangesMulti, perRange: true, type }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual([60001]);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(true);
+        expect(context.res.body.updated).toStrictEqual(false);
+        expect(storage).not.toHaveChanged();
+        expect(storage.ranges()).toHaveLength(0);
+        expect(context.bindings.notify).toBeUndefined();
+    });
+
+    it("Succeeds committing next ID to a specific range without previous consumption", async () => {
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges: rangesMulti, perRange: true, require: 50000, type, user: "fake" }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual(50000);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(true);
+        expect(context.res.body.updated).toStrictEqual(true);
+        expect(storage).toHaveChanged();
+        expect(storage.ranges()).toHaveLength(2);
+        expect(storage.ranges()).toEqual(rangesMulti);
+        expect(storage).toHaveConsumption(type);
+        expect(storage.objectIds(type)).toEqual([50000]);
+    });
+
+    it("Succeeds committing next ID to a different specific range without previous consumption", async () => {
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges: rangesMulti, perRange: true, require: 60000, type, user: "fake" }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual(60000);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(true);
+        expect(context.res.body.updated).toStrictEqual(true);
+        expect(storage).toHaveChanged();
+        expect(storage.ranges()).toHaveLength(2);
+        expect(storage.ranges()).toEqual(rangesMulti);
+        expect(storage).toHaveConsumption(type);
+        expect(storage.objectIds(type)).toEqual([60000]);
+    });
+
+    it("Succeeds committing next ID to a specific range with previous consumption", async () => {
+        const consumption = [50000, 50001, 50002, 50004, 60000, 60002];
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app().setConsumption(type, consumption);
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges: rangesMulti, perRange: true, require: 50000, type, user: "fake" }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(context.res.body.id).toStrictEqual(50003);
+        expect(context.res.body.available).toStrictEqual(true);
+        expect(context.res.body.hasConsumption).toStrictEqual(true);
+        expect(context.res.body.updated).toStrictEqual(true);
+        expect(storage).toHaveChanged();
+        expect(storage.ranges()).toHaveLength(2);
+        expect(storage.ranges()).toEqual(rangesMulti);
+        expect(storage).toHaveConsumption(type);
+        expect(storage.objectIds(type)).toEqual([50000, 50001, 50002, 50003, 50004, 60000, 60002]);
+    });
+
+    it("Fails committing next ID to a specific range with explicit range fully consumed", async () => {
+        const consumption = [50000, 50001, 50002, 50003, 50004, 50004, 50005, 50006, 50007, 50008, 50009, 60000];
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app().setConsumption(type, consumption);
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges: rangesMulti, perRange: true, require: 50009, type, user: "fake" }));
+        await getNext(context, context.req);
+        // expect(context.res).toBeStatus(200);
+        // expect(context.res.body.id).toStrictEqual(0);
+        // expect(context.res.body.available).toStrictEqual(false);
+        // expect(context.res.body.hasConsumption).toStrictEqual(true);
+        // expect(context.res.body.updated).toStrictEqual(false);
+        // expect(storage).not.toHaveChanged();
     });
 });

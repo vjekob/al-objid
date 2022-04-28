@@ -1,5 +1,5 @@
 import { ErrorResponse } from "@vjeko.com/azure-func";
-import { findFirstAvailableId } from "../../../common/util";
+import { findAvailablePerRange, findFirstAvailableId } from "../../../common/util";
 import { ALNinjaRequestHandler } from "../ALNinjaRequestHandler";
 import { AppInfo, Range } from "../TypesV2";
 import { GetNextRequest, GetNextResponse } from "./types";
@@ -31,28 +31,56 @@ const getRealRanges = (type: string, ranges: Range[]) => {
     return ranges;
 }
 
+const limitRanges = (ranges: Range[], require?: number) => {
+    if (typeof require !== "number") {
+        return ranges;
+    }
+
+    for (let range of ranges) {
+        if (require >= range.from && require <= range.to) {
+            return [range];
+        }
+    }
+
+    return [];
+}
+
 const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async (request) => {
     const appInfo: AppInfo = request.bindings.app || {} as AppInfo;
-    const { appId, ranges, type } = request.body;
+    const { appId, type, perRange, require } = request.body;
     const ids = appInfo[type] || [];
+    const ranges = request.method === "POST" && perRange && require ? limitRanges(request.body.ranges, require) : request.body.ranges;
     const realRanges = getRealRanges(type, ranges);
 
     const result = {
-        id: findFirstAvailableId(realRanges, ids),
+        id: perRange ? findAvailablePerRange(realRanges, ids) : findFirstAvailableId(realRanges, ids),
         updated: false,
         available: false,
         updateAttempts: 0,
         hasConsumption: !!request.bindings.app
     };
-    result.available = result.id > 0;
+    result.available = Array.isArray(result.id) ? result.id.length > 0 : result.id > 0;
 
-    if (result.id && request.method === "POST") {
-        const { app, success } = await updateConsumption(appId, request, type, realRanges, ranges, result);
+    const updateContext = {
+        id: Array.isArray(result.id) ? require : result.id,
+        available: result.available,
+        updated: false,
+        updateAttempts: 0,
+    };
+
+    if (request.method === "POST" && (Array.isArray(result.id) ? result.id.length : result.id)) {
+        const { app, success } = await updateConsumption(appId, request, type, realRanges, request.body.ranges, updateContext);
         if (!success) {
             throw new ErrorResponse("Too many attempts at updating BLOB", 409);
         }
+
+        result.id = updateContext.id;
+        result.available = updateContext.available;
+        result.updated = updateContext.updated;
         result.hasConsumption = true;
+        if (result.updated) {
         request.markAsChanged(appId, app);
+        }
     }
 
     return result;
@@ -61,8 +89,8 @@ const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async
 getNext.validator.expect("body", {
     ranges: "Range[]",
     type: "ALObjectType",
-    "count?": "number",
-    "perRange?": "boolean"
+    "perRange?": "boolean",
+    "require?": "number",
 });
 
 export const disableGetNextRateLimit = () => getNext.noRateLimit();
