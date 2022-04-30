@@ -1,6 +1,6 @@
 import { ConsumptionData } from "../lib/BackendTypes";
 import { PropertyBag } from '../lib/PropertyBag';
-import { getLastKnownAppName, getManifestFromAppId } from '../lib/AppManifest';
+import { getManifestFromAppId } from '../lib/AppManifest';
 import { UI } from "../lib/UI";
 import { LABELS } from "../lib/constants";
 import { ExtensionContext } from "vscode";
@@ -33,12 +33,12 @@ export class ConsumptionWarnings {
         }
         this._warningLevels[warningId] = remaining;
         this._shownWarnings[warningId] = true;
-        const name = getLastKnownAppName(appId);
-        const result = await UI.nextId.showNumbersAboutToRunOut(name, type, remaining);
+        const manifest = getManifestFromAppId(appId);
+        const result = await UI.nextId.showNumbersAboutToRunOut(manifest.name, type, remaining);
         delete this._shownWarnings[warningId];
 
         if (result === LABELS.BUTTON_DONT_SHOW_AGAIN) {
-            UI.nextId.showDisabledOnlyForAppAndType(name, type);
+            UI.nextId.showDisabledOnlyForAppAndType(manifest.name, type);
             this._context!.globalState.update(warningId, true);
         }
     }

@@ -1,6 +1,6 @@
 import { window } from "vscode";
 import { LogLevel, Output } from "../features/Output";
-import { AppManifest } from "./AppManifest";
+import { AppManifest } from "./types";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { EXTENSION_NAME, LABELS } from "./constants";
 import { EventLogEntry } from "./BackendTypes";
@@ -93,11 +93,18 @@ export const UI = {
             ),
     },
 
+    git: {
+        showNotRepoWarning: (manifest: AppManifest, operation: string) =>
+            window.showWarningMessage(`There is no Git repository for application "${manifest.name}. You cannot ${operation} for an app unless you use Git to track it.`, LABELS.BUTTON_LEARN_MORE),
+        showNotCleanWarning: async (manifest: AppManifest, operation: string) =>
+            window.showWarningMessage(`Git repository for application "${manifest.name}" is not clean. Please commit, stash, or undo your changes before ${operation}."`, LABELS.BUTTON_LEARN_MORE),
+        showNoCurrentBranchError: async (manifest: AppManifest) =>
+            window.showErrorMessage(`We could not detect your current branch for application ${manifest.name}. This can happen if you use an old version of Git or if your repository is in detached head state. Please, make sure to use latest version of Git, or to check out to an actual branch, and then retry.`, LABELS.BUTTON_LEARN_MORE),
+    },
+
     authorization: {
-        showAlreadyAuthorizedWarning: async (manifest: AppManifest) =>
-            window.showWarningMessage(`Application "${manifest.name}" is already authorized. Do you want to re-authorize it?`, "Yes", "No"),
-        showReauthorizedInfo: (manifest: AppManifest) =>
-            window.showInformationMessage(`You have successfully re-authorized app "${manifest.name}".  Please, push your changes to remote and create a pull request (if necessary) to share the authorization key with other developers on your team.`),
+        showAlreadyAuthorizedError: async (manifest: AppManifest) =>
+            window.showErrorMessage(`Application "${manifest.name}" is already authorized. You must first deauthorize it if you want to authorize it again.`),
         showIncorrectKeyWarning: (manifest: AppManifest) =>
             window.showWarningMessage(`${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} "${manifest.name}".`),
         showNotAuthorizedWarning: (manifest: AppManifest) =>
@@ -110,12 +117,6 @@ export const UI = {
             window.showInformationMessage(`You have successfully deauthorized app "${manifest.name}". Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`),
         showDeauthorizationFailedWarning: (manifest: AppManifest, error: string) =>
             window.showWarningMessage(`An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`),
-        showNotGitRepoWarning: async (manifest: AppManifest) =>
-            window.showWarningMessage(`There is no Git repository for application "${manifest.name}. You cannot change authorization for an app unless you use Git to track it.`, LABELS.BUTTON_LEARN_MORE),
-        showGitNotCleanWarning: async (manifest: AppManifest) =>
-            window.showWarningMessage(`Git repository for application "${manifest.name}" is not clean. Please commit, stash, or undo your changes before authorizing the app."`, LABELS.BUTTON_LEARN_MORE),
-        showNoCurrentBranch: async () =>
-            window.showErrorMessage(`We could not detect your current branch. Your repository could be in detached head state. Please, check out to an actual branch, and then retry.`, LABELS.BUTTON_LEARN_MORE),
         showDeletedAuthorization: async (manifest: AppManifest) =>
             window.showErrorMessage(`Authorization file for ${manifest.name} was just deleted, and the app is still authorized. Please, make sure you understand the consequences.`, LABELS.BUTTON_LEARN_MORE),
         showUnauthorizedBranch: async (branch: string, manifest: AppManifest) =>

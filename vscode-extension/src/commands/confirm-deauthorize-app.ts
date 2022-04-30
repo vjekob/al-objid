@@ -1,5 +1,4 @@
 import { commands, env, Uri, window } from "vscode";
-import { authorization } from "../lib/Authorization";
 import { URLS } from "../lib/constants";
 
 const OPTION = {
@@ -9,11 +8,7 @@ const OPTION = {
 };
 
 async function executeDeuthorization() {
-    const context = await authorization.getAuthorizationContext();
-    if (!context) {
-        return;
-    }
-    commands.executeCommand("vjeko-al-objid.deauthorize-app", context.uri, context.manifest);
+    commands.executeCommand("vjeko-al-objid.deauthorize-app");
 }
 
 export const confirmDeauthorizeApp = async () => {

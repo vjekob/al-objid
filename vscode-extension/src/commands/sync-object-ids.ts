@@ -1,5 +1,5 @@
 import { Uri } from "vscode";
-import { getManifest, getUriFromAppId } from "../lib/AppManifest";
+import { getManifest, getManifestFromAppId } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
@@ -9,6 +9,7 @@ import { ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
 import { getActualConsumption, getObjectDefinitions, getWorkspaceFolderFiles } from "../lib/ObjectIds";
 import { Telemetry } from "../lib/Telemetry";
+import { AppManifest } from "../lib/types";
 
 interface SyncOptions {
     merge: boolean,
@@ -18,18 +19,15 @@ interface SyncOptions {
 
 /**
  * Synchronizes object ID consumption information with the Azure back end.
- * 
- * @param patch Flag that indicates whether patching (merge) rather than full replace should be done
- * @param uri Uri of a document or a workspace folder for which to run the synchronization
- * @returns 
  */
 export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     let uri: Uri | undefined;
+    let manifest: AppManifest | null;
     if (!appId) {
         uri = await ALWorkspace.selectWorkspaceFolder(options?.uri);
         if (!uri) return;
 
-        const manifest = getManifest(uri);
+        manifest = getManifest(uri);
 
         if (!manifest) {
             UI.sync.showNoManifestError();
@@ -37,10 +35,11 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
         }
 
         appId = manifest.id;
-
     } else {
-        uri = getUriFromAppId(appId);
+        manifest = getManifestFromAppId(appId);
     }
+    uri = manifest.ninja.uri;
+    
     let authKey = ObjIdConfig.instance(uri).authKey;
 
     if (!options?.merge && !options?.skipQuestion) {

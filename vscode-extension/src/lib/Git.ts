@@ -1,7 +1,11 @@
 import { exec } from "child_process";
-import { Uri } from "vscode";
-import { LogLevel, output, Output } from "../features/Output";
+import { Uri, window } from "vscode";
+import { LogLevel, output } from "../features/Output";
+import { getManifest } from "./AppManifest";
+import { LABELS } from "./constants";
 import { PropertyBag } from "./PropertyBag";
+import { AppManifest, GitCleanOperationContext } from "./types";
+import { UI } from "./UI";
 
 /**
  * Represents a branch info with local and remote tracking info:
@@ -193,5 +197,80 @@ export class Git {
     public async trackRemoteBranch(uri: Uri, remoteBranch: string, newBranch: string): Promise<boolean> {
         let output = await (this.execute(`branch ${newBranch} --track ${remoteBranch}`, uri, false));
         return !!output;
+    }
+
+    public async executeCleanOperation(context: GitCleanOperationContext): Promise<boolean> {
+        const getBranchOptions = (branch: string) => ({
+            YES: `Yes, please commit to the ${branch} branch`,
+            NO: "No, I'll select another branch and then retry",
+        });
+
+        async function confirmBranchName(branch: string, manifest: AppManifest): Promise<boolean> {
+            const options = getBranchOptions(branch);
+            let result = await window.showQuickPick(Object.values(options), {
+                placeHolder: `Do you want to commit to the ${branch} branch for app ${manifest.name}?`
+            });
+            return result === options.YES;
+        }
+
+        const manifests: AppManifest[] = [];
+
+        // First pass - require all uris to belong to clean git repos and confirm branch names
+        for (let uri of context.uris) {
+            const manifest = getManifest(uri)!;
+            manifests.push(manifest);
+
+            if (!await Git.instance.isInitialized(uri)) {
+                if (await UI.git.showNotRepoWarning(manifest, "change authorization") === LABELS.BUTTON_LEARN_MORE) {
+                    context.learnMore(manifest);
+                }
+                return false;
+            }
+
+            if (!await Git.instance.isClean(uri)) {
+                if (await UI.git.showNotCleanWarning(manifest, "authorizing the app") === LABELS.BUTTON_LEARN_MORE) {
+                    context.learnMore(manifest);
+                }
+                return false;
+            }
+
+            const branch = await Git.instance.getCurrentBranchName(uri);
+
+            if (!branch) {
+                if (await UI.git.showNoCurrentBranchError(manifest) === LABELS.BUTTON_LEARN_MORE) {
+                    context.learnMore(manifest);
+                };
+                return false;
+            }
+
+            if (!await confirmBranchName(branch, manifest)) {
+                return false;
+            }
+        }
+
+        let atLeastOneSucceeded = false;
+
+        // Second pass - execute and commit
+        let index = 0;
+        for (let uri of context.uris) {
+            const manifest = manifests[index++];
+            if (!await context.operation(manifest)) {
+                // Operation signalled that nothing should be committed
+                continue;
+            }
+
+            // Stage files that need to be staged
+            const files = context.getFilesToStage(manifest);
+            for (let file of files) {
+                await this.stageFile(uri, file);
+            }
+
+            // Commit files
+            await this.commit(uri, context.getCommitMessage(manifest));
+
+            atLeastOneSucceeded = true;
+        }
+
+        return atLeastOneSucceeded;
     }
 }

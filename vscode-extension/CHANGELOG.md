@@ -15,6 +15,12 @@ their app IDs are publicly known.
 - Ninja activation events are reduced to AL Language and Show Release Notes commands. This makes sure
 that unnecessary Ninja commands are not available in the Command Palette if there are no AL folders
 open.
+- Authorization and deauthorization workflows are improved and can now handle multiple roots (apps) in
+a multi-root workspaces to authorize/de-authorize multiple apps in one go.
+### Removed
+- Reauthorization feature is removed, due to refactoring in Git-scoped operations. Reauthorizing an app
+can still be done manually by deauthorizing the app, and then authorizing it again. Attempting to
+authorize an app that's already authorized will now result in an error.
 
 ## [2.4.1] - 2022-04-30
 ### Fixed

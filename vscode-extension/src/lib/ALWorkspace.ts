@@ -13,7 +13,7 @@ export class ALWorkspace {
         return workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri))
     }
 
-    public static async pickFolder(multi: boolean): Promise<Uri[] | Uri | undefined> {
+    public static async pickFolder(multi: boolean, operationDescription?: string): Promise<Uri[] | Uri | undefined> {
         const workspaces = this.getALFolders();
         if (!workspaces || workspaces.length === 0) {
             UI.general.showNoWorkspacesOpenInfo();
@@ -32,8 +32,8 @@ export class ALWorkspace {
             }
         }));
         quickPick.placeholder = multi
-            ? "Choose AL workspace folders..."
-            : "Select an AL workspace folder...";
+            ? `Choose AL workspace folders${(operationDescription ? ` ${operationDescription}` : "")}...`
+            : `Select an AL workspace folder${(operationDescription ? ` ${operationDescription}` : "")}...`;
         quickPick.ignoreFocusOut = multi;
 
         let result = await (multi ? quickPick.pickMany() : quickPick.pickOne());
@@ -52,4 +52,3 @@ export class ALWorkspace {
         return this.pickFolder(false) as Promise<Uri | undefined>;
     }
 }
-

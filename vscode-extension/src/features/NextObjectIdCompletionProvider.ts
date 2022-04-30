@@ -3,7 +3,7 @@ import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
 import { Backend } from "../lib/Backend";
-import { AppManifest, getManifest } from "../lib/AppManifest";
+import { getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
@@ -11,6 +11,7 @@ import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext, ParserConnector } from "./ParserConnector";
+import { AppManifest } from "../lib/types";
 
 type SymbolInfo = {
     type: string;

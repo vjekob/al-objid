@@ -1,8 +1,8 @@
 import { Disposable, Event, EventEmitter, TreeDataProvider, workspace } from "vscode";
 import { ALWorkspace } from "../../lib/ALWorkspace";
-import { AppManifest, getManifest } from "../../lib/AppManifest";
+import { getManifest } from "../../lib/AppManifest";
 import { PropertyBag } from "../../lib/PropertyBag";
-import { ALRange } from "../../lib/types";
+import { ALRange, AppManifest } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
 import { ExplorerItem } from './ExplorerItem';
@@ -44,7 +44,7 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
         }
         for (let folder of folders) {
             const manifest = getManifest(folder.uri)!;
-            const watcher = workspace.createFileSystemWatcher(manifest.path);
+            const watcher = workspace.createFileSystemWatcher(manifest.ninja.path);
             watcher.onDidChange(e => this.refresh())
             this._watchers.push(watcher);
         }

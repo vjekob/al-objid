@@ -1,5 +1,4 @@
 import { commands, env, Uri, window } from "vscode";
-import { authorization } from "../lib/Authorization";
 import { URLS } from "../lib/constants";
 
 const OPTION = {
@@ -15,11 +14,7 @@ const OPTION_AGAIN = {
 };
 
 async function executeAuthorization() {
-    const context = await authorization.getAuthorizationContext();
-    if (!context) {
-        return;
-    }
-    commands.executeCommand("vjeko-al-objid.authorize-app", context.uri, context.manifest);
+    commands.executeCommand("vjeko-al-objid.authorize-app");
 }
 
 async function confirmAgain() {

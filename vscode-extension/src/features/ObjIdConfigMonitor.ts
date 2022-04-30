@@ -1,13 +1,14 @@
 import path = require("path");
 import { Disposable, RelativePattern, Uri, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { AppManifest, getManifest } from "../lib/AppManifest";
-import { authorization } from "../lib/Authorization";
+import { getManifest } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
 import { LABELS } from "../lib/constants";
+import { showDocument } from "../lib/functions";
 import { Git } from "../lib/Git";
 import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Telemetry } from "../lib/Telemetry";
+import { AppManifest } from "../lib/types";
 import { UI } from "../lib/UI";
 import { AuthorizationStatusBar } from "./AuthorizationStatusBar";
 
@@ -69,14 +70,14 @@ export class ObjIdConfigMonitor implements Disposable {
         let branch = await Git.instance.getCurrentBranchName(uri);
         if (branch !== currentBranch) {
             if (await UI.authorization.showUnauthorizedBranch(branch, manifest) === LABELS.BUTTON_LEARN_MORE) {
-                authorization.showAuthorizationBranchChangeDoc();
+                showDocument("authorization-branch-change");
             }
             return;
         }
 
         Telemetry.instance.log("critical.objIdConfigDeleted", manifest.id);
         if (await UI.authorization.showDeletedAuthorization(manifest) === LABELS.BUTTON_LEARN_MORE) {
-            authorization.showAuthorizationDeletedDoc();
+            showDocument("authorization-deleted");
         }
     }
 

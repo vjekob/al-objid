@@ -1,5 +1,5 @@
 import { ThemeIcon, TreeItemCollapsibleState, Uri } from "vscode";
-import { AppManifest } from "../../lib/AppManifest";
+import { AppManifest } from "../../lib/types";
 import { ExplorerItem } from "./ExplorerItem";
 import { ExplorerItemFactory } from "./ExplorerItemFactory";
 import { ExplorerItemType } from "./ExplorerItemType";
