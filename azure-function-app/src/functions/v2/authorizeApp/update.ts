@@ -18,11 +18,15 @@ export async function writeAppAuthorization(appId: string, gitUser: string, gitE
             key,
             valid: true,
             user: {
-                name: gitUser,
-                email: gitEMail,
                 timestamp: Date.now(),
-            },
+            } as any,
         };
+        if (gitUser) {
+            app._authorization.user.name = gitUser;
+            if (gitEMail) {
+                app._authorization.user.email = gitEMail;
+            }
+        }
 
         request.log(app, "authorize");
 

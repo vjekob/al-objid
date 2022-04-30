@@ -25,15 +25,18 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
         super(async (request) => {
             const alNinjaRequest = (request as unknown as ALNinjaRequestContext<TRequest, TBindings>);
             alNinjaRequest.log = (app, eventType, data) => {
+                const user = request.body && request.body.user;
                 const timestamp = Date.now();
                 const minTimestamp = timestamp - (4 * 60 * 60 * 1000); // Keep log entries for 4 hours
                 const log = (app._log || []).filter(entry => entry.timestamp > minTimestamp);
-                log.push({
-                    timestamp,
-                    eventType,
-                    user: request.body.user,
-                    data
-                });
+                if (user) {
+                    log.push({
+                        timestamp,
+                        eventType,
+                        user: request.body.user,
+                        data
+                    });
+                }
                 app._log = log;
             };
             let appUpdated: AppInfo | null = null;

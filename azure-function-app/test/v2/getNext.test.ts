@@ -215,6 +215,16 @@ describe("Testing function api/v2/getNext", () => {
         expect(context.res.body._appInfo.codeunit).toEqual([50000]);
     });
 
+    it("Succeeds committing next ID without previous consumption, without logging user", async () => {
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(storage.log().length).toBe(0);
+    });
+
     it("Succeeds committing next ID with previous consumption and stale log", async () => {
         const consumption = [50000, 50001, 50002, 50004];
         const type = ALObjectType.codeunit;
@@ -247,6 +257,18 @@ describe("Testing function api/v2/getNext", () => {
         expect(context.res.body._appInfo.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
     });
 
+    it("Succeeds committing next ID with previous consumption and stale log, without logging user", async () => {
+        const consumption = [50000, 50001, 50002, 50004];
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app()
+            .setConsumption(type, consumption)
+            .setLog([{ timestamp: 1, eventType: "getNext", user: "mock", data: { type: "table", id: 50000 } }]);
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(storage.log().length).toBe(0);
+    });
 
     it("Succeeds committing next ID with previous consumption and fresh log", async () => {
         const consumption = [50000, 50001, 50002, 50004];
@@ -281,6 +303,20 @@ describe("Testing function api/v2/getNext", () => {
         expect(context.res.body._appInfo.codeunit).toEqual([50000, 50001, 50002, 50003, 50004]);
     });
 
+
+    it("Succeeds committing next ID with previous consumption and fresh log, without logging user", async () => {
+        const consumption = [50000, 50001, 50002, 50004];
+        const log = [{ timestamp: Date.now(), eventType: "getNext", user: "mock", data: { type: "table", id: 50000 } }];
+        const type = ALObjectType.codeunit;
+        const storage = new StubStorage().app()
+            .setConsumption(type, consumption)
+            .setLog(log);
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, ranges, type }));
+        await getNext(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(storage.log().length).toBe(1);
+    });
 
     it("Succeeds committing next field ID to third-party enum with previous consumption", async () => {
         const consumption = [50000, 50001, 50002, 50004];

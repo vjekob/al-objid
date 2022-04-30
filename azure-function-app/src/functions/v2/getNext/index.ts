@@ -14,7 +14,7 @@ const getRealRanges = (type: string, ranges: Range[]) => {
     if (parts[0].toLowerCase() === "tableextension") {
         return ranges;
     }
-    
+
     const id = parseInt(parts[1]);
     let ownObject = false;
     for (let range of ranges) {
@@ -79,7 +79,7 @@ const getNext = new ALNinjaRequestHandler<GetNextRequest, GetNextResponse>(async
         result.updated = updateContext.updated;
         result.hasConsumption = true;
         if (result.updated) {
-        request.markAsChanged(appId, app);
+            request.markAsChanged(appId, app);
         }
     }
 

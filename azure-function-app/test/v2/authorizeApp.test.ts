@@ -49,6 +49,15 @@ describe("Testing function api/v2/authorizeApp", () => {
         expect(context.bindings.notify.authorization.valid).toStrictEqual(true);
     });
 
+    it("Authorizes a previously unauthorized app, without logging user", async () => {
+        const storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { appId: storage.appId }));
+        await authorizeApp(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(storage.log().length).toBe(0);
+    });
+
     it("Authorizes a previously unknown app", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
@@ -116,7 +125,16 @@ describe("Testing function api/v2/authorizeApp", () => {
         expect(context.bindings.notify.authorization).toBeUndefined();
     });
 
-    it("Stores username, password, and timestamp in authorization log", async () => {
+    it("De-authorizes a previously authorized app, without logging user", async () => {
+        const storage = new StubStorage().app().authorize();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("DELETE", { appId: storage.appId, authKey: storage.authKey }));
+        await authorizeApp(context, context.req);
+        expect(context.res).toBeStatus(200);
+        expect(storage.log().length).toBe(0);
+    });
+
+    it("Stores username, email, and timestamp in authorization log", async () => {
         const gitUser = "_FAKE_";
         const gitEMail = "_FAKE@MAIL_";
         let storage = new StubStorage().app();
@@ -137,6 +155,64 @@ describe("Testing function api/v2/authorizeApp", () => {
         expect(typeof contextGET.res.body.user.timestamp).toStrictEqual("number");
     });
 
+    it("Does not store username and email in authorization log when not present in payload", async () => {
+        let storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const contextPOST = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, user: "fake" }));
+        await authorizeApp(contextPOST, contextPOST.req);
+        expect(contextPOST.res).toBeStatus(200);
+        expect(storage).toHaveChanged();
+
+        const contextGET = new Mock.Context(new Mock.Request("GET", { appId: storage.appId }));
+        await authorizeApp(contextGET, contextGET.req);
+        expect(contextGET.res).toBeStatus(200);
+        expect(contextGET.res.body).toBeDefined();
+        expect(contextGET.res.body.authorized).toStrictEqual(true);
+        expect(contextGET.res.body.user).toBeDefined();
+        expect(contextGET.res.body.user.name).not.toBeDefined();
+        expect(contextGET.res.body.user.email).not.toBeDefined();
+        expect(typeof contextGET.res.body.user.timestamp).toStrictEqual("number");
+    });
+
+    it("Stores username (but not email) in authorization log", async () => {
+        const gitUser = "_FAKE_";
+        let storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const contextPOST = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, user: "fake", gitUser }));
+        await authorizeApp(contextPOST, contextPOST.req);
+        expect(contextPOST.res).toBeStatus(200);
+        expect(storage).toHaveChanged();
+
+        const contextGET = new Mock.Context(new Mock.Request("GET", { appId: storage.appId }));
+        await authorizeApp(contextGET, contextGET.req);
+        expect(contextGET.res).toBeStatus(200);
+        expect(contextGET.res.body).toBeDefined();
+        expect(contextGET.res.body.authorized).toStrictEqual(true);
+        expect(contextGET.res.body.user).toBeDefined();
+        expect(contextGET.res.body.user.name).toStrictEqual(gitUser);
+        expect(contextGET.res.body.user.email).not.toBeDefined();
+        expect(typeof contextGET.res.body.user.timestamp).toStrictEqual("number");
+    });
+
+    it("Does not store email in authorization log when username is not present", async () => {
+        const gitEMail = "_FAKE@MAIL_";
+        let storage = new StubStorage().app();
+        Mock.useStorage(storage.content);
+        const contextPOST = new Mock.Context(new Mock.Request("POST", { appId: storage.appId, user: "fake", gitEMail }));
+        await authorizeApp(contextPOST, contextPOST.req);
+        expect(contextPOST.res).toBeStatus(200);
+        expect(storage).toHaveChanged();
+
+        const contextGET = new Mock.Context(new Mock.Request("GET", { appId: storage.appId }));
+        await authorizeApp(contextGET, contextGET.req);
+        expect(contextGET.res).toBeStatus(200);
+        expect(contextGET.res.body).toBeDefined();
+        expect(contextGET.res.body.authorized).toStrictEqual(true);
+        expect(contextGET.res.body.user).toBeDefined();
+        expect(contextGET.res.body.user.name).not.toBeDefined();
+        expect(contextGET.res.body.user.email).not.toBeDefined();
+        expect(typeof contextGET.res.body.user.timestamp).toStrictEqual("number");
+    });
 
     it("Retrieves unauthorized app info", async () => {
         let storage = new StubStorage().app();
