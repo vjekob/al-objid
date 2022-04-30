@@ -1,5 +1,5 @@
-import { Range } from "vscode";
 import { ALObjectType } from "./constants";
+import { ALRange } from "./types";
 
 export interface NextObjectIdInfo {
     id: number | number[];
@@ -58,7 +58,7 @@ export type ConsumptionData = {
 };
 
 export type AppCacheInfo = {
-    _ranges: Range[],
+    _ranges: ALRange[],
     _log: EventLogEntry[],
 } & ConsumptionData;
 

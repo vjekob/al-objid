@@ -5,6 +5,11 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.4.1] - 2022-04-30
+### Fixed
+- Object ID suggestions are sorthed alphabetically, instead of following range order from the `app.json`
+app manifest file (https://github.com/vjekob/al-objid/issues/29)
+
 ## [2.4.0] - 2022-04-28
 ### Added
 - Requesting and assigning IDs from multiple ranges (https://github.com/vjekob/al-objid/issues/11)

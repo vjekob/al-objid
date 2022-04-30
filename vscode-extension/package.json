@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "2.4.0",
+	"version": "2.4.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"

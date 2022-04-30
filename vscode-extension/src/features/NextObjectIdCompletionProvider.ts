@@ -197,9 +197,11 @@ export class NextObjectIdCompletionProvider {
             }
 
             const items: NextObjectIdCompletionItem[] = [];
-            for (let id of objectId.id) {
+            for (let i = 0; i < objectId.id.length; i++) {
+                const id = objectId.id[i];
                 const objectIdCopy = { ...objectId, id };
-                items.push(new NextObjectIdCompletionItem(type, objectIdCopy, manifest, position, document.uri, { ...nextIdContext, requireId: id }));
+                const deeperContext = {...nextIdContext, requireId: id, additional: { ordinal: i }} as NextIdContext;
+                items.push(new NextObjectIdCompletionItem(type, objectIdCopy, manifest, position, document.uri, deeperContext));
             }
             return items;
         } else {

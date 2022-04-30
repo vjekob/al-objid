@@ -3,10 +3,15 @@ import { ALParserNinja } from "@vjeko.com/al-parser-ninja";
 import { ALObject } from "@vjeko.com/al-parser-types-ninja";
 import { LogLevel, output } from "./Output";
 import { CheckType } from "@vjeko.com/al-parser-ninja/dist/CheckType";
+import { ALRange } from "../lib/types";
 
 export interface NextIdContext {
     injectSemicolon: boolean;
     requireId?: number;
+    additional?: {
+        ordinal: number;
+        range: ALRange;
+    }
 }
 
 export class ParserConnector implements Disposable {

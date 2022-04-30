@@ -32,10 +32,11 @@ export class NextObjectIdCompletionItem extends CompletionItem {
 
         this._injectSemicolon = nextIdContext.injectSemicolon;
 
-        this.sortText = "0";
+        this.sortText = nextIdContext.additional ? `0.${nextIdContext.additional.ordinal / 1000}` : "0";
         this.command = this.getCompletionCommand(position, uri, type, manifest, objectId);
         this.documentation = this.getCompletionDocumentation(type, objectId);
         this.insertText = `${objectId.id}${this._injectSemicolon ? ";" : ""}`;
+        this.detail = "AL Object ID Ninja";
     }
 
     getCompletionCommand(position: Position, uri: Uri, type: string, manifest: AppManifest, objectId: NextObjectIdInfo): Command {
