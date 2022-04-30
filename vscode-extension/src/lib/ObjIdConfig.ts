@@ -48,8 +48,12 @@ export class ObjIdConfig {
     }
 
     private setComment(config: any, property: ConfigurationProperty) {
-        let value = COMMENTS[property];
-        let key = Symbol.for(`before:${property}`);
+        const value = COMMENTS[property];
+        if (!value) {
+            return;
+        }
+        
+        const key = Symbol.for(`before:${property}`);
         if (!config[key]) config[key] = [{
             type: "LineComment",
             value
@@ -68,10 +72,10 @@ export class ObjIdConfig {
     private setProperty<T>(property: ConfigurationProperty, value?: T) {
         let config = this.read();
         if (value) {
-            (config as any)[property] = value;
+            config[property] = value;
             this.setComment(config, property);
         } else {
-            delete config.authKey;
+            delete config[property];
             this.removeComment(config, property);
         }
         this.write(config);
@@ -85,6 +89,7 @@ export class ObjIdConfig {
         this.setProperty(ConfigurationProperty.AuthKey, value);
     }
 
+    /* TODO Implement custom back-end in .objIdConfig
     get backEndUrl(): string {
         return this.getProperty(ConfigurationProperty.BackEndUrl) || "";
     }
@@ -100,4 +105,5 @@ export class ObjIdConfig {
     set backEndApiKey(value: string) {
         this.setProperty(ConfigurationProperty.BackEndApiKey, value);
     }
+    */
 }

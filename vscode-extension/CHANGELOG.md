@@ -5,6 +5,12 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.5.0] - 2022-05-02
+### Changed
+- Ninja activation events are reduced to AL Language and Show Release Notes commands. This makes sure
+that unnecessary Ninja commands are not available in the Command Palette if there are no AL folders
+open.
+
 ## [2.4.1] - 2022-04-30
 ### Fixed
 - Object ID suggestions are sorthed alphabetically, instead of following range order from the `app.json`

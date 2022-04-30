@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "2.4.1",
+	"version": "2.5.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -60,10 +60,6 @@
 	],
 	"activationEvents": [
 		"onLanguage:al",
-		"onCommand:vjeko-al-objid.confirm-sync-object-ids",
-		"onCommand:vjeko-al-objid.confirm-authorize-app",
-		"onCommand:vjeko-al-objid.confirm-deauthorize-app",
-		"onCommand:vjeko-al-objid.auto-sync-object-ids",
 		"onCommand:vjeko-al-objid.show-release-notes"
 	],
 	"main": "./out/extension.js",
