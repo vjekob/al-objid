@@ -9,6 +9,7 @@ const encryptionKeys: PropertyBag<string> = {};
 const lastKnownNames: PropertyBag<string> = {};
 const uriMap: PropertyBag<Uri> = {};
 const manifestMap: PropertyBag<AppManifest> = {};
+const manifestOriginalIds: PropertyBag<string> = {};
 
 export interface AppManifest {
     encryptionKey: string;
@@ -35,7 +36,9 @@ export function getManifest(uri: Uri): AppManifest | null {
 
         manifest.path = appPath;
         const encryptionKey = AppIdCache.instance.getAppIdHash(manifest.id.replace("-", ""));
+        const originalId = manifest.id;
         manifest.id = AppIdCache.instance.getAppIdHash(manifest.id);
+        manifestOriginalIds[manifest.id] = originalId;
         lastKnownNames[manifest.id] = manifest.name;
         uriMap[manifest.id] = uri;
         manifestMap[manifest.id] = manifest;
@@ -77,4 +80,8 @@ export function getLastKnownAppName(appId: string): string {
 
 export function getManifestFromAppId(appId: string): AppManifest {
     return manifestMap[appId];
+}
+
+export function getManifestOriginalId(appId: string): string {
+    return manifestOriginalIds[appId];
 }
