@@ -39,13 +39,15 @@ export class NotificationsFromLog {
                 maxTimestamp = event.timestamp;
             }
 
-            event.user = decrypt(event.user, appId) || "Unknown user";
-            if (event.user === Config.instance.userName) {
-                continue;
-            }
+            if (event.user) {
+                event.user = decrypt(event.user, appId) || "Unknown user";
+                if (event.user === Config.instance.userName) {
+                    continue;
+                }
 
-            UI.log.showMessage(event, appName);
-            updated = true;
+                UI.log.showMessage(event, appName);
+                updated = true;
+            }
         }
 
         this._log[appId] = maxTimestamp || Date.now();

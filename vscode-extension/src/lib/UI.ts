@@ -124,6 +124,9 @@ export const UI = {
 
     log: {
         showMessage: (event: EventLogEntry, appName: string) => {
+            if (!event || !event.user) {
+                return;
+            }
             let message = "";
             switch (event.eventType) {
                 case "authorize":

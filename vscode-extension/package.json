@@ -122,6 +122,11 @@
 					"type": "string",
 					"description": "Name to be shown in notification messages. If you leave this empty, Object ID Ninja will use your OS user name (or your Git user name in future versions)."
 				},
+				"objectIdNinja.includeUserName": {
+					"type": "boolean",
+					"default": true,
+					"description": "If you don't want your user name to be sent to the back end, you can switch this option off. When you do, other developers on your team won't see notifications about object ID assignments done by you."
+				},
 				"objectIdNinja.useVerboseOutputLogging": {
 					"type": "boolean",
 					"default": false,

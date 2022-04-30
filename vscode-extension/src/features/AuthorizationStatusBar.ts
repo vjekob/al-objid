@@ -28,7 +28,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
     }
 
     private getUserInfoText(info: AuthorizedAppResponse | undefined) {
-        return info && info.user ? `${info.user.name} (${info.user.email}) at ${new Date(info.user.timestamp).toLocaleString()}` : "";
+        return info && info.user && info.user.name ? `${info.user.name} ${(info.user.email ? `(${info.user.email})` : "")} at ${new Date(info.user.timestamp).toLocaleString()}` : "";
     }
 
     private async readUserInfo(manifest: AppManifest, authKey: string) {

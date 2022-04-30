@@ -109,7 +109,7 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, 
         status: API_RESULT.NOT_SENT,
     };
 
-    if (data && typeof data === "object" && !Array.isArray(data) && data.appId) {
+    if (Config.instance.includeUserName && data && typeof data === "object" && !Array.isArray(data) && data.appId) {
         data.user = encrypt(Config.instance.userName, data.appId);
     }
 
@@ -240,13 +240,18 @@ export class Backend {
 
     static async authorizeApp(appId: string, gitUser: string, gitEMail: string, errorHandler: ErrorHandler<AuthorizationInfo>): Promise<AuthorizationInfo | undefined> {
         knownManagedApps[appId] = Promise.resolve(true);
+        const additional: any = {};
+
+        if (Config.instance.includeUserName) {
+            additional.gitUser = encrypt(gitUser, appId);
+            additional.gitEMail = encrypt(gitEMail, appId);
+        }
         const response = await sendRequest<AuthorizationInfo>(
             "/api/v2/authorizeApp",
             "POST",
             {
                 appId,
-                gitUser: encrypt(gitUser, appId),
-                gitEMail: encrypt(gitEMail, appId),
+                ...additional,
             },
             errorHandler
         );

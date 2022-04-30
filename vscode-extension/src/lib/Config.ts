@@ -64,6 +64,10 @@ export class Config extends DisposableHolder {
         return this._config.get<string>("overrideUserName") || User.username;
     }
 
+    public get includeUserName(): boolean {
+        return this.getWithDefault<boolean>("includeUserName", true);
+    }
+
     public get useVerboseOutputLogging(): boolean {
         return this.getWithDefault<boolean>("useVerboseOutputLogging", true);
     }
