@@ -165,9 +165,6 @@ export const autoSyncObjectIds = async () => {
     let result = await window.withProgress({ location: ProgressLocation.Notification }, async progress => {
         if (!workspace.workspaceFolders || !workspace.workspaceFolders.length) return autoSyncResult(AutoSyncResult.NoALFolders);
 
-        const gitExtension = extensions?.getExtension('vscode.git')?.exports;
-        const git = gitExtension?.getAPI(1);
-
         // Pick folders
         let manifests = auto
             ? ALWorkspace.getALFolders()?.map(workspace => getCachedManifestFromUri(workspace.uri))
@@ -184,7 +181,7 @@ export const autoSyncObjectIds = async () => {
         let nonGit = createNewConfig();
         setup.push(nonGit);
         for (let manifest of manifests) {
-            let root = await Git.instance.getRepositoryRootUri(git, manifest.ninja.uri);
+            let root = await Git.instance.getRepositoryRootUri(manifest.ninja.uri);
             if (!root) {
                 nonGit.folders.push(manifest.ninja.uri);
                 continue;

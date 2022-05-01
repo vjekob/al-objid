@@ -8,6 +8,7 @@ import { Telemetry } from "../lib/Telemetry";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { Git } from "../lib/Git";
 import { showDocument } from "../lib/functions";
+import { getAppNamesFromManifests } from "../lib/AppManifest";
 
 export const deauthorizeApp = async () => {
     const manifests = await ALWorkspace.pickFolders("to deauthorize");
@@ -49,7 +50,7 @@ export const deauthorizeApp = async () => {
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument("authorization-git"),
-        getCommitMessage: (manifest) => `AL Object ID Ninja app deauthorization for ${manifest.name}`
+        getCommitMessage: (manifests) => `AL Object ID Ninja app deauthorization for ${getAppNamesFromManifests(manifests)}`
     });
 
     if (success) {

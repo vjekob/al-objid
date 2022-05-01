@@ -92,8 +92,8 @@ export const UI = {
             window.showWarningMessage(`There is no Git repository for application "${manifest.name}. You cannot ${operation} for an app unless you use Git to track it.`, LABELS.BUTTON_LEARN_MORE),
         showNotCleanWarning: async (manifest: AppManifest, operation: string) =>
             window.showWarningMessage(`Git repository for application "${manifest.name}" is not clean. Please commit, stash, or undo your changes before ${operation}."`, LABELS.BUTTON_LEARN_MORE),
-        showNoCurrentBranchError: async (manifest: AppManifest) =>
-            window.showErrorMessage(`We could not detect your current branch for application ${manifest.name}. This can happen if you use an old version of Git or if your repository is in detached head state. Please, make sure to use latest version of Git, or to check out to an actual branch, and then retry.`, LABELS.BUTTON_LEARN_MORE),
+        showNoCurrentBranchError: async (name: string) =>
+            window.showErrorMessage(`We could not detect your current branch for ${name}. This can happen if you use an old version of Git or if your repository is in detached head state. Please, make sure to use latest version of Git, or to check out to an actual branch, and then retry.`, LABELS.BUTTON_LEARN_MORE),
     },
 
     authorization: {

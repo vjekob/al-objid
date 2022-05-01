@@ -78,3 +78,14 @@ export function getAppEncryptionKey(appId: string): string {
 export function getCachedManifestFromAppId(appId: string): AppManifest {
     return manifestMap[appId];
 }
+
+export function getAppNamesFromManifests(manifests: AppManifest[]): string {
+    switch (manifests.length) {
+        case 1:
+            return manifests[0].name;
+        case 2:
+            return manifests.map(manifest => manifest.name).join(" and ");
+        default:
+            return `${manifests.slice(0, manifests.length - 1).map(manifest => manifest.name).join(", ")}, and ${manifests[manifests.length - 1].name}`;
+    }
+}

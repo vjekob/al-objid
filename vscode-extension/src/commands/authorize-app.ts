@@ -8,6 +8,7 @@ import { Telemetry } from "../lib/Telemetry";
 import { Git } from "../lib/Git";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { showDocument } from "../lib/functions";
+import { getAppNamesFromManifests } from "../lib/AppManifest";
 
 export const authorizeApp = async () => {
     const manifests = await ALWorkspace.pickFolders("to authorize");
@@ -28,7 +29,7 @@ export const authorizeApp = async () => {
                     return false;
                 }
 
-                await UI.authorization.showAlreadyAuthorizedError(manifest);
+                UI.authorization.showAlreadyAuthorizedError(manifest);
                 return true;
             });
 
@@ -42,7 +43,7 @@ export const authorizeApp = async () => {
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument("authorization-git"),
-        getCommitMessage: (manifest) => `AL Object ID Ninja app authorization for ${manifest.name}`
+        getCommitMessage: (manifests) => `AL Object ID Ninja app authorization for ${getAppNamesFromManifests(manifests)}`
     });
 
     if (success) {

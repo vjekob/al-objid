@@ -50,6 +50,12 @@ export interface GitCleanOperationContext {
     manifests: AppManifest[];
     operation: (manifest: AppManifest) => Promise<boolean>;
     getFilesToStage: (manifest: AppManifest) => string[];
-    learnMore: (manifest: AppManifest) => any,
-    getCommitMessage: (manifest: AppManifest) => string
+    learnMore: (manifests: AppManifest | AppManifest[]) => any,
+    getCommitMessage: (manifests: AppManifest[]) => string
+}
+
+export interface GitTopLevelPathContext {
+    uri: Uri;
+    manifests: AppManifest[];
+    branch: string;
 }
