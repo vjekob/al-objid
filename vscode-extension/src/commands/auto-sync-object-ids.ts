@@ -1,5 +1,4 @@
-import { ObjIdConfig } from "./../lib/ObjIdConfig";
-import { env, extensions, ProgressLocation, Uri, window, workspace } from "vscode";
+import { env, ProgressLocation, Uri, window, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { AuthorizedAppConsumption, ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS, URLS } from "../lib/constants";
@@ -129,7 +128,7 @@ function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manif
         let manifest = manifests.find(manifest => manifest.ninja.uri.fsPath === key)!;
         result.push({
             appId: manifest.id,
-            authKey: ObjIdConfig.instance(manifest.ninja.uri).authKey,
+            authKey: manifest.ninja.config.authKey,
             ids: consumptions[key]
         });
     }

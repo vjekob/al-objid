@@ -1,7 +1,6 @@
 import { Command, CompletionItem, CompletionItemKind, MarkdownString, Position, Range, TextEdit, Uri, workspace, WorkspaceEdit } from "vscode";
 import { Backend } from "../lib/Backend";
 import { AppManifest } from "../lib/types";
-import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
@@ -32,7 +31,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
 
         this._injectSemicolon = nextIdContext.injectSemicolon;
 
-        const objIdConfig = ObjIdConfig.instance(manifest.ninja.uri);
+        const objIdConfig = manifest.ninja.config;
         const rangeInfo = getRangeForId(objectId.id as number, objIdConfig.idRanges);
 
         this.sortText = nextIdContext.additional ? `0.${nextIdContext.additional.ordinal / 1000}` : "0";
@@ -50,7 +49,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             title: "",
             arguments: [async () => {
                 output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`, LogLevel.Info);
-                const { authKey } = ObjIdConfig.instance(uri);
+                const { authKey } = manifest.ninja.config;
                 const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, authKey, objectId.id as number);
                 const notChanged = !realId || !realId.available || this.isIdEqual(realId.id, objectId.id as number);
                 Telemetry.instance.log("getNextNo-commit", manifest.id, notChanged ? undefined : "different");

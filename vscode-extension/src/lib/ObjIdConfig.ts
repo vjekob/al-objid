@@ -22,20 +22,12 @@ const COMMENTS: PropertyBag<string> = {
 };
 
 export class ObjIdConfig {
-    //#region Singleton map
-    private static _instances: PropertyBag<ObjIdConfig> = {};
+    private _path: fs.PathLike;
 
-    public static instance(uri: Uri): ObjIdConfig {
-        return this._instances[uri.fsPath] || (this._instances[uri.fsPath] = new ObjIdConfig(uri));
-    }
-
-    private constructor(uri: Uri) {
+    public constructor(uri: Uri) {
         const folder = workspace.getWorkspaceFolder(uri);
         this._path = path.join(folder!.uri.fsPath, CONFIG_FILE_NAME);
     }
-    //#endregion
-
-    private _path: fs.PathLike;
 
     private read(): any {
         try {

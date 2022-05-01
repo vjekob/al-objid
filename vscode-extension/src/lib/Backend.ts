@@ -13,7 +13,6 @@ import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataP
 import { LABELS } from './constants';
 import { env, Uri } from 'vscode';
 import { Telemetry } from './Telemetry';
-import { ObjIdConfig } from './ObjIdConfig';
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -195,7 +194,7 @@ export class Backend {
         }
 
         const manifest = getCachedManifestFromAppId(appId);
-        const objIdConfig = ObjIdConfig.instance(manifest.ninja.uri);
+        const objIdConfig = manifest.ninja.config;
         const additionalOptions = {} as NextObjectIdInfo;
         if (Config.instance.requestPerRange || objIdConfig.idRanges.length > 0) {
             additionalOptions.perRange = true;

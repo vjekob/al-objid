@@ -4,6 +4,7 @@ import path = require("path");
 import * as fs from "fs";
 import { ALRange, AppManifest } from "./types";
 import { PropertyBag } from "./PropertyBag";
+import { ObjIdConfig } from "./ObjIdConfig";
 
 const encryptionKeys: PropertyBag<string> = {};
 const manifestMap: PropertyBag<AppManifest> = {};
@@ -25,7 +26,8 @@ export function getManifest(uri: Uri): AppManifest | null {
         manifest.ninja = {
             unsafeOriginalId: manifest.id,
             uri: folderUri,
-            path: appPath
+            path: appPath,
+            config: new ObjIdConfig(folderUri),
         };
         manifest.id = AppIdCache.instance.getAppIdHash(manifest.ninja.unsafeOriginalId);
 

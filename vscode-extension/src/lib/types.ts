@@ -1,4 +1,5 @@
 import { Uri } from "vscode";
+import { ObjIdConfig } from "./ObjIdConfig";
 
 export interface ALRange {
     from: number;
@@ -42,6 +43,11 @@ export interface AppManifest {
          * Fully qualified file system path to the `app.json` file
          */
         path: string;
+
+        /**
+         * AL Object ID Ninja configuration (from `.objidconfig` file)
+         */
+        config: ObjIdConfig;
     }
 }
 

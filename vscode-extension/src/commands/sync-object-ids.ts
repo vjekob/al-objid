@@ -3,7 +3,6 @@ import { getCachedManifestFromAppId } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { LogLevel, output } from "../features/Output";
 import { ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
@@ -35,7 +34,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     }
     uri = manifest.ninja.uri;
 
-    let authKey = ObjIdConfig.instance(uri).authKey;
+    let authKey = manifest.ninja.config.authKey;
 
     if (!options?.merge && !options?.skipQuestion) {
         let consumption = await Backend.getConsumption(appId, authKey);
@@ -52,7 +51,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     const consumption: ConsumptionInfo = getActualConsumption(objects);
 
     Telemetry.instance.log("syncIds", appId);
-    if (await Backend.syncIds(appId, consumption, !!(options?.merge), ObjIdConfig.instance(uri).authKey || "")) {
+    if (await Backend.syncIds(appId, consumption, !!(options?.merge), manifest.ninja.config.authKey || "")) {
         UI.sync.showSuccessInfo(manifest);
     }
 }

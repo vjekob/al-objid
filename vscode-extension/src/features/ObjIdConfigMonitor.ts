@@ -6,7 +6,6 @@ import { Backend } from "../lib/Backend";
 import { LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { Git } from "../lib/Git";
-import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Telemetry } from "../lib/Telemetry";
 import { AppManifest } from "../lib/types";
 import { UI } from "../lib/UI";
@@ -61,7 +60,7 @@ export class ObjIdConfigMonitor implements Disposable {
 
     private async onDeleted(manifest: AppManifest, uri: Uri) {
         const currentBranch = this._currentBranches[manifest.id];
-        const { authKey } = ObjIdConfig.instance(uri);
+        const { authKey } = manifest.ninja.config;
         const info = await Backend.getAuthInfo(manifest.id, authKey);
         if (!info?.authorized) {
             return;

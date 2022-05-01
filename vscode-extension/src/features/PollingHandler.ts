@@ -2,7 +2,6 @@ import { NotificationsFromLog } from './NotificationsFromLog';
 import { Disposable, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
-import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { PropertyBag } from "../lib/PropertyBag";
 import { FolderAuthorization } from "../lib/BackendTypes";
@@ -39,7 +38,7 @@ export class PollingHandler implements Disposable {
         for (let folder of folders) {
             let manifest = getManifest(folder.uri)!;
             this._appName[manifest.id] = manifest.name;
-            let { authKey } = ObjIdConfig.instance(folder.uri);
+            let { authKey } = manifest.ninja.config;
             payload.push({ appId: manifest.id, authKey });
         }
 

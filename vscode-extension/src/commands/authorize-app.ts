@@ -1,7 +1,6 @@
-import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { LogLevel, output } from "../features/Output";
-import { CONFIG_FILE_NAME, ObjIdConfig } from "../lib/ObjIdConfig";
+import { CONFIG_FILE_NAME } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
@@ -37,7 +36,7 @@ export const authorizeApp = async () => {
                 return false;
             }
 
-            ObjIdConfig.instance(manifest.ninja.uri).authKey = response.authKey;
+            manifest.ninja.config.authKey = response.authKey;
             UI.authorization.showAuthorizationSuccessfulInfo(manifest);
             return true;
         },

@@ -1,7 +1,6 @@
-import { Uri } from "vscode";
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { LogLevel, output } from "../features/Output";
-import { CONFIG_FILE_NAME, ObjIdConfig } from "../lib/ObjIdConfig";
+import { CONFIG_FILE_NAME } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
@@ -21,13 +20,13 @@ export const deauthorizeApp = async () => {
         operation: async (manifest) => {
             output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
 
-            if (!ObjIdConfig.instance(manifest.ninja.uri).authKey) {
+            if (!manifest.ninja.config.authKey) {
                 UI.authorization.showNotAuthorizedWarning(manifest);
                 return false;
             }
 
             Telemetry.instance.log("deauthorize", manifest.id);
-            let response = await Backend.deauthorizeApp(manifest.id, ObjIdConfig.instance(manifest.ninja.uri).authKey || "", async (response) => {
+            let response = await Backend.deauthorizeApp(manifest.id, manifest.ninja.config.authKey || "", async (response) => {
                 switch (response.error.statusCode) {
                     case 401:
                         UI.authorization.showIncorrectKeyWarning(manifest);
@@ -44,7 +43,7 @@ export const deauthorizeApp = async () => {
                 return false;
             }
 
-            ObjIdConfig.instance(manifest.ninja.uri).authKey = "";
+            manifest.ninja.config.authKey = "";
             UI.authorization.showDeauthorizationSuccessfulInfo(manifest);
             return true;
         },

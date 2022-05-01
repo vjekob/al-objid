@@ -1,7 +1,6 @@
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
-import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
 
@@ -11,8 +10,8 @@ export async function copyRanges() {
         return;
     }
 
-    const objIdConfig = ObjIdConfig.instance(manifest.ninja.uri);
-    const existingRangesJson = JSON.stringify(objIdConfig.idRanges);
+    const ranges = manifest.ninja.config.idRanges;
+    const existingRangesJson = JSON.stringify(ranges);
     const newRanges = manifest.idRanges.map(range => ({ ...range, description: `From ${range.from} to ${range.to}` }) as NinjaALRange);
     const newRangesJson = JSON.stringify(newRanges);
 
@@ -20,7 +19,7 @@ export async function copyRanges() {
         return;
     }
 
-    if (objIdConfig.idRanges.length > 0) {
+    if (ranges.length > 0) {
         switch (await UI.copyRanges.rangesExistConfirmation(manifest)) {
             case LABELS.COPY_RANGES_ARE_YOU_SURE.YES:
                 // Continue with defining ranges
@@ -35,5 +34,5 @@ export async function copyRanges() {
         }
     }
 
-    ObjIdConfig.instance(manifest.ninja.uri).idRanges = manifest.idRanges.map(range => ({ ...range, description: `From ${range.from} to ${range.to}` }) as NinjaALRange);
+    manifest.ninja.config.idRanges = manifest.idRanges.map(range => ({ ...range, description: `From ${range.from} to ${range.to}` }) as NinjaALRange);
 }

@@ -5,7 +5,6 @@ import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
 import { Backend } from "../lib/Backend";
 import { getManifest } from "../lib/AppManifest";
 import { UI } from "../lib/UI";
-import { ObjIdConfig } from "../lib/ObjIdConfig";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
@@ -185,7 +184,7 @@ export class NextObjectIdCompletionProvider {
         const manifest = getManifest(document.uri);
         if (!manifest) return;
 
-        const { authKey } = ObjIdConfig.instance(document.uri);
+        const { authKey } = manifest.ninja.config;
         const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, authKey);
         Telemetry.instance.log("getNextNo-fetch", manifest.id);
 
