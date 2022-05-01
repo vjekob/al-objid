@@ -4,18 +4,21 @@ import * as fs from "fs";
 import { LogLevel, Output } from "../features/Output";
 import { stringify, parse } from "comment-json";
 import { PropertyBag } from "./PropertyBag";
+import { NinjaALRange } from "./types";
 
 enum ConfigurationProperty {
     AuthKey = "authKey",
     AppPoolId = "appPoolId",
     BackEndUrl = "backEndUrl",
     BackEndApiKey = "backEndApiKey",
+    Ranges = "idRanges",
 }
 
 export const CONFIG_FILE_NAME = ".objidconfig";
 
 const COMMENTS: PropertyBag<string> = {
-    authKey: "This is the authorization key for all back-end communication. Do not modify or delete this value!"
+    [ConfigurationProperty.AuthKey]: "This is the authorization key for all back-end communication. DO NOT MODIFY OR DELETE THIS VALUE!",
+    [ConfigurationProperty.Ranges]: "You can customize and describe your logical ranges here"
 };
 
 export class ObjIdConfig {
@@ -56,7 +59,7 @@ export class ObjIdConfig {
         const key = Symbol.for(`before:${property}`);
         if (!config[key]) config[key] = [{
             type: "LineComment",
-            value
+            value: ` ${value}`,
         }];
     }
 
@@ -87,6 +90,14 @@ export class ObjIdConfig {
 
     set authKey(value: string) {
         this.setProperty(ConfigurationProperty.AuthKey, value);
+    }
+
+    get idRanges(): NinjaALRange[] {
+        return this.getProperty(ConfigurationProperty.Ranges) || [];
+    }
+
+    set idRanges(value: NinjaALRange[]) {
+        this.setProperty(ConfigurationProperty.Ranges, value);
     }
 
     /* TODO Implement custom back-end in .objIdConfig

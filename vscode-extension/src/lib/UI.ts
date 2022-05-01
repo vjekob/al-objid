@@ -117,6 +117,11 @@ export const UI = {
             window.showWarningMessage(`The ${branch} branch of ${manifest.name} does not contain authorization file and you won't be able to assign new object IDs.`, LABELS.BUTTON_LEARN_MORE),
     },
 
+    copyRanges: {
+        rangesExistConfirmation: async (manifest: AppManifest) =>
+            window.showQuickPick(Object.values(LABELS.COPY_RANGES_ARE_YOU_SURE), { placeHolder: `Logical ranges are already defined for ${manifest.name}. Do you want to overwrite them?` })
+    },
+
     log: {
         showMessage: (event: EventLogEntry, appName: string) => {
             if (!event || !event.user) {

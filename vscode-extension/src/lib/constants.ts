@@ -61,6 +61,12 @@ export const LABELS = {
         INTERACTIVE: "Interactive (ask about folders and branches)",
         LEARN_MORE: "Learn more about auto-syncing"
     },
+
+    COPY_RANGES_ARE_YOU_SURE: {
+        YES: "Yes, overwrite existing logical ranges",
+        NO: "No, I have changed my mind",
+        LEARN_MORE: "Learn more about logical ranges",
+    },
 };
 
 /**

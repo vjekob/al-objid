@@ -92,6 +92,10 @@
 			{
 				"command": "vjeko-al-objid.show-release-notes",
 				"title": "Ninja: Show Release Notes"
+			},
+			{
+				"command": "vjeko-al-objid.copy-ranges",
+				"title": "Ninja: Copy ranges from app.json to .objidconfig"
 			}
 		],
 		"configuration": {

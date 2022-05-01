@@ -23,6 +23,7 @@ import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { Telemetry } from "./lib/Telemetry";
 import { ParserConnector } from "./features/ParserConnector";
 import { ObjIdConfigMonitor } from "./features/ObjIdConfigMonitor";
+import { copyRanges } from "./commands/copy-ranges";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -36,6 +37,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.confirm-deauthorize-app", confirmDeauthorizeApp),
 		commands.registerCommand("vjeko-al-objid.auto-sync-object-ids", autoSyncObjectIds),
 		commands.registerCommand("vjeko-al-objid.show-release-notes", showReleaseNotes),
+		commands.registerCommand("vjeko-al-objid.copy-ranges", copyRanges),
 
 		// Internal commands
 		commands.registerCommand("vjeko-al-objid.commit-suggestion", commitSuggestionCommand),

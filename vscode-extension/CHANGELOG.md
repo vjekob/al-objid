@@ -5,12 +5,15 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## [2.5.0] - 2022-05-02
+## [2.5.0] - 2022-05-03
 ### Added
 - Configuration option `objectIdNinja.includeUserName` is re-introduced. Even though sensitive information
 is encrypted, the encryption is both symmetric and easy to decrypt for anyone with access to app ID. Some
 companies prefer not storing any sensitive information in the back end due to privacy policies and because
 their app IDs are publicly known.
+- Logical ranges and range descriptions can be defined in `.objidconfig` configuration file. This allows
+more flexibility during assigning new IDs. Logical ranges are automatically represented in Range Explorer
+and IntelliSense auto-suggestion drop-down list.
 ### Changed
 - Ninja activation events are reduced to AL Language and Show Release Notes commands. This makes sure
 that unnecessary Ninja commands are not available in the Command Palette if there are no AL folders

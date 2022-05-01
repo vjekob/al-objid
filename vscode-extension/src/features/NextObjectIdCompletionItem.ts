@@ -6,6 +6,7 @@ import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext } from "./ParserConnector";
+import { getRangeForId } from "../lib/functions";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 
@@ -31,11 +32,16 @@ export class NextObjectIdCompletionItem extends CompletionItem {
 
         this._injectSemicolon = nextIdContext.injectSemicolon;
 
+        const objIdConfig = ObjIdConfig.instance(manifest.ninja.uri);
+        const rangeInfo = getRangeForId(objectId.id as number, objIdConfig.idRanges);
+
         this.sortText = nextIdContext.additional ? `0.${nextIdContext.additional.ordinal / 1000}` : "0";
         this.command = this.getCompletionCommand(position, uri, type, manifest, objectId);
         this.documentation = this.getCompletionDocumentation(type, objectId);
         this.insertText = `${objectId.id}${this._injectSemicolon ? ";" : ""}`;
         this.detail = "AL Object ID Ninja";
+        this.label = rangeInfo ? `${objectId.id} (${rangeInfo.description})` : this.insertText;
+        this.kind = CompletionItemKind.Constant;
     }
 
     getCompletionCommand(position: Position, uri: Uri, type: string, manifest: AppManifest, objectId: NextObjectIdInfo): Command {

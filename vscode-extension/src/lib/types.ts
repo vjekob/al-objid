@@ -5,9 +5,8 @@ export interface ALRange {
     to: number;
 }
 
-export interface NinjaRange extends ALRange {
-    shortDescription: string;
-    fullDescription: string;
+export interface NinjaALRange extends ALRange {
+    description: string;
 }
 
 /**

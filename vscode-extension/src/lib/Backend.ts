@@ -13,6 +13,7 @@ import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataP
 import { LABELS } from './constants';
 import { env, Uri } from 'vscode';
 import { Telemetry } from './Telemetry';
+import { ObjIdConfig } from './ObjIdConfig';
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -193,11 +194,16 @@ export class Backend {
             }
         }
 
+        const manifest = getCachedManifestFromAppId(appId);
+        const objIdConfig = ObjIdConfig.instance(manifest.ninja.uri);
         const additionalOptions = {} as NextObjectIdInfo;
-        if (Config.instance.requestPerRange) {
+        if (Config.instance.requestPerRange || objIdConfig.idRanges.length > 0) {
             additionalOptions.perRange = true;
             if (commit && require) {
                 additionalOptions.require = require;
+            }
+            if (objIdConfig.idRanges.length > 0) {
+                ranges = objIdConfig.idRanges;
             }
         }
 
