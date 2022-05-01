@@ -5,6 +5,8 @@ import { LogLevel, Output } from "../features/Output";
 import { stringify, parse } from "comment-json";
 import { PropertyBag } from "./PropertyBag";
 import { NinjaALRange } from "./types";
+import { UI } from "./UI";
+import { LABELS, TIME } from "./constants";
 
 enum ConfigurationProperty {
     AuthKey = "authKey",
@@ -21,12 +23,16 @@ const COMMENTS: PropertyBag<string> = {
     [ConfigurationProperty.Ranges]: "You can customize and describe your logical ranges here"
 };
 
-export class ObjIdConfig {
-    private _path: fs.PathLike;
+const idRangeWarnings: PropertyBag<number> = {};
 
-    public constructor(uri: Uri) {
+export class ObjIdConfig {
+    private readonly _path: fs.PathLike;
+    private readonly _name: string;
+
+    public constructor(uri: Uri, name: string) {
         const folder = workspace.getWorkspaceFolder(uri);
         this._path = path.join(folder!.uri.fsPath, CONFIG_FILE_NAME);
+        this._name = name;
     }
 
     private read(): any {
@@ -84,8 +90,66 @@ export class ObjIdConfig {
         this.setProperty(ConfigurationProperty.AuthKey, value);
     }
 
+    private getIdRanges() {
+        return this.getProperty<NinjaALRange[]>(ConfigurationProperty.Ranges) || [];
+    }
+
+    private getValidRanges(ranges: NinjaALRange[]): NinjaALRange[] {
+        const result = [];
+        for (let range of ranges) {
+            if (typeof range.from === "number" && typeof range.to === "number" && range.from && range.to) {
+                result.push(range);
+            } else {
+                const key = `${this._path}:${range.from}:${range.to}:${range.description}`;
+                if ((idRangeWarnings[key] || 0) < Date.now() - TIME.FIVE_MINUTES) {
+                    UI.ranges.showInvalidRangeTypeError('', range).then(() => {
+                        // When somebody dismisses the error, we want to throw it again ASAP (unless fixed)
+                        delete idRangeWarnings[key];
+                    });
+                }
+            }
+        }
+        return result;
+    }
+
     get idRanges(): NinjaALRange[] {
-        return this.getProperty(ConfigurationProperty.Ranges) || [];
+        const ranges = this.getIdRanges().map(range => ({ ...range }));
+        ranges.forEach(range => {
+            if ((typeof range.from !== "number") || (typeof range.to !== "number") || (!range.to) || (!range.from)) {
+                // This is a problem, but it's reported elsewhere
+                return;
+            }
+
+            if (range.to < range.from) {
+                const { from, to, description } = range;
+                const key = `${this._path}:${range.from}:${range.to}:${range.description}`;
+                if ((idRangeWarnings[key] || 0) < Date.now() - TIME.FIVE_MINUTES) {
+                    idRangeWarnings[key] = Date.now();
+                    UI.ranges.showInvalidRangeFromToError('', range).then(result => {
+                        // When somebody dismisses the error, we want to throw it again ASAP (unless fixed)
+                        delete idRangeWarnings[key];
+
+                        if (result === LABELS.FIX) {
+                            let fixed = false;
+                            const ranges = this.getIdRanges();
+                            for (let original of ranges) {
+                                if (original.from === from && original.to === to && original.description === description) {
+                                    original.from = to;
+                                    original.to = from;
+                                    fixed = true;
+                                }
+                            }
+                            if (fixed) {
+                                this.idRanges = ranges;
+                            }
+                        }
+                    });
+                }
+                range.from = to;
+                range.to = from;
+            }
+        });
+        return this.getValidRanges(ranges);
     }
 
     set idRanges(value: NinjaALRange[]) {

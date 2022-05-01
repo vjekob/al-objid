@@ -1,6 +1,6 @@
 import { LogLevel, output } from "../features/Output";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { NinjaALRange } from "../lib/types";
+import { ALRange, NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
 
 export async function consolidateRanges() {
@@ -9,8 +9,8 @@ export async function consolidateRanges() {
         return;
     }
 
-    const ranges = manifest.idRanges;
-    const logicalRanges = manifest.ninja.config.idRanges;
+    const ranges = manifest.idRanges.sort((left, right) => left.from - right.from);
+    const logicalRanges = manifest.ninja.config.idRanges.sort((left, right) => left.from - right.from);
 
     if (logicalRanges.length === 0) {
         UI.ranges.showNoLogicalRangesMessage(manifest);

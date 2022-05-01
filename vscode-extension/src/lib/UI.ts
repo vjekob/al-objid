@@ -1,6 +1,6 @@
 import { window } from "vscode";
 import { LogLevel, Output } from "../features/Output";
-import { ALRange, AppManifest } from "./types";
+import { ALRange, AppManifest, NinjaALRange } from "./types";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { EXTENSION_NAME, LABELS } from "./constants";
 import { EventLogEntry } from "./BackendTypes";
@@ -126,6 +126,10 @@ export const UI = {
             window.showInformationMessage(`All ranges in app.json for ${manifest.name} are represented as logical ranges in .objidconfig.`),
         showRangesConsolidatedMessage: async (manifest: AppManifest, ranges: ALRange[]) =>
             window.showInformationMessage(`${ranges.length} new ranges are created in .objidconfig for ${manifest.name}`),
+        showInvalidRangeFromToError: async (name: string, range: NinjaALRange) =>
+            window.showErrorMessage(`Range ${range.description ? (`${range.description} (${range.from}..${range.to})`) : (`${range.from}..${range.to}`)} in ${name} has "to" lower than "from". "from" must be lower, and "to" must be higher.`, LABELS.FIX),
+        showInvalidRangeTypeError: async (name: string, range: NinjaALRange) =>
+            window.showErrorMessage(`Range ${range.description ? (`${range.description} (${range.from}..${range.to})`) : (`${range.from}..${range.to}`)} in ${name} is invalid. Both "from" and "to" must be non-zero numbers.`, "OK"),
     },
 
     log: {
