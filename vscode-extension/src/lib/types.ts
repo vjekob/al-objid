@@ -47,7 +47,7 @@ export interface AppManifest {
 }
 
 export interface GitCleanOperationContext {
-    uris: Uri[];
+    manifests: AppManifest[];
     operation: (manifest: AppManifest) => Promise<boolean>;
     getFilesToStage: (manifest: AppManifest) => string[];
     learnMore: (manifest: AppManifest) => any,

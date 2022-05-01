@@ -7,6 +7,7 @@ import { PropertyBag } from "./PropertyBag";
 
 const encryptionKeys: PropertyBag<string> = {};
 const manifestMap: PropertyBag<AppManifest> = {};
+const uriMap: WeakMap<Uri, AppManifest> = new WeakMap();
 
 interface AppManifestBackwardCompatibility extends AppManifest {
     idRange: ALRange;
@@ -16,18 +17,19 @@ export function getManifest(uri: Uri): AppManifest | null {
     const folder = workspace.getWorkspaceFolder(uri);
     if (!folder) return null;
 
+    const folderUri = folder?.uri;
+
     const appPath = path.join(folder.uri.fsPath, "app.json");
     try {
         const manifest = JSON.parse(fs.readFileSync(appPath).toString()) as AppManifestBackwardCompatibility;
         manifest.ninja = {
             unsafeOriginalId: manifest.id,
-            uri,
+            uri: folderUri,
             path: appPath
         };
         manifest.id = AppIdCache.instance.getAppIdHash(manifest.ninja.unsafeOriginalId);
 
         const encryptionKey = AppIdCache.instance.getAppIdHash(manifest.ninja.unsafeOriginalId.replace("-", ""));
-        manifestMap[manifest.id] = manifest;
 
         setAppEncryptionKey(manifest.id, encryptionKey);
 
@@ -35,6 +37,11 @@ export function getManifest(uri: Uri): AppManifest | null {
             manifest.idRanges = [manifest.idRange];
         }
 
+        manifestMap[manifest.id] = manifest;
+        uriMap.set(uri, manifest);
+        if (uri.fsPath !== folderUri.fsPath) {
+            uriMap.set(folderUri, manifest);
+        }
         return manifest;
     }
     catch {
@@ -52,10 +59,22 @@ function setAppEncryptionKey(appId: string, key: string) {
     encryptionKeys[appId] = key.substring(numeric, numeric + 32);
 }
 
+/**
+ * This function returns a cached manifest from an URI. It is not safe to just call this
+ * function without actually knowing that the URI is a valid AL app root URI. It is only
+ * safe to call this function in conjunction with previously calling `ALWorkspace.getALFolders`
+ * or when the same URI has previously been used with `getManifest`.
+ * @param uri URI for which manifest is to be returned
+ * @returns AppManifest for the URI
+ */
+export function getCachedManifestFromUri(uri: Uri): AppManifest {
+    return uriMap.get(uri)!;
+}
+
 export function getAppEncryptionKey(appId: string): string {
     return encryptionKeys[appId];
 }
 
-export function getManifestFromAppId(appId: string): AppManifest {
+export function getCachedManifestFromAppId(appId: string): AppManifest {
     return manifestMap[appId];
 }

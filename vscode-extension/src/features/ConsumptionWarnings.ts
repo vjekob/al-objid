@@ -1,6 +1,6 @@
 import { ConsumptionData } from "../lib/BackendTypes";
 import { PropertyBag } from '../lib/PropertyBag';
-import { getManifestFromAppId } from '../lib/AppManifest';
+import { getCachedManifestFromAppId } from '../lib/AppManifest';
 import { UI } from "../lib/UI";
 import { LABELS } from "../lib/constants";
 import { ExtensionContext } from "vscode";
@@ -33,7 +33,7 @@ export class ConsumptionWarnings {
         }
         this._warningLevels[warningId] = remaining;
         this._shownWarnings[warningId] = true;
-        const manifest = getManifestFromAppId(appId);
+        const manifest = getCachedManifestFromAppId(appId);
         const result = await UI.nextId.showNumbersAboutToRunOut(manifest.name, type, remaining);
         delete this._shownWarnings[warningId];
 
@@ -44,7 +44,7 @@ export class ConsumptionWarnings {
     }
 
     public checkRemainingIds(appId: string, consumption: ConsumptionData) {
-        const manifest = getManifestFromAppId(appId);
+        const manifest = getCachedManifestFromAppId(appId);
         const available = manifest.idRanges.reduce((previous, current) => previous + Math.max(current.to - current.from, 0) + 1, 0);
 
         // The formula below will work like this:

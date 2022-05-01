@@ -8,7 +8,7 @@ import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
 import { ConsumptionCache } from '../features/ConsumptionCache';
-import { getManifestFromAppId } from './AppManifest';
+import { getCachedManifestFromAppId } from './AppManifest';
 import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataProvider';
 import { LABELS } from './constants';
 import { env, Uri } from 'vscode';
@@ -122,7 +122,7 @@ async function sendRequest<T>(path: string, method: HttpMethod, data: any = {}, 
             if (appInfo) {
                 const { appId } = data;
                 const { _log, ...consumptions } = appInfo;
-                const manifest = getManifestFromAppId(appId);
+                const manifest = getCachedManifestFromAppId(appId);
                 NotificationsFromLog.instance.updateLog(appId, _log as EventLogEntry[], manifest.name);
                 if (ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData)) {
                     ExplorerTreeDataProvider.instance.refresh();

@@ -1,6 +1,7 @@
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
-import { getManifest } from "./AppManifest";
+import { getManifest, getCachedManifestFromUri } from "./AppManifest";
 import { QuickPickWrapper } from "./QuickPickWrapper";
+import { AppManifest } from "./types";
 import { UI } from "./UI";
 
 export class ALWorkspace {
@@ -13,22 +14,25 @@ export class ALWorkspace {
         return workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri))
     }
 
-    public static async pickFolder(multi: boolean, operationDescription?: string): Promise<Uri[] | Uri | undefined> {
+    static async pickFolderOrFolders(multi: boolean, operationDescription?: string): Promise<AppManifest[] | AppManifest | undefined> {
         const workspaces = this.getALFolders();
         if (!workspaces || workspaces.length === 0) {
             UI.general.showNoWorkspacesOpenInfo();
             return;
         }
 
-        if (workspaces.length === 1) return workspaces[0].uri;
+        if (workspaces.length === 1) {
+            const manifest = getCachedManifestFromUri(workspaces[0].uri)!;
+            return multi ? [manifest] : manifest;
+        }
 
-        let quickPick = new QuickPickWrapper<Uri>(workspaces.map(w => {
-            let manifest = getManifest(w.uri);
+        let quickPick = new QuickPickWrapper<AppManifest>(workspaces.map(w => {
+            let manifest = getCachedManifestFromUri(w.uri);
             return {
                 label: w.name,
                 detail: `$(folder) ${w.uri.fsPath}`,
                 description: `${manifest!.name} (${manifest!.version})`,
-                data: w.uri
+                data: manifest
             }
         }));
         quickPick.placeholder = multi
@@ -38,17 +42,27 @@ export class ALWorkspace {
 
         let result = await (multi ? quickPick.pickMany() : quickPick.pickOne());
         if (!result) return undefined;
-        return multi
-            ? result as Uri[]
-            : result as Uri;
+        return result;
     }
 
-    public static async selectWorkspaceFolder(uri?: Uri): Promise<Uri | undefined> {
-        if (uri && this.isALWorkspace(uri)) return workspace.getWorkspaceFolder(uri)!.uri;
+    public static pickFolder(operationDescription?: string): Promise<AppManifest | undefined> {
+        return this.pickFolderOrFolders(false, operationDescription) as Promise<AppManifest | undefined>;
+    }
+
+    public static pickFolders(operationDescription?: string): Promise<AppManifest[] | undefined> {
+        return this.pickFolderOrFolders(true, operationDescription) as Promise<AppManifest[] | undefined>;
+    }
+
+    public static async selectWorkspaceFolder(uri?: Uri): Promise<AppManifest | undefined> {
+        if (uri && this.isALWorkspace(uri)) {
+            return getCachedManifestFromUri(uri);
+        }
 
         uri = window.activeTextEditor?.document.uri;
-        if (uri && this.isALWorkspace(uri)) return workspace.getWorkspaceFolder(uri)!.uri;
+        if (uri && this.isALWorkspace(uri)) {
+            return getCachedManifestFromUri(uri);
+        }
 
-        return this.pickFolder(false) as Promise<Uri | undefined>;
+        return this.pickFolder();
     }
 }

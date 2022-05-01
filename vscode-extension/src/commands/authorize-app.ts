@@ -10,13 +10,13 @@ import { ALWorkspace } from "../lib/ALWorkspace";
 import { showDocument } from "../lib/functions";
 
 export const authorizeApp = async () => {
-    const uris = await ALWorkspace.pickFolder(true, "to authorize") as Uri[];
-    if (!uris) {
+    const manifests = await ALWorkspace.pickFolders("to authorize");
+    if (!manifests) {
         return;
     }
 
     const success = await Git.instance.executeCleanOperation({
-        uris,
+        manifests,
         operation: async (manifest) => {
             output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
 

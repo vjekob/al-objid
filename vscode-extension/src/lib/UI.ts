@@ -10,10 +10,6 @@ const CONSTANTS = {
         CANNOT_COMMUNICATE: "Cannot communicate with the back-end API.",
     },
 
-    SYNC: {
-        NOTHING_TO_SYNC: "There is nothing to synchronize."
-    },
-
     AUTHORIZATION: {
         INCORRECT_KEY: "The authorization key you have provided is incorrect.",
         CANNOT_DEAUTHORIZE: "You cannot deauthorize app"
@@ -25,7 +21,7 @@ export const UI = {
         showNoWorkspacesOpenInfo: () =>
             window.showInformationMessage("There are no AL folders open. Nothing to do."),
         showReleaseNotes: (version: string) =>
-            window.showInformationMessage(`AL Object ID Ninja has been updated to version ${version}. Happy developing!`,
+            window.showInformationMessage(`AL Object ID Ninja has been updated to version ${version}.`,
                 LABELS.BUTTON_SHOW_RELEASE_NOTES),
         showReleaseNotesNotAvailable: (version: string) =>
             window.showInformationMessage(`Release notes are not available for version ${version}`),
@@ -53,10 +49,8 @@ export const UI = {
     },
 
     sync: {
-        showNoManifestError: () =>
-            window.showErrorMessage(`There is no app.json file in this workspace. ${CONSTANTS.SYNC.NOTHING_TO_SYNC}`),
-        showSuccessInfo: () =>
-            window.showInformationMessage("Object IDs are now in sync with the Azure back end. Happy developing!"),
+        showSuccessInfo: (manifest?: AppManifest) =>
+            window.showInformationMessage(`Object IDs${manifest ? ` for ${manifest.name}` : ""} are now in sync with the Azure back end.`),
         showAreYouSure: async () =>
             window.showQuickPick(Object.values(LABELS.SYNC_ARE_YOU_SURE), {
                 placeHolder: "Are you sure you want to replace existing object ID assignments?"

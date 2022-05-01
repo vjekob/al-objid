@@ -1,5 +1,5 @@
 import { Uri } from "vscode";
-import { getManifest, getManifestFromAppId } from "../lib/AppManifest";
+import { getCachedManifestFromAppId } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { ALWorkspace } from "../lib/ALWorkspace";
@@ -22,24 +22,19 @@ interface SyncOptions {
  */
 export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     let uri: Uri | undefined;
-    let manifest: AppManifest | null;
+    let manifest: AppManifest | undefined;
     if (!appId) {
-        uri = await ALWorkspace.selectWorkspaceFolder(options?.uri);
-        if (!uri) return;
-
-        manifest = getManifest(uri);
-
+        manifest = await ALWorkspace.selectWorkspaceFolder(options?.uri);
         if (!manifest) {
-            UI.sync.showNoManifestError();
             return;
         }
 
         appId = manifest.id;
     } else {
-        manifest = getManifestFromAppId(appId);
+        manifest = getCachedManifestFromAppId(appId);
     }
     uri = manifest.ninja.uri;
-    
+
     let authKey = ObjIdConfig.instance(uri).authKey;
 
     if (!options?.merge && !options?.skipQuestion) {
@@ -58,6 +53,6 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
 
     Telemetry.instance.log("syncIds", appId);
     if (await Backend.syncIds(appId, consumption, !!(options?.merge), ObjIdConfig.instance(uri).authKey || "")) {
-        UI.sync.showSuccessInfo();
+        UI.sync.showSuccessInfo(manifest);
     }
 }

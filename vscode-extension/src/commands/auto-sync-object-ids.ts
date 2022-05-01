@@ -8,10 +8,11 @@ import { getObjectDefinitions, getWorkspaceFolderFiles, updateActualConsumption 
 import { PropertyBag } from "../lib/PropertyBag";
 import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
-import { getManifest } from "../lib/AppManifest";
+import { getCachedManifestFromUri } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
 import { LogLevel, output } from "../features/Output";
 import { Telemetry } from "../lib/Telemetry";
+import { AppManifest } from "../lib/types";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -122,14 +123,13 @@ function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>) {
     }
 }
 
-function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, folders: Uri[]): AuthorizedAppConsumption[] {
+function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manifests: AppManifest[]): AuthorizedAppConsumption[] {
     let result: AuthorizedAppConsumption[] = [];
     for (let key of Object.keys(consumptions)) {
-        let uri = folders.find(folder => folder.fsPath === key)!;
-        let manifest = getManifest(uri)!;
+        let manifest = manifests.find(manifest => manifest.ninja.uri.fsPath === key)!;
         result.push({
             appId: manifest.id,
-            authKey: ObjIdConfig.instance(uri).authKey,
+            authKey: ObjIdConfig.instance(manifest.ninja.uri).authKey,
             ids: consumptions[key]
         });
     }
@@ -169,10 +169,12 @@ export const autoSyncObjectIds = async () => {
         const git = gitExtension?.getAPI(1);
 
         // Pick folders
-        let folders = auto
-            ? ALWorkspace.getALFolders()?.map(workspace => workspace.uri)
-            : await ALWorkspace.pickFolder(true) as Uri[] | undefined;
-        if (!folders || !folders.length) return autoSyncResult(AutoSyncResult.SilentFailure);
+        let manifests = auto
+            ? ALWorkspace.getALFolders()?.map(workspace => getCachedManifestFromUri(workspace.uri))
+            : await ALWorkspace.pickFolders();
+        if (!manifests || !manifests.length) {
+            return autoSyncResult(AutoSyncResult.SilentFailure);
+        }
 
         // Find git repos that match picked folders
         progress.report({ message: "Connecting to Git..." });
@@ -181,16 +183,16 @@ export const autoSyncObjectIds = async () => {
         let setup: AutoSyncConfiguration[] = [];
         let nonGit = createNewConfig();
         setup.push(nonGit);
-        for (let uri of folders) {
-            let root = await Git.instance.getRepositoryRootUri(git, uri);
+        for (let manifest of manifests) {
+            let root = await Git.instance.getRepositoryRootUri(git, manifest.ninja.uri);
             if (!root) {
-                nonGit.folders.push(uri);
+                nonGit.folders.push(manifest.ninja.uri);
                 continue;
             }
 
             let repoPath = root.fsPath;
             if (!repoFolders[repoPath]) repoFolders[repoPath] = [];
-            repoFolders[repoPath].push(uri);
+            repoFolders[repoPath].push(manifest.ninja.uri);
 
             if (repos.find(repo => repo.fsPath === repoPath)) continue;
 
@@ -284,7 +286,7 @@ export const autoSyncObjectIds = async () => {
             await syncSingleConfiguration(config, consumptions);
         }
         compressConsumptions(consumptions);
-        let payload = authorizeConsumptions(consumptions, folders);
+        let payload = authorizeConsumptions(consumptions, manifests);
 
         Telemetry.instance.log("autoSyncIds");
         await Backend.autoSyncIds(payload, false);

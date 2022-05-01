@@ -10,13 +10,13 @@ import { Git } from "../lib/Git";
 import { showDocument } from "../lib/functions";
 
 export const deauthorizeApp = async () => {
-    const uris = await ALWorkspace.pickFolder(true, "to deauthorize") as Uri[];
-    if (!uris) {
+    const manifests = await ALWorkspace.pickFolders("to deauthorize");
+    if (!manifests) {
         return;
     }
 
     const success = await Git.instance.executeCleanOperation({
-        uris,
+        manifests,
         operation: async (manifest) => {
             output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
 
@@ -52,5 +52,7 @@ export const deauthorizeApp = async () => {
         getCommitMessage: (manifest) => `AL Object ID Ninja app deauthorization for ${manifest.name}`
     });
 
-    AuthorizationStatusBar.instance.updateStatusBar();
+    if (success) {
+        AuthorizationStatusBar.instance.updateStatusBar();
+    }
 };
