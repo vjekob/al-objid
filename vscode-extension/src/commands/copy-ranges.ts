@@ -20,7 +20,7 @@ export async function copyRanges() {
     }
 
     if (ranges.length > 0) {
-        switch (await UI.copyRanges.rangesExistConfirmation(manifest)) {
+        switch (await UI.ranges.showLogicalRangesExistConfirmation(manifest)) {
             case LABELS.COPY_RANGES_ARE_YOU_SURE.YES:
                 // Continue with defining ranges
                 break;

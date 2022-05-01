@@ -1,6 +1,6 @@
 import { window } from "vscode";
 import { LogLevel, Output } from "../features/Output";
-import { AppManifest } from "./types";
+import { ALRange, AppManifest } from "./types";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { EXTENSION_NAME, LABELS } from "./constants";
 import { EventLogEntry } from "./BackendTypes";
@@ -117,9 +117,15 @@ export const UI = {
             window.showWarningMessage(`The ${branch} branch of ${manifest.name} does not contain authorization file and you won't be able to assign new object IDs.`, LABELS.BUTTON_LEARN_MORE),
     },
 
-    copyRanges: {
-        rangesExistConfirmation: async (manifest: AppManifest) =>
-            window.showQuickPick(Object.values(LABELS.COPY_RANGES_ARE_YOU_SURE), { placeHolder: `Logical ranges are already defined for ${manifest.name}. Do you want to overwrite them?` })
+    ranges: {
+        showLogicalRangesExistConfirmation: async (manifest: AppManifest) =>
+            window.showQuickPick(Object.values(LABELS.COPY_RANGES_ARE_YOU_SURE), { placeHolder: `Logical ranges are already defined for ${manifest.name}. Do you want to overwrite them?` }),
+        showNoLogicalRangesMessage: async (manifest: AppManifest) =>
+            window.showInformationMessage(`No logical ranges are defined for ${manifest.name}. There is nothing to consolidate.`),
+        showRangeFullyRepresentedMessage: async (manifest: AppManifest) =>
+            window.showInformationMessage(`All ranges in app.json for ${manifest.name} are represented as logical ranges in .objidconfig.`),
+        showRangesConsolidatedMessage: async (manifest: AppManifest, ranges: ALRange[]) =>
+            window.showInformationMessage(`${ranges.length} new ranges are created in .objidconfig for ${manifest.name}`),
     },
 
     log: {

@@ -124,3 +124,74 @@ range is numerically the first one), and finally the *Other* range.
 > Note: Changing order of ranges in the `.objidconfig` file will reflect immediately on the IntelliSense
 auto-suggest drop-down list, but not for the Range Explorer view. To reflect changes to ranges in the
 Range Explorer view, you must restart VS Code.
+
+## Consolidating logical ranges
+
+It is possible that logical ranges defined in `.objidconfig` get out of sync. For example, you can edit
+the original ranges in `.objidconfig` manually, or you could add more ranges or change existing ranges in
+`app.json`. If this happens, not all IDs avaialble through `app.json` will be assignable by Ninja.
+
+To fix the problem, you can use the `Ninja: Consolidate logical ranges` command.
+
+For example, if these are ranges defined in `app.json`:
+
+```JSON
+"idRanges": [
+  {
+    "from": 50100,
+    "to": 50109
+  },
+  {
+    "from": 60000,
+    "to": 70000
+  }
+]
+```
+
+... and these are defined in `.objidconfig`:
+
+```JSON
+"idRanges": [
+  {
+    "from": 60000,
+    "to": 60099,
+    "description": "Finance"
+  },
+  {
+    "from": 60100,
+    "to": 60199,
+    "description": "Sales"
+  },
+  {
+    "from": 60200,
+    "to": 60299,
+    "description": "Purchases"
+  },
+  {
+    "from": 50100,
+    "to": 50109,
+    "description": "Customer range"
+  },
+  {
+    "from": 60350,
+    "to": 60799,
+    "description": "Random customizations"
+  }
+]
+```
+
+Then running the `Ninja: Consolidate logical ranges` command will result in these additional ranges
+defined in `.objidconfig`:
+
+```JSON
+{
+  "from": 60300,
+  "to": 60349,
+  "description": "Free range #1"
+},
+{
+  "from": 60800,
+  "to": 70000,
+  "description": "Free range #2"
+}
+```

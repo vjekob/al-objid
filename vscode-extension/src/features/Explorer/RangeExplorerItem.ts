@@ -15,9 +15,15 @@ export class RangeExplorerItem extends ExplorerItem {
     private _range: ALRange;
 
     constructor(appId: string, range: ALRange) {
+        super("", "", ""); // All three will be configured immediately
+
         const description = (range as NinjaALRange).description || "";
         const addition = description ? ` (${description})` : "";
-        super(`${range.from}..${range.to}${addition}`, `From ${range.from} to ${range.to}${addition}`);
+        
+        this.label = `${range.from}..${range.to}`;
+        this.tooltip = `From ${range.from} to ${range.to}${addition}`;
+        this.description = description;
+
         this.collapsibleState = TreeItemCollapsibleState.Expanded;
         this.iconPath = { light, dark };
         this._appId = appId;
