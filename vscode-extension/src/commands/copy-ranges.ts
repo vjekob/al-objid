@@ -31,6 +31,8 @@ export async function copyRanges() {
                 // Show document and exit without doing anything
                 showDocument("logical-ranges");
                 return;
+            default:
+                return;
         }
     }
 
