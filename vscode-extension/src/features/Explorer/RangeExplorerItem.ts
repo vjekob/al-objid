@@ -1,6 +1,6 @@
 import path = require("path");
 import { TreeItemCollapsibleState, Uri } from "vscode";
-import { ALRange } from "../../lib/types";
+import { ALRange, NinjaALRange } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
 import { ExplorerItem } from "./ExplorerItem";
 import { ExplorerItemFactory } from "./ExplorerItemFactory";
@@ -15,7 +15,9 @@ export class RangeExplorerItem extends ExplorerItem {
     private _range: ALRange;
 
     constructor(appId: string, range: ALRange) {
-        super(`${range.from}..${range.to}`, `From ${range.from} to ${range.to}`);
+        const description = (range as NinjaALRange).description || "";
+        const addition = description ? ` (${description})` : "";
+        super(`${range.from}..${range.to}${addition}`, `From ${range.from} to ${range.to}${addition}`);
         this.collapsibleState = TreeItemCollapsibleState.Expanded;
         this.iconPath = { light, dark };
         this._appId = appId;

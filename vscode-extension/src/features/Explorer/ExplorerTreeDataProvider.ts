@@ -137,7 +137,9 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
             type: ExplorerItemType.workspace,
         };
 
-        for (let range of manifest.idRanges) {
+        const ranges = manifest.ninja.config.idRanges.length ? manifest.ninja.config.idRanges : manifest.idRanges;
+
+        for (let range of ranges) {
             this.buildRangeItemsFromCache(manifest.id, range);
         }
     }

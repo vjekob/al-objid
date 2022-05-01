@@ -26,6 +26,7 @@ export class WorkspaceExplorerItem extends ExplorerItem {
     hasChildren = true;
 
     override getChildren(): ExplorerItem[] {
-        return this._manifest.idRanges.map(range => ExplorerItemFactory.range(this._manifest.id, range));
+        const ranges = this._manifest.ninja.config.idRanges.length ? this._manifest.ninja.config.idRanges : this._manifest.idRanges;
+        return ranges.map(range => ExplorerItemFactory.range(this._manifest.id, range));
     }
 }

@@ -1,4 +1,3 @@
-import { Uri } from "vscode";
 import { ExplorerItem } from "./ExplorerItem";
 import { ExplorerItemType } from "./ExplorerItemType";
 

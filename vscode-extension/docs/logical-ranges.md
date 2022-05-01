@@ -77,3 +77,50 @@ To help you kick-start your logical range definitions, you can use the `Ninja: C
 .objidconfig` command:
 
 ![Copying ranges to .objidconfig](https://github.com/vjekob/al-objid/blob/master/doc/images/copy-ranges.gif?raw=true)
+
+## Ordering logical ranges
+
+The order of logical ranges declared in the `.objidconfig` file is the order in which suggestions are
+ordered in the IntelliSense auto-suggest drop-down list, as well as in the Range Explorer view. If you
+want to prioritize certain ranges on top of others, then you should list those ranges first. For example:
+
+```JSON
+{
+  //You can customize and describe your logical ranges here
+  "idRanges": [
+    {
+      "from": 60000,
+      "to": 60099,
+      "description": "Finance"
+    },
+    {
+      "from": 60100,
+      "to": 60199,
+      "description": "Sales"
+    },
+    {
+      "from": 60200,
+      "to": 60299,
+      "description": "Purchases"
+    },
+    {
+      "from": 50100,
+      "to": 50109,
+      "description": "Customer range"
+    },
+    {
+      "from": 61000,
+      "to": 69999,
+      "description": "Other"
+    }
+  ]
+}
+```
+
+The configuration above will make sure that suggestions are first shown for the *Finance* range, then for
+the *Sales* range, then for the *Purchases* range, then for the *Customer range* range (even though that
+range is numerically the first one), and finally the *Other* range.
+
+> Note: Changing order of ranges in the `.objidconfig` file will reflect immediately on the IntelliSense
+auto-suggest drop-down list, but not for the Range Explorer view. To reflect changes to ranges in the
+Range Explorer view, you must restart VS Code.
