@@ -23,7 +23,7 @@ let syncDisabled: PropertyBag<boolean> = {};
 let syncSkipped = 0;
 let stopAsking = false;
 
-async function syncIfChosen(manifest: AppManifest, choice: Promise<string | undefined>) {
+export async function syncIfChosen(manifest: AppManifest, choice: Promise<string | undefined>) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
             commands.executeCommand("vjeko-al-objid.sync-object-ids", {

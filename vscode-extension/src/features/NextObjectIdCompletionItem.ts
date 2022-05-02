@@ -5,12 +5,16 @@ import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext } from "./ParserConnector";
-import { getRangeForId } from "../lib/functions";
+import { showDocument } from "../lib/functions";
+import { UI } from "../lib/UI";
+import { DOCUMENTS, LABELS } from "../lib/constants";
+import { syncIfChosen } from "./NextObjectIdCompletionProvider";
 
 export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
 
 export class NextObjectIdCompletionItem extends CompletionItem {
     private _injectSemicolon: boolean = false;
+    private _range: NinjaALRange | undefined;
 
     private isIdEqual(left: number | number[], right: number) {
         let leftAsArray = left as number[];
@@ -30,6 +34,8 @@ export class NextObjectIdCompletionItem extends CompletionItem {
         super(`${objectId.id}${nextIdContext.injectSemicolon ? ";" : ""}`, CompletionItemKind.Constant);
 
         this._injectSemicolon = nextIdContext.injectSemicolon;
+        this._range = range;
+
         this.sortText = nextIdContext.additional ? `0.${nextIdContext.additional.ordinal / 1000}` : "0";
         this.command = this.getCompletionCommand(position, uri, type, manifest, objectId);
         this.documentation = this.getCompletionDocumentation(type, objectId);
@@ -47,13 +53,29 @@ export class NextObjectIdCompletionItem extends CompletionItem {
                 output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`, LogLevel.Info);
                 const { authKey } = manifest.ninja.config;
                 const realId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, true, authKey, objectId.id as number);
-                const notChanged = !realId || !realId.available || this.isIdEqual(realId.id, objectId.id as number);
+                const notChanged = !realId || this.isIdEqual(realId.id, objectId.id as number);
                 Telemetry.instance.log("getNextNo-commit", manifest.id, notChanged ? undefined : "different");
-                if (notChanged) return;
+                if (notChanged) {
+                    return;
+                }
                 output.log(`Another user has consumed ${type} ${objectId.id} in the meantime. Retrieved new: ${type} ${realId.id}`, LogLevel.Info);
 
+                let replacement = `${realId.id}`;
+                if (!realId.available) {
+                    if (this._range) {
+                        UI.nextId.showNoMoreInLogicalRangeWarning(this._range.description).then(result => {
+                            if (result === LABELS.BUTTON_LEARN_MORE) {
+                                showDocument(DOCUMENTS.LOGICAL_RANGES);
+                            }
+                        });
+                    } else {
+                        syncIfChosen(manifest, UI.nextId.showNoMoreNumbersWarning());
+                    }
+                    replacement = "";
+                }
+
                 let replace = new WorkspaceEdit();
-                replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), `${realId.id}`)]);
+                replace.set(uri, [TextEdit.replace(new Range(position, position.translate(0, objectId.id.toString().length)), replacement)]);
                 workspace.applyEdit(replace);
             }]
         };

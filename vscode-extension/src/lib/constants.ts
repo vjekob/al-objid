@@ -82,3 +82,11 @@ export const TIME = {
     FIVE_MINUTES: 5 * 60 * 1000,
     TEN_MINUTES: 10 * 60 * 1000,
 };
+
+export const DOCUMENTS = {
+    LOGICAL_RANGES: "logical-ranges",
+    AUTHORIZATION_GIT: "authorization-git",
+    AUTHORIZED: "authorized",
+    AUTHORIZATION_BRANCH_CHANGE: "authorization-branch-change",
+    AUTHORIZATION_DELETED: "authorization-deleted",
+}

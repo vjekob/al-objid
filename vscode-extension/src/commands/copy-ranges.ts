@@ -1,5 +1,5 @@
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { LABELS } from "../lib/constants";
+import { DOCUMENTS, LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
@@ -29,7 +29,7 @@ export async function copyRanges() {
                 return;
             case LABELS.COPY_RANGES_ARE_YOU_SURE.LEARN_MORE:
                 // Show document and exit without doing anything
-                showDocument("logical-ranges");
+                showDocument(DOCUMENTS.LOGICAL_RANGES);
                 return;
             default:
                 return;

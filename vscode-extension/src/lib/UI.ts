@@ -85,6 +85,8 @@ export const UI = {
                 LABELS.BUTTON_DONT_ASK,
                 "Keep reminding me for each app"
             ),
+        showNoMoreInLogicalRangeWarning: async (name: string) =>
+            window.showWarningMessage(`No more numbers are available in logical range ${name} that you selected. Please retry with a different range, or reconfigure your logical ranges to include more numbers in the ${name} range.`, LABELS.BUTTON_LEARN_MORE),
     },
 
     git: {

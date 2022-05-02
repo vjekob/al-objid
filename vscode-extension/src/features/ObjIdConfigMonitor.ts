@@ -3,7 +3,7 @@ import { Disposable, RelativePattern, Uri, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getManifest } from "../lib/AppManifest";
 import { Backend } from "../lib/Backend";
-import { LABELS } from "../lib/constants";
+import { DOCUMENTS, LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { Git } from "../lib/Git";
 import { Telemetry } from "../lib/Telemetry";
@@ -69,14 +69,14 @@ export class ObjIdConfigMonitor implements Disposable {
         let branch = await Git.instance.getCurrentBranchName(uri);
         if (branch !== currentBranch) {
             if (await UI.authorization.showUnauthorizedBranch(branch, manifest) === LABELS.BUTTON_LEARN_MORE) {
-                showDocument("authorization-branch-change");
+                showDocument(DOCUMENTS.AUTHORIZATION_BRANCH_CHANGE);
             }
             return;
         }
 
         Telemetry.instance.log("critical.objIdConfigDeleted", manifest.id);
         if (await UI.authorization.showDeletedAuthorization(manifest) === LABELS.BUTTON_LEARN_MORE) {
-            showDocument("authorization-deleted");
+            showDocument(DOCUMENTS.AUTHORIZATION_DELETED);
         }
     }
 
