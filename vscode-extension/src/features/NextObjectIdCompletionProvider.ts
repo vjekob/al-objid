@@ -11,6 +11,7 @@ import { PropertyBag } from "../lib/PropertyBag";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext, ParserConnector } from "./ParserConnector";
 import { AppManifest } from "../lib/types";
+import { getRangeForId } from "../lib/functions";
 
 type SymbolInfo = {
     type: string;
@@ -197,11 +198,20 @@ export class NextObjectIdCompletionProvider {
             }
 
             const items: NextObjectIdCompletionItem[] = [];
+            const logicalNames: string[] = [];
+            const objIdConfig = manifest.ninja.config;    
             for (let i = 0; i < objectId.id.length; i++) {
                 const id = objectId.id[i];
+                const range = getRangeForId(id as number, objIdConfig.idRanges);
+                if (range && range.description) {
+                    if (logicalNames.includes(range.description)) {
+                        continue;
+                    }
+                    logicalNames.push(range.description);
+                }
                 const objectIdCopy = { ...objectId, id };
                 const deeperContext = {...nextIdContext, requireId: id, additional: { ordinal: i }} as NextIdContext;
-                items.push(new NextObjectIdCompletionItem(type, objectIdCopy, manifest, position, document.uri, deeperContext));
+                items.push(new NextObjectIdCompletionItem(type, objectIdCopy, manifest, position, document.uri, deeperContext, range));
             }
             return items;
         } else {

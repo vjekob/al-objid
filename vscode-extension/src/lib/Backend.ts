@@ -13,6 +13,8 @@ import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataP
 import { LABELS } from './constants';
 import { env, Uri } from 'vscode';
 import { Telemetry } from './Telemetry';
+import { getRangeForId } from './functions';
+import { ALRange, NinjaALRange } from './types';
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
@@ -186,7 +188,7 @@ async function isKnownManagedApp(appId: string, forceCheck: boolean = false): Pr
 }
 
 export class Backend {
-    static async getNextNo(appId: string, type: string, ranges: any, commit: boolean, authKey: string, require?: number): Promise<NextObjectIdInfo | undefined> {
+    static async getNextNo(appId: string, type: string, ranges: ALRange[], commit: boolean, authKey: string, require?: number): Promise<NextObjectIdInfo | undefined> {
         if (!await isKnownManagedApp(appId)) {
             if (!commit) {
                 knownManagedApps[appId] = Promise.resolve(true);
@@ -203,6 +205,13 @@ export class Backend {
             }
             if (objIdConfig.idRanges.length > 0) {
                 ranges = objIdConfig.idRanges;
+                if (commit && require) {
+                    // When committing, and we use logical ranges, then filter out the ranges to only the same logical range (identified by name)
+                    const currentRange = getRangeForId(require, ranges as NinjaALRange[]);
+                    if (currentRange) {
+                        ranges = (ranges as NinjaALRange[]).filter((range) => currentRange.description ? range.description === currentRange.description : true);
+                    }
+                }
             }
         }
 

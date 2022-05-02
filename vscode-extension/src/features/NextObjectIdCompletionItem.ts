@@ -1,6 +1,6 @@
 import { Command, CompletionItem, CompletionItemKind, MarkdownString, Position, Range, TextEdit, Uri, workspace, WorkspaceEdit } from "vscode";
 import { Backend } from "../lib/Backend";
-import { AppManifest } from "../lib/types";
+import { AppManifest, NinjaALRange } from "../lib/types";
 import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
@@ -26,20 +26,16 @@ export class NextObjectIdCompletionItem extends CompletionItem {
         return false;
     }
 
-    constructor(type: string, objectId: NextObjectIdInfo, manifest: AppManifest, position: Position, uri: Uri, nextIdContext: NextIdContext) {
+    constructor(type: string, objectId: NextObjectIdInfo, manifest: AppManifest, position: Position, uri: Uri, nextIdContext: NextIdContext, range?: NinjaALRange) {
         super(`${objectId.id}${nextIdContext.injectSemicolon ? ";" : ""}`, CompletionItemKind.Constant);
 
         this._injectSemicolon = nextIdContext.injectSemicolon;
-
-        const objIdConfig = manifest.ninja.config;
-        const rangeInfo = getRangeForId(objectId.id as number, objIdConfig.idRanges);
-
         this.sortText = nextIdContext.additional ? `0.${nextIdContext.additional.ordinal / 1000}` : "0";
         this.command = this.getCompletionCommand(position, uri, type, manifest, objectId);
         this.documentation = this.getCompletionDocumentation(type, objectId);
         this.insertText = `${objectId.id}${this._injectSemicolon ? ";" : ""}`;
         this.detail = "AL Object ID Ninja";
-        this.label = rangeInfo ? `${objectId.id} (${rangeInfo.description})` : this.insertText;
+        this.label = range && range.description ? `${objectId.id} (${range.description})` : this.insertText;
         this.kind = CompletionItemKind.Constant;
     }
 

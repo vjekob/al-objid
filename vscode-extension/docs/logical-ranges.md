@@ -58,6 +58,29 @@ This is an example of an `.objidconfig` configuration file that declares logical
 }
 ```
 
+## Multiple number ranges per logical range
+
+A logical range is not just a single range of numbers delimited by `from` and `to` but encompasses all
+number ranges with the same `description` property. For example, the configuration below represents a
+single logical range:
+
+```JSON
+    {
+      "from": 60100,
+      "to": 60199,
+      "description": "Sales"
+    },
+    {
+      "from": 60550,
+      "to": 60599,
+      "description": "Sales"
+    }
+```
+
+This matters when assigning new numbers, because IntelliSense will auto-suggest only one number for
+the `Sales` logical range, it will not offer two numbers from two different number ranges. This allows
+for great flexibility when defining ranges and does not limit you to a single numeric range.
+
 ## Using logical ranges
 
 When you declare logical ranges in your `.objidconfig` configuration file, every time you request a new
@@ -69,6 +92,43 @@ object ID, you will see multiple ID suggestions, one per range:
 `idRanges` property, then AL Object ID Ninja will **always** suggest IDs per range, regardless of the
 `objectIdNinja.requestPerRange` setting. **Logical ranges declared in `.objidconfig` always take
 precendent over your VS Code User or Workspace settings.**
+
+## How number assignment works when logical ranges are used
+
+Ninja assigns new numbers in a two-step process: first, you request the next number auto-suggestion which
+is shown in your IntelliSense auto-suggest drop-down list; and second, when you accept the auto-suggestion
+by selecting the number from auto-suggest drop-down list. Until one user selects the auto-suggested next
+ID, multiple users may see the same suggested number, but Ninja makes sure that each user receives a
+unique new object ID when they complete the auto-suggestion by selecting the suggested number in the list.
+In a multi-user scenario, this is what it looks like:
+
+![Number assignment in multi-user scenario](https://github.com/vjekob/al-objid/blob/master/doc/images/assigning-id-multiuser.gif?raw=true)
+
+When you don't have logical ranges (and when Ninja is configured not to request new IDs per range), then
+Ninja will propose a single next ID which is always the lowest unused ID from the ranges defined in your
+`app.json`. Without logical ranges, Ninja will consider all ID ranges defined in `app.json` as equal, and
+when one range is consumed, it will suggest the next number from the next free range.
+
+However, when you have logical ranges, and you accept the auto-suggested ID from the drop-down list, then
+Ninja will require the next ID to actually be assigned from the range you selected. If that range happens
+to be fully consumed at the moment you accept the suggestion, then Ninja will not be able to suggest the
+next number.
+
+For example, consider this scenario. You have two logical ranges, Sales (50000..50099) and `Purchases`
+(50100..50199). You want to assign a new number and Ninja offers two choices:
+
+![Two suggestions](https://github.com/vjekob/al-objid/blob/master/doc/images/logical-ranges-example1.png?raw=true)
+
+Imagine that at the same time you are creating your new codeunit, another developer on your team is also
+creating a new codeunit and wants to assign its number from the Sales logical range. Both of you will see
+exactly the same suggestions for Sales and Purchase ranges. If the other user selects the Sales range,
+they will consume the last available number in the Sales range (50099). If you now also accept the Sales
+range, Ninja will not assign any number to your object, and will behave as if there are no more numbers
+avaiable.
+
+> Keep in mind: Ninja will always respect your logical range choice when assigning a new number, and will
+never assign a new number from a different logical range than the one you selected when accepting an ID
+suggested by Ninja.
 
 ## Copying ranges from `app.json` to `.objidconfig`
 
