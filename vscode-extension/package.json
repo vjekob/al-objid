@@ -67,7 +67,8 @@
 		"commands": [
 			{
 				"command": "vjeko-al-objid.confirm-sync-object-ids",
-				"title": "Ninja: Synchronize Object IDs with Azure Back End",
+				"category": "Ninja",
+				"title": "Synchronize Object IDs with Azure Back End",
 				"icon": {
 					"dark": "images/share-dark.svg",
 					"light": "images/share-light.svg"
@@ -75,15 +76,18 @@
 			},
 			{
 				"command": "vjeko-al-objid.confirm-authorize-app",
-				"title": "Ninja: Authorize AL App"
+				"category": "Ninja",
+				"title": "Authorize AL App"
 			},
 			{
 				"command": "vjeko-al-objid.confirm-deauthorize-app",
-				"title": "Ninja: Deauthorize AL App"
+				"category": "Ninja",
+				"title": "Deauthorize AL App"
 			},
 			{
 				"command": "vjeko-al-objid.auto-sync-object-ids",
-				"title": "Ninja: Automatically Synchronize Object IDs for Entire Workspace",
+				"category": "Ninja",
+				"title": "Automatically Synchronize Object IDs for Entire Workspace",
 				"icon": {
 					"dark": "images/share-all-dark.svg",
 					"light": "images/share-all-light.svg"
@@ -91,15 +95,18 @@
 			},
 			{
 				"command": "vjeko-al-objid.show-release-notes",
-				"title": "Ninja: Show Release Notes"
+				"category": "Ninja",
+				"title": "Show Release Notes"
 			},
 			{
 				"command": "vjeko-al-objid.copy-ranges",
-				"title": "Ninja: Copy ranges from app.json to .objidconfig"
+				"category": "Ninja",
+				"title": "Copy ranges from app.json to .objidconfig"
 			},
 			{
 				"command": "vjeko-al-objid.consolidate-ranges",
-				"title": "Ninja: Consolidate logical ranges"
+				"category": "Ninja",
+				"title": "Consolidate logical ranges"
 			}
 		],
 		"configuration": {
