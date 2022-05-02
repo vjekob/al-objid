@@ -1,6 +1,5 @@
-import { LogLevel, output } from "../features/Output";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { ALRange, NinjaALRange } from "../lib/types";
+import { NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
 
 export async function consolidateRanges() {
@@ -9,61 +8,120 @@ export async function consolidateRanges() {
         return;
     }
 
-    const ranges = manifest.idRanges.sort((left, right) => left.from - right.from);
-    const logicalRanges = manifest.ninja.config.idRanges.sort((left, right) => left.from - right.from);
-
+    // Create a sorted clone of app.json ranges and .objidconfig (logical) ranges
+    let ranges = manifest.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));
+    let logicalRanges = manifest.ninja.config.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));
     if (logicalRanges.length === 0) {
         UI.ranges.showNoLogicalRangesMessage(manifest);
         return;
     }
 
-    const start = Date.now();
-
-    const unused: number[] = [];
-    for (let range of ranges) {
-        for (let i = range.from; i <= range.to; i++) {
-            let covered = false;
-            for (let logical of logicalRanges) {
-                if (i >= logical.from && i <= logical.to) {
-                    covered = true;
-                    break;
-                }
-            }
-            if (!covered) {
-                unused.push(i);
-            }
-        }
-    }
-
-    if (unused.length === 0) {
-        UI.ranges.showRangeFullyRepresentedMessage(manifest);
-        return;
-    }
-
     const newRanges: NinjaALRange[] = [];
-    let range = newRange(unused[0], newRanges.length + 1);
-    for (let i = 1; i < unused.length; i++) {
-        let id = unused[i];
-        if (id === range.to + 1) {
-            range.to = id
-            continue;
+    const FREE_RANGE = "Free range";
+
+    while (ranges.length) {
+        // If there are no logical ranges left, add all remaining ranges and break the while loop
+        if (logicalRanges.length === 0) {
+            for (let range of ranges) {
+                newRanges.push({ ...range, description: FREE_RANGE });
+            }
+            break;
         }
 
-        newRanges.push(range);
-        range = newRange(id, newRanges.length + 1);
+        switch (true) {
+            case ranges[0].from === logicalRanges[0].from:
+                switch (true) {
+                    case ranges[0].to === logicalRanges[0].to:
+                        newRanges.push(logicalRanges[0]);
+                        ranges.shift();
+                        logicalRanges.shift();
+                        break;
+
+                    case ranges[0].to < logicalRanges[0].to:
+                        newRanges.push({ ...ranges[0], description: logicalRanges[0].description });
+                        logicalRanges[0].from = ranges[0].to + 1;
+                        ranges.shift();
+                        break;
+
+                    case ranges[0].to > logicalRanges[0].to:
+                        newRanges.push(logicalRanges[0]);
+                        ranges[0].from = logicalRanges[0].to + 1;
+                        logicalRanges.shift();
+                        break;
+                }
+                break;
+
+            case ranges[0].from < logicalRanges[0].from:
+                switch (true) {
+                    case ranges[0].to < logicalRanges[0].from:
+                        newRanges.push({ from: ranges[0].from, to: ranges[0].to, description: FREE_RANGE });
+                        ranges.shift();
+                        break;
+
+                    default:
+                        newRanges.push({ from: ranges[0].from, to: logicalRanges[0].from - 1, description: FREE_RANGE });
+                        ranges[0].from = logicalRanges[0].from;
+                        break;
+                }
+                break;
+
+            case ranges[0].from > logicalRanges[0].from:
+                switch (true) {
+                    case logicalRanges[0].to < ranges[0].from:
+                        logicalRanges.shift();
+                        break;
+
+                    default:
+                        logicalRanges[0].from = ranges[0].from;
+                        break;
+                }
+                break;
+        }
+
+        if (ranges.length && ranges[0].from > ranges[0].to) {
+            ranges.shift();
+        }
+
+        if (logicalRanges.length && logicalRanges[0].from > logicalRanges[0].to) {
+            logicalRanges.shift();
+        }
     }
-    newRanges.push(range);
 
-    for (let range of newRanges) {
-        logicalRanges.push(range);
+    // Combine adjacent ranges with same names
+    const combinedRanges: NinjaALRange[] = [];
+    while (newRanges.length) {
+        const range = newRanges.shift()!;
+        const combinedRange = combinedRanges[combinedRanges.length - 1];
+        switch (true) {
+            case combinedRanges.length === 0:
+                combinedRanges.push(range);
+                continue;
+
+            case combinedRange.to === range.from - 1 && combinedRange.description === range.description:
+                combinedRange.to = range.to;
+                continue;
+
+            default:
+                combinedRanges.push(range);
+                continue;
+        }
     }
-    manifest.ninja.config.idRanges = logicalRanges;
 
-    output.log(`Completed in ${Date.now() - start} ms`, LogLevel.Info);
+    // Sort resulting ranges according to original sort order
+    const logicalNames = manifest.ninja.config.idRanges.reduce<string[]>((names, range) => (range.description && !names.includes(range.description) && names.push(range.description), names), []);
+    const resultRanges: NinjaALRange[] = [];
+    for (let name of logicalNames) {
+        for (let i = 0; i < combinedRanges.length; i++) {
+            if (combinedRanges[i].description === name) {
+                resultRanges.push(combinedRanges.splice(i, 1)[0]);
+                i--;
+            }
+        }
+    }
 
-    UI.ranges.showRangesConsolidatedMessage(manifest, newRanges);
-}
+    // Add remaining ranges 
+    resultRanges.push(...combinedRanges);
 
-function newRange(from: number, ordinal: number): NinjaALRange {
-    return { from, to: from, description: `Free range #${ordinal}` };
+    manifest.ninja.config.idRanges = resultRanges;
+    UI.ranges.showRangesConsolidatedMessage(manifest);
 }

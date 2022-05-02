@@ -94,26 +94,55 @@ export class ObjIdConfig {
         return this.getProperty<NinjaALRange[]>(ConfigurationProperty.Ranges) || [];
     }
 
+    private showRangeWarning<T>(range: NinjaALRange, showWarning: () => Promise<T>, rewarnDelay: number): Promise<T> {
+        return new Promise<T>(async (resolve) => {
+            const key = `${this._path}:${range.from}:${range.to}:${range.description}`;
+            if ((idRangeWarnings[key] || 0) < Date.now() - rewarnDelay) {
+                idRangeWarnings[key] = Date.now();
+                const result = await showWarning();
+                delete idRangeWarnings[key];
+                resolve(result);
+            }
+        });
+    }
+
     private getValidRanges(ranges: NinjaALRange[]): NinjaALRange[] {
         const result = [];
         for (let range of ranges) {
             if (typeof range.from === "number" && typeof range.to === "number" && range.from && range.to) {
                 result.push(range);
             } else {
-                const key = `${this._path}:${range.from}:${range.to}:${range.description}`;
-                if ((idRangeWarnings[key] || 0) < Date.now() - TIME.FIVE_MINUTES) {
-                    UI.ranges.showInvalidRangeTypeError('', range).then(() => {
-                        // When somebody dismisses the error, we want to throw it again ASAP (unless fixed)
-                        delete idRangeWarnings[key];
-                    });
-                }
+                this.showRangeWarning(range, () => UI.ranges.showInvalidRangeTypeError(this._name, range), TIME.FIVE_MINUTES);
             }
         }
         return result;
     }
 
+    private rangesOverlap(ranges: NinjaALRange[]): boolean {
+        if (ranges.length <= 1) {
+            return false;
+        }
+
+        for (let i = 0; i < ranges.length - 1; i++) {
+            for (let j = i + 1; j < ranges.length; j++) {
+                if (ranges[i].from <= ranges[j].to && ranges[i].to >= ranges[j].from) {
+                    this.showRangeWarning(ranges[i], () => UI.ranges.showRangeOverlapError(this._name, ranges[i], ranges[j]), TIME.TWO_MINUTES);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     get idRanges(): NinjaALRange[] {
+        // Clone the ranges array first
         const ranges = this.getIdRanges().map(range => ({ ...range }));
+
+        if (this.rangesOverlap(ranges)) {
+            return [];
+        }
+
         ranges.forEach(range => {
             if ((typeof range.from !== "number") || (typeof range.to !== "number") || (!range.to) || (!range.from)) {
                 // This is a problem, but it's reported elsewhere
@@ -122,13 +151,7 @@ export class ObjIdConfig {
 
             if (range.to < range.from) {
                 const { from, to, description } = range;
-                const key = `${this._path}:${range.from}:${range.to}:${range.description}`;
-                if ((idRangeWarnings[key] || 0) < Date.now() - TIME.FIVE_MINUTES) {
-                    idRangeWarnings[key] = Date.now();
-                    UI.ranges.showInvalidRangeFromToError('', range).then(result => {
-                        // When somebody dismisses the error, we want to throw it again ASAP (unless fixed)
-                        delete idRangeWarnings[key];
-
+                this.showRangeWarning(range, () => UI.ranges.showInvalidRangeFromToError(this._name, range), TIME.FIVE_MINUTES).then(result => {
                         if (result === LABELS.FIX) {
                             let fixed = false;
                             const ranges = this.getIdRanges();
@@ -144,7 +167,6 @@ export class ObjIdConfig {
                             }
                         }
                     });
-                }
                 range.from = to;
                 range.to = from;
             }

@@ -195,3 +195,10 @@ defined in `.objidconfig`:
   "description": "Free range #2"
 }
 ```
+
+> Note: Consolidating ranges will try to keep the original order of logical ranges. However, if you have
+two logical ranges with the same name, it may not end up with the same order. For example, if you have two
+logical ranges named *Sales* and one logical range *Purchase* defined in between two *Sales* ranges, then
+consolidation will order two *Sales* ranges together, and then the *Purhcase* range after them. If you want
+to retain the exact same original range ordering in scenarios like this, you'll have to move ranges later
+manually.

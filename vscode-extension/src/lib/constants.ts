@@ -67,6 +67,8 @@ export const LABELS = {
         NO: "No, I have changed my mind",
         LEARN_MORE: "Learn more about logical ranges",
     },
+
+    FIX: "Fix it"
 };
 
 /**
@@ -74,3 +76,9 @@ export const LABELS = {
  * decide whether to show release notes.
  */
 export const ALREADY_USED = "already_used";
+
+export const TIME = {
+    TWO_MINUTES: 2 * 60 * 1000,
+    FIVE_MINUTES: 5 * 60 * 1000,
+    TEN_MINUTES: 10 * 60 * 1000,
+};
