@@ -14,6 +14,10 @@ their app IDs are publicly known.
 - Logical ranges and range descriptions can be defined in `.objidconfig` configuration file. This allows
 more flexibility during assigning new IDs. Logical ranges are automatically represented in Range Explorer
 and IntelliSense auto-suggestion drop-down list.
+- App pools feature is introduced. It allows multiple apps to share the same consumption information, thus
+making it possible to share same number ranges between different apps
+([Git issue #1](https://github.com/vjekob/al-objid/issues/1)) or even between different vendors
+([Git issue #19](https://github.com/vjekob/al-objid/issues/19)).
 ### Changed
 - Ninja activation events are reduced to AL Language and Show Release Notes commands. This makes sure
 that unnecessary Ninja commands are not available in the Command Palette if there are no AL folders

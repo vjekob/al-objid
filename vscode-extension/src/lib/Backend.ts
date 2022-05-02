@@ -13,7 +13,7 @@ import { ExplorerTreeDataProvider } from '../features/Explorer/ExplorerTreeDataP
 import { LABELS } from './constants';
 import { env, Uri } from 'vscode';
 import { Telemetry } from './Telemetry';
-import { getRangeForId } from './functions';
+import { getPoolIdFromAppIdIfAvailable, getRangeForId } from './functions';
 import { ALRange, NinjaALRange } from './types';
 
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
@@ -215,6 +215,8 @@ export class Backend {
             }
         }
 
+        appId = getPoolIdFromAppIdIfAvailable(appId);
+
         const response = await sendRequest<NextObjectIdInfo>(
             "/api/v2/getNext",
             commit ? "POST" : "GET",
@@ -233,6 +235,8 @@ export class Backend {
     static async syncIds(appId: string, ids: ConsumptionInfo, patch: boolean, authKey: string): Promise<boolean> {
         knownManagedApps[appId] = Promise.resolve(true);
 
+        appId = getPoolIdFromAppIdIfAvailable(appId);
+
         const response = await sendRequest<ConsumptionInfo>(
             "/api/v2/syncIds",
             patch ? "PATCH" : "POST",
@@ -242,8 +246,11 @@ export class Backend {
     }
 
     static async autoSyncIds(consumptions: AuthorizedAppConsumption[], patch: boolean): Promise<boolean> {
+        consumptions = JSON.parse(JSON.stringify(consumptions)); // Cloning to avoid side effects
+
         for (let app of consumptions) {
             knownManagedApps[app.appId] = Promise.resolve(true);
+            app.appId = getPoolIdFromAppIdIfAvailable(app.appId);
         }
         const response = await sendRequest<ConsumptionInfo>(
             "/api/v2/autoSyncIds",
@@ -261,6 +268,9 @@ export class Backend {
             additional.gitUser = encrypt(gitUser, appId);
             additional.gitEMail = encrypt(gitEMail, appId);
         }
+
+        appId = getPoolIdFromAppIdIfAvailable(appId);
+
         const response = await sendRequest<AuthorizationInfo>(
             "/api/v2/authorizeApp",
             "POST",
@@ -279,6 +289,8 @@ export class Backend {
             return;
         }
 
+        appId = getPoolIdFromAppIdIfAvailable(appId);
+
         const response = await sendRequest<AuthorizedAppResponse>(
             "/api/v2/authorizeApp",
             "GET",
@@ -293,6 +305,7 @@ export class Backend {
     }
 
     static async deauthorizeApp(appId: string, authKey: string, errorHandler: ErrorHandler<AuthorizationDeletedInfo>): Promise<boolean> {
+        appId = getPoolIdFromAppIdIfAvailable(appId);
         const response = await sendRequest<AuthorizationDeletedInfo>(
             "/api/v2/authorizeApp",
             "DELETE",
@@ -303,6 +316,8 @@ export class Backend {
     }
 
     static async check(payload: FolderAuthorization[]): Promise<CheckResponse | undefined> {
+        payload = JSON.parse(JSON.stringify(payload)); // Cloning to avoid side effects
+
         // We are not calling the polling endpoint if it's misconfigured. Either both URLs are default, or polling is pointless.
         if (Config.instance.isBackEndConfigInError) {
             Telemetry.instance.logOnce("invalidBackendConfig");
@@ -336,6 +351,11 @@ export class Backend {
             return;
         }
 
+        // Update payload for app pools
+        for (let folder of payload) {
+            folder.appId = getPoolIdFromAppIdIfAvailable(folder.appId);
+        }
+
         // We check only those apps that we know are managed by the back end
         const response = await sendRequest<CheckResponse>(
             "/api/v2/check",
@@ -352,6 +372,8 @@ export class Backend {
             return;
         }
 
+        appId = getPoolIdFromAppIdIfAvailable(appId);
+
         const response = await sendRequest<ConsumptionInfoWithTotal>(
             "/api/v2/getConsumption",
             "GET",
@@ -361,6 +383,8 @@ export class Backend {
     }
 
     static async checkApp(appId: string): Promise<boolean> {
+        appId = getPoolIdFromAppIdIfAvailable(appId);
+
         const response = await sendRequest<boolean>(
             "/api/v2/checkApp",
             "GET",

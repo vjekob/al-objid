@@ -116,7 +116,35 @@ function compressConsumption(consumption: ConsumptionInfo) {
     }
 }
 
-function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>) {
+function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manifests: AppManifest[]) {
+    // First pass: consolidate per app pool
+    const manifestMap: PropertyBag<string> = {};
+    for (let key of Object.keys(consumptions)) {
+        let manifest = manifests.find(manifest => manifest.ninja.uri.fsPath === key)!;
+        const { appPoolId } = manifest.ninja.config;
+        if (!appPoolId) {
+            continue;
+        }
+
+        if (!manifestMap[appPoolId]) {
+            manifestMap[appPoolId] = key;
+            continue;
+        }
+
+        const poolConsumption = consumptions[manifestMap[appPoolId]];
+        const appConsumption = consumptions[key];
+        delete consumptions[key];
+
+        for (let type of Object.keys(appConsumption)) {
+            if (poolConsumption[type]) {
+                poolConsumption[type] = [...poolConsumption[type], ...appConsumption[type]];
+            } else {
+                poolConsumption[type] = appConsumption[type];
+            }
+        }
+    }
+
+    // Second pass: compress
     for (let key of Object.keys(consumptions)) {
         compressConsumption(consumptions[key]);
     }
@@ -132,6 +160,7 @@ function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manif
             ids: consumptions[key]
         });
     }
+
     return result;
 }
 
@@ -281,7 +310,7 @@ export const autoSyncObjectIds = async () => {
             progress.report({ message: `Finding object IDs in ${config.repo ? `repo ${getRepoName(config.repo)}` : "workspace"}...` })
             await syncSingleConfiguration(config, consumptions);
         }
-        compressConsumptions(consumptions);
+        compressConsumptions(consumptions, manifests);
         let payload = authorizeConsumptions(consumptions, manifests);
 
         Telemetry.instance.log("autoSyncIds");

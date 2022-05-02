@@ -107,6 +107,11 @@
 				"command": "vjeko-al-objid.consolidate-ranges",
 				"category": "Ninja",
 				"title": "Consolidate logical ranges"
+			},
+			{
+				"command": "vjeko-al-objid.create-app-pool-preview",
+				"category": "Ninja",
+				"title": "Create a simple App Pool (Preview)"
 			}
 		],
 		"configuration": {

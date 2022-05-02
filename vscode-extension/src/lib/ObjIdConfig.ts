@@ -20,7 +20,8 @@ export const CONFIG_FILE_NAME = ".objidconfig";
 
 const COMMENTS: PropertyBag<string> = {
     [ConfigurationProperty.AuthKey]: "This is the authorization key for all back-end communication. DO NOT MODIFY OR DELETE THIS VALUE!",
-    [ConfigurationProperty.Ranges]: "You can customize and describe your logical ranges here"
+    [ConfigurationProperty.Ranges]: "You can customize and describe your logical ranges here",
+    [ConfigurationProperty.AppPoolId]: "Application pool this app belongs to. When defined, your object ID assignments are not per app, but per pool. DO NOT MANUALLY MODIFY THIS VALUE!"
 };
 
 const idRangeWarnings: PropertyBag<number> = {};
@@ -53,7 +54,7 @@ export class ObjIdConfig {
         if (!value) {
             return;
         }
-        
+
         const key = Symbol.for(`before:${property}`);
         if (!config[key]) config[key] = [{
             type: "LineComment",
@@ -152,21 +153,21 @@ export class ObjIdConfig {
             if (range.to < range.from) {
                 const { from, to, description } = range;
                 this.showRangeWarning(range, () => UI.ranges.showInvalidRangeFromToError(this._name, range), TIME.FIVE_MINUTES).then(result => {
-                        if (result === LABELS.FIX) {
-                            let fixed = false;
-                            const ranges = this.getIdRanges();
-                            for (let original of ranges) {
-                                if (original.from === from && original.to === to && original.description === description) {
-                                    original.from = to;
-                                    original.to = from;
-                                    fixed = true;
-                                }
-                            }
-                            if (fixed) {
-                                this.idRanges = ranges;
+                    if (result === LABELS.FIX) {
+                        let fixed = false;
+                        const ranges = this.getIdRanges();
+                        for (let original of ranges) {
+                            if (original.from === from && original.to === to && original.description === description) {
+                                original.from = to;
+                                original.to = from;
+                                fixed = true;
                             }
                         }
-                    });
+                        if (fixed) {
+                            this.idRanges = ranges;
+                        }
+                    }
+                });
                 range.from = to;
                 range.to = from;
             }
@@ -176,6 +177,14 @@ export class ObjIdConfig {
 
     set idRanges(value: NinjaALRange[]) {
         this.setProperty(ConfigurationProperty.Ranges, value);
+    }
+
+    get appPoolId(): string | null {
+        return this.getProperty(ConfigurationProperty.AppPoolId) || null;
+    }
+
+    set appPoolId(value: string | null) {
+        this.setProperty(ConfigurationProperty.AppPoolId, value);
     }
 
     /* TODO Implement custom back-end in .objIdConfig

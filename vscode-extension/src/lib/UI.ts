@@ -136,6 +136,15 @@ export const UI = {
             window.showErrorMessage(`Ranges logical ranges ${range1.description ? (`${range1.description} (${range1.from}..${range1.to})`) : (`${range1.from}..${range1.to}`)} and ${range2.description ? (`${range2.description} (${range2.from}..${range2.to})`) : (`${range2.from}..${range2.to}`)} in ${name} overlap. Until you fix this issue, your logical range configuration in .objidconfig will be ignored.`, "OK"),
     },
 
+    pool: {
+        showInvalidAppPoolIdError: async (manifest: AppManifest) =>
+            window.showErrorMessage(`App Pool ID defined in .objidconfig for ${manifest.name} is invalid. Please make sure to only use pool IDs created using the appropriate Ninja command.`),
+        showAppAuthorizedError: async (manifest: AppManifest) =>
+            window.showErrorMessage(`App ${manifest.name} is authorized. Pools manage their own authorization, so only unauthorized apps can be included in app pools.`, LABELS.BUTTON_LEARN_MORE),
+        showAppAlreadyInPoolError: async (manifest: AppManifest) =>
+            window.showErrorMessage(`App ${manifest.name} already belongs to a pool. One app can belong to only one pool.`, LABELS.BUTTON_LEARN_MORE),
+    },
+
     log: {
         showMessage: (event: EventLogEntry, appName: string) => {
             if (!event || !event.user) {

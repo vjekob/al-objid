@@ -25,6 +25,7 @@ import { ParserConnector } from "./features/ParserConnector";
 import { ObjIdConfigMonitor } from "./features/ObjIdConfigMonitor";
 import { copyRanges } from "./commands/copy-ranges";
 import { consolidateRanges } from "./commands/consolidate-ranges";
+import { createAppPool } from "./commands/create-app-pool";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -40,6 +41,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.show-release-notes", showReleaseNotes),
 		commands.registerCommand("vjeko-al-objid.copy-ranges", copyRanges),
 		commands.registerCommand("vjeko-al-objid.consolidate-ranges", consolidateRanges),
+		commands.registerCommand("vjeko-al-objid.create-app-pool-preview", createAppPool),
 
 		// Internal commands
 		commands.registerCommand("vjeko-al-objid.commit-suggestion", commitSuggestionCommand),

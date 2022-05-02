@@ -14,7 +14,7 @@ export class ALWorkspace {
         return workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri))
     }
 
-    static async pickFolderOrFolders(multi: boolean, operationDescription?: string): Promise<AppManifest[] | AppManifest | undefined> {
+    private static async pickFolderOrFolders(multi: boolean, operationDescription?: string): Promise<AppManifest[] | AppManifest | undefined> {
         const workspaces = this.getALFolders();
         if (!workspaces || workspaces.length === 0) {
             UI.general.showNoWorkspacesOpenInfo();
