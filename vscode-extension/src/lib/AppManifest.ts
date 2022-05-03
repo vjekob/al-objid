@@ -27,7 +27,7 @@ export function getManifest(uri: Uri): AppManifest | null {
             unsafeOriginalId: manifest.id,
             uri: folderUri,
             path: appPath,
-            config: new ObjIdConfig(folderUri, manifest.name),
+            config: ObjIdConfig.instance(folderUri, manifest.name),
         };
         manifest.id = AppIdCache.instance.getAppIdHash(manifest.ninja.unsafeOriginalId);
 

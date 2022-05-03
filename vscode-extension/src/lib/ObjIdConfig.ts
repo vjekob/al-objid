@@ -1,4 +1,4 @@
-import { Uri, workspace } from "vscode";
+import { DiagnosticSeverity, Uri, workspace, WorkspaceFolder } from "vscode";
 import path = require("path");
 import * as fs from "fs";
 import { LogLevel, Output } from "../features/Output";
@@ -7,6 +7,8 @@ import { PropertyBag } from "./PropertyBag";
 import { NinjaALRange } from "./types";
 import { UI } from "./UI";
 import { LABELS, TIME } from "./constants";
+import { CreateDiagnostic, Diagnostics, DIAGNOSTIC_CODE } from "../features/Diagnostics";
+import { ObjIdConfigSymbols } from "./ObjIdConfigSymbols";
 
 enum ConfigurationProperty {
     AuthKey = "authKey",
@@ -14,6 +16,8 @@ enum ConfigurationProperty {
     BackEndUrl = "backEndUrl",
     BackEndApiKey = "backEndApiKey",
     Ranges = "idRanges",
+    BcLicense = "bcLicense",
+    LicenseReport = "licenseReport",
 }
 
 export const CONFIG_FILE_NAME = ".objidconfig";
@@ -21,24 +25,50 @@ export const CONFIG_FILE_NAME = ".objidconfig";
 const COMMENTS: PropertyBag<string> = {
     [ConfigurationProperty.AuthKey]: "This is the authorization key for all back-end communication. DO NOT MODIFY OR DELETE THIS VALUE!",
     [ConfigurationProperty.Ranges]: "You can customize and describe your logical ranges here",
-    [ConfigurationProperty.AppPoolId]: "Application pool this app belongs to. When defined, your object ID assignments are not per app, but per pool. DO NOT MANUALLY MODIFY THIS VALUE!"
+    [ConfigurationProperty.AppPoolId]: "Application pool this app belongs to. When defined, your object ID assignments are not per app, but per pool. DO NOT MANUALLY MODIFY THIS VALUE!",
+    [ConfigurationProperty.BcLicense]: "Customer BC license file (*.bclicense) to check object assignments against",
+    [ConfigurationProperty.LicenseReport]: "Customer license report file (*.txt) to check object assignments against",
 };
 
 const idRangeWarnings: PropertyBag<number> = {};
 
+
 export class ObjIdConfig {
+    private static _instances = new WeakMap<Uri, ObjIdConfig>();
+    private readonly _folder: WorkspaceFolder;
+    private readonly _uri: Uri;
     private readonly _path: fs.PathLike;
     private readonly _name: string;
+    private _symbols: ObjIdConfigSymbols;
+    private _lastReadContent: string = "{}";
 
-    public constructor(uri: Uri, name: string) {
-        const folder = workspace.getWorkspaceFolder(uri);
-        this._path = path.join(folder!.uri.fsPath, CONFIG_FILE_NAME);
+    public static instance(uri: Uri, name: string): ObjIdConfig {
+        let cached = this._instances.get(uri);
+        if (cached) {
+            return cached;
+        }
+
+        cached = new ObjIdConfig(uri, name);
+        this._instances.set(uri, cached);
+        return cached;
+    }
+
+    private constructor(uri: Uri, name: string) {
+        this._folder = workspace.getWorkspaceFolder(uri)!;
+        this._path = path.join(this._folder.uri.fsPath, CONFIG_FILE_NAME);
         this._name = name;
+        this._uri = Uri.file(this._path);
+        this._symbols = new ObjIdConfigSymbols(this._uri);
     }
 
     private read(): any {
         try {
-            return parse(fs.readFileSync(this._path).toString() || "{}") as any;
+            const content = fs.readFileSync(this._path).toString() || "{}";
+            if (content !== this._lastReadContent) {
+                this._symbols = new ObjIdConfigSymbols(this._uri);
+            }
+            this._lastReadContent = content;
+            return parse(this._lastReadContent) as any;
         } catch (e: any) {
             if (e.code !== "ENOENT") Output.instance.log(`Cannot read file ${path}: ${e}`, LogLevel.Info);
             return {};
@@ -107,19 +137,60 @@ export class ObjIdConfig {
         });
     }
 
-    private getValidRanges(ranges: NinjaALRange[]): NinjaALRange[] {
+    private async validateRange(range: NinjaALRange, ordinal: number, diagnose: CreateDiagnostic) {
+        const idRanges = await this._symbols.idRanges;
+        if (!idRanges) {
+            return;
+        }
+
+        const idRange = this._symbols.properties.idRanges(idRanges.children[ordinal]);
+        const from = idRange.from();
+        const to = idRange.to();
+
+        if (from) {
+            if (typeof range.from !== "number") {
+                diagnose(from.range, `Syntax error: Invalid value (non-zero number expected; found ${JSON.stringify(range.from)}).`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.INVALIDTYPE);
+            }
+        } else {
+            diagnose(idRange.range, `Syntax error: Missing "from" property`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.MISSING_PROPERTY);
+        }
+        if (to) {
+            if (typeof range.to !== "number") {
+                diagnose(to.range, `Syntax error: Invalid value (non-zero number expected; found ${JSON.stringify(range.to)}).`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.INVALIDTYPE);
+            }
+        } else {
+            diagnose(idRange.range, `Syntax error: Missing "to" property`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.MISSING_PROPERTY);
+        }
+    }
+
+    private getValidRanges(ranges: NinjaALRange[], diagnose: CreateDiagnostic): NinjaALRange[] {
         const result = [];
-        for (let range of ranges) {
+        for (let i = 0; i < ranges.length; i++) {
+            const range = ranges[i];
             if (typeof range.from === "number" && typeof range.to === "number" && range.from && range.to) {
                 result.push(range);
             } else {
+                this.validateRange(range, i, diagnose);
                 this.showRangeWarning(range, () => UI.ranges.showInvalidRangeTypeError(this._name, range), TIME.FIVE_MINUTES);
             }
         }
         return result;
     }
 
-    private rangesOverlap(ranges: NinjaALRange[]): boolean {
+    private async reportRangesOverlapDiagnostic(ordinal1: number, ordinal2: number, diagnose: CreateDiagnostic) {
+        const idRanges = await this._symbols.idRanges;
+        if (!idRanges) {
+            return;
+        }
+
+        const range1 = this._symbols.properties.idRanges(idRanges.children[ordinal1]);
+        const range2 = this._symbols.properties.idRanges(idRanges.children[ordinal2]);
+
+        diagnose(range1.range, `Invalid range: Overlaps with range ${range2.from()?.detail}..${range2.to()?.detail}`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.RANGES_OVERLAP);
+        diagnose(range2.range, `Invalid range: Overlaps with range ${range1.from()?.detail}..${range1.to()?.detail}`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.RANGES_OVERLAP);
+    }
+
+    private rangesOverlap(ranges: NinjaALRange[], diagnose: CreateDiagnostic): boolean {
         if (ranges.length <= 1) {
             return false;
         }
@@ -127,6 +198,7 @@ export class ObjIdConfig {
         for (let i = 0; i < ranges.length - 1; i++) {
             for (let j = i + 1; j < ranges.length; j++) {
                 if (ranges[i].from <= ranges[j].to && ranges[i].to >= ranges[j].from) {
+                    this.reportRangesOverlapDiagnostic(i, j, diagnose);
                     this.showRangeWarning(ranges[i], () => UI.ranges.showRangeOverlapError(this._name, ranges[i], ranges[j]), TIME.TWO_MINUTES);
                     return true;
                 }
@@ -136,22 +208,50 @@ export class ObjIdConfig {
         return false;
     }
 
+    private async reportToBeforeFrom(ordinal: number, diagnose: CreateDiagnostic) {
+        const idRanges = await this._symbols.idRanges;
+        if (!idRanges) {
+            return;
+        }
+
+        const range = this._symbols.properties.idRanges(idRanges.children[ordinal]);
+        diagnose(range.range, `Invalid range: "to" must not be less than "from".`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.TO_BEFORE_FROM);
+    }
+
+    private async reportMissingDescription(ordinal: number, diagnose: CreateDiagnostic) {
+        const idRanges = await this._symbols.idRanges;
+        if (!idRanges) {
+            return;
+        }
+
+        const range = this._symbols.properties.idRanges(idRanges.children[ordinal]);
+        diagnose(range.range, `Missing description for range ${range.from()?.detail}..${range.to()?.detail}.`, DiagnosticSeverity.Information, DIAGNOSTIC_CODE.OBJIDCONFIG.TO_BEFORE_FROM);
+    }
+
     get idRanges(): NinjaALRange[] {
+        const diagnose = Diagnostics.instance.createDiagnostics(this._uri, "objidconfig.idranges");
+
         // Clone the ranges array first
         const ranges = this.getIdRanges().map(range => ({ ...range }));
 
-        if (this.rangesOverlap(ranges)) {
-            return [];
+        let invalid = false;
+        if (this.rangesOverlap(ranges, diagnose)) {
+            invalid = true;
         }
 
-        ranges.forEach(range => {
+        ranges.forEach((range, ordinal) => {
             if ((typeof range.from !== "number") || (typeof range.to !== "number") || (!range.to) || (!range.from)) {
                 // This is a problem, but it's reported elsewhere
                 return;
             }
 
+            if (!range.description) {
+                this.reportMissingDescription(ordinal, diagnose);
+            }
+
             if (range.to < range.from) {
                 const { from, to, description } = range;
+                this.reportToBeforeFrom(ordinal, diagnose);
                 this.showRangeWarning(range, () => UI.ranges.showInvalidRangeFromToError(this._name, range), TIME.FIVE_MINUTES).then(result => {
                     if (result === LABELS.FIX) {
                         let fixed = false;
@@ -172,19 +272,49 @@ export class ObjIdConfig {
                 range.to = from;
             }
         });
-        return this.getValidRanges(ranges);
+
+        // First collect valid ranges to run remaining validations
+        const validRanges = this.getValidRanges(ranges, diagnose);
+
+        // Then return either empty array or valid ranges
+        return invalid ? [] : validRanges;
     }
 
     set idRanges(value: NinjaALRange[]) {
         this.setProperty(ConfigurationProperty.Ranges, value);
     }
 
-    get appPoolId(): string | null {
-        return this.getProperty(ConfigurationProperty.AppPoolId) || null;
+    get appPoolId(): string | undefined {
+        return this.getProperty(ConfigurationProperty.AppPoolId);
     }
 
-    set appPoolId(value: string | null) {
+    set appPoolId(value: string | undefined) {
         this.setProperty(ConfigurationProperty.AppPoolId, value);
+    }
+
+    private async validateBcLicense(bcLicense: string) {
+        if (!bcLicense) {
+            return;
+        }
+
+        const diagnose = Diagnostics.instance.createDiagnostics(this._uri, "objidconfig.bcLicense");
+
+        if (!fs.existsSync(path.join(this._folder.uri.fsPath, bcLicense))) {
+            const bcLicenseSymbol = await this._symbols.bcLicense;
+            if (bcLicenseSymbol) {
+                diagnose(bcLicenseSymbol?.range, `Cannot find license file.`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.FILE_NOT_FOUND);
+            }
+        }
+    }
+
+    get bcLicense(): string | undefined {
+        const bcLicense = this.getProperty<string>(ConfigurationProperty.BcLicense);
+        this.validateBcLicense(bcLicense);
+        return bcLicense;
+    }
+
+    get licenseReport(): string | undefined {
+        return this.getProperty(ConfigurationProperty.LicenseReport);
     }
 
     /* TODO Implement custom back-end in .objIdConfig

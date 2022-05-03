@@ -11,7 +11,6 @@ import { NewsHandler } from "./features/NewsHandler";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
 import { PollingHandler } from "./features/PollingHandler";
 import { NextObjectIdCompletionProvider } from "./features/NextObjectIdCompletionProvider";
-import { ObjectIDHighlighter } from "./features/ObjectIDHighlighter";
 import { Output } from "./features/Output";
 import { Config } from "./lib/Config";
 import { HttpStatusHandler } from "./features/HttpStatusHandler";
@@ -26,6 +25,7 @@ import { ObjIdConfigMonitor } from "./features/ObjIdConfigMonitor";
 import { copyRanges } from "./commands/copy-ranges";
 import { consolidateRanges } from "./commands/consolidate-ranges";
 import { createAppPool } from "./commands/create-app-pool";
+import { Diagnostics } from "./features/Diagnostics";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -64,6 +64,7 @@ export function activate(context: ExtensionContext) {
 		new ObjIdConfigMonitor(),
 		new HttpStatusHandler(context).getDisposables(),
 		ParserConnector.instance,
+		Diagnostics.instance,
 	);
 
 	ReleaseNotesHandler.instance.check(context);

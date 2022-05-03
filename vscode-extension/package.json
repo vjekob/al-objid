@@ -60,6 +60,7 @@
 	],
 	"activationEvents": [
 		"onLanguage:al",
+		"workspaceContains:/.objidconfig",
 		"onCommand:vjeko-al-objid.show-release-notes"
 	],
 	"main": "./out/extension.js",
@@ -173,7 +174,6 @@
 			{
 				"id": "jsonc",
 				"filenames": [
-					".objidauth",
 					".objidconfig"
 				]
 			}

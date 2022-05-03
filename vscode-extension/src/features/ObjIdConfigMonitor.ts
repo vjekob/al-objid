@@ -12,15 +12,6 @@ import { UI } from "../lib/UI";
 import { AuthorizationStatusBar } from "./AuthorizationStatusBar";
 
 export class ObjIdConfigMonitor implements Disposable {
-    private static _instance: ObjIdConfigMonitor;
-
-    public static get instance() {
-        if (!this._instance) {
-            throw new Error("You must not access ObjIdConfigMonitor.instance before it has been instantiated.");
-        }
-        return this._instance;
-    }
-
     private _repos: { uri: Uri, manifest: AppManifest }[] = [];
     private _workspaceFoldersChangeEvent: Disposable;
     private _watchers: Disposable[] = [];
@@ -58,6 +49,11 @@ export class ObjIdConfigMonitor implements Disposable {
         this._timeout = setTimeout(() => this.checkCurrentBranches(), 10000);
     }
 
+    private validateFile(manifest: AppManifest) {
+        manifest.ninja.config.idRanges;
+        manifest.ninja.config.bcLicense;
+    }
+
     private async onDeleted(manifest: AppManifest, uri: Uri) {
         const currentBranch = this._currentBranches[manifest.id];
         const { authKey } = manifest.ninja.config;
@@ -80,10 +76,15 @@ export class ObjIdConfigMonitor implements Disposable {
         }
     }
 
+    private async onDidChange(manifest: AppManifest, uri: Uri) {
+        this.validateFile(manifest);
+        AuthorizationStatusBar.instance.updateStatusBar()
+    }
+
     private async setUpWatcher(manifest: AppManifest, uri: Uri) {
         const watcher = workspace.createFileSystemWatcher(path.join(uri.fsPath, ".objidconfig"));
         watcher.onDidDelete(() => this.onDeleted(manifest, uri));
-        watcher.onDidChange(() => AuthorizationStatusBar.instance.updateStatusBar());
+        watcher.onDidChange(() => this.onDidChange(manifest, uri));
         this._watchers.push(watcher);
 
         const gitRoot = await Git.instance.getTopLevelPath(uri);
@@ -93,6 +94,7 @@ export class ObjIdConfigMonitor implements Disposable {
             this._currentBranches[manifest.id] = await Git.instance.getCurrentBranchName(uri);
         });
         this._watchers.push(gitWatcher);
+        this.validateFile(manifest);
     }
 
     private setUpWatchers() {
