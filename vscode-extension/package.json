@@ -60,8 +60,7 @@
 	],
 	"activationEvents": [
 		"onLanguage:al",
-		"workspaceContains:/.objidconfig",
-		"onCommand:vjeko-al-objid.show-release-notes"
+		"workspaceContains:/.objidconfig"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

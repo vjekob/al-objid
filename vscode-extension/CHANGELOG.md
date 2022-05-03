@@ -5,7 +5,7 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## [2.5.0] - 2022-05-03
+## [2.5.0] - 2022-05-04
 ### Added
 - Configuration option `objectIdNinja.includeUserName` is re-introduced. Even though sensitive information
 is encrypted, the encryption is both symmetric and easy to decrypt for anyone with access to app ID. Some
@@ -18,6 +18,12 @@ and IntelliSense auto-suggestion drop-down list.
 making it possible to share same number ranges between different apps
 ([Git issue #1](https://github.com/vjekob/al-objid/issues/1)) or even between different vendors
 ([Git issue #19](https://github.com/vjekob/al-objid/issues/19)).
+- License validation feature is introduced. It allows you to check your object IDs against a (customer)
+license and see if there are any object IDs your app uses, that aren't assigned to the license with which
+the app will run ([Git issue #5](https://github.com/vjekob/al-objid/issues/5)).
+- `.objidconfig` file validation and integration with Problems window. Any configuration you make manually
+to the `.objidconfig` is now validated automatically, and any problems are both reported to you in the
+Problems window, and indicated in the editor.
 ### Changed
 - Ninja activation events are reduced to AL Language and Show Release Notes commands. This makes sure
 that unnecessary Ninja commands are not available in the Command Palette if there are no AL folders
