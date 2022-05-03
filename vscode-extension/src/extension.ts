@@ -1,4 +1,4 @@
-import { ExtensionContext, commands, languages, Disposable, window } from "vscode";
+import { ExtensionContext, commands, languages, window } from "vscode";
 import { authorizeApp } from "./commands/authorize-app";
 import { autoSyncObjectIds } from "./commands/auto-sync-object-ids";
 import { commitSuggestionCommand } from "./commands/commit-suggestion";
@@ -26,6 +26,7 @@ import { copyRanges } from "./commands/copy-ranges";
 import { consolidateRanges } from "./commands/consolidate-ranges";
 import { createAppPool } from "./commands/create-app-pool";
 import { Diagnostics } from "./features/Diagnostics";
+import { validateLicense } from "./commands/validate-license";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -48,6 +49,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
 		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 		commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
+		commands.registerCommand("vjeko-al-objid.validate-license-preview", validateLicense),
 
 		// Tree view
 		ExplorerTreeDataProvider.instance,

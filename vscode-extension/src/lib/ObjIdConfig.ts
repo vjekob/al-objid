@@ -9,6 +9,7 @@ import { UI } from "./UI";
 import { LABELS, TIME } from "./constants";
 import { CreateDiagnostic, Diagnostics, DIAGNOSTIC_CODE } from "../features/Diagnostics";
 import { ObjIdConfigSymbols } from "./ObjIdConfigSymbols";
+import { BCLicense } from "./BCLicense";
 
 enum ConfigurationProperty {
     AuthKey = "authKey",
@@ -41,6 +42,8 @@ export class ObjIdConfig {
     private readonly _name: string;
     private _symbols: ObjIdConfigSymbols;
     private _lastReadContent: string = "{}";
+    private _bcLicense: string | undefined = undefined;
+    private _bcLicensePromise?: Promise<BCLicense | undefined>;
 
     public static instance(uri: Uri, name: string): ObjIdConfig {
         let cached = this._instances.get(uri);
@@ -292,25 +295,48 @@ export class ObjIdConfig {
         this.setProperty(ConfigurationProperty.AppPoolId, value);
     }
 
-    private async validateBcLicense(bcLicense: string) {
-        if (!bcLicense) {
-            return;
+    private async validateBcLicense(path: string): Promise<boolean> {
+        if (!path) {
+            return false;
         }
 
         const diagnose = Diagnostics.instance.createDiagnostics(this._uri, "objidconfig.bcLicense");
 
-        if (!fs.existsSync(path.join(this._folder.uri.fsPath, bcLicense))) {
+        if (!fs.existsSync(path)) {
             const bcLicenseSymbol = await this._symbols.bcLicense;
             if (bcLicenseSymbol) {
                 diagnose(bcLicenseSymbol?.range, `Cannot find license file.`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.FILE_NOT_FOUND);
+                return false;
             }
         }
+
+        return true;
     }
 
     get bcLicense(): string | undefined {
-        const bcLicense = this.getProperty<string>(ConfigurationProperty.BcLicense);
-        this.validateBcLicense(bcLicense);
-        return bcLicense;
+        const relativePath = this.getProperty<string>(ConfigurationProperty.BcLicense);
+        if (!relativePath) {
+            return;
+        }
+
+        this._bcLicense = path.join(this._folder.uri.fsPath, relativePath);
+        this.validateBcLicense(this._bcLicense).then(exists => {
+            if (!exists) {
+                return;
+            }
+
+            this._bcLicensePromise = new Promise<BCLicense | undefined>(resolve => resolve(new BCLicense(this._bcLicense!)));
+        });
+
+        return this._bcLicense;
+    }
+
+    async getLicenseObject(): Promise<BCLicense | undefined> {
+        if (!this._bcLicensePromise) {
+            return undefined;
+        }
+
+        return await this._bcLicensePromise;
     }
 
     get licenseReport(): string | undefined {

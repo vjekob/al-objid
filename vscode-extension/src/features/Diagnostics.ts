@@ -14,6 +14,10 @@ export const DIAGNOSTIC_CODE = {
         MISSING_DESCRIPTION: "NINJA005",
         FILE_NOT_FOUND: "NINJA006",
     },
+
+    BCLICENSE: {
+        UNAVAILABLE: "NINJA101",
+    }
 };
 
 export class Diagnostics implements Disposable {
@@ -65,7 +69,7 @@ export class Diagnostics implements Disposable {
                     set.push(...document![key]);
                 }
                 this._diagnostics.set(uri, set);
-            }, 100));
+            }, 1000));
         };
 
         // Makes sure that diagnostics are reported at least once
