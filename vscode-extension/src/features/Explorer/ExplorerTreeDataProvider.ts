@@ -115,6 +115,9 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
             type: ExplorerItemType.range,
         };
         const consumption = ConsumptionCache.instance.getConsumption(appId) as any;
+        if (!consumption) {
+            return;
+        }
 
         let severity = TreeItemSeverity.none;
         let propagateItem: TreeItemInfo | undefined;

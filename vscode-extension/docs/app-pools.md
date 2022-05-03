@@ -1,4 +1,4 @@
-# Application Pools
+# Application Pools (Preview)
 
 Application pools is an AL Object ID Ninja feature that allows multiple apps share the same consumption
 information about object IDs.
@@ -87,3 +87,24 @@ When you need to synchronize application pool consumption, possible approaches a
 * Define one multi-root workspace that includes all apps in the pool, and then run auto-synchronization
 from that app.
 * Run replace synchronization from one app, then run update synchronization from all other apps.
+
+## Why is this feature marked as *"Preview"*?
+
+The app pools feature in its current incarnation is kind of a peer-to-peer feature. It works entirely in
+the front end and the only thing that identifies a pool is its ID. There is no pool metadata, no
+properties, no back-end information.
+
+There are a number of things that make this feature not really complete. For example:
+- Consumption warnings (notification messages telling you how many objects remain) do not work with app
+pools. When you use app pools, you simply don't get these notifications.
+- Ninja explorer view does not work with app pools for the same reasons consumption warnings do not work.
+- Anyone knowing your app pool ID can hijack your pool, especially if you use an open-source project.
+- There is no real back-end functionality related to app pools. When assigning numbers, the back end has
+no clue whether it's an app or an app pool that is requesting new numbers (or performing any other
+operation, for that matter).
+- There is no overview of what apps belong to a pool.
+- There is no pool management that would allow you to remove apps from pools without actually having
+access to those apps.
+
+That said, app pools are currently very simple to use and they get the job done. Don't be afraid of
+using it just because in the future this feature will be redesigned.

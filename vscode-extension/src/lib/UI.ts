@@ -1,6 +1,6 @@
 import { window } from "vscode";
 import { LogLevel, Output } from "../features/Output";
-import { ALRange, AppManifest, NinjaALRange } from "./types";
+import { AppManifest, NinjaALRange } from "./types";
 import { CONFIG_FILE_NAME } from "./ObjIdConfig";
 import { EXTENSION_NAME, LABELS } from "./constants";
 import { EventLogEntry } from "./BackendTypes";
@@ -143,6 +143,11 @@ export const UI = {
             window.showErrorMessage(`App ${manifest.name} is authorized. Pools manage their own authorization, so only unauthorized apps can be included in app pools.`, LABELS.BUTTON_LEARN_MORE),
         showAppAlreadyInPoolError: async (manifest: AppManifest) =>
             window.showErrorMessage(`App ${manifest.name} already belongs to a pool. One app can belong to only one pool.`, LABELS.BUTTON_LEARN_MORE),
+    },
+
+    license: {
+        showNoLicenseMessage: async (manifest: AppManifest) =>
+            window.showInformationMessage(`There is no license configured for ${manifest.name}, there is nothing to validate.`, LABELS.BUTTON_LEARN_MORE),
     },
 
     log: {

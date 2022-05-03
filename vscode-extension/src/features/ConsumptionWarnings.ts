@@ -45,6 +45,11 @@ export class ConsumptionWarnings {
 
     public checkRemainingIds(appId: string, consumption: ConsumptionData) {
         const manifest = getCachedManifestFromAppId(appId);
+        if (!manifest) {
+            // TODO Notifications for app pools are not handled at the moment
+            return;
+        }
+
         const available = manifest.idRanges.reduce((previous, current) => previous + Math.max(current.to - current.from, 0) + 1, 0);
 
         // The formula below will work like this:

@@ -117,7 +117,7 @@
 			{
 				"command": "vjeko-al-objid.validate-license-preview",
 				"category": "Ninja",
-				"title": "Validate against a license (Preview)"
+				"title": "Validate object IDs against license (Preview)"
 			}
 		],
 		"configuration": {
