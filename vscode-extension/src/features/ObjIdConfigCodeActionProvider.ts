@@ -12,13 +12,12 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
 
         const manifest = getManifest(document.uri);
 
-        const symbol = await getSymbolAtPosition(document.uri, range.start);
-
         const actions: CodeAction[] = [];
         for (let issue of ninjaIssues) {
             switch (issue.code) {
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_OBJECT_TYPE:
-                    createAction(actions, "", [], "Remove declaration", CodeActionKind.QuickFix);
+                    const symbol = await getSymbolAtPosition(document.uri, range.start)!;
+                    createAction(actions, "vjeko-al-objid.quickfix-remove-declaration", [manifest, symbol?.name], "Remove declaration", CodeActionKind.QuickFix);
                     createAction(actions, "", [], "Select valid object type", CodeActionKind.QuickFix);
 
                     break;

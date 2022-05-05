@@ -309,9 +309,13 @@ export class ObjIdConfig {
         return allObjectRanges[objectType] ? this.validateRanges(allObjectRanges[objectType].map(range => ({ ...range })), diagnose || this.getObjectRangeDiagnoseMethod(), objectType) : this.idRanges;
     }
 
-    setObjectRanges(objectType: string, value: NinjaALRange[]) {
+    setObjectRanges(objectType: string, value: NinjaALRange[] | undefined) {
         const allObjectRanges = this.getAllObjectRanges();
-        allObjectRanges[objectType] = value;
+        if (value) {
+            allObjectRanges[objectType] = value;
+        } else {
+            delete allObjectRanges[objectType];
+        }
         this.setProperty(ConfigurationProperty.ObjectRanges, allObjectRanges);
     }
 
