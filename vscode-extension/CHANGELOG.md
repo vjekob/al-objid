@@ -10,6 +10,7 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 - Logical ranges per object type feature is introduced. It allows defining different logical ranges per
 AL object type. For example, "Sales" range may be 50100..50500 in general, but for codeunits it may be
 50100..50999. Logical ranges per type don't integrate (yet) with the Range Explorer view.
+- Code actions to help fixing issues with some `.objidconfig` issues.
 ## [2.5.0] - 2022-05-04
 ### Added
 - Configuration option `objectIdNinja.includeUserName` is re-introduced. Even though sensitive information

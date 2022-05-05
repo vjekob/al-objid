@@ -81,6 +81,47 @@ This matters when assigning new numbers, because IntelliSense will auto-suggest 
 the `Sales` logical range, it will not offer two numbers from two different number ranges. This allows
 for great flexibility when defining ranges and does not limit you to a single numeric range.
 
+## Logical ranges per object type
+
+Logical ranges defined in the `idRanges` property are general and apply to all object types. However,
+you can specify an explicit object type range. For example, you can have "Sales", "Purchases", and
+"Finances" as logical ranges for all object types, except for XmlPorts, where you have "Import", "Export",
+and "Integration"
+
+To define per-object logical ranges, use the `objectRanges` property, like this:
+
+```JSON
+  "objectRanges": {
+    "xmlport": [
+      {
+        "from": 50000,
+        "to": 50049,
+        "description": "Import"
+      },
+      {
+        "from": 50050,
+        "to": 50099,
+        "description": "Export"
+      }
+    ],
+    "page": [
+      {
+        "from": 50000,
+        "to": 50199,
+        "description": "Sales"
+      },
+      {
+        "from": 50200,
+        "to": 50399,
+        "description": "Purchases"
+      }
+    ]
+  }
+```
+
+In this example setup, XMLports and pages have explicit object ranges, and assigning values to those
+types of objects will use the ranges defined in here.
+
 ## Using logical ranges
 
 When you declare logical ranges in your `.objidconfig` configuration file, every time you request a new
