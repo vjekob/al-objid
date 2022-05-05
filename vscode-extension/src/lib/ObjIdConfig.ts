@@ -386,6 +386,10 @@ export class ObjIdConfig {
         return this._bcLicense;
     }
 
+    set bcLicense(value: string | undefined) {
+        this.setProperty(ConfigurationProperty.BcLicense, value);
+    }
+
     async getLicenseObject(): Promise<BCLicense | undefined> {
         if (!this._bcLicensePromise) {
             return undefined;

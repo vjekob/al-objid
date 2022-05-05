@@ -148,6 +148,8 @@ export const UI = {
     license: {
         showNoLicenseMessage: async (manifest: AppManifest) =>
             window.showInformationMessage(`There is no license configured for ${manifest.name}, there is nothing to validate.`, LABELS.BUTTON_LEARN_MORE),
+        noLicenseFilesFound: async (manifest: AppManifest) =>
+            window.showWarningMessage(`We could not find any license files in ${manifest.name}.`),
     },
 
     log: {

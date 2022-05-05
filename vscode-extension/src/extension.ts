@@ -28,6 +28,7 @@ import { createAppPool } from "./commands/create-app-pool";
 import { Diagnostics } from "./features/Diagnostics";
 import { validateLicense } from "./commands/validate-license";
 import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvider";
+import { selectBCLicense } from "./commands/select-bclicense";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -51,6 +52,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
 		commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
 		commands.registerCommand("vjeko-al-objid.validate-license-preview", validateLicense),
+		commands.registerCommand("vjeko-al-objid.select-bclicense", selectBCLicense),
 
 		// Tree view
 		ExplorerTreeDataProvider.instance,

@@ -1,4 +1,6 @@
 import { CodeActionProvider, TextDocument, Range, CodeActionContext, CancellationToken, CodeAction, DocumentSymbol, commands, SymbolKind, CodeActionKind } from "vscode";
+import { getManifest } from "../lib/AppManifest";
+import { getSymbolAtPosition } from "../lib/functions";
 import { DIAGNOSTIC_CODE } from "./Diagnostics";
 
 export class ObjIdConfigActionProvider implements CodeActionProvider {
@@ -7,6 +9,10 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
         if (ninjaIssues.length === 0) {
             return;
         }
+
+        const manifest = getManifest(document.uri);
+
+        const symbol = await getSymbolAtPosition(document.uri, range.start);
 
         const actions: CodeAction[] = [];
         for (let issue of ninjaIssues) {
@@ -18,7 +24,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     break;
 
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND:
-                    createAction(actions, "", [], "Select a BC license file");
+                    createAction(actions, "vjeko-al-objid.select-bclicense", [manifest], "Select a BC license file");
                     break;
             }
         }
@@ -26,7 +32,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
     }
 }
 
-function createAction(actions: CodeAction[], command: string, args: [], title: string, kind: CodeActionKind = CodeActionKind.QuickFix) {
+function createAction(actions: CodeAction[], command: string, args: any[], title: string, kind: CodeActionKind = CodeActionKind.QuickFix) {
     const action = new CodeAction(title);
     action.kind = kind;
     action.command = { command, arguments: args, title };
