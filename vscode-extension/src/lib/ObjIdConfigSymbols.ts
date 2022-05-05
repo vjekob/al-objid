@@ -3,6 +3,7 @@ import * as fs from "fs";
 import path = require("path");
 import * as os from 'os';
 import { getSha256 } from "./Sha256";
+import { ConfigurationProperty } from "./types";
 
 async function waitForJsonActivation(): Promise<boolean> {
     // We need this because there is no other reliable way to await for activation of JSON language features, needed for symbol loading
@@ -43,12 +44,14 @@ let jsonAvailable = waitForJsonActivation();
 export class ObjIdConfigSymbols {
     private readonly _symbolsPromise: Promise<DocumentSymbol[] | undefined>;
     private readonly _idRangesPromise: Promise<DocumentSymbol | undefined>;
+    private readonly _objectRangesPromise: Promise<DocumentSymbol | undefined>;
     private readonly _bcLicensePromise: Promise<DocumentSymbol | undefined>;
 
     constructor(uri: Uri) {
         if (!fs.existsSync(uri.fsPath)) {
             this._symbolsPromise = Promise.resolve(undefined);
             this._idRangesPromise = Promise.resolve(undefined);
+            this._objectRangesPromise = Promise.resolve(undefined);
             this._bcLicensePromise = Promise.resolve(undefined);
             return;
         }
@@ -63,8 +66,9 @@ export class ObjIdConfigSymbols {
             resolve(symbols);
         });
 
-        this._idRangesPromise = this.getPropertyPromise("idRanges");
-        this._bcLicensePromise = this.getPropertyPromise("bcLicense");
+        this._idRangesPromise = this.getPropertyPromise(ConfigurationProperty.Ranges);
+        this._objectRangesPromise = this.getPropertyPromise(ConfigurationProperty.ObjectRanges);
+        this._bcLicensePromise = this.getPropertyPromise(ConfigurationProperty.BcLicense);
     }
 
     private getPropertyPromise(name: string) {
@@ -87,6 +91,10 @@ export class ObjIdConfigSymbols {
 
     public get idRanges(): Promise<DocumentSymbol | undefined> {
         return this._idRangesPromise;
+    }
+
+    public get objectRanges(): Promise<DocumentSymbol | undefined> {
+        return this._objectRangesPromise;
     }
 
     public get bcLicense(): Promise<DocumentSymbol | undefined> {

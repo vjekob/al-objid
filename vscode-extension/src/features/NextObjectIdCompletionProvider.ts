@@ -202,7 +202,7 @@ export class NextObjectIdCompletionProvider {
             const objIdConfig = manifest.ninja.config;    
             for (let i = 0; i < objectId.id.length; i++) {
                 const id = objectId.id[i];
-                const range = getRangeForId(id as number, objIdConfig.idRanges);
+                const range = getRangeForId(id as number, objIdConfig.getObjectRanges(type));
                 if (range && range.description) {
                     if (logicalNames.includes(range.description)) {
                         continue;

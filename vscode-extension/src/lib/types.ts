@@ -64,3 +64,15 @@ export interface GitTopLevelPathContext {
     manifests: AppManifest[];
     branch: string;
 }
+
+export enum ConfigurationProperty {
+    AuthKey = "authKey",
+    AppPoolId = "appPoolId",
+    BackEndUrl = "backEndUrl",
+    BackEndApiKey = "backEndApiKey",
+    Ranges = "idRanges",
+    ObjectRanges = "objectRanges",
+    BcLicense = "bcLicense",
+    LicenseReport = "licenseReport",
+}
+

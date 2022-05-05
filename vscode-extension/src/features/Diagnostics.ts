@@ -7,12 +7,13 @@ export interface CreateDiagnostic {
 
 export const DIAGNOSTIC_CODE = {
     OBJIDCONFIG: {
-        INVALIDTYPE: "NINJA001",
+        INVALID_TYPE: "NINJA001",
         MISSING_PROPERTY: "NINJA002",
         RANGES_OVERLAP: "NINJA003",
         TO_BEFORE_FROM: "NINJA004",
         MISSING_DESCRIPTION: "NINJA005",
         FILE_NOT_FOUND: "NINJA006",
+        INVALID_OBJECT_TYPE: "NINJA007",
     },
 
     BCLICENSE: {

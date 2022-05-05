@@ -50,8 +50,9 @@ export class ObjIdConfigMonitor implements Disposable {
     }
 
     private validateFile(manifest: AppManifest) {
-        manifest.ninja.config.idRanges;
-        manifest.ninja.config.bcLicense;
+        manifest.ninja.config.idRanges; // This reads them, and reading validates them
+        manifest.ninja.config.validateObjectRanges();
+        manifest.ninja.config.bcLicense; // This reads them, and reading validates them
     }
 
     private async onDeleted(manifest: AppManifest, uri: Uri) {

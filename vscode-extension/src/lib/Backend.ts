@@ -198,13 +198,14 @@ export class Backend {
         const manifest = getCachedManifestFromAppId(appId);
         const objIdConfig = manifest.ninja.config;
         const additionalOptions = {} as NextObjectIdInfo;
-        if (Config.instance.requestPerRange || objIdConfig.idRanges.length > 0) {
+        const idRanges = objIdConfig.getObjectRanges(type);
+        if (Config.instance.requestPerRange || idRanges.length > 0) {
             additionalOptions.perRange = true;
             if (commit && require) {
                 additionalOptions.require = require;
             }
-            if (objIdConfig.idRanges.length > 0) {
-                ranges = objIdConfig.idRanges;
+            if (idRanges.length > 0) {
+                ranges = idRanges;
                 if (commit && require) {
                     // When committing, and we use logical ranges, then filter out the ranges to only the same logical range (identified by name)
                     const currentRange = getRangeForId(require, ranges as NinjaALRange[]);
