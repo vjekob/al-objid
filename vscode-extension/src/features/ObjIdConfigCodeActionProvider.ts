@@ -27,7 +27,6 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     if (remainingTypes.length > 0) {
                         createAction(actions, "vjeko-al-objid.quickfix-select-valid-type", [document, symbol.selectionRange, remainingTypes], "Select valid object type", CodeActionKind.QuickFix);
                     }
-
                     break;
 
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND:
