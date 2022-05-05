@@ -27,6 +27,7 @@ import { consolidateRanges } from "./commands/consolidate-ranges";
 import { createAppPool } from "./commands/create-app-pool";
 import { Diagnostics } from "./features/Diagnostics";
 import { validateLicense } from "./commands/validate-license";
+import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvider";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -55,6 +56,9 @@ export function activate(context: ExtensionContext) {
 		ExplorerTreeDataProvider.instance,
 		window.registerTreeDataProvider("ninja-rangeExplorer", ExplorerTreeDataProvider.instance),
 		window.registerFileDecorationProvider(ExplorerDecorationsProvider.instance),
+
+		// CodeActions provider
+        languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),
 
 		// Other
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),

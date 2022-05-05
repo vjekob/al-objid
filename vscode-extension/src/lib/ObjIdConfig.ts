@@ -360,7 +360,7 @@ export class ObjIdConfig {
         if (!fs.existsSync(path)) {
             const bcLicenseSymbol = await this._symbols.bcLicense;
             if (bcLicenseSymbol) {
-                diagnose(bcLicenseSymbol?.range, `Cannot find license file.`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.FILE_NOT_FOUND);
+                diagnose(bcLicenseSymbol?.range, `Cannot find license file.`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND);
                 return false;
             }
         }
