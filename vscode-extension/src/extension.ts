@@ -30,6 +30,7 @@ import { validateLicense } from "./commands/validate-license";
 import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvider";
 import { selectBCLicense } from "./commands/select-bclicense";
 import { quickFixRemoveDeclaration } from "./commands/quickfix-remove-declaration";
+import { quickFixSelectValidType } from "./commands/quickfix-select-valid-type";
 
 export function activate(context: ExtensionContext) {
 	ConsumptionWarnings.instance.setContext(context);
@@ -55,6 +56,7 @@ export function activate(context: ExtensionContext) {
 		commands.registerCommand("vjeko-al-objid.validate-license-preview", validateLicense),
 		commands.registerCommand("vjeko-al-objid.select-bclicense", selectBCLicense),
 		commands.registerCommand("vjeko-al-objid.quickfix-remove-declaration", quickFixRemoveDeclaration),
+		commands.registerCommand("vjeko-al-objid.quickfix-select-valid-type", quickFixSelectValidType),
 
 		// Tree view
 		ExplorerTreeDataProvider.instance,

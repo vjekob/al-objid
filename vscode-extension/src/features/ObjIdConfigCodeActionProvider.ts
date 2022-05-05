@@ -1,5 +1,6 @@
 import { CodeActionProvider, TextDocument, Range, CodeActionContext, CancellationToken, CodeAction, DocumentSymbol, commands, SymbolKind, CodeActionKind } from "vscode";
 import { getManifest } from "../lib/AppManifest";
+import { ALObjectType } from "../lib/constants";
 import { getSymbolAtPosition } from "../lib/functions";
 import { DIAGNOSTIC_CODE } from "./Diagnostics";
 
@@ -11,14 +12,21 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
         }
 
         const manifest = getManifest(document.uri);
+        if (!manifest) {
+            return;
+        }
 
         const actions: CodeAction[] = [];
         for (let issue of ninjaIssues) {
             switch (issue.code) {
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_OBJECT_TYPE:
-                    const symbol = await getSymbolAtPosition(document.uri, range.start)!;
-                    createAction(actions, "vjeko-al-objid.quickfix-remove-declaration", [manifest, symbol?.name], "Remove declaration", CodeActionKind.QuickFix);
-                    createAction(actions, "", [], "Select valid object type", CodeActionKind.QuickFix);
+                    const symbol = (await getSymbolAtPosition(document.uri, range.start))!;
+                    const existingTypes = manifest.ninja.config.explicitObjectTypeRanges;
+                    const remainingTypes = Object.values<string>(ALObjectType).filter(type => !existingTypes.includes(type));
+                    createAction(actions, "vjeko-al-objid.quickfix-remove-declaration", [manifest, symbol.name], "Remove declaration", CodeActionKind.QuickFix);
+                    if (remainingTypes.length > 0) {
+                        createAction(actions, "vjeko-al-objid.quickfix-select-valid-type", [document, symbol.selectionRange, remainingTypes], "Select valid object type", CodeActionKind.QuickFix);
+                    }
 
                     break;
 

@@ -329,11 +329,14 @@ export class ObjIdConfig {
         const validTypes = Object.values<string>(ALObjectType);
 
         const objectRangesSymbol = await this._symbols.objectRanges;
+        if (!objectRangesSymbol) {
+            return;
+        }
         for (let child of objectRangesSymbol!.children) {
             const type = child.name;
             if (!validTypes.includes(type)) {
                 // Report error
-                diagnose(child.selectionRange, `Invalid object type: ${child.detail}`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_OBJECT_TYPE);
+                diagnose(child.selectionRange, `Invalid object type: ${type}.`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_OBJECT_TYPE);
                 continue;
             }
             this.getObjectRanges(type, diagnose);
