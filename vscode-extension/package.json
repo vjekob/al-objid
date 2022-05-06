@@ -3,7 +3,7 @@
 	"displayName": "AL Object ID Ninja",
 	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
 	"publisher": "vjeko",
-	"version": "2.6.0",
+	"version": "2.6.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/vjekob/al-objid.git"
@@ -216,6 +216,44 @@
 					"command": "vjeko-al-objid.confirm-sync-object-ids",
 					"group": "inline",
 					"when": "view == ninja-rangeExplorer && viewItem == ninja-folder"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "vjeko-al-objid.confirm-sync-object-ids",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.confirm-authorize-app",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.confirm-deauthorize-app",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.auto-sync-object-ids",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.show-release-notes",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.copy-ranges",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.consolidate-ranges",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.create-app-pool-preview",
+					"when": "vjeko-al-objid.active"
+				},
+				{
+					"command": "vjeko-al-objid.validate-license-preview",
+					"when": "vjeko-al-objid.active"
 				}
 			]
 		}
