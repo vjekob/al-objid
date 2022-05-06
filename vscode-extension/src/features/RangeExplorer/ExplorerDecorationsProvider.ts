@@ -9,7 +9,7 @@ import {
 } from "vscode";
 import { PropertyBag } from "../../lib/PropertyBag";
 import { TreeItemInfo } from "./TreeItemInfo";
-import { TreeItemSeverity } from "./TreeItemSeverity";
+import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
 
 const Colors: any = {
     undefined: "foreground",

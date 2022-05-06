@@ -1,42 +1,58 @@
 import path = require("path");
-import { TreeItemCollapsibleState, Uri } from "vscode";
+import { TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { ALRange, NinjaALRange } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
-import { ExplorerItem } from "./ExplorerItem";
-import { ExplorerItemFactory } from "./ExplorerItemFactory";
-import { ExplorerItemType } from "./ExplorerItemType";
+import { ObjectTypeExplorerItem } from "./ObjectTypeExplorerItem";
 import { RangeExplorerTreeDataProvider } from "./RangeExplorerTreeDataProvider";
+import { TextExplorerItem } from "../Explorer/TextExplorerItem";
+import { NinjaExplorerItem } from "../Explorer/ExplorerItem";
 
 const light = path.join(__filename, "..", "..", "..", "..", "images", "brackets-square-light.svg");
 const dark = path.join(__filename, "..", "..", "..", "..", "images", "brackets-square-dark.svg");
 
-export class RangeExplorerItem extends ExplorerItem {
-    private _appId: string;
-    private _range: ALRange;
+export class RangeExplorerItem implements NinjaExplorerItem {
+    private readonly _label: string;
+    private readonly _tooltip: string;
+    private readonly _description: string;
+    private readonly _collapsibleState: TreeItemCollapsibleState;
+    private readonly _appId: string;
+    private readonly _range: ALRange;
+    private readonly _id: string;
+    private readonly _resourceUri: Uri;
+    private _children: NinjaExplorerItem[] | undefined;
 
     constructor(appId: string, range: ALRange) {
-        super("", "", ""); // All three will be configured immediately
-
         const description = (range as NinjaALRange).description || "";
         const addition = description ? ` (${description})` : "";
 
-        this.label = `${range.from}..${range.to}`;
-        this.tooltip = `From ${range.from} to ${range.to}${addition}`;
-        this.description = description;
+        this._label = `${range.from}..${range.to}`;
+        this._tooltip = `From ${range.from} to ${range.to}${addition}`;
+        this._description = description;
 
-        this.collapsibleState = TreeItemCollapsibleState.Expanded;
-        this.iconPath = { light, dark };
+        this._collapsibleState = TreeItemCollapsibleState.Expanded;
         this._appId = appId;
         this._range = range;
-        this.id = RangeExplorerTreeDataProvider.instance.getUriString(appId, range);
-        this.resourceUri = Uri.parse(this.id);
+        this._id = RangeExplorerTreeDataProvider.instance.getUriString(appId, range);
+        this._resourceUri = Uri.parse(this._id);
     }
 
-    type = ExplorerItemType.range;
-    hasChildren = true;
+    public getTreeItem() {
+        const item = new TreeItem(this._label, this._collapsibleState);
+        item.tooltip = this._tooltip;
+        item.description = this._description;
+        item.collapsibleState = this._collapsibleState;
+        item.iconPath = { light, dark };
+        item.id = this._id;
+        item.resourceUri = this._resourceUri;
+        return item;
+    }
 
-    override getChildren(): ExplorerItem[] {
-        const children = [];
+    public get children(): NinjaExplorerItem[] {
+        if (this._children) {
+            return this._children;
+        }
+
+        this._children = [];
 
         const consumption = ConsumptionCache.instance.getConsumption(this._appId) as any;
         if (consumption) {
@@ -45,8 +61,8 @@ export class RangeExplorerItem extends ExplorerItem {
                     id => id >= this._range.from && id <= this._range.to
                 );
                 if (ids.length) {
-                    children.push(
-                        ExplorerItemFactory.objectType(
+                    this._children.push(
+                        new ObjectTypeExplorerItem(
                             this._appId,
                             this._range,
                             type,
@@ -57,9 +73,9 @@ export class RangeExplorerItem extends ExplorerItem {
                 }
             }
 
-            if (!children.length) {
-                children.push(
-                    ExplorerItemFactory.text(
+            if (!this._children.length) {
+                this._children.push(
+                    new TextExplorerItem(
                         "No consumption yet.",
                         "No object IDs have been assigned from this range"
                     )
@@ -67,6 +83,6 @@ export class RangeExplorerItem extends ExplorerItem {
             }
         }
 
-        return children;
+        return this._children;
     }
 }

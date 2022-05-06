@@ -1,17 +1,22 @@
 import path = require("path");
-import { Uri } from "vscode";
+import { TreeItem, Uri } from "vscode";
 import { ALRange } from "../../lib/types";
-import { ExplorerItem } from "./ExplorerItem";
-import { ExplorerItemType } from "./ExplorerItemType";
+import { NinjaExplorerItem } from "../Explorer/ExplorerItem";
 import { RangeExplorerTreeDataProvider } from "./RangeExplorerTreeDataProvider";
 
-export class ObjectTypeExplorerItem extends ExplorerItem {
+export class ObjectTypeExplorerItem implements NinjaExplorerItem {
+    private readonly _label: string;
+    private readonly _tooltip: string;
+    private readonly _description: string;
+    private readonly _id: string;
+    private readonly _resourceUri: Uri;
+    private readonly _light: string;
+    private readonly _dark: string;
+
     constructor(appId: string, range: ALRange, objectType: string, ids: number[], size: number) {
-        super(
-            `${objectType}`,
-            `${ids.length} assigned ${objectType} object(s)`,
-            `${Math.round((ids.length / size) * 100)}% (${ids.length} of ${size})`
-        );
+        this._label = `${objectType}`;
+        this._tooltip = `${ids.length} assigned ${objectType} object(s)`;
+        this._description = `${Math.round((ids.length / size) * 100)}% (${ids.length} of ${size})`;
 
         const uri = RangeExplorerTreeDataProvider.instance.getUriString(appId, range, objectType);
         const info = RangeExplorerTreeDataProvider.instance.getTreeItemInfo(uri);
@@ -37,14 +42,22 @@ export class ObjectTypeExplorerItem extends ExplorerItem {
         }
 
         const icon = `ids-${iconPct}`;
-        const light = path.join(__filename, "..", "..", "..", "..", "images", `${icon}-light.svg`);
-        const dark = path.join(__filename, "..", "..", "..", "..", "images", `${icon}-dark.svg`);
-        this.iconPath = { dark, light };
+        this._light = path.join(__filename, "..", "..", "..", "..", "images", `${icon}-light.svg`);
+        this._dark = path.join(__filename, "..", "..", "..", "..", "images", `${icon}-dark.svg`);
 
-        this.resourceUri = Uri.parse(uri);
-        this.id = uri;
+        this._resourceUri = Uri.parse(uri);
+        this._id = uri;
     }
 
-    type = ExplorerItemType.objectType;
-    hasChildren = false;
+    public children = [];
+
+    public getTreeItem() {
+        const item = new TreeItem(this._label);
+        item.tooltip = this._tooltip;
+        item.description = this._description;
+        item.id = this._id;
+        item.resourceUri = this._resourceUri;
+        item.iconPath = { dark: this._dark, light: this._light };
+        return item;
+    }
 }

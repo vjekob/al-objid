@@ -1,17 +1,19 @@
-import { Disposable, Event, EventEmitter, TreeDataProvider, workspace } from "vscode";
+import { Disposable, Event, EventEmitter, TreeDataProvider, TreeItem, workspace } from "vscode";
 import { ALWorkspace } from "../../lib/ALWorkspace";
 import { getManifest } from "../../lib/AppManifest";
 import { PropertyBag } from "../../lib/PropertyBag";
 import { ALRange, AppManifest } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
-import { ExplorerItem } from "./ExplorerItem";
-import { ExplorerItemFactory } from "./ExplorerItemFactory";
-import { ExplorerItemType } from "./ExplorerItemType";
 import { TreeItemInfo } from "./TreeItemInfo";
-import { TreeItemSeverity } from "./TreeItemSeverity";
+import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
+import { TextExplorerItem } from "../Explorer/TextExplorerItem";
+import { WorkspaceExplorerItem } from "./WorkspaceExplorerItem";
+import { NinjaExplorerItem } from "../Explorer/ExplorerItem";
 
-export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>, Disposable {
+export class RangeExplorerTreeDataProvider
+    implements TreeDataProvider<NinjaExplorerItem>, Disposable
+{
     public static _instance: RangeExplorerTreeDataProvider;
 
     private constructor() {
@@ -30,9 +32,9 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerI
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
 
-    private _onDidChangeTreeData: EventEmitter<ExplorerItem | undefined | null | void> =
-        new EventEmitter<ExplorerItem | undefined | null | void>();
-    readonly onDidChangeTreeData: Event<ExplorerItem | undefined | null | void> =
+    private _onDidChangeTreeData: EventEmitter<NinjaExplorerItem | undefined | null | void> =
+        new EventEmitter<NinjaExplorerItem | undefined | null | void>();
+    readonly onDidChangeTreeData: Event<NinjaExplorerItem | undefined | null | void> =
         this._onDidChangeTreeData.event;
 
     private onDidChangeWorkspaceFolders() {
@@ -54,29 +56,25 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerI
         }
     }
 
-    getTreeItem(element: ExplorerItem) {
-        return element;
+    getTreeItem(element: NinjaExplorerItem): TreeItem {
+        return element.getTreeItem();
     }
 
-    getChildren(element?: ExplorerItem): ExplorerItem[] {
+    getChildren(element?: NinjaExplorerItem): NinjaExplorerItem[] {
         if (!element) {
             const folders = ALWorkspace.getALFolders();
             if (!folders) {
                 return [
-                    ExplorerItemFactory.text(
+                    new TextExplorerItem(
                         "No AL workspaces are open.",
                         "There is nothing to show here"
                     ),
                 ];
             }
-            return folders?.map(folder => ExplorerItemFactory.workspace(folder.uri));
+            return folders?.map(folder => new WorkspaceExplorerItem(getManifest(folder.uri)!));
         }
 
-        if (element.hasChildren) {
-            return element.getChildren();
-        }
-
-        return [];
+        return element.children;
     }
 
     public getUriString(appId: string, range?: ALRange, objectType?: string): string {
@@ -100,7 +98,6 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerI
 
         const uri = this.getUriString(appId, range, objectType);
         const item: TreeItemInfo = {
-            type: ExplorerItemType.objectType,
             remaining: size - ids.length,
         };
 
@@ -130,9 +127,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerI
 
     private buildRangeItemsFromCache(appId: string, range: ALRange): void {
         const uri = this.getUriString(appId, range);
-        this._items[uri] = {
-            type: ExplorerItemType.range,
-        };
+        this._items[uri] = {};
         const consumption = ConsumptionCache.instance.getConsumption(appId) as any;
         if (!consumption) {
             return;
@@ -157,9 +152,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerI
 
     private buildFolderItemsFromCache(manifest: AppManifest): void {
         const uri = this.getUriString(manifest.id);
-        this._items[uri] = {
-            type: ExplorerItemType.workspace,
-        };
+        this._items[uri] = {};
 
         const ranges = manifest.ninja.config.idRanges.length
             ? manifest.ninja.config.idRanges
