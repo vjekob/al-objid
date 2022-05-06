@@ -6,16 +6,16 @@ Welcome to AL Object ID Ninja version 2.5.0!
 
 This version brings a lot of exciting new features:
 
-* App pools feature to share same object ID ranges between multiple apps
-* License validation to check your object ID assignments against a (customer) license
-* Logical ranges to help you manage object ID assignments with more granularity and control
+-   App pools feature to share same object ID ranges between multiple apps
+-   License validation to check your object ID assignments against a (customer) license
+-   Logical ranges to help you manage object ID assignments with more granularity and control
 
 There are also a few minor updates and changes:
 
-* Including user name in back-end operations is (again) optional
-* Authorization and deauthorization work better in multi-root workspaces
-* Validation of `.objidconfig` file
-* Improved AL Object ID Ninja extension activation
+-   Including user name in back-end operations is (again) optional
+-   Authorization and deauthorization work better in multi-root workspaces
+-   Validation of `.objidconfig` file
+-   Improved AL Object ID Ninja extension activation
 
 That's the bullet points. Read on to get more insight into these features and improvements.
 
@@ -26,9 +26,10 @@ about object IDs. Once you consume an object ID from one app, it immediately bec
 assignment in any other app belonging to the same pool.
 
 There are several scenarios where application pools are not just preferable, but indispensable:
-* Splitting one large partner range across multiple partner apps, especially for legacy apps.
-* Multiple PTE (per-tenant extensions) for the same customer absolutely must cause no ID conflict, but
-without application pools it's practically impossible to make sure all IDs are unique across all PTEs.
+
+-   Splitting one large partner range across multiple partner apps, especially for legacy apps.
+-   Multiple PTE (per-tenant extensions) for the same customer absolutely must cause no ID conflict, but
+    without application pools it's practically impossible to make sure all IDs are unique across all PTEs.
 
 To learn more about app pool, check out the [Application Pools documentation page](https://github.com/vjekob/al-objid/blob/master/vscode-extension/docs/app-pools.md)
 on GitHub.
@@ -92,8 +93,9 @@ if you are not working in an AL workspace. This could result in runtime errors t
 to interpret for most of users.
 
 Ninja is now activated only in these circumstances:
-* You are actually working in an AL project
-* Your workspace contains the `.objidconfig` file
+
+-   You are actually working in an AL project
+-   Your workspace contains the `.objidconfig` file
 
 Furthermore, Ninja will now also activate the AL extension automatically if it itself gets activated
 by the presence of the `.objidconfig` file. This allows you to open VS Code and start invoking AL

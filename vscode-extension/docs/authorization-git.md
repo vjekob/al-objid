@@ -17,19 +17,20 @@ make sure that the authorization file is always committed to your repository. If
 is dirty, Ninja would not be able to commit just the `.objidconfig` file.
 
 This is what happens during authorization:
-* Ninja will first ask (twice) for your confirmation. Ninja wants to be sure you know what you are
-doing when you are authorizing an app.
-* Then, Ninja will check if the repository is clean. If there are uncommitted modifications in your
-repository, either in your working directory or staging area, you must clean them before authorizing
-the app.
-* When repository is clean, Ninja will check which branch you are on. It will ask you whether you
-are sure to commit `.objidconfig` to that branch. This is to prevent accidental commits to your main
-branch when you are not doing trunk-based development (in which case committing to master locally
-could cause problems).
-* When you confirm the branch to commit to, Ninja will proceed with authorization. It will send the
-authorization request to the back end, and when it receives the authorization key response, it will
-store the key in the `.objidconfig` file.
-* When `.objidconfig` file is written, Ninja will immediately stage it, then commit it.
+
+-   Ninja will first ask (twice) for your confirmation. Ninja wants to be sure you know what you are
+    doing when you are authorizing an app.
+-   Then, Ninja will check if the repository is clean. If there are uncommitted modifications in your
+    repository, either in your working directory or staging area, you must clean them before authorizing
+    the app.
+-   When repository is clean, Ninja will check which branch you are on. It will ask you whether you
+    are sure to commit `.objidconfig` to that branch. This is to prevent accidental commits to your main
+    branch when you are not doing trunk-based development (in which case committing to master locally
+    could cause problems).
+-   When you confirm the branch to commit to, Ninja will proceed with authorization. It will send the
+    authorization request to the back end, and when it receives the authorization key response, it will
+    store the key in the `.objidconfig` file.
+-   When `.objidconfig` file is written, Ninja will immediately stage it, then commit it.
 
 After your app is authorized, Ninja will monitor your `.objidconfig` file for you and it will make
 sure that you do not accidentally delete it. It will make an honest attempt to detect the difference

@@ -21,7 +21,7 @@ export const createAppPool = async () => {
     } else {
         await createAppPoolForMultipleApps(folders.map(folder => folder.uri));
     }
-}
+};
 
 function prerequisitesMet(manifest: AppManifest): boolean {
     if (manifest.ninja.config.appPoolId) {
@@ -70,14 +70,15 @@ async function createAppPoolForMultipleApps(uris: Uri[]) {
 
     Git.instance.executeCleanOperation({
         manifests,
-        operation: async (manifest) => {
+        operation: async manifest => {
             manifest.ninja.config.appPoolId = poolId;
             return true;
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument(DOCUMENTS.APP_POOLS),
-        getCommitMessage: (manifests) => `AL Object ID Ninja pool creation (preview) for ${getAppNamesFromManifests(manifests)}`
-    })
+        getCommitMessage: manifests =>
+            `AL Object ID Ninja pool creation (preview) for ${getAppNamesFromManifests(manifests)}`,
+    });
 }
 
 function createAppPoolIdFromAppId(manifest: AppManifest): string {

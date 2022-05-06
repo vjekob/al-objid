@@ -3,7 +3,11 @@ import { ALWorkspace } from "../lib/ALWorkspace";
 import { AuthorizedAppConsumption, ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS, URLS } from "../lib/constants";
 import { Git, GitBranchInfo } from "../lib/Git";
-import { getObjectDefinitions, getWorkspaceFolderFiles, updateActualConsumption } from "../lib/ObjectIds";
+import {
+    getObjectDefinitions,
+    getWorkspaceFolderFiles,
+    updateActualConsumption,
+} from "../lib/ObjectIds";
 import { PropertyBag } from "../lib/PropertyBag";
 import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
@@ -27,13 +31,17 @@ const BranchInfo = {
     getDetail(branch: GitBranchInfo) {
         if (branch.name) {
             if (!branch.tracks) return "Local-only branch";
-            if (branch.ahead === 0 && branch.behind === 0) return "Local and remote branches are in sync";
+            if (branch.ahead === 0 && branch.behind === 0) {
+                return "Local and remote branches are in sync";
+            }
             if (branch.ahead) {
                 let result = `Local is ahead of remote by ${branch.ahead} commit(s)`;
                 if (branch.behind) result += ` and behind it by ${branch.behind} commits`;
                 return result;
             }
-            if (branch.behind > 0) return `Local is behind remote by ${branch.behind} commit(s)`;
+            if (branch.behind > 0) {
+                return `Local is behind remote by ${branch.behind} commit(s)`;
+            }
         } else {
             return "Remote-only branch";
         }
@@ -47,8 +55,8 @@ const BranchInfo = {
         return branch.ahead
             ? `omit ${branch.ahead} local commits`
             : `includes more information than local`;
-    }
-}
+    },
+};
 
 interface AutoSyncConfiguration {
     repo?: Uri;
@@ -63,9 +71,7 @@ function createNewConfig(repo?: Uri): AutoSyncConfiguration {
 
 function getRepoName(repo: Uri) {
     let parts = repo.path.split("/");
-    return parts.length === 0
-        ? repo.toString()
-        : parts[parts.length - 1];
+    return parts.length === 0 ? repo.toString() : parts[parts.length - 1];
 }
 
 async function updateObjectDefinitions(uri: Uri, consumption: ConsumptionInfo) {
@@ -74,14 +80,20 @@ async function updateObjectDefinitions(uri: Uri, consumption: ConsumptionInfo) {
     updateActualConsumption(objects, consumption);
 }
 
-async function syncFoldersForConfiguration(config: AutoSyncConfiguration, consumptions: PropertyBag<ConsumptionInfo>) {
+async function syncFoldersForConfiguration(
+    config: AutoSyncConfiguration,
+    consumptions: PropertyBag<ConsumptionInfo>
+) {
     for (let folder of config.folders) {
         if (!consumptions[folder.fsPath]) consumptions[folder.fsPath] = {};
         await updateObjectDefinitions(folder, consumptions[folder.fsPath]);
     }
 }
 
-async function syncSingleConfiguration(config: AutoSyncConfiguration, consumptions: PropertyBag<ConsumptionInfo>) {
+async function syncSingleConfiguration(
+    config: AutoSyncConfiguration,
+    consumptions: PropertyBag<ConsumptionInfo>
+) {
     const { repo, branchesLocal, branchesRemote } = config;
     if (repo) {
         let currentBranch = await Git.instance.getCurrentBranchName(repo);
@@ -107,7 +119,7 @@ async function syncSingleConfiguration(config: AutoSyncConfiguration, consumptio
         return;
     }
 
-    await syncFoldersForConfiguration(config, consumptions)
+    await syncFoldersForConfiguration(config, consumptions);
 }
 
 function compressConsumption(consumption: ConsumptionInfo) {
@@ -116,7 +128,10 @@ function compressConsumption(consumption: ConsumptionInfo) {
     }
 }
 
-function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manifests: AppManifest[]) {
+function compressConsumptions(
+    consumptions: PropertyBag<ConsumptionInfo>,
+    manifests: AppManifest[]
+) {
     // First pass: consolidate per app pool
     const manifestMap: PropertyBag<string> = {};
     for (let key of Object.keys(consumptions)) {
@@ -150,14 +165,17 @@ function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manife
     }
 }
 
-function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manifests: AppManifest[]): AuthorizedAppConsumption[] {
+function authorizeConsumptions(
+    consumptions: PropertyBag<ConsumptionInfo>,
+    manifests: AppManifest[]
+): AuthorizedAppConsumption[] {
     let result: AuthorizedAppConsumption[] = [];
     for (let key of Object.keys(consumptions)) {
         let manifest = manifests.find(manifest => manifest.ninja.uri.fsPath === key)!;
         result.push({
             appId: manifest.id,
             authKey: manifest.ninja.config.authKey,
-            ids: consumptions[key]
+            ids: consumptions[key],
         });
     }
 
@@ -169,9 +187,9 @@ const AutoSyncResult = {
     NoALFolders: Symbol("NoALFolders"),
     SilentFailure: Symbol("SilentFailure"),
     GitDirty: Symbol("GitDirty"),
-}
+};
 
-function autoSyncResult(status: symbol, context?: any): { status: symbol, context: any } {
+function autoSyncResult(status: symbol, context?: any): { status: symbol; context: any } {
     return { status, context };
 }
 
@@ -188,135 +206,165 @@ export const autoSyncObjectIds = async () => {
             break;
         default:
             return;
-    };
+    }
 
-    let result = await window.withProgress({ location: ProgressLocation.Notification }, async progress => {
-        if (!workspace.workspaceFolders || !workspace.workspaceFolders.length) return autoSyncResult(AutoSyncResult.NoALFolders);
+    let result = await window.withProgress(
+        { location: ProgressLocation.Notification },
+        async progress => {
+            if (!workspace.workspaceFolders || !workspace.workspaceFolders.length)
+                return autoSyncResult(AutoSyncResult.NoALFolders);
 
-        // Pick folders
-        let manifests = auto
-            ? ALWorkspace.getALFolders()?.map(workspace => getCachedManifestFromUri(workspace.uri))
-            : await ALWorkspace.pickFolders();
-        if (!manifests || !manifests.length) {
-            return autoSyncResult(AutoSyncResult.SilentFailure);
-        }
-
-        // Find git repos that match picked folders
-        progress.report({ message: "Connecting to Git..." });
-        let repos: Uri[] = [];
-        let repoFolders: PropertyBag<Uri[]> = {};
-        let setup: AutoSyncConfiguration[] = [];
-        let nonGit = createNewConfig();
-        setup.push(nonGit);
-        for (let manifest of manifests) {
-            let root = await Git.instance.getRepositoryRootUri(manifest.ninja.uri);
-            if (!root) {
-                nonGit.folders.push(manifest.ninja.uri);
-                continue;
+            // Pick folders
+            let manifests = auto
+                ? ALWorkspace.getALFolders()?.map(workspace =>
+                      getCachedManifestFromUri(workspace.uri)
+                  )
+                : await ALWorkspace.pickFolders();
+            if (!manifests || !manifests.length) {
+                return autoSyncResult(AutoSyncResult.SilentFailure);
             }
 
-            let repoPath = root.fsPath;
-            if (!repoFolders[repoPath]) repoFolders[repoPath] = [];
-            repoFolders[repoPath].push(manifest.ninja.uri);
+            // Find git repos that match picked folders
+            progress.report({ message: "Connecting to Git..." });
+            let repos: Uri[] = [];
+            let repoFolders: PropertyBag<Uri[]> = {};
+            let setup: AutoSyncConfiguration[] = [];
+            let nonGit = createNewConfig();
+            setup.push(nonGit);
+            for (let manifest of manifests) {
+                let root = await Git.instance.getRepositoryRootUri(manifest.ninja.uri);
+                if (!root) {
+                    nonGit.folders.push(manifest.ninja.uri);
+                    continue;
+                }
 
-            if (repos.find(repo => repo.fsPath === repoPath)) continue;
+                let repoPath = root.fsPath;
+                if (!repoFolders[repoPath]) repoFolders[repoPath] = [];
+                repoFolders[repoPath].push(manifest.ninja.uri);
 
-            if (!await Git.instance.isClean(root)) return autoSyncResult(AutoSyncResult.GitDirty, root);
-            repos.push(root);
-        }
+                if (repos.find(repo => repo.fsPath === repoPath)) continue;
 
-        // Iterate through all repos to obtain branch information
-        let branches: PropertyBag<GitBranchInfo[] | null> = {};
-        let i = 0;
-        for (let repo of repos) {
-            progress.report({ message: `Fetching branch information for ${getRepoName(repo)} (${++i} of ${repos.length})...` });
-
-            // Fetch
-            await Git.instance.fetch(repo);
-
-            // Obtain branches
-            branches[repo.fsPath] = await Git.instance.branches(repo);
-            if (branches === null) {
-                // For some reason, repository reports no branches
-                continue;
-            }
-        }
-
-        // Iterate through all repos and pick the branches
-        for (let repo of repos) {
-            let repoBranches = branches[repo.fsPath];
-            if (repoBranches === null) continue;
-
-            // Pick from list of branches
-            if (repoBranches.length > 1 && !auto) {
-                progress.report({ message: "Waiting for your branches selection..." });
-                let quickPick = new QuickPickWrapper<GitBranchInfo>(repoBranches.map((branch) => ({
-                    label: BranchInfo.getName(branch),
-                    detail: BranchInfo.getDetail(branch),
-                    description: "",
-                    data: branch
-                })));
-                quickPick.placeholder = `Which branches would you like to synchronize for ${getRepoName(repo)}?`;
-                let picked = await quickPick.pickMany();
-                if (!picked.length) continue;
-                repoBranches = picked;
+                if (!(await Git.instance.isClean(root)))
+                    return autoSyncResult(AutoSyncResult.GitDirty, root);
+                repos.push(root);
             }
 
-            // For each branch, if local is ahead/behind, ask whether to use local, remote, or both (and also indicate how many commits is difference)
-            let config: AutoSyncConfiguration = createNewConfig(repo);
-            for (let branch of repoBranches) {
-                progress.report({ message: `Progressing branch ${branch.name || branch.tracks} of ${getRepoName(repo)}` });
-                if (branch.ahead || branch.behind) {
-                    if (auto) {
-                        if (branch.ahead) config.branchesLocal.push(branch.name!);
-                        if (branch.behind) config.branchesRemote.push(branch.name!);
-                    } else {
-                        let picks = [
-                            `Local (${BranchInfo.getChooseLocalText(branch)})`,
-                            `Remote (${BranchInfo.getChooseRemoteText(branch)})`,
-                        ];
-                        if (branch.ahead && branch.behind) picks.push(`Both (includes all information from local and remote)`)
-                        let choice = await window.showQuickPick(picks, { placeHolder: `How do you want to synchronize branch ${branch.name} of ${getRepoName(repo)}?` });
-                        if (!choice) continue;
-                        switch (choice.split(" ")[0]) {
-                            case "Local":
-                                config.branchesLocal.push(branch.name!);
-                                break;
-                            case "Remote":
-                                config.branchesRemote.push(branch.tracks!);
-                                break;
-                            case "Both":
-                                config.branchesRemote.push(branch.tracks!);
-                                config.branchesLocal.push(branch.name!);
-                                break;
-                        }
-                    }
-                } else {
-                    if (branch.name) {
-                        // If local branch exists, then it's used even if remote exists
-                        config.branchesLocal.push(branch.name);
-                    } else {
-                        // If local branch does not exist, then it's a remote branch and must be used
-                        config.branchesRemote.push(branch.tracks!);
-                    }
+            // Iterate through all repos to obtain branch information
+            let branches: PropertyBag<GitBranchInfo[] | null> = {};
+            let i = 0;
+            for (let repo of repos) {
+                progress.report({
+                    message: `Fetching branch information for ${getRepoName(repo)} (${++i} of ${
+                        repos.length
+                    })...`,
+                });
+
+                // Fetch
+                await Git.instance.fetch(repo);
+
+                // Obtain branches
+                branches[repo.fsPath] = await Git.instance.branches(repo);
+                if (branches === null) {
+                    // For some reason, repository reports no branches
+                    continue;
                 }
             }
-            config.folders = repoFolders[repo.fsPath];
-            setup.push(config);
-        }
 
-        let consumptions: PropertyBag<ConsumptionInfo> = {};
-        for (let config of setup) {
-            progress.report({ message: `Finding object IDs in ${config.repo ? `repo ${getRepoName(config.repo)}` : "workspace"}...` })
-            await syncSingleConfiguration(config, consumptions);
-        }
-        compressConsumptions(consumptions, manifests);
-        let payload = authorizeConsumptions(consumptions, manifests);
+            // Iterate through all repos and pick the branches
+            for (let repo of repos) {
+                let repoBranches = branches[repo.fsPath];
+                if (repoBranches === null) continue;
 
-        Telemetry.instance.log("autoSyncIds");
-        await Backend.autoSyncIds(payload, false);
-        return autoSyncResult(AutoSyncResult.Success);
-    });
+                // Pick from list of branches
+                if (repoBranches.length > 1 && !auto) {
+                    progress.report({
+                        message: "Waiting for your branches selection...",
+                    });
+                    let quickPick = new QuickPickWrapper<GitBranchInfo>(
+                        repoBranches.map(branch => ({
+                            label: BranchInfo.getName(branch),
+                            detail: BranchInfo.getDetail(branch),
+                            description: "",
+                            data: branch,
+                        }))
+                    );
+                    quickPick.placeholder = `Which branches would you like to synchronize for ${getRepoName(
+                        repo
+                    )}?`;
+                    let picked = await quickPick.pickMany();
+                    if (!picked.length) continue;
+                    repoBranches = picked;
+                }
+
+                // For each branch, if local is ahead/behind, ask whether to use local, remote, or both (and also indicate how many commits is difference)
+                let config: AutoSyncConfiguration = createNewConfig(repo);
+                for (let branch of repoBranches) {
+                    progress.report({
+                        message: `Progressing branch ${
+                            branch.name || branch.tracks
+                        } of ${getRepoName(repo)}`,
+                    });
+                    if (branch.ahead || branch.behind) {
+                        if (auto) {
+                            if (branch.ahead) config.branchesLocal.push(branch.name!);
+                            if (branch.behind) config.branchesRemote.push(branch.name!);
+                        } else {
+                            let picks = [
+                                `Local (${BranchInfo.getChooseLocalText(branch)})`,
+                                `Remote (${BranchInfo.getChooseRemoteText(branch)})`,
+                            ];
+                            if (branch.ahead && branch.behind)
+                                picks.push(`Both (includes all information from local and remote)`);
+                            let choice = await window.showQuickPick(picks, {
+                                placeHolder: `How do you want to synchronize branch ${
+                                    branch.name
+                                } of ${getRepoName(repo)}?`,
+                            });
+                            if (!choice) continue;
+                            switch (choice.split(" ")[0]) {
+                                case "Local":
+                                    config.branchesLocal.push(branch.name!);
+                                    break;
+                                case "Remote":
+                                    config.branchesRemote.push(branch.tracks!);
+                                    break;
+                                case "Both":
+                                    config.branchesRemote.push(branch.tracks!);
+                                    config.branchesLocal.push(branch.name!);
+                                    break;
+                            }
+                        }
+                    } else {
+                        if (branch.name) {
+                            // If local branch exists, then it's used even if remote exists
+                            config.branchesLocal.push(branch.name);
+                        } else {
+                            // If local branch does not exist, then it's a remote branch and must be used
+                            config.branchesRemote.push(branch.tracks!);
+                        }
+                    }
+                }
+                config.folders = repoFolders[repo.fsPath];
+                setup.push(config);
+            }
+
+            let consumptions: PropertyBag<ConsumptionInfo> = {};
+            for (let config of setup) {
+                progress.report({
+                    message: `Finding object IDs in ${
+                        config.repo ? `repo ${getRepoName(config.repo)}` : "workspace"
+                    }...`,
+                });
+                await syncSingleConfiguration(config, consumptions);
+            }
+            compressConsumptions(consumptions, manifests);
+            let payload = authorizeConsumptions(consumptions, manifests);
+
+            Telemetry.instance.log("autoSyncIds");
+            await Backend.autoSyncIds(payload, false);
+            return autoSyncResult(AutoSyncResult.Success);
+        }
+    );
 
     switch (result.status) {
         case AutoSyncResult.Success:
@@ -324,12 +372,18 @@ export const autoSyncObjectIds = async () => {
             UI.sync.showSuccessInfo();
             break;
         case AutoSyncResult.NoALFolders:
-            output.log("[auto-sync-object-ids] No AL folders found in the workspace.", LogLevel.Info);
+            output.log(
+                "[auto-sync-object-ids] No AL folders found in the workspace.",
+                LogLevel.Info
+            );
             break;
         case AutoSyncResult.GitDirty:
             let repoName = getRepoName(result.context);
-            output.log(`[auto-sync-object-ids] Git repository ${repoName} is dirty. Cannot auto sync.`, LogLevel.Info);
-            if (await UI.sync.showRepoNotClean(repoName) === LABELS.BUTTON_LEARN_MORE) {
+            output.log(
+                `[auto-sync-object-ids] Git repository ${repoName} is dirty. Cannot auto sync.`,
+                LogLevel.Info
+            );
+            if ((await UI.sync.showRepoNotClean(repoName)) === LABELS.BUTTON_LEARN_MORE) {
                 env.openExternal(Uri.parse(URLS.AUTO_SYNC_DIRTY));
             }
             break;

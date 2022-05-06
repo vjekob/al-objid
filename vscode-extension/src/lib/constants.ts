@@ -1,7 +1,8 @@
 import { extensions } from "vscode";
 
 export const EXTENSION_NAME = "AL Object ID Ninja";
-export const EXTENSION_VERSION = extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
+export const EXTENSION_VERSION =
+    extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
 
 export const URLS = {
     AUTHORIZATION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md",
@@ -24,7 +25,7 @@ export const OBJECT_TYPES = [
     "reportextension",
     "table",
     "tableextension",
-    "xmlport"
+    "xmlport",
 ];
 
 // TODO replace the array above with the enum below (and make sure to break nothing in the proces)
@@ -53,13 +54,13 @@ export const LABELS = {
 
     SYNC_ARE_YOU_SURE: {
         YES: "Yes, please replace existing object ID consumptions in the back end",
-        NO: "No, I have changed my mind"
+        NO: "No, I have changed my mind",
     },
 
     AUTO_SYNC_PICK: {
         FULL_AUTO: "Fully automated (no questions)",
         INTERACTIVE: "Interactive (ask about folders and branches)",
-        LEARN_MORE: "Learn more about auto-syncing"
+        LEARN_MORE: "Learn more about auto-syncing",
     },
 
     COPY_RANGES_ARE_YOU_SURE: {
@@ -68,7 +69,7 @@ export const LABELS = {
         LEARN_MORE: "Learn more about logical ranges",
     },
 
-    FIX: "Fix it"
+    FIX: "Fix it",
 };
 
 /**
@@ -90,4 +91,4 @@ export const DOCUMENTS = {
     AUTHORIZATION_BRANCH_CHANGE: "authorization-branch-change",
     AUTHORIZATION_DELETED: "authorization-deleted",
     APP_POOLS: "app-pools",
-}
+};

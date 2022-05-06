@@ -1,4 +1,3 @@
-import { ExtensionContext } from "vscode";
 import { ReleaseNotesHandler } from "../features/ReleaseNotesHandler";
 
 /**

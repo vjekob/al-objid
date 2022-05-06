@@ -4,7 +4,7 @@
 
 **YES, READ IT, PLEASE, WE REALLY MEAN IT.**
 
-We have created a small file named `.objidconfig` in the root of your app, right next to your `app.json`. This file **is important**, it **IS NOT** an accidental leftover artifact of the authorization procedure that we just happened to forget to delete. No, this file **IS IMPORTANT**. **REALLY, REALLY, *REALLY* IMPORTANT.**
+We have created a small file named `.objidconfig` in the root of your app, right next to your `app.json`. This file **is important**, it **IS NOT** an accidental leftover artifact of the authorization procedure that we just happened to forget to delete. No, this file **IS IMPORTANT**. **REALLY, REALLY, _REALLY_ IMPORTANT.**
 
 Think of this file as your team's per-app AL Object ID Ninja password.
 

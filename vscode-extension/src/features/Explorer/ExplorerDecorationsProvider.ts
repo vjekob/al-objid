@@ -1,4 +1,12 @@
-import { Event, EventEmitter, FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from "vscode";
+import {
+    Event,
+    EventEmitter,
+    FileDecoration,
+    FileDecorationProvider,
+    ProviderResult,
+    ThemeColor,
+    Uri,
+} from "vscode";
 import { PropertyBag } from "../../lib/PropertyBag";
 import { TreeItemInfo } from "./TreeItemInfo";
 import { TreeItemSeverity } from "./TreeItemSeverity";
@@ -13,7 +21,7 @@ const Colors: any = {
 
 export class ExplorerDecorationsProvider implements FileDecorationProvider {
     private static _instance: ExplorerDecorationsProvider;
-    private constructor() { }
+    private constructor() {}
     public static get instance() {
         return this._instance || (this._instance = new ExplorerDecorationsProvider());
     }
@@ -21,8 +29,11 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
     private _treeItems: PropertyBag<TreeItemInfo> = {};
     private _updated: PropertyBag<boolean> = {};
 
-    private _onDidChangeFileDecorations: EventEmitter<Uri | Uri[] | undefined> = new EventEmitter<Uri | Uri[] | undefined>();
-    readonly onDidChangeFileDecorations: Event<Uri | Uri[] | undefined> | undefined = this._onDidChangeFileDecorations.event;
+    private _onDidChangeFileDecorations: EventEmitter<Uri | Uri[] | undefined> = new EventEmitter<
+        Uri | Uri[] | undefined
+    >();
+    readonly onDidChangeFileDecorations: Event<Uri | Uri[] | undefined> | undefined =
+        this._onDidChangeFileDecorations.event;
 
     provideFileDecoration(uri: Uri): ProviderResult<FileDecoration> {
         if (uri.scheme !== "ninja") {
@@ -38,12 +49,14 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
                 color: new ThemeColor(Colors[`${info.severity}`]),
                 tooltip: `${info.remaining} remaining`,
                 propagate: info.propagate,
-            }
-        };
+            };
+        }
     }
 
     update() {
-        this._onDidChangeFileDecorations.fire(Object.keys(this._updated).map(key => Uri.parse(key)));
+        this._onDidChangeFileDecorations.fire(
+            Object.keys(this._updated).map(key => Uri.parse(key))
+        );
     }
 
     markForUpdate(uriString: string, info: TreeItemInfo) {

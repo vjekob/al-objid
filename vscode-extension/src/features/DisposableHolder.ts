@@ -5,7 +5,7 @@ export abstract class DisposableHolder {
 
     protected registerDisposable(disposable: Disposable) {
         if (!this._disposables.includes(disposable)) {
-            this._disposables.push(disposable)
+            this._disposables.push(disposable);
         }
     }
 

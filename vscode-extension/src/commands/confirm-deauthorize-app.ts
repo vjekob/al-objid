@@ -13,7 +13,7 @@ async function executeDeuthorization() {
 
 export const confirmDeauthorizeApp = async () => {
     let result = await window.showQuickPick(Object.values(OPTION), {
-        placeHolder: "Are you sure you want to deauthorize your app?"
+        placeHolder: "Are you sure you want to deauthorize your app?",
     });
     switch (result) {
         case OPTION.YES:
@@ -21,6 +21,6 @@ export const confirmDeauthorizeApp = async () => {
             break;
         case OPTION.LEARN:
             env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
-            break;   
+            break;
     }
 };

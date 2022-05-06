@@ -4,15 +4,15 @@ Welcome to AL Object ID Ninja version 2.2.0! This is the first update in a long 
 features introduced in this version required deep changes in both the Visual Studio Code extension and the Azure
 back end.
 
-> ***IMPORTANT:*** If you are using a private back end, please make sure to update it. The changes introduced with
-this version will not work with the previous version of the back end. Old features will continue working unaffected,
-but to take advantage of the new features, you also need the latest back end.
+> **_IMPORTANT:_** If you are using a private back end, please make sure to update it. The changes introduced with
+> this version will not work with the previous version of the back end. Old features will continue working unaffected,
+> but to take advantage of the new features, you also need the latest back end.
 
 ## What's New
 
-* You can now assign field IDs and enum value IDs
-* AL Object ID Ninja uses a new, much faster and more accurate AL parser
-* Several minor updates and fixes are introduced
+-   You can now assign field IDs and enum value IDs
+-   AL Object ID Ninja uses a new, much faster and more accurate AL parser
+-   Several minor updates and fixes are introduced
 
 That's it in brief notes. If you want to know more details, read on.
 
@@ -31,8 +31,8 @@ Unlike with AL Language extension, AL Object ID Ninja can auto-suggest value IDs
 
 ![Assigning enum value IDs](https://raw.github.com/vjekob/al-objid/master/doc/images/value_ids.gif)
 
-> ***IMPORTANT:*** If you have already used AL Object ID Ninja with existing apps, you will have to synchronize all
-IDs with **Replace** option once again to be able to assign field IDs and enum value IDs correctly.
+> **_IMPORTANT:_** If you have already used AL Object ID Ninja with existing apps, you will have to synchronize all
+> IDs with **Replace** option once again to be able to assign field IDs and enum value IDs correctly.
 
 ## New AL Language parser
 

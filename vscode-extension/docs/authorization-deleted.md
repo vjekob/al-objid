@@ -12,7 +12,7 @@ message.
 
 If you really deleted the `.objidconfig` file, especially if it's intentional, then
 it means you don't really know what app authorization is and why Ninja uses it. We
-recommend that you read this document: 
+recommend that you read this document:
 https://github.com/vjekob/al-objid/blob/master/doc/Authorization.md
 
 The easiest way to recover is to switch to Source Control (**View > SCM** in the main menu), then

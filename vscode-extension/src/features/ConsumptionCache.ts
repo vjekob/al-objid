@@ -1,13 +1,13 @@
 import { ConsumptionData } from "../lib/BackendTypes";
 import { OBJECT_TYPES } from "../lib/constants";
-import { PropertyBag } from '../lib/PropertyBag';
+import { PropertyBag } from "../lib/PropertyBag";
 import { ConsumptionWarnings } from "./ConsumptionWarnings";
 
 export class ConsumptionCache {
     //#region Singleton
     private static _instance: ConsumptionCache;
 
-    private constructor() { }
+    private constructor() {}
 
     public static get instance(): ConsumptionCache {
         return this._instance || (this._instance = new ConsumptionCache());

@@ -18,12 +18,12 @@ export const authorizeApp = async () => {
 
     const success = await Git.instance.executeCleanOperation({
         manifests,
-        operation: async (manifest) => {
+        operation: async manifest => {
             output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
 
             Telemetry.instance.log("authorize", manifest.id);
             const gitUser = await Git.instance.getUserInfo(manifest.ninja.uri);
-            let response = await Backend.authorizeApp(manifest.id, gitUser.name, gitUser.email, async (response) => {
+            let response = await Backend.authorizeApp(manifest.id, gitUser.name, gitUser.email, async response => {
                 const { error } = response;
                 if (error.statusCode !== 405) {
                     return false;
@@ -43,11 +43,12 @@ export const authorizeApp = async () => {
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument(DOCUMENTS.AUTHORIZATION_GIT),
-        getCommitMessage: (manifests) => `AL Object ID Ninja app authorization for ${getAppNamesFromManifests(manifests)}`
+        getCommitMessage: manifests =>
+            `AL Object ID Ninja app authorization for ${getAppNamesFromManifests(manifests)}`,
     });
 
     if (success) {
         AuthorizationStatusBar.instance.updateStatusBar();
         showDocument(DOCUMENTS.AUTHORIZED);
     }
-}
+};

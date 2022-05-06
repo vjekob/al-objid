@@ -19,7 +19,7 @@ export class RangeExplorerItem extends ExplorerItem {
 
         const description = (range as NinjaALRange).description || "";
         const addition = description ? ` (${description})` : "";
-        
+
         this.label = `${range.from}..${range.to}`;
         this.tooltip = `From ${range.from} to ${range.to}${addition}`;
         this.description = description;
@@ -41,14 +41,29 @@ export class RangeExplorerItem extends ExplorerItem {
         const consumption = ConsumptionCache.instance.getConsumption(this._appId) as any;
         if (consumption) {
             for (var type of Object.keys(consumption).sort()) {
-                const ids = (consumption[type] as number[] || []).filter(id => id >= this._range.from && id <= this._range.to);
+                const ids = ((consumption[type] as number[]) || []).filter(
+                    id => id >= this._range.from && id <= this._range.to
+                );
                 if (ids.length) {
-                    children.push(ExplorerItemFactory.objectType(this._appId, this._range, type, ids, Math.max(this._range.to - this._range.from, 0) + 1));
+                    children.push(
+                        ExplorerItemFactory.objectType(
+                            this._appId,
+                            this._range,
+                            type,
+                            ids,
+                            Math.max(this._range.to - this._range.from, 0) + 1
+                        )
+                    );
                 }
             }
 
             if (!children.length) {
-                children.push(ExplorerItemFactory.text("No consumption yet.", "No object IDs have been assigned from this range"));
+                children.push(
+                    ExplorerItemFactory.text(
+                        "No consumption yet.",
+                        "No object IDs have been assigned from this range"
+                    )
+                );
             }
         }
 

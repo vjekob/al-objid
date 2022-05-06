@@ -23,8 +23,8 @@ assigned to new objects by other developers in their local repos, nor it shows t
 developers object IDs you assigned.
 
 > AL Object ID Ninja **does not** replace object ID suggestions made by the AL Language.
-Instead, it puts its suggestions on top of the suggestion list, right above Microsoft's suggestions. If you want to accept AL Object ID Ninja's suggestion, make sure to pick
-the first auto-suggested object ID, not the second one! 
+> Instead, it puts its suggestions on top of the suggestion list, right above Microsoft's suggestions. If you want to accept AL Object ID Ninja's suggestion, make sure to pick
+> the first auto-suggested object ID, not the second one!
 
 ## How do I get started? Is there any setup?
 

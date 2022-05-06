@@ -16,7 +16,13 @@ export class ExplorerItemFactory {
         return new RangeExplorerItem(appId, range);
     }
 
-    static objectType(appId: string, range: ALRange, objectType: string, ids: number[], size: number): ExplorerItem {
+    static objectType(
+        appId: string,
+        range: ALRange,
+        objectType: string,
+        ids: number[],
+        size: number
+    ): ExplorerItem {
         return new ObjectTypeExplorerItem(appId, range, objectType, ids, size);
     }
 

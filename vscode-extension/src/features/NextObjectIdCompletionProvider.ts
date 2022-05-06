@@ -1,4 +1,13 @@
-import { CancellationToken, commands, CompletionContext, DocumentSymbol, env, Position, TextDocument, Uri } from "vscode";
+import {
+    CancellationToken,
+    commands,
+    CompletionContext,
+    DocumentSymbol,
+    env,
+    Position,
+    TextDocument,
+    Uri,
+} from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
@@ -27,7 +36,7 @@ export async function syncIfChosen(manifest: AppManifest, choice: Promise<string
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
             commands.executeCommand("vjeko-al-objid.sync-object-ids", {
-                skipQuestion: true
+                skipQuestion: true,
             });
             break;
         case LABELS.BUTTON_LEARN_MORE:
@@ -37,7 +46,10 @@ export async function syncIfChosen(manifest: AppManifest, choice: Promise<string
         default:
             syncDisabled[manifest.id] = true;
             if (++syncSkipped > 1) {
-                if (await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo() === LABELS.BUTTON_DONT_ASK) {
+                if (
+                    (await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo()) ===
+                    LABELS.BUTTON_DONT_ASK
+                ) {
                     stopAsking = true;
                 }
             }
@@ -46,7 +58,12 @@ export async function syncIfChosen(manifest: AppManifest, choice: Promise<string
 }
 
 function isTableOrEnum(type: string) {
-    return (type.startsWith("table_") || type.startsWith("tableextension_") || type.startsWith("enum_") || type.startsWith("enumextension_"));
+    return (
+        type.startsWith("table_") ||
+        type.startsWith("tableextension_") ||
+        type.startsWith("enum_") ||
+        type.startsWith("enumextension_")
+    );
 }
 
 function getSymbols(uri: Uri): string[] {
@@ -54,20 +71,46 @@ function getSymbols(uri: Uri): string[] {
     return manifest?.preprocessorSymbols || [];
 }
 
-async function isTableField(document: TextDocument, position: Position, context: NextIdContext): Promise<boolean | string> {
-    return await ParserConnector.instance.checkField(document.getText(), position, getSymbols(document.uri), context);
+async function isTableField(
+    document: TextDocument,
+    position: Position,
+    context: NextIdContext
+): Promise<boolean | string> {
+    return await ParserConnector.instance.checkField(
+        document.getText(),
+        position,
+        getSymbols(document.uri),
+        context
+    );
 }
 
-async function isEnumValue(document: TextDocument, position: Position, context: NextIdContext): Promise<boolean | string> {
-    return await ParserConnector.instance.checkValue(document.getText(), position, getSymbols(document.uri), context);
+async function isEnumValue(
+    document: TextDocument,
+    position: Position,
+    context: NextIdContext
+): Promise<boolean | string> {
+    return await ParserConnector.instance.checkValue(
+        document.getText(),
+        position,
+        getSymbols(document.uri),
+        context
+    );
 }
 
-async function getTypeAtPositionRaw(document: TextDocument, position: Position, context: NextIdContext): Promise<string | null> {
+async function getTypeAtPositionRaw(
+    document: TextDocument,
+    position: Position,
+    context: NextIdContext
+): Promise<string | null> {
     const matches: DocumentSymbol[] = [];
     const symbol = await getSymbolAtPosition(document.uri, position, matches);
 
     // Check for table fields
-    if (matches.length > 1 && matches[0].name.toLowerCase().startsWith("table") && matches[1].name.toLowerCase() === "fields") {
+    if (
+        matches.length > 1 &&
+        matches[0].name.toLowerCase().startsWith("table") &&
+        matches[1].name.toLowerCase() === "fields"
+    ) {
         const objectParts = matches[0].name.toLowerCase().split(" ");
         const isField = await isTableField(document, position, context);
         if (!isField) {
@@ -100,15 +143,21 @@ async function getTypeAtPositionRaw(document: TextDocument, position: Position, 
     if (!symbol) {
         const line = document.lineAt(position.line).text.substring(0, position.character).trim();
         return line;
-    };
+    }
 
     const match = symbol.name.match(/^(?<type>\w+)\s(?<id>\d+)\s(?<name>"?.+"?)?$/);
     if (match) {
         const { type, id } = match.groups as SymbolInfo;
         if (id !== "0") return null;
 
-        const pos = position.translate(-symbol.range.start.line, position.line === symbol.range.start.line ? -symbol.range.start.character : 0);
-        const lines = document.getText(symbol.range).split(EOL).slice(0, pos.line + 1);
+        const pos = position.translate(
+            -symbol.range.start.line,
+            position.line === symbol.range.start.line ? -symbol.range.start.character : 0
+        );
+        const lines = document
+            .getText(symbol.range)
+            .split(EOL)
+            .slice(0, pos.line + 1);
         lines[lines.length - 1] = lines[lines.length - 1].substring(0, pos.character);
         const text = lines.join("").trim();
         if (text.toLowerCase() === type.toLowerCase()) return type;
@@ -116,7 +165,11 @@ async function getTypeAtPositionRaw(document: TextDocument, position: Position, 
     return null;
 }
 
-async function getTypeAtPosition(document: TextDocument, position: Position, context: NextIdContext): Promise<string | null> {
+async function getTypeAtPosition(
+    document: TextDocument,
+    position: Position,
+    context: NextIdContext
+): Promise<string | null> {
     let type = await getTypeAtPositionRaw(document, position, context);
     if (type === null) return null;
 
@@ -143,7 +196,12 @@ function showNotificationsIfNecessary(manifest: AppManifest, objectId?: NextObje
 }
 
 export class NextObjectIdCompletionProvider {
-    async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext) {
+    async provideCompletionItems(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken,
+        context: CompletionContext
+    ) {
         const nextIdContext: NextIdContext = { injectSemicolon: false };
         const type = await getTypeAtPosition(document, position, nextIdContext);
         if (!type) return;
@@ -152,7 +210,13 @@ export class NextObjectIdCompletionProvider {
         if (!manifest) return;
 
         const { authKey } = manifest.ninja.config;
-        const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, authKey);
+        const objectId = await Backend.getNextNo(
+            manifest.id,
+            type,
+            manifest.idRanges,
+            false,
+            authKey
+        );
         Telemetry.instance.log("getNextNo-fetch", manifest.id);
 
         if (showNotificationsIfNecessary(manifest, objectId) || !objectId) return [];
@@ -165,7 +229,7 @@ export class NextObjectIdCompletionProvider {
 
             const items: NextObjectIdCompletionItem[] = [];
             const logicalNames: string[] = [];
-            const objIdConfig = manifest.ninja.config;    
+            const objIdConfig = manifest.ninja.config;
             for (let i = 0; i < objectId.id.length; i++) {
                 const id = objectId.id[i];
                 const range = getRangeForId(id as number, objIdConfig.getObjectRanges(type));
@@ -176,12 +240,35 @@ export class NextObjectIdCompletionProvider {
                     logicalNames.push(range.description);
                 }
                 const objectIdCopy = { ...objectId, id };
-                const deeperContext = {...nextIdContext, requireId: id, additional: { ordinal: i }} as NextIdContext;
-                items.push(new NextObjectIdCompletionItem(type, objectIdCopy, manifest, position, document.uri, deeperContext, range));
+                const deeperContext = {
+                    ...nextIdContext,
+                    requireId: id,
+                    additional: { ordinal: i },
+                } as NextIdContext;
+                items.push(
+                    new NextObjectIdCompletionItem(
+                        type,
+                        objectIdCopy,
+                        manifest,
+                        position,
+                        document.uri,
+                        deeperContext,
+                        range
+                    )
+                );
             }
             return items;
         } else {
-            return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri, nextIdContext)];
+            return [
+                new NextObjectIdCompletionItem(
+                    type,
+                    objectId,
+                    manifest,
+                    position,
+                    document.uri,
+                    nextIdContext
+                ),
+            ];
         }
     }
 }

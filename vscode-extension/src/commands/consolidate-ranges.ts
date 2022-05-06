@@ -9,11 +9,15 @@ export async function consolidateRanges() {
     }
 
     // Create a sorted clone of app.json ranges and .objidconfig (logical) ranges
-    let ranges = manifest.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));
+    let ranges = manifest.idRanges
+        .sort((left, right) => left.from - right.from)
+        .map(range => ({ ...range }));
 
     // Consolidate logical ranges
     let consolidated = false;
-    const logicalRanges = manifest.ninja.config.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));
+    const logicalRanges = manifest.ninja.config.idRanges
+        .sort((left, right) => left.from - right.from)
+        .map(range => ({ ...range }));
     const consolidatedRanges = consolidate(manifest, ranges, logicalRanges);
     if (consolidatedRanges) {
         manifest.ninja.config.idRanges = consolidatedRanges;
@@ -23,7 +27,10 @@ export async function consolidateRanges() {
     // Consolidate explicit object type logical ranges
     const explicitTypes = manifest.ninja.config.explicitObjectTypeRanges;
     for (let type of explicitTypes) {
-        const logicalRanges = manifest.ninja.config.getObjectRanges(type).sort((left, right) => left.from - right.from).map(range => ({ ...range }));
+        const logicalRanges = manifest.ninja.config
+            .getObjectRanges(type)
+            .sort((left, right) => left.from - right.from)
+            .map(range => ({ ...range }));
         const consolidatedRanges = consolidate(manifest, ranges, logicalRanges);
         if (consolidatedRanges) {
             manifest.ninja.config.setObjectRanges(type, consolidatedRanges);
@@ -36,7 +43,11 @@ export async function consolidateRanges() {
     }
 }
 
-function consolidate(manifest: AppManifest, physicalRanges: ALRange[], logicalRanges: NinjaALRange[]): NinjaALRange[] | undefined {
+function consolidate(
+    manifest: AppManifest,
+    physicalRanges: ALRange[],
+    logicalRanges: NinjaALRange[]
+): NinjaALRange[] | undefined {
     // Creating a clone of physical ranges to eliminate side effects
     physicalRanges = [...physicalRanges.map(range => ({ ...range }))];
 
@@ -67,7 +78,10 @@ function consolidate(manifest: AppManifest, physicalRanges: ALRange[], logicalRa
                         break;
 
                     case physicalRanges[0].to < logicalRanges[0].to:
-                        newRanges.push({ ...physicalRanges[0], description: logicalRanges[0].description });
+                        newRanges.push({
+                            ...physicalRanges[0],
+                            description: logicalRanges[0].description,
+                        });
                         logicalRanges[0].from = physicalRanges[0].to + 1;
                         physicalRanges.shift();
                         break;
@@ -83,12 +97,20 @@ function consolidate(manifest: AppManifest, physicalRanges: ALRange[], logicalRa
             case physicalRanges[0].from < logicalRanges[0].from:
                 switch (true) {
                     case physicalRanges[0].to < logicalRanges[0].from:
-                        newRanges.push({ from: physicalRanges[0].from, to: physicalRanges[0].to, description: FREE_RANGE });
+                        newRanges.push({
+                            from: physicalRanges[0].from,
+                            to: physicalRanges[0].to,
+                            description: FREE_RANGE,
+                        });
                         physicalRanges.shift();
                         break;
 
                     default:
-                        newRanges.push({ from: physicalRanges[0].from, to: logicalRanges[0].from - 1, description: FREE_RANGE });
+                        newRanges.push({
+                            from: physicalRanges[0].from,
+                            to: logicalRanges[0].from - 1,
+                            description: FREE_RANGE,
+                        });
                         physicalRanges[0].from = logicalRanges[0].from;
                         break;
                 }
@@ -126,7 +148,8 @@ function consolidate(manifest: AppManifest, physicalRanges: ALRange[], logicalRa
                 combinedRanges.push(range);
                 continue;
 
-            case combinedRange.to === range.from - 1 && combinedRange.description === range.description:
+            case combinedRange.to === range.from - 1 &&
+                combinedRange.description === range.description:
                 combinedRange.to = range.to;
                 continue;
 
@@ -137,7 +160,15 @@ function consolidate(manifest: AppManifest, physicalRanges: ALRange[], logicalRa
     }
 
     // Sort resulting ranges according to original sort order
-    const logicalNames = logicalRanges.reduce<string[]>((names, range) => (range.description && !names.includes(range.description) && names.push(range.description), names), []);
+    const logicalNames = logicalRanges.reduce<string[]>(
+        (names, range) => (
+            range.description &&
+                !names.includes(range.description) &&
+                names.push(range.description),
+            names
+        ),
+        []
+    );
     const resultRanges: NinjaALRange[] = [];
     for (let name of logicalNames) {
         for (let i = 0; i < combinedRanges.length; i++) {
@@ -148,7 +179,7 @@ function consolidate(manifest: AppManifest, physicalRanges: ALRange[], logicalRa
         }
     }
 
-    // Add remaining ranges 
+    // Add remaining ranges
     resultRanges.push(...combinedRanges);
 
     return resultRanges;

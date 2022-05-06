@@ -1,4 +1,4 @@
-import { env, ExtensionContext, extensions, Uri, window } from "vscode";
+import { env, ExtensionContext, Uri, window } from "vscode";
 import { EXTENSION_NAME, EXTENSION_VERSION, LABELS } from "../lib/constants";
 import { PropertyBag } from "../lib/PropertyBag";
 import { DisposableHolder } from "./DisposableHolder";
@@ -15,7 +15,9 @@ export class HttpStatusHandler extends DisposableHolder {
     public constructor(context: ExtensionContext) {
         super();
         if (HttpStatusHandler._instance) {
-            throw new Error("Only a single instance of HttpGone class is allowed! Check the call stack and fix the problem.");
+            throw new Error(
+                "Only a single instance of HttpGone class is allowed! Check the call stack and fix the problem."
+            );
         }
         HttpStatusHandler._instance = this;
         this._context = context;
@@ -28,20 +30,33 @@ export class HttpStatusHandler extends DisposableHolder {
     //#region 410 Gone
 
     private async appUpgradedV2() {
-        const response = await window.showErrorMessage(`Your app or all apps in your workspace have been upgraded to "v2" version of the back end. The "v2" version of the back end requires latest version of ${EXTENSION_NAME}, but you are using an older one. You must update ${EXTENSION_NAME} to v2.0.0 or newer.`, LABELS.BUTTON_LEARN_MORE);
+        const response = await window.showErrorMessage(
+            `Your app or all apps in your workspace have been upgraded to "v2" version of the back end. The "v2" version of the back end requires latest version of ${EXTENSION_NAME}, but you are using an older one. You must update ${EXTENSION_NAME} to v2.0.0 or newer.`,
+            LABELS.BUTTON_LEARN_MORE
+        );
         if (response === LABELS.BUTTON_LEARN_MORE) {
-            env.openExternal(Uri.parse("https://vjeko.com/2021/10/01/important-announcement-for-al-object-id-ninja/"));
+            env.openExternal(
+                Uri.parse(
+                    "https://vjeko.com/2021/10/01/important-announcement-for-al-object-id-ninja/"
+                )
+            );
         }
     }
 
     private handlers410: PropertyBag<Function> = {
         GENERIC: () => {
-            output.log(`You are attempting to access a back-end endpoint that is no longer supported. Please update ${EXTENSION_NAME}.`, LogLevel.Info);
+            output.log(
+                `You are attempting to access a back-end endpoint that is no longer supported. Please update ${EXTENSION_NAME}.`,
+                LogLevel.Info
+            );
             if (oldVersion) {
                 return;
             }
             oldVersion = true;
-            window.showWarningMessage(`You are using an old version of ${EXTENSION_NAME}. There is no major impact on the functionality, but you should consider updating to have access to all latest features.`, "OK");
+            window.showWarningMessage(
+                `You are using an old version of ${EXTENSION_NAME}. There is no major impact on the functionality, but you should consider updating to have access to all latest features.`,
+                "OK"
+            );
         },
 
         OLD_VERSION: async () => {
@@ -52,9 +67,17 @@ export class HttpStatusHandler extends DisposableHolder {
             }
             output.log(`You are using an old version of ${EXTENSION_NAME}.`, LogLevel.Info);
             this._context.globalState.update(stateKey, true);
-            const response = await window.showWarningMessage(`You are using an old version of ${EXTENSION_NAME}, and a back-end feature you called is no longer available. Please update ${EXTENSION_NAME} to the latest version.`, "OK", LABELS.BUTTON_LEARN_MORE);
+            const response = await window.showWarningMessage(
+                `You are using an old version of ${EXTENSION_NAME}, and a back-end feature you called is no longer available. Please update ${EXTENSION_NAME} to the latest version.`,
+                "OK",
+                LABELS.BUTTON_LEARN_MORE
+            );
             if (response === LABELS.BUTTON_LEARN_MORE) {
-                env.openExternal(Uri.parse("https://vjeko.com/why-is-using-old-versions-of-al-object-id-ninja-not-a-good-idea/"));
+                env.openExternal(
+                    Uri.parse(
+                        "https://vjeko.com/why-is-using-old-versions-of-al-object-id-ninja-not-a-good-idea/"
+                    )
+                );
             }
         },
 
@@ -65,8 +88,8 @@ export class HttpStatusHandler extends DisposableHolder {
 
             appUpgradedV2 = true;
             this.appUpgradedV2();
-        }
-    }
+        },
+    };
 
     public handleError410(error: string) {
         let match = error.match(/\[STATUS_REASON=(?<reason>.+?)\]/);
@@ -95,7 +118,9 @@ export class HttpStatusHandler extends DisposableHolder {
             buttons.push(LABELS.BUTTON_LEARN_MORE);
         }
         let response = await window.showInformationMessage(
-            `AL Object ID Ninja back end is currently undergoing scheduled maintenance. It will be ready again in ${Math.ceil(diff / 60000)} minute(s).`,
+            `AL Object ID Ninja back end is currently undergoing scheduled maintenance. It will be ready again in ${Math.ceil(
+                diff / 60000
+            )} minute(s).`,
             "OK",
             LABELS.BUTTON_LEARN_MORE
         );

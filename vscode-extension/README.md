@@ -15,9 +15,9 @@ will never suggest the same object ID to developers working on the same app at t
 ![Assigning object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/assigning-id.gif)
 
 > In the example above, while the AL extension doesn't see that codeunit ID `50108` is already assigned
-by another developer, AL Object ID Ninja sees it. Also, AL Object ID Ninja sees that somebody even
-assigned `50109` while IntelliSense dropdown was open, so you only get to assign ID `50110`. No more
-object ID collisions.
+> by another developer, AL Object ID Ninja sees it. Also, AL Object ID Ninja sees that somebody even
+> assigned `50109` while IntelliSense dropdown was open, so you only get to assign ID `50110`. No more
+> object ID collisions.
 
 ## Business as usual
 
@@ -27,7 +27,7 @@ object IDs! You keep using IntelliSense and you keep accepting the first suggest
 all.
 
 > AL Object ID Ninja does not replace the object ID suggestions made by AL. It just put its own
-suggestions on top of those made by AL.
+> suggestions on top of those made by AL.
 
 ## Getting started
 
@@ -49,13 +49,14 @@ available number. When you accept the suggestion from IntelliSense, it commits t
 end so that nobody else will receive that suggestion.
 
 The information this extension exchanges with the back end is minimal. It only sends this:
-* SHA256 hash of the `id` from `app.json`. This identifies the app in the back end, but since it's a
-hash, it does not expose the actual app id to anyone.
-* `idRanges` from `app.json`. This is needed so that the back end can know which object IDs are
-available for assignment.
-* Type of the object for the ID is needed.
-* User name of the developer who requested it. This is only needed for notifications, and you can switch
-this one off if you don't like your name to be shared.
+
+-   SHA256 hash of the `id` from `app.json`. This identifies the app in the back end, but since it's a
+    hash, it does not expose the actual app id to anyone.
+-   `idRanges` from `app.json`. This is needed so that the back end can know which object IDs are
+    available for assignment.
+-   Type of the object for the ID is needed.
+-   User name of the developer who requested it. This is only needed for notifications, and you can switch
+    this one off if you don't like your name to be shared.
 
 ## Features
 
@@ -133,7 +134,7 @@ are no active branches on which developers have new objects not yet merged into 
 ![Synchronizing object IDs](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/synchronization.gif)
 
 > Note: Automatic detection of object deletion and automatic releasing of freed-up object IDs
-is currently in development and will be included in the next version.
+> is currently in development and will be included in the next version.
 
 Learn more about synchronization: https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md
 
@@ -177,15 +178,15 @@ And just for the kick of it, you can choose whether you want it fast and reliabl
 (and still reliable).
 
 > Note: Actual speed may vary depending on your hardware and internet connection. The videos in here
-are recorded on an Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz with 32 GB of RAM, with a Samsung SSD
-drive.
+> are recorded on an Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz with 32 GB of RAM, with a Samsung SSD
+> drive.
 
 ### Full logging
 
 AL Object ID Ninja doesn't hide any of its mastery from you. Everything it does, every call it makes
 to the back end, every response it receives, it logs in its dedicated output channel.
 
-### App authorization 
+### App authorization
 
 For AL Object ID Ninja to work out of the box without any configuration for every AL developer in
 the world, the communication must happen over public API endpoints. While all communication happens
@@ -221,6 +222,7 @@ If you choose to do so, please read the [Deploying a Self-Maintained Back End](h
 
 While AL Object ID Ninja does not expose any of your sensitive information, since this is a
 public service, you may want to use your own back end instead. This is possible. In that case, do this:
+
 1. Deploy the Azure Functions application from the `backend` directory onto your own Azure subscription.
 2. Configure the back-end URL and back-end key in your Visual Studio Code settings.
 
@@ -229,11 +231,12 @@ public service, you may want to use your own back end instead. This is possible.
 ## Upcoming features
 
 These features are planned for future versions:
-* Up-to-date information about current object through status bar. You will be able to see if the
-object you are working on is using a properly recorded ID assignment.
-* Automatic fixes of various out-of-sync situations.
-* Testability. Duh! I wanted to get this extension out to the world as soon as possible. Not that
-this is actually a feature, but for all you purists out there, it's coming.
+
+-   Up-to-date information about current object through status bar. You will be able to see if the
+    object you are working on is using a properly recorded ID assignment.
+-   Automatic fixes of various out-of-sync situations.
+-   Testability. Duh! I wanted to get this extension out to the world as soon as possible. Not that
+    this is actually a feature, but for all you purists out there, it's coming.
 
 ## Special thanks
 

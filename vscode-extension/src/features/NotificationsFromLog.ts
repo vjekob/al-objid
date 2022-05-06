@@ -7,7 +7,7 @@ export class NotificationsFromLog {
     //#region Singleton
     private static _instance: NotificationsFromLog;
 
-    private constructor() { }
+    private constructor() {}
 
     public static get instance(): NotificationsFromLog {
         return this._instance || (this._instance = new NotificationsFromLog());

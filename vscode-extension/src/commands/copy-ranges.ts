@@ -12,7 +12,9 @@ export async function copyRanges() {
 
     const ranges = manifest.ninja.config.idRanges;
     const existingRangesJson = JSON.stringify(ranges);
-    const newRanges = manifest.idRanges.map(range => ({ ...range, description: `From ${range.from} to ${range.to}` }) as NinjaALRange);
+    const newRanges = manifest.idRanges.map(
+        range => ({ ...range, description: `From ${range.from} to ${range.to}` } as NinjaALRange)
+    );
     const newRangesJson = JSON.stringify(newRanges);
 
     if (newRangesJson === existingRangesJson) {
@@ -36,5 +38,7 @@ export async function copyRanges() {
         }
     }
 
-    manifest.ninja.config.idRanges = manifest.idRanges.map(range => ({ ...range, description: `From ${range.from} to ${range.to}` }) as NinjaALRange);
+    manifest.ninja.config.idRanges = manifest.idRanges.map(
+        range => ({ ...range, description: `From ${range.from} to ${range.to}` } as NinjaALRange)
+    );
 }

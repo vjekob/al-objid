@@ -19,7 +19,7 @@ async function executeAuthorization() {
 
 async function confirmAgain() {
     let result = await window.showQuickPick(Object.values(OPTION_AGAIN), {
-        placeHolder: "Sorry for asking, but are you *REALLY* sure?"
+        placeHolder: "Sorry for asking, but are you *REALLY* sure?",
     });
     switch (result) {
         case OPTION_AGAIN.YES:
@@ -27,13 +27,13 @@ async function confirmAgain() {
             break;
         case OPTION_AGAIN.LEARN:
             env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
-            break;   
+            break;
     }
 }
 
 export const confirmAuthorizeApp = async () => {
     let result = await window.showQuickPick(Object.values(OPTION), {
-        placeHolder: "Are you sure you want to authorize your app?"
+        placeHolder: "Are you sure you want to authorize your app?",
     });
     switch (result) {
         case OPTION.YES:
@@ -41,6 +41,6 @@ export const confirmAuthorizeApp = async () => {
             break;
         case OPTION.LEARN:
             env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
-            break;   
+            break;
     }
 };

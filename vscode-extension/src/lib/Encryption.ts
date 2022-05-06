@@ -15,10 +15,9 @@ export function encrypt(text: string, appId: string): string | undefined {
         let encrypted = cipher.update(text, "utf-8", "base64");
         encrypted += cipher.final("base64");
         return `${iv.toString("base64")}${IV_SEPARATOR}${encrypted}`;
-    }
-    catch(error: any) {
+    } catch (error: any) {
         output.log(`An error occurred while encrypting: ${(error && error.message) || error}`);
-     }
+    }
 }
 
 export function decrypt(encrypted: string, appId: string): string | undefined {
@@ -30,8 +29,7 @@ export function decrypt(encrypted: string, appId: string): string | undefined {
         let decrypted = decipher.update(parts[1], "base64", "utf-8");
         decrypted += decipher.final("utf-8");
         return decrypted;
-    }
-    catch(error: any) {
+    } catch (error: any) {
         output.log(`An error occurred while decrypting: ${(error && error.message) || error}`);
-     }
+    }
 }

@@ -6,8 +6,8 @@ Welcome to AL Object ID Ninja version 2.6.0!
 
 This version adds a few things:
 
-* Logical ranges per object type
-* Code actions to help fixing most some `.objidconfig` issues
+-   Logical ranges per object type
+-   Code actions to help fixing most some `.objidconfig` issues
 
 That's it. If you want to know more, read on.
 

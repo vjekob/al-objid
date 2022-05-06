@@ -48,15 +48,15 @@ export interface AppManifest {
          * AL Object ID Ninja configuration (from `.objidconfig` file)
          */
         config: ObjIdConfig;
-    }
+    };
 }
 
 export interface GitCleanOperationContext {
     manifests: AppManifest[];
     operation: (manifest: AppManifest) => Promise<boolean>;
     getFilesToStage: (manifest: AppManifest) => string[];
-    learnMore: (manifests: AppManifest | AppManifest[]) => any,
-    getCommitMessage: (manifests: AppManifest[]) => string
+    learnMore: (manifests: AppManifest | AppManifest[]) => any;
+    getCommitMessage: (manifests: AppManifest[]) => string;
 }
 
 export interface GitTopLevelPathContext {
@@ -75,4 +75,3 @@ export enum ConfigurationProperty {
     BcLicense = "bcLicense",
     LicenseReport = "licenseReport",
 }
-

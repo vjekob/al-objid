@@ -14,7 +14,7 @@ export class Output extends DisposableHolder {
 
     private constructor() {
         super();
-        this.registerDisposable(this._channel = window.createOutputChannel(EXTENSION_NAME))
+        this.registerDisposable((this._channel = window.createOutputChannel(EXTENSION_NAME)));
         this.log("Starting AL Object ID Ninja", LogLevel.Info);
     }
 
@@ -31,7 +31,7 @@ export class Output extends DisposableHolder {
                 if (!Config.instance.useVerboseOutputLogging) return;
                 break;
         }
-        
+
         if (message) {
             this._channel.appendLine(`[${new Date().toISOString()}] ${message}`);
         }

@@ -31,22 +31,23 @@ In this version, license validation **does not** run constantly in the backgroun
 perform the license validation, you run the `Ninja: Validate object IDs against license (Preview)`
 command.
 
-## Why is this feature marked as *"Preview"*?
+## Why is this feature marked as _"Preview"_?
 
 While this feature technically gets the job done, there are a few things that could/should be
 improved:
-- Support for `*.txt` (permission report) format. This is fairly straightforward.
-- Support for `*.flf` format. I am not entirely sure we need this. Plus, it requires hacking, and
-I don't have time for it at the moment. If you already have some reliable info about the FLF file
-format (my assumption is that it's not encrypted, but that it simply uses a signature to protect
-the contents, but that it can actually be read without risking an army of lawyers C&D-ing the bejesus
-out of me).
-- Constant object ID monitoring (background processing). This would be amazing, and it's definitely
-coming, it's only that I need to find a way how to make it run smoothly without slowing everything
-down.
-- Graphical representation of license vs. consumption. This is actually a part of a bigger feature
-I have in mind, where the ID ranges (including license) would be presented in a graphical, interactive
-way.
+
+-   Support for `*.txt` (permission report) format. This is fairly straightforward.
+-   Support for `*.flf` format. I am not entirely sure we need this. Plus, it requires hacking, and
+    I don't have time for it at the moment. If you already have some reliable info about the FLF file
+    format (my assumption is that it's not encrypted, but that it simply uses a signature to protect
+    the contents, but that it can actually be read without risking an army of lawyers C&D-ing the bejesus
+    out of me).
+-   Constant object ID monitoring (background processing). This would be amazing, and it's definitely
+    coming, it's only that I need to find a way how to make it run smoothly without slowing everything
+    down.
+-   Graphical representation of license vs. consumption. This is actually a part of a bigger feature
+    I have in mind, where the ID ranges (including license) would be presented in a graphical, interactive
+    way.
 
 Of course, if you have any suggestions of your own, please submit them through the
 [AL Object ID Ninja issues](https://github.com/vjekob/al-objid/issues) page.

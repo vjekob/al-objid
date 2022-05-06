@@ -1,4 +1,4 @@
-import { RelativePattern, Uri, window, workspace } from "vscode";
+import { RelativePattern, window, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { AppManifest } from "../lib/types";
 import { UI } from "../lib/UI";

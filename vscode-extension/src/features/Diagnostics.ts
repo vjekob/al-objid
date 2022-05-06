@@ -1,4 +1,12 @@
-import { Diagnostic, DiagnosticCollection, DiagnosticSeverity, Disposable, languages, Range, Uri } from "vscode";
+import {
+    Diagnostic,
+    DiagnosticCollection,
+    DiagnosticSeverity,
+    Disposable,
+    languages,
+    Range,
+    Uri,
+} from "vscode";
 import { PropertyBag } from "../lib/PropertyBag";
 
 export interface CreateDiagnostic {
@@ -18,7 +26,7 @@ export const DIAGNOSTIC_CODE = {
 
     BCLICENSE: {
         UNAVAILABLE: "NINJA101",
-    }
+    },
 };
 
 export class Diagnostics implements Disposable {
@@ -64,13 +72,16 @@ export class Diagnostics implements Disposable {
             if (scheduler) {
                 clearTimeout(scheduler);
             }
-            this._schedulers.set(uri, setTimeout(() => {
-                const set: Diagnostic[] = [];
-                for (let key of Object.keys(document!)) {
-                    set.push(...document![key]);
-                }
-                this._diagnostics.set(uri, set);
-            }, 1000));
+            this._schedulers.set(
+                uri,
+                setTimeout(() => {
+                    const set: Diagnostic[] = [];
+                    for (let key of Object.keys(document!)) {
+                        set.push(...document![key]);
+                    }
+                    this._diagnostics.set(uri, set);
+                }, 1000)
+            );
         };
 
         // Makes sure that diagnostics are reported at least once

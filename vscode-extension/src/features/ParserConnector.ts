@@ -11,7 +11,7 @@ export interface NextIdContext {
     additional?: {
         ordinal: number;
         range: ALRange;
-    }
+    };
 }
 
 export class ParserConnector implements Disposable {
@@ -20,7 +20,10 @@ export class ParserConnector implements Disposable {
 
     private get initialization(): Promise<void> {
         if (!this._initialized) {
-            output.log("[AL Parser] Waiting for parser initialization to complete", LogLevel.Verbose);
+            output.log(
+                "[AL Parser] Waiting for parser initialization to complete",
+                LogLevel.Verbose
+            );
         }
         return this._initialization;
     }
@@ -33,11 +36,21 @@ export class ParserConnector implements Disposable {
         return objects;
     }
 
-    public async checkField(code: string, position: Position, symbols: string[], context: NextIdContext): Promise<boolean> {
+    public async checkField(
+        code: string,
+        position: Position,
+        symbols: string[],
+        context: NextIdContext
+    ): Promise<boolean> {
         output.log("[AL Parser] Checking if field ID is expected at current position");
         await this.initialization;
         const { line, character } = position;
-        const response = await ALParserNinja.check(CheckType.field, code, { line, character }, symbols);
+        const response = await ALParserNinja.check(
+            CheckType.field,
+            code,
+            { line, character },
+            symbols
+        );
         if (!response.valid) {
             return false;
         }
@@ -45,11 +58,21 @@ export class ParserConnector implements Disposable {
         return true;
     }
 
-    public async checkValue(code: string, position: Position, symbols: string[], context: NextIdContext): Promise<boolean> {
+    public async checkValue(
+        code: string,
+        position: Position,
+        symbols: string[],
+        context: NextIdContext
+    ): Promise<boolean> {
         output.log("[AL Parser] Checking if enum value ID is expected at current position");
         await this.initialization;
         const { line, character } = position;
-        const response = await ALParserNinja.check(CheckType.value, code, { line, character }, symbols);
+        const response = await ALParserNinja.check(
+            CheckType.value,
+            code,
+            { line, character },
+            symbols
+        );
         if (!response.valid) {
             return false;
         }

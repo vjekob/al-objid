@@ -20,7 +20,7 @@ and then suggest IDs per logical range.
 To define logical ranges, you use the `.objidconfig` configuration file. In that file, you can declare
 the `idRanges` section where you can declare ranges much like you would do in the `app.json` application
 manifest. However, apart from simply declaring logical ranges in there, you can also provide a
-*description* for each range, which then shows in the AL Object ID Ninja **Range Explorer** view as
+_description_ for each range, which then shows in the AL Object ID Ninja **Range Explorer** view as
 well as in IntelliSense autosuggest drop-down list.
 
 This is an example of an `.objidconfig` configuration file that declares logical ranges:
@@ -130,9 +130,9 @@ object ID, you will see multiple ID suggestions, one per range:
 ![Suggesting from logical ranges](https://github.com/vjekob/al-objid/blob/master/doc/images/suggest-logical-ranges.gif?raw=true)
 
 > Please note: When your `.objidconfig` configuration file defines at least one logical range in the
-`idRanges` property, then AL Object ID Ninja will **always** suggest IDs per range, regardless of the
-`objectIdNinja.requestPerRange` setting. **Logical ranges declared in `.objidconfig` always take
-precendent over your VS Code User or Workspace settings.**
+> `idRanges` property, then AL Object ID Ninja will **always** suggest IDs per range, regardless of the
+> `objectIdNinja.requestPerRange` setting. **Logical ranges declared in `.objidconfig` always take
+> precendent over your VS Code User or Workspace settings.**
 
 ## How number assignment works when logical ranges are used
 
@@ -168,14 +168,13 @@ range, Ninja will not assign any number to your object, and will behave as if th
 avaiable.
 
 > Keep in mind: Ninja will always respect your logical range choice when assigning a new number, and will
-never assign a new number from a different logical range than the one you selected when accepting an ID
-suggested by Ninja.
+> never assign a new number from a different logical range than the one you selected when accepting an ID
+> suggested by Ninja.
 
 ## Copying ranges from `app.json` to `.objidconfig`
 
 Often, you'll want to start with exact same ranges in your `.objidconfig` as you have in your `app.json`.
-To help you kick-start your logical range definitions, you can use the `Ninja: Copy ranges from app.json to
-.objidconfig` command:
+To help you kick-start your logical range definitions, you can use the `Ninja: Copy ranges from app.json to .objidconfig` command:
 
 ![Copying ranges to .objidconfig](https://github.com/vjekob/al-objid/blob/master/doc/images/copy-ranges.gif?raw=true)
 
@@ -218,13 +217,13 @@ want to prioritize certain ranges on top of others, then you should list those r
 }
 ```
 
-The configuration above will make sure that suggestions are first shown for the *Finance* range, then for
-the *Sales* range, then for the *Purchases* range, then for the *Customer range* range (even though that
-range is numerically the first one), and finally the *Other* range.
+The configuration above will make sure that suggestions are first shown for the _Finance_ range, then for
+the _Sales_ range, then for the _Purchases_ range, then for the _Customer range_ range (even though that
+range is numerically the first one), and finally the _Other_ range.
 
 > Note: Changing order of ranges in the `.objidconfig` file will reflect immediately on the IntelliSense
-auto-suggest drop-down list, but not for the Range Explorer view. To reflect changes to ranges in the
-Range Explorer view, you must restart VS Code.
+> auto-suggest drop-down list, but not for the Range Explorer view. To reflect changes to ranges in the
+> Range Explorer view, you must restart VS Code.
 
 ## Consolidating logical ranges
 
@@ -298,8 +297,8 @@ defined in `.objidconfig`:
 ```
 
 > Note: Consolidating ranges will try to keep the original order of logical ranges. However, if you have
-two logical ranges with the same name, it may not end up with the same order. For example, if you have two
-logical ranges named *Sales* and one logical range *Purchase* defined in between two *Sales* ranges, then
-consolidation will order two *Sales* ranges together, and then the *Purhcase* range after them. If you want
-to retain the exact same original range ordering in scenarios like this, you'll have to move ranges later
-manually.
+> two logical ranges with the same name, it may not end up with the same order. For example, if you have two
+> logical ranges named _Sales_ and one logical range _Purchase_ defined in between two _Sales_ ranges, then
+> consolidation will order two _Sales_ ranges together, and then the _Purhcase_ range after them. If you want
+> to retain the exact same original range ordering in scenarios like this, you'll have to move ranges later
+> manually.

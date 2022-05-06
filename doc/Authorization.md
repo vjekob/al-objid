@@ -11,29 +11,30 @@ promptly figure out how Ninja does that, and can call the same API endpoints by 
 Since AL Object ID Ninja works on public infrastructure, a malicious person who knows your app ID
 could consume all your available IDs, and make it impossible for you to use Ninja to manage your
 object IDs. There is very little to gain from this kind of activity, but since it's possible,
-Ninja prefers adopting the *better safe than sorry* strategy.
+Ninja prefers adopting the _better safe than sorry_ strategy.
 
 Consider these two facts:
+
 - When you publish your app to AppSource, your app ID becomes public. Anyone can use this information
-to mess with your object ID assignment.
+  to mess with your object ID assignment.
 - Ninja has already been attacked this way! For whatever reason, there were people who have used
-third-party app ID to make it impossible for their competitors to use Ninja. Strange world, this is.
+  third-party app ID to make it impossible for their competitors to use Ninja. Strange world, this is.
 
 App authorization helps prevent this kind of app ID hijacking.
 
 ## Why not making it truly secure?
 
-You can't both have your cake and eat it. Either the app is zero-configuration and *just works*, or it is secure. You
+You can't both have your cake and eat it. Either the app is zero-configuration and _just works_, or it is secure. You
 cannot talk to a public API endpoint from an open-source app and prevent anyone else from doing the same - with
 the same app ID that you use
 
-For this to work, there would have to be *some* configuration. You would have to register your account with Ninja
+For this to work, there would have to be _some_ configuration. You would have to register your account with Ninja
 back end, then you would have to go through OAuth authentication occasionally to obtain a token. All in all, it would
 not be zero-configuration anymore and it would take a lot of extra time to both get started and use it.
 
 ## Making it secure
 
-This is where the *app authorization* feature comes to help. If you want to prevent malicious users from hijacking
+This is where the _app authorization_ feature comes to help. If you want to prevent malicious users from hijacking
 your app ID, you can authorize your app.
 
 When you authorize your app, the back end generates a unique key for that app, sends it to Ninja, and Ninja
@@ -53,7 +54,7 @@ extremely simple to use.
 ## What do you I with the key?
 
 When Ninja creates the authorization key file in your project root, you must make sure every team member has access to
-it. The easiest way to share the key is to include it in your repository. That means: ***do not*** add it to
+it. The easiest way to share the key is to include it in your repository. That means: **_do not_** add it to
 `.gitignore`.
 
 Think of it like this: every member of your development team must use the same authorization key for the same app. The
@@ -69,10 +70,11 @@ This means: keep the key file safe.
 ## What does Ninja do to safeguard my key?
 
 Ninja goes to great length with protecting your key:
-- You can only authorize an app when your local repository is clean. That means - no pending changes in your 
-working directory or your staging area.
+
+- You can only authorize an app when your local repository is clean. That means - no pending changes in your
+  working directory or your staging area.
 - When you authorize an app, Ninja will automatically commit the authorization key. It won't push your local
-branch to remote, but it will remind you to do that.
+  branch to remote, but it will remind you to do that.
 - If you delete the key file while Ninja is running, Ninja will immediately warn you.
 
 All in all, when you authorize the app, and then let Ninja manage the key file (as opposed to you manually
@@ -80,8 +82,8 @@ doing anything with it), you are safe.
 
 ## But I don't like random files in my root
 
-We've heard this complaint. *"I want my root to be clean, and I take pride in my repo being nicely organized. All
-source files are in the `src` directory, and my root contains only `app.json` because it has to be there. Now I have this strange `.objidconfig` file and I don't really like it."*
+We've heard this complaint. _"I want my root to be clean, and I take pride in my repo being nicely organized. All
+source files are in the `src` directory, and my root contains only `app.json` because it has to be there. Now I have this strange `.objidconfig` file and I don't really like it."_
 
 People who complain about this are people who have only used VS Code to develop in AL. For all other languages, it
 is normal for the tools to put their stuff into root. Typescript, Node.js, C#, Babel, Angular, are just a few out of

@@ -62,7 +62,7 @@ export class ReleaseNotesHandler {
             return;
         }
 
-        if (await UI.general.showReleaseNotes(version) === LABELS.BUTTON_SHOW_RELEASE_NOTES) {
+        if ((await UI.general.showReleaseNotes(version)) === LABELS.BUTTON_SHOW_RELEASE_NOTES) {
             Telemetry.instance.log("releaseNotes", undefined, version);
             this.openReleaseNotesPanel(version);
         }

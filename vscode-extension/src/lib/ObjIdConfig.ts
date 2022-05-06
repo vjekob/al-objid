@@ -14,16 +14,19 @@ import { BCLicense } from "./BCLicense";
 export const CONFIG_FILE_NAME = ".objidconfig";
 
 const COMMENTS: PropertyBag<string> = {
-    [ConfigurationProperty.AuthKey]: "This is the authorization key for all back-end communication. DO NOT MODIFY OR DELETE THIS VALUE!",
+    [ConfigurationProperty.AuthKey]:
+        "This is the authorization key for all back-end communication. DO NOT MODIFY OR DELETE THIS VALUE!",
     [ConfigurationProperty.Ranges]: "You can customize and describe your logical ranges here",
     [ConfigurationProperty.ObjectRanges]: "Here you can define your logical ranges per object type",
-    [ConfigurationProperty.AppPoolId]: "Application pool this app belongs to. When defined, your object ID assignments are not per app, but per pool. DO NOT MANUALLY MODIFY THIS VALUE!",
-    [ConfigurationProperty.BcLicense]: "Customer BC license file (*.bclicense) to check object assignments against",
-    [ConfigurationProperty.LicenseReport]: "Customer license report file (*.txt) to check object assignments against",
+    [ConfigurationProperty.AppPoolId]:
+        "Application pool this app belongs to. When defined, your object ID assignments are not per app, but per pool. DO NOT MANUALLY MODIFY THIS VALUE!",
+    [ConfigurationProperty.BcLicense]:
+        "Customer BC license file (*.bclicense) to check object assignments against",
+    [ConfigurationProperty.LicenseReport]:
+        "Customer license report file (*.txt) to check object assignments against",
 };
 
 const idRangeWarnings: PropertyBag<number> = {};
-
 
 export class ObjIdConfig {
     private static _instances = new WeakMap<Uri, ObjIdConfig>();
@@ -64,7 +67,8 @@ export class ObjIdConfig {
             this._lastReadContent = content;
             return parse(this._lastReadContent) as any;
         } catch (e: any) {
-            if (e.code !== "ENOENT") Output.instance.log(`Cannot read file ${path}: ${e}`, LogLevel.Info);
+            if (e.code !== "ENOENT")
+                Output.instance.log(`Cannot read file ${path}: ${e}`, LogLevel.Info);
             return {};
         }
     }
@@ -80,10 +84,13 @@ export class ObjIdConfig {
         }
 
         const key = Symbol.for(`before:${property}`);
-        if (!config[key]) config[key] = [{
-            type: "LineComment",
-            value: ` ${value}`,
-        }];
+        if (!config[key])
+            config[key] = [
+                {
+                    type: "LineComment",
+                    value: ` ${value}`,
+                },
+            ];
     }
 
     private removeComment(config: any, property: ConfigurationProperty) {
@@ -119,8 +126,12 @@ export class ObjIdConfig {
         return this.getProperty<NinjaALRange[]>(ConfigurationProperty.Ranges) || [];
     }
 
-    private showRangeWarning<T>(range: NinjaALRange, showWarning: () => Promise<T>, rewarnDelay: number): Promise<T> {
-        return new Promise<T>(async (resolve) => {
+    private showRangeWarning<T>(
+        range: NinjaALRange,
+        showWarning: () => Promise<T>,
+        rewarnDelay: number
+    ): Promise<T> {
+        return new Promise<T>(async resolve => {
             const key = `${this._path}:${range.from}:${range.to}:${range.description}`;
             if ((idRangeWarnings[key] || 0) < Date.now() - rewarnDelay) {
                 idRangeWarnings[key] = Date.now();
@@ -142,7 +153,12 @@ export class ObjIdConfig {
         return idRanges;
     }
 
-    private async reportInvalidRange(range: NinjaALRange, ordinal: number, diagnose: CreateDiagnostic, objectType?: string) {
+    private async reportInvalidRange(
+        range: NinjaALRange,
+        ordinal: number,
+        diagnose: CreateDiagnostic,
+        objectType?: string
+    ) {
         const idRanges = await this.getIdRangesSymbol(objectType);
         if (!idRanges) {
             return;
@@ -154,35 +170,77 @@ export class ObjIdConfig {
 
         if (from) {
             if (typeof range.from !== "number") {
-                diagnose(from.range, `Syntax error: Invalid value (non-zero number expected; found ${JSON.stringify(range.from)}).`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_TYPE);
+                diagnose(
+                    from.range,
+                    `Syntax error: Invalid value (non-zero number expected; found ${JSON.stringify(
+                        range.from
+                    )}).`,
+                    DiagnosticSeverity.Error,
+                    DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_TYPE
+                );
             }
         } else {
-            diagnose(idRange.range, `Syntax error: Missing "from" property`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.MISSING_PROPERTY);
+            diagnose(
+                idRange.range,
+                `Syntax error: Missing "from" property`,
+                DiagnosticSeverity.Error,
+                DIAGNOSTIC_CODE.OBJIDCONFIG.MISSING_PROPERTY
+            );
         }
         if (to) {
             if (typeof range.to !== "number") {
-                diagnose(to.range, `Syntax error: Invalid value (non-zero number expected; found ${JSON.stringify(range.to)}).`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_TYPE);
+                diagnose(
+                    to.range,
+                    `Syntax error: Invalid value (non-zero number expected; found ${JSON.stringify(
+                        range.to
+                    )}).`,
+                    DiagnosticSeverity.Error,
+                    DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_TYPE
+                );
             }
         } else {
-            diagnose(idRange.range, `Syntax error: Missing "to" property`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.MISSING_PROPERTY);
+            diagnose(
+                idRange.range,
+                `Syntax error: Missing "to" property`,
+                DiagnosticSeverity.Error,
+                DIAGNOSTIC_CODE.OBJIDCONFIG.MISSING_PROPERTY
+            );
         }
     }
 
-    private getValidRanges(ranges: NinjaALRange[], diagnose: CreateDiagnostic, objectType?: string): NinjaALRange[] {
+    private getValidRanges(
+        ranges: NinjaALRange[],
+        diagnose: CreateDiagnostic,
+        objectType?: string
+    ): NinjaALRange[] {
         const result = [];
         for (let i = 0; i < ranges.length; i++) {
             const range = ranges[i];
-            if (typeof range.from === "number" && typeof range.to === "number" && range.from && range.to) {
+            if (
+                typeof range.from === "number" &&
+                typeof range.to === "number" &&
+                range.from &&
+                range.to
+            ) {
                 result.push(range);
             } else {
                 this.reportInvalidRange(range, i, diagnose, objectType);
-                this.showRangeWarning(range, () => UI.ranges.showInvalidRangeTypeError(this._name, range), TIME.FIVE_MINUTES);
+                this.showRangeWarning(
+                    range,
+                    () => UI.ranges.showInvalidRangeTypeError(this._name, range),
+                    TIME.FIVE_MINUTES
+                );
             }
         }
         return result;
     }
 
-    private async reportRangesOverlapDiagnostic(ordinal1: number, ordinal2: number, diagnose: CreateDiagnostic, objectType?: string) {
+    private async reportRangesOverlapDiagnostic(
+        ordinal1: number,
+        ordinal2: number,
+        diagnose: CreateDiagnostic,
+        objectType?: string
+    ) {
         const idRanges = await this.getIdRangesSymbol(objectType);
         if (!idRanges) {
             return;
@@ -191,11 +249,25 @@ export class ObjIdConfig {
         const range1 = this._symbols.properties.idRanges(idRanges.children[ordinal1]);
         const range2 = this._symbols.properties.idRanges(idRanges.children[ordinal2]);
 
-        diagnose(range1.range, `Invalid range: Overlaps with range ${range2.from()?.detail}..${range2.to()?.detail}`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.RANGES_OVERLAP);
-        diagnose(range2.range, `Invalid range: Overlaps with range ${range1.from()?.detail}..${range1.to()?.detail}`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.RANGES_OVERLAP);
+        diagnose(
+            range1.range,
+            `Invalid range: Overlaps with range ${range2.from()?.detail}..${range2.to()?.detail}`,
+            DiagnosticSeverity.Warning,
+            DIAGNOSTIC_CODE.OBJIDCONFIG.RANGES_OVERLAP
+        );
+        diagnose(
+            range2.range,
+            `Invalid range: Overlaps with range ${range1.from()?.detail}..${range1.to()?.detail}`,
+            DiagnosticSeverity.Warning,
+            DIAGNOSTIC_CODE.OBJIDCONFIG.RANGES_OVERLAP
+        );
     }
 
-    private rangesOverlap(ranges: NinjaALRange[], diagnose: CreateDiagnostic, objectType?: string): boolean {
+    private rangesOverlap(
+        ranges: NinjaALRange[],
+        diagnose: CreateDiagnostic,
+        objectType?: string
+    ): boolean {
         if (ranges.length <= 1) {
             return false;
         }
@@ -204,7 +276,11 @@ export class ObjIdConfig {
             for (let j = i + 1; j < ranges.length; j++) {
                 if (ranges[i].from <= ranges[j].to && ranges[i].to >= ranges[j].from) {
                     this.reportRangesOverlapDiagnostic(i, j, diagnose, objectType);
-                    this.showRangeWarning(ranges[i], () => UI.ranges.showRangeOverlapError(this._name, ranges[i], ranges[j]), TIME.TWO_MINUTES);
+                    this.showRangeWarning(
+                        ranges[i],
+                        () => UI.ranges.showRangeOverlapError(this._name, ranges[i], ranges[j]),
+                        TIME.TWO_MINUTES
+                    );
                     return true;
                 }
             }
@@ -213,34 +289,61 @@ export class ObjIdConfig {
         return false;
     }
 
-    private async reportToBeforeFrom(ordinal: number, diagnose: CreateDiagnostic, objectType?: string) {
+    private async reportToBeforeFrom(
+        ordinal: number,
+        diagnose: CreateDiagnostic,
+        objectType?: string
+    ) {
         const idRanges = await this.getIdRangesSymbol(objectType);
         if (!idRanges) {
             return;
         }
 
         const range = this._symbols.properties.idRanges(idRanges.children[ordinal]);
-        diagnose(range.range, `Invalid range: "to" must not be less than "from".`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.TO_BEFORE_FROM);
+        diagnose(
+            range.range,
+            `Invalid range: "to" must not be less than "from".`,
+            DiagnosticSeverity.Error,
+            DIAGNOSTIC_CODE.OBJIDCONFIG.TO_BEFORE_FROM
+        );
     }
 
-    private async reportMissingDescription(ordinal: number, diagnose: CreateDiagnostic, objectType?: string) {
+    private async reportMissingDescription(
+        ordinal: number,
+        diagnose: CreateDiagnostic,
+        objectType?: string
+    ) {
         const idRanges = await this.getIdRangesSymbol(objectType);
         if (!idRanges) {
             return;
         }
 
         const range = this._symbols.properties.idRanges(idRanges.children[ordinal]);
-        diagnose(range.range, `Missing description for range ${range.from()?.detail}..${range.to()?.detail}.`, DiagnosticSeverity.Information, DIAGNOSTIC_CODE.OBJIDCONFIG.TO_BEFORE_FROM);
+        diagnose(
+            range.range,
+            `Missing description for range ${range.from()?.detail}..${range.to()?.detail}.`,
+            DiagnosticSeverity.Information,
+            DIAGNOSTIC_CODE.OBJIDCONFIG.TO_BEFORE_FROM
+        );
     }
 
-    private validateRanges(ranges: NinjaALRange[], diagnose: CreateDiagnostic, objectType?: string): NinjaALRange[] {
+    private validateRanges(
+        ranges: NinjaALRange[],
+        diagnose: CreateDiagnostic,
+        objectType?: string
+    ): NinjaALRange[] {
         let invalid = false;
         if (this.rangesOverlap(ranges, diagnose, objectType)) {
             invalid = true;
         }
 
         ranges.forEach((range, ordinal) => {
-            if ((typeof range.from !== "number") || (typeof range.to !== "number") || (!range.to) || (!range.from)) {
+            if (
+                typeof range.from !== "number" ||
+                typeof range.to !== "number" ||
+                !range.to ||
+                !range.from
+            ) {
                 // This is a problem, but it's reported elsewhere
                 return;
             }
@@ -252,12 +355,22 @@ export class ObjIdConfig {
             if (range.to < range.from) {
                 const { from, to, description } = range;
                 this.reportToBeforeFrom(ordinal, diagnose, objectType);
-                this.showRangeWarning(range, () => UI.ranges.showInvalidRangeFromToError(this._name, range), TIME.FIVE_MINUTES).then(result => {
+                this.showRangeWarning(
+                    range,
+                    () => UI.ranges.showInvalidRangeFromToError(this._name, range),
+                    TIME.FIVE_MINUTES
+                ).then(result => {
                     if (result === LABELS.FIX) {
                         let fixed = false;
-                        const ranges = objectType ? this.getAllObjectRanges()[objectType] || [] : this.getIdRanges();
+                        const ranges = objectType
+                            ? this.getAllObjectRanges()[objectType] || []
+                            : this.getIdRanges();
                         for (let original of ranges) {
-                            if (original.from === from && original.to === to && original.description === description) {
+                            if (
+                                original.from === from &&
+                                original.to === to &&
+                                original.description === description
+                            ) {
                                 original.from = to;
                                 original.to = from;
                                 fixed = true;
@@ -306,7 +419,13 @@ export class ObjIdConfig {
 
     getObjectRanges(objectType: string, diagnose?: CreateDiagnostic): NinjaALRange[] {
         const allObjectRanges = this.getAllObjectRanges();
-        return allObjectRanges[objectType] ? this.validateRanges(allObjectRanges[objectType].map(range => ({ ...range })), diagnose || this.getObjectRangeDiagnoseMethod(), objectType) : this.idRanges;
+        return allObjectRanges[objectType]
+            ? this.validateRanges(
+                  allObjectRanges[objectType].map(range => ({ ...range })),
+                  diagnose || this.getObjectRangeDiagnoseMethod(),
+                  objectType
+              )
+            : this.idRanges;
     }
 
     setObjectRanges(objectType: string, value: NinjaALRange[] | undefined) {
@@ -325,7 +444,10 @@ export class ObjIdConfig {
             return;
         }
 
-        const diagnose = Diagnostics.instance.createDiagnostics(this._uri, "objidconfig.objectRanges");
+        const diagnose = Diagnostics.instance.createDiagnostics(
+            this._uri,
+            "objidconfig.objectRanges"
+        );
         const validTypes = Object.values<string>(ALObjectType);
 
         const objectRangesSymbol = await this._symbols.objectRanges;
@@ -336,7 +458,12 @@ export class ObjIdConfig {
             const type = child.name;
             if (!validTypes.includes(type)) {
                 // Report error
-                diagnose(child.selectionRange, `Invalid object type: ${type}.`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_OBJECT_TYPE);
+                diagnose(
+                    child.selectionRange,
+                    `Invalid object type: ${type}.`,
+                    DiagnosticSeverity.Error,
+                    DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_OBJECT_TYPE
+                );
                 continue;
             }
             this.getObjectRanges(type, diagnose);
@@ -367,7 +494,12 @@ export class ObjIdConfig {
         if (!fs.existsSync(path)) {
             const bcLicenseSymbol = await this._symbols.bcLicense;
             if (bcLicenseSymbol) {
-                diagnose(bcLicenseSymbol?.range, `Cannot find license file.`, DiagnosticSeverity.Warning, DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND);
+                diagnose(
+                    bcLicenseSymbol?.range,
+                    `Cannot find license file.`,
+                    DiagnosticSeverity.Warning,
+                    DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND
+                );
                 return false;
             }
         }
@@ -387,7 +519,9 @@ export class ObjIdConfig {
                 return;
             }
 
-            this._bcLicensePromise = new Promise<BCLicense | undefined>(resolve => resolve(new BCLicense(this._bcLicense!)));
+            this._bcLicensePromise = new Promise<BCLicense | undefined>(resolve =>
+                resolve(new BCLicense(this._bcLicense!))
+            );
         });
 
         return this._bcLicense;

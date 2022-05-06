@@ -64,7 +64,7 @@ export function activate(context: ExtensionContext) {
 		window.registerFileDecorationProvider(ExplorerDecorationsProvider.instance),
 
 		// CodeActions provider
-        languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),
+		languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),
 
 		// Other
 		languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),
@@ -76,7 +76,7 @@ export function activate(context: ExtensionContext) {
 		new ObjIdConfigMonitor(),
 		new HttpStatusHandler(context).getDisposables(),
 		ParserConnector.instance,
-		Diagnostics.instance,
+		Diagnostics.instance
 	);
 
 	ReleaseNotesHandler.instance.check(context);

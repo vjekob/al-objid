@@ -15,7 +15,7 @@ export class WorkspaceExplorerItem extends ExplorerItem {
         this.iconPath = ThemeIcon.Folder;
         this.id = ExplorerTreeDataProvider.instance.getUriString(manifest.id);
         this.resourceUri = Uri.parse(this.id);
-        this.contextValue = "ninja-folder"
+        this.contextValue = "ninja-folder";
     }
 
     get manifest() {
@@ -26,7 +26,9 @@ export class WorkspaceExplorerItem extends ExplorerItem {
     hasChildren = true;
 
     override getChildren(): ExplorerItem[] {
-        const ranges = this._manifest.ninja.config.idRanges.length ? this._manifest.ninja.config.idRanges : this._manifest.idRanges;
+        const ranges = this._manifest.ninja.config.idRanges.length
+            ? this._manifest.ninja.config.idRanges
+            : this._manifest.idRanges;
         return ranges.map(range => ExplorerItemFactory.range(this._manifest.id, range));
     }
 }

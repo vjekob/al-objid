@@ -34,11 +34,13 @@ export class NewsHandler implements Disposable {
 
     public static get instance() {
         if (!this._instance) {
-            throw new Error("You must not access NewsHandler.instance before it has been instantiated.");
+            throw new Error(
+                "You must not access NewsHandler.instance before it has been instantiated."
+            );
         }
         return this._instance;
     }
-    
+
     private _timeout: NodeJS.Timeout | undefined;
     private _snoozeTimeout: NodeJS.Timeout | undefined;
     private _disposed: boolean = false;
@@ -83,14 +85,19 @@ export class NewsHandler implements Disposable {
 
     private takeAction: NewsProcessor<NewsButton> = {
         [NewsActionType.dismiss]: (entry: NewsEntry) => this.dismiss(entry),
-        [NewsActionType.url]: (entry: NewsEntry, button: NewsButton) => this.navigateToUrl(entry, button),
-        [NewsActionType.snooze]: (entry: NewsEntry, button: NewsButton) => this.snooze(entry, button.parameter * 1000 * 60),
-    }
+        [NewsActionType.url]: (entry: NewsEntry, button: NewsButton) =>
+            this.navigateToUrl(entry, button),
+        [NewsActionType.snooze]: (entry: NewsEntry, button: NewsButton) =>
+            this.snooze(entry, button.parameter * 1000 * 60),
+    };
 
     private processNewsEntry(entry: NewsEntry): boolean {
         let processFunc = this.process[entry.type];
         const keys = this._context.globalState.keys();
-        if (typeof processFunc !== "function" || this._context.globalState.get(statusKey(entry.id)) !== undefined) {
+        if (
+            typeof processFunc !== "function" ||
+            this._context.globalState.get(statusKey(entry.id)) !== undefined
+        ) {
             return false;
         }
         if (!this._firstRun && ONLY_ON_FIRST_RUN.includes(entry.type)) {
@@ -103,7 +110,10 @@ export class NewsHandler implements Disposable {
 
     private process: NewsProcessor<void> = {
         [NewsType.announcement]: async (entry: NewsEntry) => {
-            let response = await window.showInformationMessage(entry.message, ...entry.buttons.map(button => button.caption));
+            let response = await window.showInformationMessage(
+                entry.message,
+                ...entry.buttons.map(button => button.caption)
+            );
             if (response === undefined) {
                 this.snooze(entry);
                 return;
@@ -125,7 +135,7 @@ export class NewsHandler implements Disposable {
             let uri = Uri.file(path.join(__dirname, `../../docs/${entry.message}`));
             commands.executeCommand("markdown.showPreview", uri);
         },
-    }
+    };
 
     private checkSnoozedEntries() {
         const keys = this._context.globalState.keys().filter(key => key.startsWith(ENTRY_SNOOZED));
@@ -143,7 +153,9 @@ export class NewsHandler implements Disposable {
 
     constructor(context: ExtensionContext) {
         if (NewsHandler._instance) {
-            throw new Error("Only a single instance of HttpGone class is allowed! Check the call stack and fix the problem.");
+            throw new Error(
+                "Only a single instance of HttpGone class is allowed! Check the call stack and fix the problem."
+            );
         }
         NewsHandler._instance = this;
 

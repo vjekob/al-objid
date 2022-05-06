@@ -4,7 +4,7 @@ Welcome to AL Object ID Ninja version 2.4.0!
 
 ## What's New
 
-* Suggest multiple object IDs in multi-range app
+-   Suggest multiple object IDs in multi-range app
 
 That's it in brief notes. If you want to know more details, read on.
 

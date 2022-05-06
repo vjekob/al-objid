@@ -66,7 +66,7 @@ export class QuickPickWrapper<T> {
             this._selectedOne = selected.length ? selected[0].data : undefined;
         });
         this.show();
-        return new Promise(resolve => this._resolveOne = resolve);
+        return new Promise(resolve => (this._resolveOne = resolve));
     }
 
     public async pickMany(): Promise<T[]> {
@@ -75,6 +75,6 @@ export class QuickPickWrapper<T> {
             this._selectedMany = selected.map(item => item.data);
         });
         this.show();
-        return new Promise(resolve => this._resolveMany = resolve);
+        return new Promise(resolve => (this._resolveMany = resolve));
     }
 }

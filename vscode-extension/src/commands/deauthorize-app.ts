@@ -18,7 +18,7 @@ export const deauthorizeApp = async () => {
 
     const success = await Git.instance.executeCleanOperation({
         manifests,
-        operation: async (manifest) => {
+        operation: async manifest => {
             output.log(`Deauthorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
 
             if (!manifest.ninja.config.authKey) {
@@ -27,18 +27,22 @@ export const deauthorizeApp = async () => {
             }
 
             Telemetry.instance.log("deauthorize", manifest.id);
-            let response = await Backend.deauthorizeApp(manifest.id, manifest.ninja.config.authKey || "", async (response) => {
-                switch (response.error.statusCode) {
-                    case 401:
-                        UI.authorization.showIncorrectKeyWarning(manifest);
-                        return true;
-                    case 405:
-                        UI.authorization.showNotAuthorizedWarning(manifest);
-                        return true;
-                    default:
-                        return false;
+            let response = await Backend.deauthorizeApp(
+                manifest.id,
+                manifest.ninja.config.authKey || "",
+                async response => {
+                    switch (response.error.statusCode) {
+                        case 401:
+                            UI.authorization.showIncorrectKeyWarning(manifest);
+                            return true;
+                        case 405:
+                            UI.authorization.showNotAuthorizedWarning(manifest);
+                            return true;
+                        default:
+                            return false;
+                    }
                 }
-            });
+            );
 
             if (!response) {
                 return false;
@@ -50,7 +54,8 @@ export const deauthorizeApp = async () => {
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument(DOCUMENTS.AUTHORIZATION_GIT),
-        getCommitMessage: (manifests) => `AL Object ID Ninja app deauthorization for ${getAppNamesFromManifests(manifests)}`
+        getCommitMessage: manifests =>
+            `AL Object ID Ninja app deauthorization for ${getAppNamesFromManifests(manifests)}`,
     });
 
     if (success) {

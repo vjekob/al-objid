@@ -1,14 +1,15 @@
 # Release Notes for AL Object ID Ninja version 2.1.0
 
 > Version 2.1.0 was accidentally deployed without release notes. That's why this version is 2.1.1,
-but the release notes are about v2.1.0. There is nothing new or changed in version 2.1.1. Sorry for
-this mess.
+> but the release notes are about v2.1.0. There is nothing new or changed in version 2.1.1. Sorry for
+> this mess.
 
 ## What's New
 
 There are two important new features introduced in v2.1.0:
-* Range Explorer feature
-* Warnings about running out of available IDs
+
+-   Range Explorer feature
+-   Warnings about running out of available IDs
 
 That's it in brief notes. If you want to know more details, read on.
 
@@ -66,7 +67,6 @@ AL Object ID Ninja now helps you realizing that you are about to run out of IDs 
 No matter how large (or small) your range is, Ninja is guaranteed to show you this information in time
 for you to take action (like expanding an existing range or adding a new one).
 
-> *Note*: This warning is not given out per range. If you have two available ranges, and you are about
-to run out of IDs on one of them, but another one has enough available IDs, Ninja will not show you a
-warning.
-
+> _Note_: This warning is not given out per range. If you have two available ranges, and you are about
+> to run out of IDs on one of them, but another one has enough available IDs, Ninja will not show you a
+> warning.

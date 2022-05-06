@@ -1,7 +1,7 @@
 import { commands, DocumentSymbol, Uri } from "vscode";
 import * as fs from "fs";
 import path = require("path");
-import * as os from 'os';
+import * as os from "os";
 import { getSha256 } from "./Sha256";
 import { ConfigurationProperty } from "./types";
 
@@ -21,7 +21,10 @@ async function waitForJsonActivation(): Promise<boolean> {
     while (Date.now() < start + 60000) {
         available = await new Promise<boolean>(resolve => {
             setTimeout(async () => {
-                const symbols = await commands.executeCommand("vscode.executeDocumentSymbolProvider", tempUri);
+                const symbols = await commands.executeCommand(
+                    "vscode.executeDocumentSymbolProvider",
+                    tempUri
+                );
                 if (symbols) {
                     resolve(true);
                 }
@@ -57,12 +60,15 @@ export class ObjIdConfigSymbols {
         }
 
         this._symbolsPromise = new Promise(async resolve => {
-            if (!await jsonAvailable) {
+            if (!(await jsonAvailable)) {
                 resolve(undefined);
                 return;
             }
 
-            const symbols = await (commands.executeCommand("vscode.executeDocumentSymbolProvider", uri) as Promise<DocumentSymbol[] | undefined>);
+            const symbols = await (commands.executeCommand(
+                "vscode.executeDocumentSymbolProvider",
+                uri
+            ) as Promise<DocumentSymbol[] | undefined>);
             resolve(symbols);
         });
 
@@ -81,7 +87,7 @@ export class ObjIdConfigSymbols {
 
                 const property = symbols.find(symbol => symbol.name === name)!;
                 resolve(property);
-            })
+            });
         });
     }
 

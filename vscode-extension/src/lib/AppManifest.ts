@@ -22,7 +22,9 @@ export function getManifest(uri: Uri): AppManifest | null {
 
     const appPath = path.join(folder.uri.fsPath, "app.json");
     try {
-        const manifest = JSON.parse(fs.readFileSync(appPath).toString()) as AppManifestBackwardCompatibility;
+        const manifest = JSON.parse(
+            fs.readFileSync(appPath).toString()
+        ) as AppManifestBackwardCompatibility;
         manifest.ninja = {
             unsafeOriginalId: manifest.id,
             uri: folderUri,
@@ -31,7 +33,9 @@ export function getManifest(uri: Uri): AppManifest | null {
         };
         manifest.id = AppIdCache.instance.getAppIdHash(manifest.ninja.unsafeOriginalId);
 
-        const encryptionKey = AppIdCache.instance.getAppIdHash(manifest.ninja.unsafeOriginalId.replace("-", ""));
+        const encryptionKey = AppIdCache.instance.getAppIdHash(
+            manifest.ninja.unsafeOriginalId.replace("-", "")
+        );
 
         setAppEncryptionKey(manifest.id, encryptionKey);
 
@@ -45,8 +49,7 @@ export function getManifest(uri: Uri): AppManifest | null {
             uriMap.set(folderUri, manifest);
         }
         return manifest;
-    }
-    catch {
+    } catch {
         return null;
     }
 }
@@ -88,6 +91,9 @@ export function getAppNamesFromManifests(manifests: AppManifest[]): string {
         case 2:
             return manifests.map(manifest => manifest.name).join(" and ");
         default:
-            return `${manifests.slice(0, manifests.length - 1).map(manifest => manifest.name).join(", ")}, and ${manifests[manifests.length - 1].name}`;
+            return `${manifests
+                .slice(0, manifests.length - 1)
+                .map(manifest => manifest.name)
+                .join(", ")}, and ${manifests[manifests.length - 1].name}`;
     }
 }

@@ -12,7 +12,7 @@ import { UI } from "../lib/UI";
 import { AuthorizationStatusBar } from "./AuthorizationStatusBar";
 
 export class ObjIdConfigMonitor implements Disposable {
-    private _repos: { uri: Uri, manifest: AppManifest }[] = [];
+    private _repos: { uri: Uri; manifest: AppManifest }[] = [];
     private _workspaceFoldersChangeEvent: Disposable;
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
@@ -21,7 +21,9 @@ export class ObjIdConfigMonitor implements Disposable {
 
     public constructor() {
         this.setUpWatchers();
-        this._workspaceFoldersChangeEvent = workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this));
+        this._workspaceFoldersChangeEvent = workspace.onDidChangeWorkspaceFolders(
+            this.onDidChangeWorkspaceFolders.bind(this)
+        );
     }
 
     private onDidChangeWorkspaceFolders() {
@@ -39,11 +41,13 @@ export class ObjIdConfigMonitor implements Disposable {
         this.clearBranchTimeout();
         const promises: Promise<string>[] = [];
         for (let repo of this._repos) {
-            promises.push(((repo) => {
-                const promise = Git.instance.getCurrentBranchName(repo.uri);
-                promise.then(branch => this._currentBranches[repo.manifest.id] = branch);
-                return promise;
-            })(repo));
+            promises.push(
+                (repo => {
+                    const promise = Git.instance.getCurrentBranchName(repo.uri);
+                    promise.then(branch => (this._currentBranches[repo.manifest.id] = branch));
+                    return promise;
+                })(repo)
+            );
         }
         await Promise.all(promises);
         this._timeout = setTimeout(() => this.checkCurrentBranches(), 10000);
@@ -65,21 +69,26 @@ export class ObjIdConfigMonitor implements Disposable {
 
         let branch = await Git.instance.getCurrentBranchName(uri);
         if (branch !== currentBranch) {
-            if (await UI.authorization.showUnauthorizedBranch(branch, manifest) === LABELS.BUTTON_LEARN_MORE) {
+            if (
+                (await UI.authorization.showUnauthorizedBranch(branch, manifest)) ===
+                LABELS.BUTTON_LEARN_MORE
+            ) {
                 showDocument(DOCUMENTS.AUTHORIZATION_BRANCH_CHANGE);
             }
             return;
         }
 
         Telemetry.instance.log("critical.objIdConfigDeleted", manifest.id);
-        if (await UI.authorization.showDeletedAuthorization(manifest) === LABELS.BUTTON_LEARN_MORE) {
+        if (
+            (await UI.authorization.showDeletedAuthorization(manifest)) === LABELS.BUTTON_LEARN_MORE
+        ) {
             showDocument(DOCUMENTS.AUTHORIZATION_DELETED);
         }
     }
 
     private async onDidChange(manifest: AppManifest, uri: Uri) {
         this.validateFile(manifest);
-        AuthorizationStatusBar.instance.updateStatusBar()
+        AuthorizationStatusBar.instance.updateStatusBar();
     }
 
     private async setUpWatcher(manifest: AppManifest, uri: Uri) {

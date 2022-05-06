@@ -7,11 +7,17 @@ import { ParserConnector } from "../features/ParserConnector";
 export async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
     let folderPath: string = uri.fsPath;
     let pattern = new RelativePattern(folderPath, "**/*.al");
-    return await executeWithStopwatchAsync(() => workspace.findFiles(pattern, null), `Retrieving list of files in ${uri}`);
+    return await executeWithStopwatchAsync(
+        () => workspace.findFiles(pattern, null),
+        `Retrieving list of files in ${uri}`
+    );
 }
 
 export async function getObjectDefinitions(uris: Uri[]): Promise<ALObject[]> {
-    return executeWithStopwatchAsync(() => ParserConnector.instance.parse(uris), `Parsing ${uris.length} object files`);
+    return executeWithStopwatchAsync(
+        () => ParserConnector.instance.parse(uris),
+        `Parsing ${uris.length} object files`
+    );
 }
 
 export function updateActualConsumption(objects: ALObject[], consumption: ConsumptionInfo): void {

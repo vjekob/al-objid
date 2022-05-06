@@ -6,19 +6,19 @@ import { getObjectDefinitions, getWorkspaceFolderFiles } from "./ObjectIds";
 import { PropertyBag } from "./PropertyBag";
 
 const objectTypeToPermissionTypeMap: any = {
-    "codeunit": "Codeunit",
-    "enum": "",
-    "enumextension": "",
-    "page": "Page",
-    "pageextension": "Page",
-    "permissionset": "",
-    "permissionsetextension": "",
-    "query": "Query",
-    "report": "Report",
-    "reportextension": "Report",
-    "table": "TableDescription",
-    "tableextension": "TableDescription",
-    "xmlport": "XMLPort"
+    codeunit: "Codeunit",
+    enum: "",
+    enumextension: "",
+    page: "Page",
+    pageextension: "Page",
+    permissionset: "",
+    permissionsetextension: "",
+    query: "Query",
+    report: "Report",
+    reportextension: "Report",
+    table: "TableDescription",
+    tableextension: "TableDescription",
+    xmlport: "XMLPort",
 };
 
 export class BCLicense {
@@ -39,7 +39,7 @@ export class BCLicense {
             if (!error) {
                 this._data = result;
                 this._valid = true;
-                this._uri
+                this._uri;
             }
         });
     }
@@ -60,23 +60,38 @@ export class BCLicense {
                 uriCache[object.path] = uri;
             }
             const objectUri = uriCache[object.path];
-            const diagnose = Diagnostics.instance.createDiagnostics(objectUri, `bclicense.${object.type}.${object.id}`);
+            const diagnose = Diagnostics.instance.createDiagnostics(
+                objectUri,
+                `bclicense.${object.type}.${object.id}`
+            );
             const mappedType = objectTypeToPermissionTypeMap[object.type];
             let permissions = cache[mappedType];
             if (!permissions) {
-                const setup = this._data.License.PermissionCollections[0].pl.find((obj: any) => obj?.$?.t === mappedType);
+                const setup = this._data.License.PermissionCollections[0].pl.find(
+                    (obj: any) => obj?.$?.t === mappedType
+                );
                 cache[mappedType] = setup;
             }
 
             permissions = cache[mappedType];
             if (permissions) {
-                const range = permissions?.ps[0]?.p?.find((line: any) => line?.$?.f <= object.id && line?.$?.t >= object.id);
+                const range = permissions?.ps[0]?.p?.find(
+                    (line: any) => line?.$?.f <= object.id && line?.$?.t >= object.id
+                );
                 if (range) {
                     if ((range?.$?.pbm & 2) === 2) {
                         continue;
                     }
                 }
-                diagnose(new Range(new Position(object.line, object.character), new Position(object.line, object.character + object.id.toString().length)), `${object.type} ${object.id} is not included in the license`, DiagnosticSeverity.Error, DIAGNOSTIC_CODE.BCLICENSE.UNAVAILABLE);
+                diagnose(
+                    new Range(
+                        new Position(object.line, object.character),
+                        new Position(object.line, object.character + object.id.toString().length)
+                    ),
+                    `${object.type} ${object.id} is not included in the license`,
+                    DiagnosticSeverity.Error,
+                    DIAGNOSTIC_CODE.BCLICENSE.UNAVAILABLE
+                );
             }
         }
     }

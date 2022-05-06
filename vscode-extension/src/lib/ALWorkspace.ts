@@ -11,10 +11,13 @@ export class ALWorkspace {
     }
 
     public static getALFolders(): WorkspaceFolder[] | undefined {
-        return workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri))
+        return workspace.workspaceFolders?.filter(folder => this.isALWorkspace(folder.uri));
     }
 
-    private static async pickFolderOrFolders(multi: boolean, operationDescription?: string): Promise<AppManifest[] | AppManifest | undefined> {
+    private static async pickFolderOrFolders(
+        multi: boolean,
+        operationDescription?: string
+    ): Promise<AppManifest[] | AppManifest | undefined> {
         const workspaces = this.getALFolders();
         if (!workspaces || workspaces.length === 0) {
             UI.general.showNoWorkspacesOpenInfo();
@@ -26,18 +29,24 @@ export class ALWorkspace {
             return multi ? [manifest] : manifest;
         }
 
-        let quickPick = new QuickPickWrapper<AppManifest>(workspaces.map(w => {
-            let manifest = getCachedManifestFromUri(w.uri);
-            return {
-                label: w.name,
-                detail: `$(folder) ${w.uri.fsPath}`,
-                description: `${manifest!.name} (${manifest!.version})`,
-                data: manifest
-            }
-        }));
+        let quickPick = new QuickPickWrapper<AppManifest>(
+            workspaces.map(w => {
+                let manifest = getCachedManifestFromUri(w.uri);
+                return {
+                    label: w.name,
+                    detail: `$(folder) ${w.uri.fsPath}`,
+                    description: `${manifest!.name} (${manifest!.version})`,
+                    data: manifest,
+                };
+            })
+        );
         quickPick.placeholder = multi
-            ? `Choose AL workspace folders${(operationDescription ? ` ${operationDescription}` : "")}...`
-            : `Select an AL workspace folder${(operationDescription ? ` ${operationDescription}` : "")}...`;
+            ? `Choose AL workspace folders${
+                  operationDescription ? ` ${operationDescription}` : ""
+              }...`
+            : `Select an AL workspace folder${
+                  operationDescription ? ` ${operationDescription}` : ""
+              }...`;
         quickPick.ignoreFocusOut = multi;
 
         let result = await (multi ? quickPick.pickMany() : quickPick.pickOne());
@@ -46,11 +55,15 @@ export class ALWorkspace {
     }
 
     public static pickFolder(operationDescription?: string): Promise<AppManifest | undefined> {
-        return this.pickFolderOrFolders(false, operationDescription) as Promise<AppManifest | undefined>;
+        return this.pickFolderOrFolders(false, operationDescription) as Promise<
+            AppManifest | undefined
+        >;
     }
 
     public static pickFolders(operationDescription?: string): Promise<AppManifest[] | undefined> {
-        return this.pickFolderOrFolders(true, operationDescription) as Promise<AppManifest[] | undefined>;
+        return this.pickFolderOrFolders(true, operationDescription) as Promise<
+            AppManifest[] | undefined
+        >;
     }
 
     public static async selectWorkspaceFolder(uri?: Uri): Promise<AppManifest | undefined> {

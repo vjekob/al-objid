@@ -26,7 +26,7 @@ export interface AuthorizedAppResponse {
         name: string;
         email: string;
         timestamp: number;
-    }
+    };
 }
 
 export interface AuthorizationDeletedInfo {
@@ -58,8 +58,8 @@ export type ConsumptionData = {
 };
 
 export type AppCacheInfo = {
-    _ranges: ALRange[],
-    _log: EventLogEntry[],
+    _ranges: ALRange[];
+    _log: EventLogEntry[];
 } & ConsumptionData;
 
 export type CheckResponse = {
@@ -68,9 +68,11 @@ export type CheckResponse = {
     _news: NewsEntry[];
 };
 
-export type ConsumptionInfoWithTotal = ConsumptionInfo | {
-    _total: number;
-};
+export type ConsumptionInfoWithTotal =
+    | ConsumptionInfo
+    | {
+          _total: number;
+      };
 
 export enum NewsType {
     announcement = "announcement",

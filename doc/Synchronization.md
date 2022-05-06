@@ -17,9 +17,9 @@ at some point exposes the schema information and makes it publicly accessible, t
 will be used.
 
 > If you know of a way how to retrieve accurate object type and ID information from an AL repo,
-please contribute to AL Object ID Ninja or share your knowledge with me. At the moment, the AL
-Object ID Ninja uses an extremely fast algorithm that's able to parse several thousand files in
-under a second (depending on your processor and disk speed, of course).
+> please contribute to AL Object ID Ninja or share your knowledge with me. At the moment, the AL
+> Object ID Ninja uses an extremely fast algorithm that's able to parse several thousand files in
+> under a second (depending on your processor and disk speed, of course).
 
 ## Getting the back end in sync for the first time
 
@@ -43,7 +43,7 @@ manually.
 
 ![Running synchronization manually](./images/manual-synchronization.gif)
 
-There are two types of manual synchronization: *update* and *replace*.
+There are two types of manual synchronization: _update_ and _replace_.
 
 ### Update synchronization
 
@@ -56,8 +56,9 @@ that has codeunits `50110..50115`. If you run synchronization and choose the `Up
 end will contain information about codeunits `50100..50105, 50110..50115`.
 
 Typical use cases for update synchronization are:
-* Synchronizing initially from multiple branches
-* Occasionally working offline and then syncing up when back online
+
+- Synchronizing initially from multiple branches
+- Occasionally working offline and then syncing up when back online
 
 ### Replace synchronization
 
@@ -69,8 +70,9 @@ that has codeunits `50110..50115`. If you run synchronization and choose the `Re
 end will contain information about codeunits `50110..50115`.
 
 Typical use cases for replace synchronization:
-* Initial synchronization
-* Releasing possible unused object IDs after larger refactoring or longer development cycles
+
+- Initial synchronization
+- Releasing possible unused object IDs after larger refactoring or longer development cycles
 
 ## How can object IDs get out of sync?
 
@@ -101,7 +103,7 @@ AL Object ID Ninja does not do anything that directly prevents this. When this h
 likely an accident.
 
 > I am currently working on improving this a lot. Subsequent object ID assignments for the same
-objects in the same files will be properly handled by AL Object ID Ninja.
+> objects in the same files will be properly handled by AL Object ID Ninja.
 
 ### Modifying object ID assignments
 

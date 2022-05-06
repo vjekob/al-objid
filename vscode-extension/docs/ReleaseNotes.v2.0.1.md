@@ -1,16 +1,17 @@
 # Release Notes for AL Object ID Ninja version 2.0.1
 
 > **IMPORTANT**: If you are maintaining a private back end for AL Object ID Ninja, please read this document,
-because the changes are made to how AL Object ID Ninja communicates with the back end. You will be required to
-redeploy new back-end components in order to be able to continue using AL Object ID Ninja.
+> because the changes are made to how AL Object ID Ninja communicates with the back end. You will be required to
+> redeploy new back-end components in order to be able to continue using AL Object ID Ninja.
 
 ## What's new?
 
 These are the changes and new features AL Object Ninja v2.0.1 brings:
-* Toast notifications shown by Ninja are now smarter and more efficient
-* Information that could identify users is now transmitted and stored in encrypted form
-* Commands are renamed from `Vjeko: <Command Name>` to `Ninja: <Command Name>`.
-* Release notifications are less intrusive
+
+-   Toast notifications shown by Ninja are now smarter and more efficient
+-   Information that could identify users is now transmitted and stored in encrypted form
+-   Commands are renamed from `Vjeko: <Command Name>` to `Ninja: <Command Name>`.
+-   Release notifications are less intrusive
 
 That's it in brief notes. If you want to know more details, read on.
 
@@ -28,7 +29,7 @@ The additional back end is now in charge only of notifications. Whenever you ass
 the "notifications" back end reads the queue message and updates ins cache with the latest state of your app.
 
 AL Object ID Ninja polls the "notification" back end every so often to check if there are any changes done by
-your colleagues. If anyone working in the same app has assigned a new object ID, synchronized objects, 
+your colleagues. If anyone working in the same app has assigned a new object ID, synchronized objects,
 authorized or de-authorized the app, everyone else will get a notification message.
 
 ### More reliable authorization
@@ -39,7 +40,6 @@ after an app was authorized. With this two-back-end setup, this is no longer pos
 
 All in all, with the new setup, notifications are adding less strain on the back end, they do not adversely
 affect security, and they allow valuable and productive part of the solution to work with higher efficiency.
-
 
 ### Variable polling interval through a back-off algorithm
 
@@ -73,7 +73,7 @@ notifications without any privacy concerns.
 ## Commands are prefixed `Ninja` instead of `Vjeko`
 
 It made no sense that commands are prefixed with `Vjeko` for an extension that is called Ninja. Users are
-accustomed to searching for commands by typing the extension name or moniker, and since there is no *"Vjeko"* in 
+accustomed to searching for commands by typing the extension name or moniker, and since there is no _"Vjeko"_ in
 the extension name or description, it made far more sense to use `Ninja` instead.
 
 The `Vjeko` prefix was set in the very early days of development before the name itself was determined, but it

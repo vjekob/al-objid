@@ -3,21 +3,20 @@ import https = require("https");
 export type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
 
 type Request = {
-    method?: HttpMethod,
+    method?: HttpMethod;
     hostname: string;
     port?: number;
     path: string;
     headers: { [key: string]: any };
-}
+};
 
 const DEFAULT_HEADERS = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
 };
 
 export class Https {
     private options: Request;
     constructor(request: Request) {
-
         this.options = request;
         if (!this.options.headers) this.options.headers = DEFAULT_HEADERS;
     }
@@ -36,7 +35,7 @@ export class Https {
                 res.setEncoding("utf8");
 
                 var body = "";
-                res.on("data", (chunk: any) => body += chunk);
+                res.on("data", (chunk: any) => (body += chunk));
                 res.on("end", () => {
                     try {
                         if (res.statusCode !== 200) {
@@ -61,14 +60,14 @@ export class Https {
                 });
                 res.on("error", (e: any) => {
                     reject({
-                        error: e
+                        error: e,
                     });
                 });
             });
 
             req.on("error", (e: any) => {
                 reject({
-                    error: e
+                    error: e,
                 });
             });
 

@@ -5,7 +5,7 @@ import { PropertyBag } from "../../lib/PropertyBag";
 import { ALRange, AppManifest } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
-import { ExplorerItem } from './ExplorerItem';
+import { ExplorerItem } from "./ExplorerItem";
 import { ExplorerItemFactory } from "./ExplorerItemFactory";
 import { ExplorerItemType } from "./ExplorerItemType";
 import { TreeItemInfo } from "./TreeItemInfo";
@@ -16,7 +16,9 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
 
     private constructor() {
         this.setUpWatchers();
-        this._workspaceFoldersChangeEvent = workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this));
+        this._workspaceFoldersChangeEvent = workspace.onDidChangeWorkspaceFolders(
+            this.onDidChangeWorkspaceFolders.bind(this)
+        );
     }
 
     public static get instance() {
@@ -28,8 +30,10 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
 
-    private _onDidChangeTreeData: EventEmitter<ExplorerItem | undefined | null | void> = new EventEmitter<ExplorerItem | undefined | null | void>();
-    readonly onDidChangeTreeData: Event<ExplorerItem | undefined | null | void> = this._onDidChangeTreeData.event;
+    private _onDidChangeTreeData: EventEmitter<ExplorerItem | undefined | null | void> =
+        new EventEmitter<ExplorerItem | undefined | null | void>();
+    readonly onDidChangeTreeData: Event<ExplorerItem | undefined | null | void> =
+        this._onDidChangeTreeData.event;
 
     private onDidChangeWorkspaceFolders() {
         this.disposeWatchers();
@@ -45,7 +49,7 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
         for (let folder of folders) {
             const manifest = getManifest(folder.uri)!;
             const watcher = workspace.createFileSystemWatcher(manifest.ninja.path);
-            watcher.onDidChange(e => this.refresh())
+            watcher.onDidChange(e => this.refresh());
             this._watchers.push(watcher);
         }
     }
@@ -58,7 +62,12 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
         if (!element) {
             const folders = ALWorkspace.getALFolders();
             if (!folders) {
-                return [ExplorerItemFactory.text("No AL workspaces are open.", "There is nothing to show here")];
+                return [
+                    ExplorerItemFactory.text(
+                        "No AL workspaces are open.",
+                        "There is nothing to show here"
+                    ),
+                ];
             }
             return folders?.map(folder => ExplorerItemFactory.workspace(folder.uri));
         }
@@ -81,7 +90,12 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
         return result;
     }
 
-    private buildObjectTypeItemFromCache(appId: string, range: ALRange, objectType: string, ids: number[]): TreeItemInfo {
+    private buildObjectTypeItemFromCache(
+        appId: string,
+        range: ALRange,
+        objectType: string,
+        ids: number[]
+    ): TreeItemInfo {
         const size = Math.max(range.to - range.from, 0) + 1;
 
         const uri = this.getUriString(appId, range, objectType);
@@ -101,7 +115,12 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
         }
 
         const existing = this._items[uri];
-        if (!existing || existing.severity !== item.severity || item.remaining !== existing.remaining || existing.propagate) {
+        if (
+            !existing ||
+            existing.severity !== item.severity ||
+            item.remaining !== existing.remaining ||
+            existing.propagate
+        ) {
             ExplorerDecorationsProvider.instance.markForUpdate(uri, item);
         }
         this._items[uri] = item;
@@ -122,7 +141,9 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
         let severity = TreeItemSeverity.none;
         let propagateItem: TreeItemInfo | undefined;
         for (var type of Object.keys(consumption)) {
-            const ids = (consumption[type] as number[] || []).filter(id => id >= range.from && id <= range.to);
+            const ids = ((consumption[type] as number[]) || []).filter(
+                id => id >= range.from && id <= range.to
+            );
             const item = this.buildObjectTypeItemFromCache(appId, range, type, ids);
             if (item.severity! > severity) {
                 severity = item.severity!;
@@ -140,7 +161,9 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
             type: ExplorerItemType.workspace,
         };
 
-        const ranges = manifest.ninja.config.idRanges.length ? manifest.ninja.config.idRanges : manifest.idRanges;
+        const ranges = manifest.ninja.config.idRanges.length
+            ? manifest.ninja.config.idRanges
+            : manifest.idRanges;
 
         for (let range of ranges) {
             this.buildRangeItemsFromCache(manifest.id, range);
