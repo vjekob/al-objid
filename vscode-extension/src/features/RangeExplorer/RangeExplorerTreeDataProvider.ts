@@ -80,7 +80,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerI
     }
 
     public getUriString(appId: string, range?: ALRange, objectType?: string): string {
-        let result = `ninja://${appId}`;
+        let result = `ninja://range/${appId}`;
         if (range) {
             result = `${result}/${range.from}-${range.to}`;
         }

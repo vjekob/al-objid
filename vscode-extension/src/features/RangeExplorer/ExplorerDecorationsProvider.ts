@@ -36,7 +36,7 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         this._onDidChangeFileDecorations.event;
 
     provideFileDecoration(uri: Uri): ProviderResult<FileDecoration> {
-        if (uri.scheme !== "ninja") {
+        if (uri.scheme !== "ninja" && uri.authority !== "range") {
             return;
         }
 

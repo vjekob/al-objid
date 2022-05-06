@@ -20,7 +20,7 @@ export const confirmSyncObjectIds = async (item: TreeItem) => {
             commands.executeCommand(
                 "vjeko-al-objid.sync-object-ids",
                 { merge: result === OPTION.UPDATE },
-                item?.resourceUri?.authority
+                item?.resourceUri?.path.substring(1)
             );
             break;
         case OPTION.LEARN:
