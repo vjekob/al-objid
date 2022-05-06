@@ -21,7 +21,7 @@ import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
 import { ConsumptionCache } from "../features/ConsumptionCache";
 import { getCachedManifestFromAppId } from "./AppManifest";
-import { ExplorerTreeDataProvider } from "../features/Explorer/ExplorerTreeDataProvider";
+import { RangeExplorerTreeDataProvider } from "../features/RangeExplorer/RangeExplorerTreeDataProvider";
 import { LABELS } from "./constants";
 import { env, Uri } from "vscode";
 import { Telemetry } from "./Telemetry";
@@ -164,7 +164,7 @@ async function sendRequest<T>(
                         consumptions as ConsumptionData
                     )
                 ) {
-                    ExplorerTreeDataProvider.instance.refresh();
+                    RangeExplorerTreeDataProvider.instance.refresh();
                 }
             }
         } catch (error: any) {

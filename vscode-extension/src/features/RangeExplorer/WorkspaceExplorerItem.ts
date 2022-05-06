@@ -3,7 +3,7 @@ import { AppManifest } from "../../lib/types";
 import { ExplorerItem } from "./ExplorerItem";
 import { ExplorerItemFactory } from "./ExplorerItemFactory";
 import { ExplorerItemType } from "./ExplorerItemType";
-import { ExplorerTreeDataProvider } from "./ExplorerTreeDataProvider";
+import { RangeExplorerTreeDataProvider } from "./RangeExplorerTreeDataProvider";
 
 export class WorkspaceExplorerItem extends ExplorerItem {
     private _manifest: AppManifest;
@@ -13,7 +13,7 @@ export class WorkspaceExplorerItem extends ExplorerItem {
         this._manifest = manifest;
         this.collapsibleState = TreeItemCollapsibleState.Expanded;
         this.iconPath = ThemeIcon.Folder;
-        this.id = ExplorerTreeDataProvider.instance.getUriString(manifest.id);
+        this.id = RangeExplorerTreeDataProvider.instance.getUriString(manifest.id);
         this.resourceUri = Uri.parse(this.id);
         this.contextValue = "ninja-folder";
     }

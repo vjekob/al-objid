@@ -3,7 +3,7 @@ import { Uri } from "vscode";
 import { ALRange } from "../../lib/types";
 import { ExplorerItem } from "./ExplorerItem";
 import { ExplorerItemType } from "./ExplorerItemType";
-import { ExplorerTreeDataProvider } from "./ExplorerTreeDataProvider";
+import { RangeExplorerTreeDataProvider } from "./RangeExplorerTreeDataProvider";
 
 export class ObjectTypeExplorerItem extends ExplorerItem {
     constructor(appId: string, range: ALRange, objectType: string, ids: number[], size: number) {
@@ -13,8 +13,8 @@ export class ObjectTypeExplorerItem extends ExplorerItem {
             `${Math.round((ids.length / size) * 100)}% (${ids.length} of ${size})`
         );
 
-        const uri = ExplorerTreeDataProvider.instance.getUriString(appId, range, objectType);
-        const info = ExplorerTreeDataProvider.instance.getTreeItemInfo(uri);
+        const uri = RangeExplorerTreeDataProvider.instance.getUriString(appId, range, objectType);
+        const info = RangeExplorerTreeDataProvider.instance.getTreeItemInfo(uri);
 
         const pct = Math.max(1 - ids.length / Math.max(size - 5, 0), 0);
 

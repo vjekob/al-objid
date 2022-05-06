@@ -11,8 +11,8 @@ import { ExplorerItemType } from "./ExplorerItemType";
 import { TreeItemInfo } from "./TreeItemInfo";
 import { TreeItemSeverity } from "./TreeItemSeverity";
 
-export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>, Disposable {
-    public static _instance: ExplorerTreeDataProvider;
+export class RangeExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>, Disposable {
+    public static _instance: RangeExplorerTreeDataProvider;
 
     private constructor() {
         this.setUpWatchers();
@@ -22,7 +22,7 @@ export class ExplorerTreeDataProvider implements TreeDataProvider<ExplorerItem>,
     }
 
     public static get instance() {
-        return this._instance || (this._instance = new ExplorerTreeDataProvider());
+        return this._instance || (this._instance = new RangeExplorerTreeDataProvider());
     }
 
     private _items: PropertyBag<TreeItemInfo> = {};

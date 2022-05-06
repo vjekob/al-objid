@@ -5,7 +5,7 @@ import { ConsumptionCache } from "../ConsumptionCache";
 import { ExplorerItem } from "./ExplorerItem";
 import { ExplorerItemFactory } from "./ExplorerItemFactory";
 import { ExplorerItemType } from "./ExplorerItemType";
-import { ExplorerTreeDataProvider } from "./ExplorerTreeDataProvider";
+import { RangeExplorerTreeDataProvider } from "./RangeExplorerTreeDataProvider";
 
 const light = path.join(__filename, "..", "..", "..", "..", "images", "brackets-square-light.svg");
 const dark = path.join(__filename, "..", "..", "..", "..", "images", "brackets-square-dark.svg");
@@ -28,7 +28,7 @@ export class RangeExplorerItem extends ExplorerItem {
         this.iconPath = { light, dark };
         this._appId = appId;
         this._range = range;
-        this.id = ExplorerTreeDataProvider.instance.getUriString(appId, range);
+        this.id = RangeExplorerTreeDataProvider.instance.getUriString(appId, range);
         this.resourceUri = Uri.parse(this.id);
     }
 

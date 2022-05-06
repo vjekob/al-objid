@@ -8,7 +8,7 @@ import { FolderAuthorization } from "../lib/BackendTypes";
 import { ConsumptionCache } from "./ConsumptionCache";
 import { NewsHandler } from "./NewsHandler";
 import { output } from "./Output";
-import { ExplorerTreeDataProvider } from "./Explorer/ExplorerTreeDataProvider";
+import { RangeExplorerTreeDataProvider } from "./RangeExplorer/RangeExplorerTreeDataProvider";
 
 const DEFAULT_POLLING_INTERVAL = 15 * 1000; // 15 seconds
 const MAX_POLLING_INTERVAL = 15 * 60 * 1000; // 15 minutes
@@ -72,7 +72,7 @@ export class PollingHandler implements Disposable {
         }
 
         if (consumptionUpdates) {
-            ExplorerTreeDataProvider.instance.refresh();
+            RangeExplorerTreeDataProvider.instance.refresh();
         }
     }
 
