@@ -29,11 +29,8 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
     private _treeItems: PropertyBag<TreeItemInfo> = {};
     private _updated: PropertyBag<boolean> = {};
 
-    private _onDidChangeFileDecorations: EventEmitter<Uri | Uri[] | undefined> = new EventEmitter<
-        Uri | Uri[] | undefined
-    >();
-    readonly onDidChangeFileDecorations: Event<Uri | Uri[] | undefined> | undefined =
-        this._onDidChangeFileDecorations.event;
+    private _onDidChangeFileDecorations = new EventEmitter<Uri[]>();
+    readonly onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;
 
     provideFileDecoration(uri: Uri): ProviderResult<FileDecoration> {
         if (uri.scheme !== "ninja" && uri.authority !== "range") {

@@ -1,6 +1,6 @@
 import { Disposable, Event, EventEmitter, TreeDataProvider, TreeItem, workspace } from "vscode";
 import { ALWorkspace } from "../../lib/ALWorkspace";
-import { getManifest } from "../../lib/AppManifest";
+import { getCachedManifestFromUri, getManifest } from "../../lib/AppManifest";
 import { PropertyBag } from "../../lib/PropertyBag";
 import { ALRange, AppManifest } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
@@ -9,7 +9,7 @@ import { TreeItemInfo } from "./TreeItemInfo";
 import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
 import { TextExplorerItem } from "../Explorer/TextExplorerItem";
 import { WorkspaceExplorerItem } from "./WorkspaceExplorerItem";
-import { NinjaExplorerItem } from "../Explorer/ExplorerItem";
+import { NinjaExplorerItem } from "../Explorer/NinjaExplorerItem";
 
 export class RangeExplorerTreeDataProvider
     implements TreeDataProvider<NinjaExplorerItem>, Disposable
@@ -32,10 +32,8 @@ export class RangeExplorerTreeDataProvider
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
 
-    private _onDidChangeTreeData: EventEmitter<NinjaExplorerItem | undefined | null | void> =
-        new EventEmitter<NinjaExplorerItem | undefined | null | void>();
-    readonly onDidChangeTreeData: Event<NinjaExplorerItem | undefined | null | void> =
-        this._onDidChangeTreeData.event;
+    private _onDidChangeTreeData = new EventEmitter<NinjaExplorerItem | void>();
+    readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private onDidChangeWorkspaceFolders() {
         this.disposeWatchers();
@@ -60,18 +58,37 @@ export class RangeExplorerTreeDataProvider
         return element.getTreeItem();
     }
 
-    getChildren(element?: NinjaExplorerItem): NinjaExplorerItem[] {
+    getChildren(element?: NinjaExplorerItem): NinjaExplorerItem[] | Promise<NinjaExplorerItem[]> {
         if (!element) {
-            const folders = ALWorkspace.getALFolders();
+            let folders = ALWorkspace.getALFolders();
             if (!folders) {
                 return [
                     new TextExplorerItem(
                         "No AL workspaces are open.",
-                        "There is nothing to show here"
+                        "There is nothing to show here",
+                        undefined
                     ),
                 ];
             }
-            return folders?.map(folder => new WorkspaceExplorerItem(getManifest(folder.uri)!));
+
+            folders = folders.filter(
+                folder => !getCachedManifestFromUri(folder.uri).ninja.config.appPoolId
+            );
+            if (!folders) {
+                return [
+                    new TextExplorerItem(
+                        "Only app pools available.",
+                        "There is nothing to show here",
+                        undefined
+                    ),
+                ];
+            }
+            return folders?.map(
+                folder =>
+                    new WorkspaceExplorerItem(getManifest(folder.uri)!, item => {
+                        this._onDidChangeTreeData.fire(item);
+                    })
+            );
         }
 
         return element.children;
@@ -163,7 +180,7 @@ export class RangeExplorerTreeDataProvider
         }
     }
 
-    private buildItemsFromCache(): void {
+    private buildItemsFromConsumptionCache(): void {
         const folders = ALWorkspace.getALFolders();
         if (!folders) {
             return;
@@ -171,12 +188,15 @@ export class RangeExplorerTreeDataProvider
 
         for (let folder of folders) {
             const manifest = getManifest(folder.uri)!;
-            this.buildFolderItemsFromCache(manifest);
+            if (!manifest.ninja.config.appPoolId) {
+                // TODO Make Pool Explorer for app pools
+                this.buildFolderItemsFromCache(manifest);
+            }
         }
     }
 
     refresh() {
-        this.buildItemsFromCache();
+        this.buildItemsFromConsumptionCache();
         ExplorerDecorationsProvider.instance.update();
         this._onDidChangeTreeData.fire();
     }

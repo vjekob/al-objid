@@ -1,10 +1,12 @@
 import path = require("path");
 import { TreeItem, Uri } from "vscode";
 import { ALRange } from "../../lib/types";
-import { NinjaExplorerItem } from "../Explorer/ExplorerItem";
+import { NinjaExplorerItem } from "../Explorer/NinjaExplorerItem";
+import { RangeExplorerItem } from "./RangeExplorerItem";
 import { RangeExplorerTreeDataProvider } from "./RangeExplorerTreeDataProvider";
 
 export class ObjectTypeExplorerItem implements NinjaExplorerItem {
+    private readonly _parent: RangeExplorerItem;
     private readonly _label: string;
     private readonly _tooltip: string;
     private readonly _description: string;
@@ -13,7 +15,16 @@ export class ObjectTypeExplorerItem implements NinjaExplorerItem {
     private readonly _light: string;
     private readonly _dark: string;
 
-    constructor(appId: string, range: ALRange, objectType: string, ids: number[], size: number) {
+    constructor(
+        appId: string,
+        range: ALRange,
+        objectType: string,
+        ids: number[],
+        size: number,
+        parent: RangeExplorerItem
+    ) {
+        this._parent = parent;
+
         this._label = `${objectType}`;
         this._tooltip = `${ids.length} assigned ${objectType} object(s)`;
         this._description = `${Math.round((ids.length / size) * 100)}% (${ids.length} of ${size})`;
@@ -47,6 +58,10 @@ export class ObjectTypeExplorerItem implements NinjaExplorerItem {
 
         this._resourceUri = Uri.parse(uri);
         this._id = uri;
+    }
+
+    public get parent(): RangeExplorerItem {
+        return this._parent;
     }
 
     public children = [];

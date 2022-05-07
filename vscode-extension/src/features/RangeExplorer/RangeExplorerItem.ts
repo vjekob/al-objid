@@ -5,7 +5,7 @@ import { ConsumptionCache } from "../ConsumptionCache";
 import { ObjectTypeExplorerItem } from "./ObjectTypeExplorerItem";
 import { RangeExplorerTreeDataProvider } from "./RangeExplorerTreeDataProvider";
 import { TextExplorerItem } from "../Explorer/TextExplorerItem";
-import { NinjaExplorerItem } from "../Explorer/ExplorerItem";
+import { NinjaExplorerItem, UpdateNinjaExplorerItem } from "../Explorer/NinjaExplorerItem";
 
 const light = path.join(__filename, "..", "..", "..", "..", "images", "brackets-square-light.svg");
 const dark = path.join(__filename, "..", "..", "..", "..", "images", "brackets-square-dark.svg");
@@ -14,14 +14,22 @@ export class RangeExplorerItem implements NinjaExplorerItem {
     private readonly _label: string;
     private readonly _tooltip: string;
     private readonly _description: string;
-    private readonly _collapsibleState: TreeItemCollapsibleState;
+    private _collapsibleState: TreeItemCollapsibleState;
     private readonly _appId: string;
     private readonly _range: ALRange;
     private readonly _id: string;
     private readonly _resourceUri: Uri;
+    private readonly _update: UpdateNinjaExplorerItem;
     private _children: NinjaExplorerItem[] | undefined;
 
-    constructor(appId: string, range: ALRange) {
+    constructor(
+        appId: string,
+        range: ALRange,
+        parent: NinjaExplorerItem,
+        update: UpdateNinjaExplorerItem
+    ) {
+        this.parent = parent;
+
         const description = (range as NinjaALRange).description || "";
         const addition = description ? ` (${description})` : "";
 
@@ -34,7 +42,11 @@ export class RangeExplorerItem implements NinjaExplorerItem {
         this._range = range;
         this._id = RangeExplorerTreeDataProvider.instance.getUriString(appId, range);
         this._resourceUri = Uri.parse(this._id);
+
+        this._update = update;
     }
+
+    public readonly parent: NinjaExplorerItem;
 
     public getTreeItem() {
         const item = new TreeItem(this._label, this._collapsibleState);
@@ -67,7 +79,8 @@ export class RangeExplorerItem implements NinjaExplorerItem {
                             this._range,
                             type,
                             ids,
-                            Math.max(this._range.to - this._range.from, 0) + 1
+                            Math.max(this._range.to - this._range.from, 0) + 1,
+                            this
                         )
                     );
                 }
@@ -77,10 +90,16 @@ export class RangeExplorerItem implements NinjaExplorerItem {
                 this._children.push(
                     new TextExplorerItem(
                         "No consumption yet.",
-                        "No object IDs have been assigned from this range"
+                        "No object IDs have been assigned from this range",
+                        this
                     )
                 );
             }
+        }
+
+        if (this._children.length === 0) {
+            this._collapsibleState = TreeItemCollapsibleState.None;
+            this._update(this);
         }
 
         return this._children;
