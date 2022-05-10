@@ -10,14 +10,14 @@ const objectTypeToPermissionTypeMap: any = {
     enum: "",
     enumextension: "",
     page: "Page",
-    pageextension: "Page",
+    pageextension: "", // "Page", // TODO Handle pageextension validation through a property setting (strict license validation)
     permissionset: "",
     permissionsetextension: "",
     query: "Query",
     report: "Report",
     reportextension: "Report",
     table: "TableDescription",
-    tableextension: "TableDescription",
+    tableextension: "", // "TableDescription", // TODO Handle tableextension validation through a property setting (strict license validation)
     xmlport: "XMLPort",
 };
 
