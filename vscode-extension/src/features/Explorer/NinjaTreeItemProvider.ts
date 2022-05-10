@@ -1,5 +1,6 @@
 import { TreeItemCollapsibleState } from "vscode";
 import { INinjaTreeItem, NinjaTreeItemIcon, NinjaTreeItemLabel } from "./NinjaTreeItem";
+import { TreeItemDecoration } from "./TreeItemDecoration";
 
 export interface NinjaTreeItemProvider {
     getLabel: () => NinjaTreeItemLabel;
@@ -10,5 +11,6 @@ export interface NinjaTreeItemProvider {
     getContextValue?: () => string | Promise<string>;
     getDescription?: () => string | Promise<string>;
     getChildren?: () => INinjaTreeItem[];
+    getDecoration?: () => TreeItemDecoration | undefined | Promise<TreeItemDecoration | undefined>;
     dispose?: () => void;
 }

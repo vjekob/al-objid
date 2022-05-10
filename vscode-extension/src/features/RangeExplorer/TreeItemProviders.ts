@@ -5,18 +5,27 @@ import { ConsumptionCache } from "../ConsumptionCache";
 import { INinjaTreeItem, NinjaTreeItem, UpdateNinjaTreeItem } from "../Explorer/NinjaTreeItem";
 import { NinjaTreeItemProvider } from "../Explorer/NinjaTreeItemProvider";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
+import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
 
-function getIconFromRemaining(remaining: number, icon: string): string {
+const severityIconMap: { [key: number]: string | undefined } = {
+    [TreeItemSeverity.none]: undefined,
+    [TreeItemSeverity.info]: "info",
+    [TreeItemSeverity.warning]: "warning",
+    [TreeItemSeverity.error]: "error",
+};
+
+function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
+    let severity = TreeItemSeverity.none;
     if (remaining < 10) {
-        icon = "info";
+        severity = TreeItemSeverity.info;
         if (remaining <= 5) {
-            icon = "warning";
-            if (remaining! === 0) {
-                icon = "error";
+            severity = TreeItemSeverity.warning;
+            if (remaining === 0) {
+                severity = TreeItemSeverity.error;
             }
         }
     }
-    return icon;
+    return severity;
 }
 
 export function getFolderTreeItemProvider(
@@ -361,7 +370,8 @@ export function getObjectTypeConsumptionTreeItemProvider(
     const path = `${pathSoFar}/${objectType}`;
     const pct = Math.round((ids.length / size) * 100);
     const remaining = size - ids.length;
-    const icon = getIconFromRemaining(remaining, "check");
+    const severity = getSeverityFromRemaining(remaining);
+    const icon = severityIconMap[severity] || "check";
 
     return {
         getLabel: () => objectType,
@@ -370,6 +380,16 @@ export function getObjectTypeConsumptionTreeItemProvider(
         getCollapsibleState: () => TreeItemCollapsibleState.None,
         getTooltip: () => `${ids.length} assigned ${objectType} object(s)`,
         getDescription: () => `${pct}% (${ids.length} of ${size})`,
+        getDecoration: () => {
+            if (remaining > 10) {
+                return undefined;
+            }
+            return {
+                badge: `${remaining}`,
+                propagate: true,
+                severity,
+            };
+        },
     };
 }
 
@@ -390,7 +410,8 @@ export function getObjectTypeRangeConsumptionTreeItemProvider(
     const size = range.to - range.from + 1;
     const remaining = size - ids.length;
     const pct = Math.round((ids.length / size) * 100);
-    const icon = getIconFromRemaining(remaining, "check");
+    const severity = getSeverityFromRemaining(remaining);
+    const icon = severityIconMap[severity] || "check";
 
     return {
         getLabel: () => `${range.from}..${range.to}${addition}`,
@@ -399,5 +420,15 @@ export function getObjectTypeRangeConsumptionTreeItemProvider(
         getCollapsibleState: () => TreeItemCollapsibleState.None,
         getTooltip: () => `From ${range.from} to ${range.to}${addition}`,
         getDescription: () => `${pct}% (${ids.length} of ${size})`,
+        getDecoration: () => {
+            if (remaining > 10) {
+                return undefined;
+            }
+            return {
+                badge: `${remaining}`,
+                propagate: true,
+                severity,
+            };
+        },
     };
 }

@@ -1,5 +1,6 @@
 import {
     Disposable,
+    ThemeColor,
     ThemeIcon,
     TreeItem,
     TreeItemCollapsibleState,
@@ -7,8 +8,11 @@ import {
     Uri,
 } from "vscode";
 import { AppManifest } from "../../lib/types";
+import { ExplorerDecorationsProvider } from "../RangeExplorer/ExplorerDecorationsProvider";
 import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
 import { TextTreeItem } from "./TextTreeItem";
+import { TreeItemDecoration } from "./TreeItemDecoration";
+import { SeverityColors } from "./TreeItemSeverity";
 
 type NinjaTreeItemLabelType = string | TreeItemLabel;
 type NinjaTreeItemIconType = string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon;
@@ -91,8 +95,29 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
             decomposePromise(contextValue, result => (contextValue = result));
         }
 
-        const createItem = () =>
-            this.createItem({
+        let decoration: TreeItemDecoration | undefined | Promise<TreeItemDecoration | undefined>;
+        if (this._provider.getDecoration) {
+            decoration = this._provider.getDecoration();
+            decomposePromise(decoration, result => (decoration = result));
+        }
+
+        const decorate = (uri: Uri) => {
+            if (decoration) {
+                ExplorerDecorationsProvider.instance.decorate(
+                    uri,
+                    decoration as TreeItemDecoration
+                );
+            }
+        };
+
+        const createItem = () => {
+            if (iconPath instanceof ThemeIcon && decoration) {
+                iconPath = new ThemeIcon(
+                    iconPath.id,
+                    new ThemeColor(SeverityColors[`${(decoration as TreeItemDecoration).severity}`])
+                );
+            }
+            return this.createItem({
                 label: label as NinjaTreeItemLabelType,
                 description: description as string | undefined,
                 collapsibleState: collapsibleState as TreeItemCollapsibleState,
@@ -106,15 +131,20 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
                 id: `ninja/${this._manifest.id}${uriPath}`,
                 contextValue: contextValue as string | undefined,
             });
+        };
 
         if (promises.length) {
             return new Promise<TreeItem>(async resolve => {
                 await Promise.all(promises);
-                resolve(createItem());
+                const item = createItem();
+                decorate(item.resourceUri!);
+                resolve(item);
             });
         }
 
-        return createItem();
+        const item = createItem();
+        decorate(item.resourceUri!);
+        return item;
     }
 
     public get children(): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {

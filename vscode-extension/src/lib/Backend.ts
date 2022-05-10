@@ -165,7 +165,7 @@ async function sendRequest<T>(
                         consumptions as ConsumptionData
                     )
                 ) {
-                    RangeExplorerTreeDataProvider.instance.refresh();
+                    RangeExplorerTreeDataProvider.instance.refresh(manifest.ninja.uri);
                 }
             }
         } catch (error: any) {

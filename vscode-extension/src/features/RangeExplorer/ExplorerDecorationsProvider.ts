@@ -7,15 +7,9 @@ import {
     Uri,
 } from "vscode";
 import { PropertyBag } from "../../lib/PropertyBag";
-import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
-
-const Colors: any = {
-    undefined: "foreground",
-    [`${TreeItemSeverity.none}`]: "foreground",
-    [`${TreeItemSeverity.info}`]: "editorInfo.foreground",
-    [`${TreeItemSeverity.warning}`]: "list.warningForeground",
-    [`${TreeItemSeverity.error}`]: "list.errorForeground",
-};
+import { AppManifest } from "../../lib/types";
+import { TreeItemDecoration } from "../Explorer/TreeItemDecoration";
+import { SeverityColors } from "../Explorer/TreeItemSeverity";
 
 export class ExplorerDecorationsProvider implements FileDecorationProvider {
     private static _instance: ExplorerDecorationsProvider;
@@ -24,38 +18,44 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         return this._instance || (this._instance = new ExplorerDecorationsProvider());
     }
 
-    // private _treeItems: PropertyBag<TreeItemInfo> = {};
-    private _updated: PropertyBag<boolean> = {};
+    private _decorations: PropertyBag<PropertyBag<TreeItemDecoration>> = {};
 
     private _onDidChangeFileDecorations = new EventEmitter<Uri[]>();
     readonly onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;
 
     provideFileDecoration(uri: Uri): ProviderResult<FileDecoration> {
-        if (uri.scheme !== "ninja" && uri.authority !== "range") {
+        if (uri.scheme !== "ninja") {
             return;
         }
 
-        const uriStr = uri.toString();
-        delete this._updated[uriStr];
-        // const info = this._treeItems[uriStr];
-        // if (info) {
-        //     return {
-        //         badge: info.remaining! < 10 ? `${info.remaining}` : undefined,
-        //         color: new ThemeColor(Colors[`${info.severity}`]),
-        //         tooltip: `${info.remaining} remaining`,
-        //         propagate: info.propagate,
-        //     };
-        // }
+        const map = this._decorations[uri.authority];
+        if (!map) {
+            return;
+        }
+
+        const decoration = map[uri.path];
+        if (!decoration) {
+            return;
+        }
+
+        return {
+            ...decoration,
+            propagate: false,
+            color: new ThemeColor(SeverityColors[`${decoration.severity}`]),
+        };
     }
 
-    update() {
-        this._onDidChangeFileDecorations.fire(
-            Object.keys(this._updated).map(key => Uri.parse(key))
-        );
+    decorate(uri: Uri, decoration: TreeItemDecoration) {
+        if (!this._decorations[uri.authority]) {
+            this._decorations[uri.authority] = {};
+        }
+
+        const map = this._decorations[uri.authority];
+        map[uri.path] = decoration;
+        this._onDidChangeFileDecorations.fire([uri]);
     }
 
-    // markForUpdate(uriString: string, info: TreeItemInfo) {
-    //     this._treeItems[uriString] = info;
-    //     this._updated[uriString] = true;
-    // }
+    releaseDecorations(manifest: AppManifest) {
+        delete this._decorations[manifest.id];
+    }
 }

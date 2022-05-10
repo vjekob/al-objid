@@ -1,4 +1,5 @@
-import { Disposable, EventEmitter, TreeDataProvider, TreeItem, workspace } from "vscode";
+import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
+import { Disposable, EventEmitter, TreeDataProvider, TreeItem, Uri, workspace } from "vscode";
 import { ALWorkspace } from "../../lib/ALWorkspace";
 import { getCachedManifestFromUri, getManifest } from "../../lib/AppManifest";
 import { ALRange } from "../../lib/types";
@@ -57,7 +58,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
         for (let folder of folders) {
             const manifest = getManifest(folder.uri)!;
             const watcher = workspace.createFileSystemWatcher(manifest.ninja.path);
-            watcher.onDidChange(e => this.refresh());
+            watcher.onDidChange(e => this.refresh(e));
             this._watchers.push(watcher);
         }
     }
@@ -118,9 +119,15 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
         return result;
     }
 
-    refresh() {
+    refresh(uri?: Uri) {
         // this.buildItemsFromConsumptionCache();
         // ExplorerDecorationsProvider.instance.update();
+        if (uri) {
+            const manifest = getManifest(uri);
+            if (manifest) {
+                ExplorerDecorationsProvider.instance.releaseDecorations(manifest);
+            }
+        }
         this._onDidChangeTreeData.fire();
     }
 
