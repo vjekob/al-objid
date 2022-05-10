@@ -1,297 +1,297 @@
 {
-	"name": "vjeko-al-objid",
-	"displayName": "AL Object ID Ninja",
-	"description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
-	"publisher": "vjeko",
-	"version": "2.7.0",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/vjekob/al-objid.git"
-	},
-	"homepage": "https://github.com/vjekob/al-objid/blob/master/vscode-extension/README.md",
-	"bugs": "https://github.com/vjekob/al-objid/issues",
-	"icon": "images/icon.png",
-	"galleryBanner": {
-		"color": "#505C6D",
-		"theme": "dark"
-	},
-	"engines": {
-		"vscode": "^1.50.1"
-	},
-	"license": "MIT",
-	"categories": [
-		"Formatters",
-		"Language Packs",
-		"Linters",
-		"Other"
-	],
-	"keywords": [
-		"AL",
-		"AL Extensions",
-		"Auto Suggest",
-		"Best Practices",
-		"Dynamics 365 Business Central",
-		"Dynamics NAV",
-		"ERP",
-		"IntelliSense",
-		"Object IDs"
-	],
-	"badges": [
-		{
-			"url": "https://img.shields.io/github/license/vjekob/al-objid",
-			"href": "https://github.com/vjekob/al-objid/blob/master/LICENSE.md",
-			"description": "AL Object ID Ninja is licensed under MIT License"
-		},
-		{
-			"url": "https://img.shields.io/github/languages/top/vjekob/al-objid",
-			"href": "https://www.typescriptlang.org/",
-			"description": "Learn TypeScript"
-		},
-		{
-			"url": "https://img.shields.io/github/forks/vjekob/al-objid?style=social",
-			"href": "https://github.com/vjekob/al-objid/network/members",
-			"description": "Fork this repository and become one of the contributors"
-		},
-		{
-			"url": "https://img.shields.io/github/stars/vjekob/al-objid?style=social",
-			"href": "https://github.com/vjekob/al-objid/stargazers",
-			"description": "Share the love! If you like AL Object ID Ninja, give it a star on GitHub!"
-		}
-	],
-	"activationEvents": [
-		"onLanguage:al",
-		"workspaceContains:/.objidconfig"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "vjeko-al-objid.confirm-sync-object-ids",
-				"category": "Ninja",
-				"title": "Synchronize Object IDs with Azure Back End",
-				"icon": {
-					"dark": "images/share-dark.svg",
-					"light": "images/share-light.svg"
-				}
-			},
-			{
-				"command": "vjeko-al-objid.confirm-authorize-app",
-				"category": "Ninja",
-				"title": "Authorize AL App"
-			},
-			{
-				"command": "vjeko-al-objid.confirm-deauthorize-app",
-				"category": "Ninja",
-				"title": "Deauthorize AL App"
-			},
-			{
-				"command": "vjeko-al-objid.auto-sync-object-ids",
-				"category": "Ninja",
-				"title": "Automatically Synchronize Object IDs for Entire Workspace",
-				"icon": {
-					"dark": "images/share-all-dark.svg",
-					"light": "images/share-all-light.svg"
-				}
-			},
-			{
-				"command": "vjeko-al-objid.show-release-notes",
-				"category": "Ninja",
-				"title": "Show Release Notes"
-			},
-			{
-				"command": "vjeko-al-objid.copy-ranges",
-				"category": "Ninja",
-				"title": "Copy ranges from app.json to .objidconfig"
-			},
-			{
-				"command": "vjeko-al-objid.consolidate-ranges",
-				"category": "Ninja",
-				"title": "Consolidate logical ranges"
-			},
-			{
-				"command": "vjeko-al-objid.create-app-pool-preview",
-				"category": "Ninja",
-				"title": "Create a simple App Pool (Preview)"
-			},
-			{
-				"command": "vjeko-al-objid.validate-license-preview",
-				"category": "Ninja",
-				"title": "Validate object IDs against license (Preview)"
-			}
-		],
-		"configuration": {
-			"title": "AL Object ID Ninja",
-			"properties": {
-				"objectIdNinja.backEndUrl": {
-					"type": "string",
-					"markdownDescription": "URL of the back-end API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/azure-function-app. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid.azurewebsites.net`, `myids.contoso.com`. Incorrect examples are: `https://my-al-objectid.azurewebsites.net/` or `http://mids.contoso.com/`"
-				},
-				"objectIdNinja.backEndAPIKey": {
-					"type": "string",
-					"markdownDescription": "API key used to access the back-end. This API key is passed as `x-functions-key` header to all of API endpoints. When using Azure Functions, make sure this is the app key that can authorize access to all individual functions in the app."
-				},
-				"objectIdNinja.backEndUrlPoll": {
-					"type": "string",
-					"markdownDescription": "URL of the back-end polling API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/azure-polling-app. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid-poll.azurewebsites.net`, `myids-poll.contoso.com`. Incorrect examples are: `https://my-al-objectid-poll.azurewebsites.net/` or `http://mids-poll.contoso.com/`"
-				},
-				"objectIdNinja.backEndAPIKeyPoll": {
-					"type": "string",
-					"markdownDescription": "API key used to access the polling back-end. This API key is passed as `x-functions-key` header to all of API endpoints. When using Azure Functions, make sure this is the app key that can authorize access to all individual functions in the app."
-				},
-				"objectIdNinja.showEventLogNotifications": {
-					"type": "boolean",
-					"default": true,
-					"description": "Show notifications when other developers create objects in the app you are working on."
-				},
-				"objectIdNinja.overrideUserName": {
-					"type": "string",
-					"description": "Name to be shown in notification messages. If you leave this empty, Object ID Ninja will use your OS user name (or your Git user name in future versions)."
-				},
-				"objectIdNinja.includeUserName": {
-					"type": "boolean",
-					"default": true,
-					"description": "If you don't want your user name to be sent to the back end, you can switch this option off. When you do, other developers on your team won't see notifications about object ID assignments done by you."
-				},
-				"objectIdNinja.useVerboseOutputLogging": {
-					"type": "boolean",
-					"default": false,
-					"markdownDescription": "Switch this on if you want very detailed messages in the AL Object ID Ninja output channel."
-				},
-				"objectIdNinja.showReleaseNotes": {
-					"type": "boolean",
-					"default": true,
-					"markdownDescription": "Whenever you update AL Object ID Ninja to a new version that includes important updates, we'll show you the release notes. If you prefer not being interrupted, switch this option off."
-				},
-				"objectIdNinja.showRangeWarnings": {
-					"type": "boolean",
-					"default": true,
-					"markdownDescription": "Show notifications when the available range is about to run out. **It's a good idea to keep this option switched on!**"
-				},
-				"objectIdNinja.requestPerRange": {
-					"type": "boolean",
-					"default": false,
-					"description": "Requires that next IDs are retrieved per range. For example, if an app declares multiple ranges, Ninja will suggest the next ID from each range where IDs are available. User can then choose the range from which the ID will be assigned."
-				}
-			}
-		},
-		"languages": [
-			{
-				"id": "jsonc",
-				"filenames": [
-					".objidconfig"
-				]
-			}
-		],
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "vjeko-al-objid",
-					"icon": "images/tree-view.svg",
-					"title": "AL Object ID Ninja"
-				}
-			]
-		},
-		"views": {
-			"vjeko-al-objid": [
-				{
-					"id": "ninja-rangeExplorer",
-					"name": "Range Explorer",
-					"icon": "images/tree-view.svg",
-					"contextualTitle": "Range Explorer",
-					"type": "tree",
-					"when": "vjeko-al-objid.active == true"
-				},
-				{
-					"id": "ninja-licenseExplorer",
-					"name": "License Explorer",
-					"icon": "images/tree-view.svg",
-					"contextualTitle": "License Explorer",
-					"type": "tree",
-					"when": "vjeko-al-objid.active == true"
-				}
-			]
-		},
-		"menus": {
-			"view/title": [
-				{
-					"command": "vjeko-al-objid.auto-sync-object-ids",
-					"group": "navigation",
-					"when": "view == ninja-rangeExplorer"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "vjeko-al-objid.confirm-sync-object-ids",
-					"group": "inline",
-					"when": "view == ninja-rangeExplorer && viewItem == ninja-folder"
-				}
-			],
-			"commandPalette": [
-				{
-					"command": "vjeko-al-objid.confirm-sync-object-ids",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.confirm-authorize-app",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.confirm-deauthorize-app",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.auto-sync-object-ids",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.show-release-notes",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.copy-ranges",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.consolidate-ranges",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.create-app-pool-preview",
-					"when": "vjeko-al-objid.active"
-				},
-				{
-					"command": "vjeko-al-objid.validate-license-preview",
-					"when": "vjeko-al-objid.active"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.2.2",
-		"@types/node": "14.x",
-		"@types/vscode": "^1.50.1",
-		"@types/xml2js": "^0.4.11",
-		"@typescript-eslint/eslint-plugin": "^4.26.0",
-		"@typescript-eslint/parser": "^4.26.0",
-		"eslint": "^7.27.0",
-		"glob": "^7.1.7",
-		"mocha": "^10.0.0",
-		"typescript": "^4.3.2",
-		"vscode-test": "^1.5.2"
-	},
-	"dependencies": {
-		"@vjeko.com/al-parser-ninja": "^1.0.8",
-		"@vjeko.com/al-parser-types-ninja": "^1.0.4",
-		"comment-json": "^4.1.1",
-		"xml2js": "^0.4.23"
-	}
+    "name": "vjeko-al-objid",
+    "displayName": "AL Object ID Ninja",
+    "description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
+    "publisher": "vjeko",
+    "version": "2.7.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vjekob/al-objid.git"
+    },
+    "homepage": "https://github.com/vjekob/al-objid/blob/master/vscode-extension/README.md",
+    "bugs": "https://github.com/vjekob/al-objid/issues",
+    "icon": "images/icon.png",
+    "galleryBanner": {
+        "color": "#505C6D",
+        "theme": "dark"
+    },
+    "engines": {
+        "vscode": "^1.50.1"
+    },
+    "license": "MIT",
+    "categories": [
+        "Formatters",
+        "Language Packs",
+        "Linters",
+        "Other"
+    ],
+    "keywords": [
+        "AL",
+        "AL Extensions",
+        "Auto Suggest",
+        "Best Practices",
+        "Dynamics 365 Business Central",
+        "Dynamics NAV",
+        "ERP",
+        "IntelliSense",
+        "Object IDs"
+    ],
+    "badges": [
+        {
+            "url": "https://img.shields.io/github/license/vjekob/al-objid",
+            "href": "https://github.com/vjekob/al-objid/blob/master/LICENSE.md",
+            "description": "AL Object ID Ninja is licensed under MIT License"
+        },
+        {
+            "url": "https://img.shields.io/github/languages/top/vjekob/al-objid",
+            "href": "https://www.typescriptlang.org/",
+            "description": "Learn TypeScript"
+        },
+        {
+            "url": "https://img.shields.io/github/forks/vjekob/al-objid?style=social",
+            "href": "https://github.com/vjekob/al-objid/network/members",
+            "description": "Fork this repository and become one of the contributors"
+        },
+        {
+            "url": "https://img.shields.io/github/stars/vjekob/al-objid?style=social",
+            "href": "https://github.com/vjekob/al-objid/stargazers",
+            "description": "Share the love! If you like AL Object ID Ninja, give it a star on GitHub!"
+        }
+    ],
+    "activationEvents": [
+        "onLanguage:al",
+        "workspaceContains:/.objidconfig"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "vjeko-al-objid.confirm-sync-object-ids",
+                "category": "Ninja",
+                "title": "Synchronize Object IDs with Azure Back End",
+                "icon": {
+                    "dark": "images/share-dark.svg",
+                    "light": "images/share-light.svg"
+                }
+            },
+            {
+                "command": "vjeko-al-objid.confirm-authorize-app",
+                "category": "Ninja",
+                "title": "Authorize AL App"
+            },
+            {
+                "command": "vjeko-al-objid.confirm-deauthorize-app",
+                "category": "Ninja",
+                "title": "Deauthorize AL App"
+            },
+            {
+                "command": "vjeko-al-objid.auto-sync-object-ids",
+                "category": "Ninja",
+                "title": "Automatically Synchronize Object IDs for Entire Workspace",
+                "icon": {
+                    "dark": "images/share-all-dark.svg",
+                    "light": "images/share-all-light.svg"
+                }
+            },
+            {
+                "command": "vjeko-al-objid.show-release-notes",
+                "category": "Ninja",
+                "title": "Show Release Notes"
+            },
+            {
+                "command": "vjeko-al-objid.copy-ranges",
+                "category": "Ninja",
+                "title": "Copy ranges from app.json to .objidconfig"
+            },
+            {
+                "command": "vjeko-al-objid.consolidate-ranges",
+                "category": "Ninja",
+                "title": "Consolidate logical ranges"
+            },
+            {
+                "command": "vjeko-al-objid.create-app-pool-preview",
+                "category": "Ninja",
+                "title": "Create a simple App Pool (Preview)"
+            },
+            {
+                "command": "vjeko-al-objid.validate-license-preview",
+                "category": "Ninja",
+                "title": "Validate object IDs against license (Preview)"
+            }
+        ],
+        "configuration": {
+            "title": "AL Object ID Ninja",
+            "properties": {
+                "objectIdNinja.backEndUrl": {
+                    "type": "string",
+                    "markdownDescription": "URL of the back-end API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/azure-function-app. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid.azurewebsites.net`, `myids.contoso.com`. Incorrect examples are: `https://my-al-objectid.azurewebsites.net/` or `http://mids.contoso.com/`"
+                },
+                "objectIdNinja.backEndAPIKey": {
+                    "type": "string",
+                    "markdownDescription": "API key used to access the back-end. This API key is passed as `x-functions-key` header to all of API endpoints. When using Azure Functions, make sure this is the app key that can authorize access to all individual functions in the app."
+                },
+                "objectIdNinja.backEndUrlPoll": {
+                    "type": "string",
+                    "markdownDescription": "URL of the back-end polling API you want to communicate with. This API must support the same functionality as https://github.com/vjekob/al-objid/tree/master/azure-polling-app. You must not include `https` or any leading or training slashes. **Important:** The endpoint must be on the HTTPS protocol. Examples are: `my-al-objectid-poll.azurewebsites.net`, `myids-poll.contoso.com`. Incorrect examples are: `https://my-al-objectid-poll.azurewebsites.net/` or `http://mids-poll.contoso.com/`"
+                },
+                "objectIdNinja.backEndAPIKeyPoll": {
+                    "type": "string",
+                    "markdownDescription": "API key used to access the polling back-end. This API key is passed as `x-functions-key` header to all of API endpoints. When using Azure Functions, make sure this is the app key that can authorize access to all individual functions in the app."
+                },
+                "objectIdNinja.showEventLogNotifications": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show notifications when other developers create objects in the app you are working on."
+                },
+                "objectIdNinja.overrideUserName": {
+                    "type": "string",
+                    "description": "Name to be shown in notification messages. If you leave this empty, Object ID Ninja will use your OS user name (or your Git user name in future versions)."
+                },
+                "objectIdNinja.includeUserName": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If you don't want your user name to be sent to the back end, you can switch this option off. When you do, other developers on your team won't see notifications about object ID assignments done by you."
+                },
+                "objectIdNinja.useVerboseOutputLogging": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Switch this on if you want very detailed messages in the AL Object ID Ninja output channel."
+                },
+                "objectIdNinja.showReleaseNotes": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Whenever you update AL Object ID Ninja to a new version that includes important updates, we'll show you the release notes. If you prefer not being interrupted, switch this option off."
+                },
+                "objectIdNinja.showRangeWarnings": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Show notifications when the available range is about to run out. **It's a good idea to keep this option switched on!**"
+                },
+                "objectIdNinja.requestPerRange": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Requires that next IDs are retrieved per range. For example, if an app declares multiple ranges, Ninja will suggest the next ID from each range where IDs are available. User can then choose the range from which the ID will be assigned."
+                }
+            }
+        },
+        "languages": [
+            {
+                "id": "jsonc",
+                "filenames": [
+                    ".objidconfig"
+                ]
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "vjeko-al-objid",
+                    "icon": "images/tree-view.svg",
+                    "title": "AL Object ID Ninja"
+                }
+            ]
+        },
+        "views": {
+            "vjeko-al-objid": [
+                {
+                    "id": "ninja-rangeExplorer",
+                    "name": "Range Explorer",
+                    "icon": "images/tree-view.svg",
+                    "contextualTitle": "Range Explorer",
+                    "type": "tree",
+                    "when": "vjeko-al-objid.active == true"
+                },
+                {
+                    "id": "ninja-licenseExplorer",
+                    "name": "License Explorer",
+                    "icon": "images/tree-view.svg",
+                    "contextualTitle": "License Explorer",
+                    "type": "tree",
+                    "when": "vjeko-al-objid.active == true"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "vjeko-al-objid.auto-sync-object-ids",
+                    "group": "navigation",
+                    "when": "view == ninja-rangeExplorer"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "vjeko-al-objid.confirm-sync-object-ids",
+                    "group": "inline",
+                    "when": "view == ninja-rangeExplorer && viewItem == ninja-folder"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "vjeko-al-objid.confirm-sync-object-ids",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.confirm-authorize-app",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.confirm-deauthorize-app",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.auto-sync-object-ids",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.show-release-notes",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.copy-ranges",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.consolidate-ranges",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.create-app-pool-preview",
+                    "when": "vjeko-al-objid.active"
+                },
+                {
+                    "command": "vjeko-al-objid.validate-license-preview",
+                    "when": "vjeko-al-objid.active"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.3",
+        "@types/mocha": "^8.2.2",
+        "@types/node": "14.x",
+        "@types/vscode": "^1.50.1",
+        "@types/xml2js": "^0.4.11",
+        "@typescript-eslint/eslint-plugin": "^4.26.0",
+        "@typescript-eslint/parser": "^4.26.0",
+        "eslint": "^7.27.0",
+        "glob": "^7.1.7",
+        "mocha": "^10.0.0",
+        "typescript": "^4.3.2",
+        "vscode-test": "^1.5.2"
+    },
+    "dependencies": {
+        "@vjeko.com/al-parser-ninja": "^1.0.8",
+        "@vjeko.com/al-parser-types-ninja": "^1.0.4",
+        "comment-json": "^4.1.1",
+        "xml2js": "^0.4.23"
+    }
 }

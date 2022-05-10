@@ -1,17 +1,17 @@
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import { NinjaExplorerItem } from "./NinjaExplorerItem";
+import { INinjaTreeItem } from "./NinjaTreeItem";
 
-export class TextExplorerItem implements NinjaExplorerItem {
+export class TextTreeItem implements INinjaTreeItem {
     private readonly _text: string;
     private readonly _tooltip: string;
 
-    constructor(text: string, tooltip: string, parent: NinjaExplorerItem | undefined) {
+    constructor(text: string, tooltip: string, parent: INinjaTreeItem | undefined) {
         this.parent = parent;
         this._text = text;
         this._tooltip = tooltip;
     }
 
-    public readonly parent: NinjaExplorerItem | undefined;
+    public readonly parent: INinjaTreeItem | undefined;
 
     public children = [];
 

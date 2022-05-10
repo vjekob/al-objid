@@ -1,19 +1,28 @@
-import { Disposable, Event, EventEmitter, TreeDataProvider, TreeItem, workspace } from "vscode";
+import { Disposable, EventEmitter, TreeDataProvider, TreeItem, workspace } from "vscode";
 import { ALWorkspace } from "../../lib/ALWorkspace";
 import { getCachedManifestFromUri, getManifest } from "../../lib/AppManifest";
-import { PropertyBag } from "../../lib/PropertyBag";
-import { ALRange, AppManifest } from "../../lib/types";
-import { ConsumptionCache } from "../ConsumptionCache";
-import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
-import { TreeItemInfo } from "./TreeItemInfo";
-import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
-import { TextExplorerItem } from "../Explorer/TextExplorerItem";
-import { WorkspaceExplorerItem } from "./WorkspaceExplorerItem";
-import { NinjaExplorerItem } from "../Explorer/NinjaExplorerItem";
+import { ALRange } from "../../lib/types";
+import { TextTreeItem } from "../Explorer/TextTreeItem";
+import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";
+import { getFolderTreeItemProvider } from "./TreeItemProviders";
 
-export class RangeExplorerTreeDataProvider
-    implements TreeDataProvider<NinjaExplorerItem>, Disposable
-{
+// TODO Display any "no consumption yet" (and similar) nodes grayed out
+// Also, propagate this decoration to their parents
+
+// TODO When editing .objidconfig or app.json, refresh range explorer
+
+// TODO Show individual IDs in range explorer, title = object id, description = file path
+// When clicking on object id, opens the document and selects that id
+// For any object consumed not by this repo, indicate with a different color that it comes from another repo
+// For any such object, add commands:
+// - "Investigate": checks if the object is in another branch, and if not, adds an "investigation token" in
+//                  the back end that every other user will pick up and report back if they have this object
+//                  in their repos, and if not, back end reports back and indicates that this object id is
+//                  probably safe to release. For this we SHOULD keep name, date, time, of every object id
+//                  assignment made through Ninja
+// - "Release":     releases the ID in the back end and makes it available for re-assignment
+
+export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTreeItem>, Disposable {
     public static _instance: RangeExplorerTreeDataProvider;
 
     private constructor() {
@@ -27,12 +36,11 @@ export class RangeExplorerTreeDataProvider
         return this._instance || (this._instance = new RangeExplorerTreeDataProvider());
     }
 
-    private _items: PropertyBag<TreeItemInfo> = {};
     private _workspaceFoldersChangeEvent: Disposable;
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
 
-    private _onDidChangeTreeData = new EventEmitter<NinjaExplorerItem | void>();
+    private _onDidChangeTreeData = new EventEmitter<INinjaTreeItem | void>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private onDidChangeWorkspaceFolders() {
@@ -54,16 +62,16 @@ export class RangeExplorerTreeDataProvider
         }
     }
 
-    getTreeItem(element: NinjaExplorerItem): TreeItem {
+    getTreeItem(element: INinjaTreeItem): TreeItem | Promise<TreeItem> {
         return element.getTreeItem();
     }
 
-    getChildren(element?: NinjaExplorerItem): NinjaExplorerItem[] | Promise<NinjaExplorerItem[]> {
+    getChildren(element?: INinjaTreeItem): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
         if (!element) {
             let folders = ALWorkspace.getALFolders();
             if (!folders) {
                 return [
-                    new TextExplorerItem(
+                    new TextTreeItem(
                         "No AL workspaces are open.",
                         "There is nothing to show here",
                         undefined
@@ -76,19 +84,24 @@ export class RangeExplorerTreeDataProvider
             );
             if (!folders) {
                 return [
-                    new TextExplorerItem(
+                    new TextTreeItem(
                         "Only app pools available.",
                         "There is nothing to show here",
                         undefined
                     ),
                 ];
             }
-            return folders?.map(
-                folder =>
-                    new WorkspaceExplorerItem(getManifest(folder.uri)!, item => {
+            return folders?.map(folder => {
+                const manifest = getManifest(folder.uri)!;
+                const folderItem = new NinjaTreeItem(
+                    manifest,
+                    getFolderTreeItemProvider(manifest, item => {
                         this._onDidChangeTreeData.fire(item);
                     })
-            );
+                );
+                this._watchers.push(folderItem);
+                return folderItem;
+            });
         }
 
         return element.children;
@@ -105,104 +118,10 @@ export class RangeExplorerTreeDataProvider
         return result;
     }
 
-    private buildObjectTypeItemFromCache(
-        appId: string,
-        range: ALRange,
-        objectType: string,
-        ids: number[]
-    ): TreeItemInfo {
-        const size = Math.max(range.to - range.from, 0) + 1;
-
-        const uri = this.getUriString(appId, range, objectType);
-        const item: TreeItemInfo = {
-            remaining: size - ids.length,
-        };
-
-        if (item.remaining! < 10) {
-            item.severity = TreeItemSeverity.info;
-            if (item.remaining! <= 5) {
-                item.severity = TreeItemSeverity.warning;
-                if (item.remaining! === 0) {
-                    item.severity = TreeItemSeverity.error;
-                }
-            }
-        }
-
-        const existing = this._items[uri];
-        if (
-            !existing ||
-            existing.severity !== item.severity ||
-            item.remaining !== existing.remaining ||
-            existing.propagate
-        ) {
-            ExplorerDecorationsProvider.instance.markForUpdate(uri, item);
-        }
-        this._items[uri] = item;
-
-        return item;
-    }
-
-    private buildRangeItemsFromCache(appId: string, range: ALRange): void {
-        const uri = this.getUriString(appId, range);
-        this._items[uri] = {};
-        const consumption = ConsumptionCache.instance.getConsumption(appId) as any;
-        if (!consumption) {
-            return;
-        }
-
-        let severity = TreeItemSeverity.none;
-        let propagateItem: TreeItemInfo | undefined;
-        for (var type of Object.keys(consumption)) {
-            const ids = ((consumption[type] as number[]) || []).filter(
-                id => id >= range.from && id <= range.to
-            );
-            const item = this.buildObjectTypeItemFromCache(appId, range, type, ids);
-            if (item.severity! > severity) {
-                severity = item.severity!;
-                propagateItem = item;
-            }
-        }
-        if (propagateItem) {
-            propagateItem.propagate = true;
-        }
-    }
-
-    private buildFolderItemsFromCache(manifest: AppManifest): void {
-        const uri = this.getUriString(manifest.id);
-        this._items[uri] = {};
-
-        const ranges = manifest.ninja.config.idRanges.length
-            ? manifest.ninja.config.idRanges
-            : manifest.idRanges;
-
-        for (let range of ranges) {
-            this.buildRangeItemsFromCache(manifest.id, range);
-        }
-    }
-
-    private buildItemsFromConsumptionCache(): void {
-        const folders = ALWorkspace.getALFolders();
-        if (!folders) {
-            return;
-        }
-
-        for (let folder of folders) {
-            const manifest = getManifest(folder.uri)!;
-            if (!manifest.ninja.config.appPoolId) {
-                // TODO Make Pool Explorer for app pools
-                this.buildFolderItemsFromCache(manifest);
-            }
-        }
-    }
-
     refresh() {
-        this.buildItemsFromConsumptionCache();
-        ExplorerDecorationsProvider.instance.update();
+        // this.buildItemsFromConsumptionCache();
+        // ExplorerDecorationsProvider.instance.update();
         this._onDidChangeTreeData.fire();
-    }
-
-    getTreeItemInfo(uriString: string): TreeItemInfo {
-        return this._items[uriString];
     }
 
     private disposeWatchers() {

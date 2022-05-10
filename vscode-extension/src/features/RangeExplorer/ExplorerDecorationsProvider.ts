@@ -1,5 +1,4 @@
 import {
-    Event,
     EventEmitter,
     FileDecoration,
     FileDecorationProvider,
@@ -8,7 +7,6 @@ import {
     Uri,
 } from "vscode";
 import { PropertyBag } from "../../lib/PropertyBag";
-import { TreeItemInfo } from "./TreeItemInfo";
 import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
 
 const Colors: any = {
@@ -26,7 +24,7 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         return this._instance || (this._instance = new ExplorerDecorationsProvider());
     }
 
-    private _treeItems: PropertyBag<TreeItemInfo> = {};
+    // private _treeItems: PropertyBag<TreeItemInfo> = {};
     private _updated: PropertyBag<boolean> = {};
 
     private _onDidChangeFileDecorations = new EventEmitter<Uri[]>();
@@ -39,15 +37,15 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
 
         const uriStr = uri.toString();
         delete this._updated[uriStr];
-        const info = this._treeItems[uriStr];
-        if (info) {
-            return {
-                badge: info.remaining! < 10 ? `${info.remaining}` : undefined,
-                color: new ThemeColor(Colors[`${info.severity}`]),
-                tooltip: `${info.remaining} remaining`,
-                propagate: info.propagate,
-            };
-        }
+        // const info = this._treeItems[uriStr];
+        // if (info) {
+        //     return {
+        //         badge: info.remaining! < 10 ? `${info.remaining}` : undefined,
+        //         color: new ThemeColor(Colors[`${info.severity}`]),
+        //         tooltip: `${info.remaining} remaining`,
+        //         propagate: info.propagate,
+        //     };
+        // }
     }
 
     update() {
@@ -56,8 +54,8 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         );
     }
 
-    markForUpdate(uriString: string, info: TreeItemInfo) {
-        this._treeItems[uriString] = info;
-        this._updated[uriString] = true;
-    }
+    // markForUpdate(uriString: string, info: TreeItemInfo) {
+    //     this._treeItems[uriString] = info;
+    //     this._updated[uriString] = true;
+    // }
 }

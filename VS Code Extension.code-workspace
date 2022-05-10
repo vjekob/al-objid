@@ -46,6 +46,7 @@
 			"xmlport"
 		],
 		"typescript.referencesCodeLens.enabled": true,
-		"editor.formatOnSave": true
+		"editor.formatOnSave": true,
+		"svg.preview.background": "editor"
 	}
 }

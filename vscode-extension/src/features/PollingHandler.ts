@@ -71,7 +71,7 @@ export class PollingHandler implements Disposable {
             this._pollingInterval = DEFAULT_POLLING_INTERVAL;
         }
 
-        // TODO Drop explicit consumption updates and replace them with events
+        // TODO Drop imperative consumption updates and replace them with events
         if (consumptionUpdates) {
             RangeExplorerTreeDataProvider.instance.refresh();
         }

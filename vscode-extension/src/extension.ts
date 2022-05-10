@@ -31,6 +31,7 @@ import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvi
 import { selectBCLicense } from "./commands/select-bclicense";
 import { quickFixRemoveDeclaration } from "./commands/quickfix-remove-declaration";
 import { quickFixSelectValidType } from "./commands/quickfix-select-valid-type";
+import { ConsumptionCache } from "./features/ConsumptionCache";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
@@ -85,7 +86,8 @@ export function activate(context: ExtensionContext) {
         new ObjIdConfigMonitor(),
         new HttpStatusHandler(context).getDisposables(),
         ParserConnector.instance,
-        Diagnostics.instance
+        Diagnostics.instance,
+        ConsumptionCache.instance
     );
 
     ReleaseNotesHandler.instance.check(context);

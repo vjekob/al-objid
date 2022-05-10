@@ -397,6 +397,10 @@ export class ObjIdConfig {
         return invalid ? [] : validRanges;
     }
 
+    hasIdRanges(): boolean {
+        return this.getIdRanges().length > 0;
+    }
+
     get idRanges(): NinjaALRange[] {
         const diagnose = Diagnostics.instance.createDiagnostics(this._uri, "objidconfig.idranges");
 
@@ -407,6 +411,22 @@ export class ObjIdConfig {
 
     set idRanges(value: NinjaALRange[]) {
         this.setProperty(ConfigurationProperty.Ranges, value);
+    }
+
+    get logicalRangeNames(): string[] {
+        const names: string[] = [];
+        const ranges = this.getIdRanges();
+        for (let range of ranges) {
+            if (
+                names.find(
+                    name => name.toLowerCase().trim() === range.description.toLowerCase().trim()
+                )
+            ) {
+                continue;
+            }
+            names.push(range.description);
+        }
+        return names;
     }
 
     private getAllObjectRanges(): PropertyBag<NinjaALRange[]> {

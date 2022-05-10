@@ -158,7 +158,7 @@ async function sendRequest<T>(
                     _log as EventLogEntry[],
                     manifest.name
                 );
-                // TODO Drop explicit range explorer updates and replace them with events
+                // TODO Drop imperative range explorer updates and replace them with events
                 if (
                     ConsumptionCache.instance.updateConsumption(
                         appId,

@@ -1,0 +1,156 @@
+import {
+    Disposable,
+    ThemeIcon,
+    TreeItem,
+    TreeItemCollapsibleState,
+    TreeItemLabel,
+    Uri,
+} from "vscode";
+import { AppManifest } from "../../lib/types";
+import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
+import { TextTreeItem } from "./TextTreeItem";
+
+type NinjaTreeItemLabelType = string | TreeItemLabel;
+type NinjaTreeItemIconType = string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon;
+
+export type NinjaTreeItemLabel = NinjaTreeItemLabelType | Promise<NinjaTreeItemLabelType>;
+export type NinjaTreeItemIcon = NinjaTreeItemIconType | Promise<NinjaTreeItemIconType>;
+
+export interface INinjaTreeItem {
+    getTreeItem: () => TreeItem | Promise<TreeItem>;
+    children: INinjaTreeItem[] | Promise<INinjaTreeItem[]>;
+    // parent: NinjaTreeItem | undefined; // TODO The `parent` property is unnecessary
+}
+
+export interface UpdateNinjaTreeItem {
+    // TODO Updating should work not by directly calling the update method
+    // Instead, update should populate item(s) into an array that is later refreshed through a single call to event.fire
+    (item: INinjaTreeItem): void;
+}
+
+export class NinjaTreeItem implements INinjaTreeItem, Disposable {
+    private readonly _manifest: AppManifest;
+    private readonly _provider: NinjaTreeItemProvider;
+    private _children: INinjaTreeItem[] | undefined;
+    private _childrenPromise: Promise<INinjaTreeItem[]> | undefined;
+    private _disposed = false;
+
+    constructor(manifest: AppManifest, provider: NinjaTreeItemProvider) {
+        this._manifest = manifest;
+        this._provider = provider;
+    }
+
+    private createItem(templateItem: TreeItem) {
+        const item = new TreeItem(templateItem.label!, templateItem.collapsibleState);
+        item.description = templateItem.description;
+        item.tooltip = templateItem.tooltip;
+        item.iconPath = templateItem.iconPath;
+        item.resourceUri = templateItem.resourceUri;
+        item.id = templateItem.id;
+        item.contextValue = templateItem.contextValue; // Referenced in package.json "when" view condition
+        return item;
+    }
+
+    getTreeItem(): TreeItem | Promise<TreeItem> {
+        const promises: Promise<any>[] = [];
+
+        const decomposePromise = <T>(target: T | Promise<T>, assign: (result: T) => void) => {
+            if (target instanceof Promise) {
+                target.then(result => assign(result));
+                promises.push(target);
+            }
+        };
+
+        let label = this._provider.getLabel();
+        decomposePromise(label, result => (label = result));
+
+        let collapsibleState = this._provider.getCollapsibleState();
+        decomposePromise(collapsibleState, result => (collapsibleState = result));
+
+        let iconPath = this._provider.getIcon();
+        decomposePromise(iconPath, result => (iconPath = result));
+
+        let uriPath = this._provider.getUriPath();
+        decomposePromise(uriPath, result => (uriPath = result));
+
+        let tooltip: string | undefined | Promise<string>;
+        if (this._provider.getTooltip) {
+            tooltip = this._provider.getTooltip();
+            decomposePromise(tooltip, result => (tooltip = result));
+        }
+
+        let description: string | undefined | Promise<string>;
+        if (this._provider.getDescription) {
+            description = this._provider.getDescription();
+            decomposePromise(description, result => (description = result));
+        }
+
+        let contextValue: string | undefined | Promise<string>;
+        if (this._provider.getContextValue) {
+            contextValue = this._provider.getContextValue();
+            decomposePromise(contextValue, result => (contextValue = result));
+        }
+
+        const createItem = () =>
+            this.createItem({
+                label: label as NinjaTreeItemLabelType,
+                description: description as string | undefined,
+                collapsibleState: collapsibleState as TreeItemCollapsibleState,
+                tooltip: tooltip as string,
+                iconPath: iconPath as NinjaTreeItemIconType,
+                resourceUri: Uri.from({
+                    scheme: "ninja",
+                    authority: this._manifest.id,
+                    path: uriPath as string,
+                }),
+                id: `ninja/${this._manifest.id}${uriPath}`,
+                contextValue: contextValue as string | undefined,
+            });
+
+        if (promises.length) {
+            return new Promise<TreeItem>(async resolve => {
+                await Promise.all(promises);
+                resolve(createItem());
+            });
+        }
+
+        return createItem();
+    }
+
+    public get children(): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
+        if (this._children) {
+            return this._children;
+        }
+
+        if (this._childrenPromise) {
+            return this._childrenPromise;
+        }
+
+        if (typeof this._provider.getChildren === "function") {
+            const children = this._provider.getChildren();
+            if (children instanceof Promise) {
+                this._childrenPromise = children;
+                this._childrenPromise.then(result => {
+                    this._children = result;
+                    this._childrenPromise = undefined;
+                });
+                return this._childrenPromise;
+            }
+            this._children = children;
+            return this._children;
+        }
+
+        return [];
+    }
+
+    public dispose() {
+        if (this._disposed) {
+            return;
+        }
+        this._disposed = true;
+
+        if (this._provider.dispose) {
+            this._provider.dispose();
+        }
+    }
+}
