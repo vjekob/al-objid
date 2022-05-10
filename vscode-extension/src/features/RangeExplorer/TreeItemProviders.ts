@@ -106,7 +106,7 @@ export function getRangeTreeItemProvider(
         getDescription: () => description,
 
         getChildren: () => {
-            const consumption = ConsumptionCache.instance.getConsumption(manifest.id);
+            const consumption = ConsumptionCache.instance.getConsumption(manifest.id) || {};
 
             const children: INinjaTreeItem[] = [];
             for (let key of Object.values<string>(ALObjectType)) {
@@ -177,7 +177,7 @@ export function getLogicalRangesTreeItemProvider(manifest: AppManifest): NinjaTr
 
     return {
         getLabel: () => "Logical Ranges",
-        getCollapsibleState: () => TreeItemCollapsibleState.Collapsed,
+        getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("tag"),
         getDescription: () => ".objidconfig",
         getUriPath: () => path,
@@ -187,9 +187,9 @@ export function getLogicalRangesTreeItemProvider(manifest: AppManifest): NinjaTr
             const logicalRanges = manifest.ninja.config.idRanges;
 
             const children = logicalRangeNames.map(name => {
-                const compareName = name.toLowerCase().trim();
+                const compareName = (name || "").toLowerCase().trim();
                 const ranges = logicalRanges.filter(
-                    range => range.description.toLowerCase().trim() === compareName
+                    range => (range.description || "").toLowerCase().trim() === compareName
                 );
                 return ranges.length === 1
                     ? new NinjaTreeItem(
@@ -213,13 +213,15 @@ export function getLogicalRangeTreeItemProvider(
     pathSoFar: string,
     children: NinjaALRange[]
 ): NinjaTreeItemProvider {
-    const nameLower = name.toLowerCase().trim();
-    const ranges = children.filter(range => range.description.toLowerCase().trim() === nameLower);
+    const nameLower = (name || "").toLowerCase().trim();
+    const ranges = children.filter(
+        range => (range.description || "").toLowerCase().trim() === nameLower
+    );
     const path = `${pathSoFar}/${name || "$noname$"}`;
 
     return {
         getLabel: () => name,
-        getCollapsibleState: () => TreeItemCollapsibleState.Collapsed,
+        getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("tag"),
         getUriPath: () => path,
 
@@ -244,13 +246,15 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
     pathSoFar: string,
     children: NinjaALRange[]
 ): NinjaTreeItemProvider {
-    const nameLower = name.toLowerCase().trim();
-    const ranges = children.filter(range => range.description.toLowerCase().trim() === nameLower);
+    const nameLower = (name || "").toLowerCase().trim();
+    const ranges = children.filter(
+        range => (range.description || "").toLowerCase().trim() === nameLower
+    );
     const path = `${pathSoFar}/${name || "$noname$"}`;
 
     return {
         getLabel: () => name,
-        getCollapsibleState: () => TreeItemCollapsibleState.Collapsed,
+        getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("tag"),
         getUriPath: () => path,
 
@@ -278,7 +282,7 @@ export function getObjectRangesTreeItemProvider(manifest: AppManifest): NinjaTre
     const path = "/objectranges";
     return {
         getLabel: () => "Object Ranges",
-        getCollapsibleState: () => TreeItemCollapsibleState.Collapsed,
+        getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("group-by-ref-type"),
         getDescription: () => ".objidconfig",
         getUriPath: () => path,
@@ -317,8 +321,8 @@ export function getObjectTypeRangesTreeItemProvider(
                 if (
                     results.find(
                         left =>
-                            left.toLowerCase().trim() ===
-                            range.description.toLocaleLowerCase().trim()
+                            (left || "").toLowerCase().trim() ===
+                            (range.description || "").toLocaleLowerCase().trim()
                     )
                 ) {
                     return results;
@@ -328,9 +332,9 @@ export function getObjectTypeRangesTreeItemProvider(
             }, []);
 
             const children = logicalRangeNames.map(name => {
-                const compareName = name.toLowerCase().trim();
+                const compareName = (name || "").toLowerCase().trim();
                 const ranges = logicalRanges.filter(
-                    range => range.description.toLowerCase().trim() === compareName
+                    range => (range.description || "").toLowerCase().trim() === compareName
                 );
                 return ranges.length === 1
                     ? new NinjaTreeItem(
@@ -404,7 +408,7 @@ export function getObjectTypeRangeConsumptionTreeItemProvider(
     const addition = description && !dropLogicalName ? ` (${description})` : "";
     const path = `${pathSoFar}/${range.from}-${range.to}`;
 
-    const consumption = ConsumptionCache.instance.getConsumption(manifest.id);
+    const consumption = ConsumptionCache.instance.getConsumption(manifest.id) || {};
     const objConsumption = consumption[objectType as ALObjectType] || [];
     const ids = objConsumption.filter(id => id >= range.from && id <= range.to);
     const size = range.to - range.from + 1;

@@ -114,6 +114,14 @@ export class ObjIdConfig {
         this.write(config);
     }
 
+    get uri(): Uri {
+        return this._uri;
+    }
+
+    get path(): fs.PathLike {
+        return this._path;
+    }
+
     get authKey(): string {
         return this.getProperty(ConfigurationProperty.AuthKey) || "";
     }

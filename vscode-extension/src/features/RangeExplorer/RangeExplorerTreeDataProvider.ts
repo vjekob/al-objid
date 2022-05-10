@@ -57,9 +57,16 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
         }
         for (let folder of folders) {
             const manifest = getManifest(folder.uri)!;
-            const watcher = workspace.createFileSystemWatcher(manifest.ninja.path);
-            watcher.onDidChange(e => this.refresh(e));
-            this._watchers.push(watcher);
+
+            const watcherAppId = workspace.createFileSystemWatcher(manifest.ninja.path);
+            watcherAppId.onDidChange(e => this.refresh(e));
+            this._watchers.push(watcherAppId);
+
+            const watcherObjIdConfig = workspace.createFileSystemWatcher(
+                `${manifest.ninja.config.path}`
+            );
+            watcherObjIdConfig.onDidChange(e => this.refresh(e));
+            this._watchers.push(watcherObjIdConfig);
         }
     }
 
@@ -120,8 +127,6 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
     }
 
     refresh(uri?: Uri) {
-        // this.buildItemsFromConsumptionCache();
-        // ExplorerDecorationsProvider.instance.update();
         if (uri) {
             const manifest = getManifest(uri);
             if (manifest) {

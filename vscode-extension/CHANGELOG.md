@@ -5,6 +5,17 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.7.0] - 2022-05-12
+
+### Added
+
+-   Range explorer includes logical ranges and object ranges from `.objidconfig` file.
+
+### Fixed
+
+-   License validation is fixed for `tableextension` and `pageextension` object. Seems that these kinds of
+    objects do not require any license validation. ([Git issue #32](https://github.com/vjekob/al-objid/issues/32))
+
 ## [2.6.1] - 2022-05-06
 
 ### Fixed
