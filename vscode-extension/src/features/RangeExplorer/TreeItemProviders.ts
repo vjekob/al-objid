@@ -16,7 +16,7 @@ const severityIconMap: { [key: number]: string | undefined } = {
 
 function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
     let severity = TreeItemSeverity.none;
-    if (remaining < 10) {
+    if (remaining <= 10) {
         severity = TreeItemSeverity.info;
         if (remaining <= 5) {
             severity = TreeItemSeverity.warning;
@@ -157,6 +157,7 @@ export function getPhysicalRangesTreeItemProvider(manifest: AppManifest): NinjaT
         getCollapsibleState: () => TreeItemCollapsibleState.Collapsed,
         getIcon: () => new ThemeIcon("array"),
         getDescription: () => "app.json",
+        getTooltip: () => "Physical ranges defined in app.json",
         getUriPath: () => path,
 
         getChildren: () => {
@@ -180,6 +181,7 @@ export function getLogicalRangesTreeItemProvider(manifest: AppManifest): NinjaTr
         getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("tag"),
         getDescription: () => ".objidconfig",
+        getTooltip: () => "Logical ranges defined in .objidconfig",
         getUriPath: () => path,
 
         getChildren: () => {
@@ -223,6 +225,7 @@ export function getLogicalRangeTreeItemProvider(
         getLabel: () => name,
         getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("tag"),
+        getTooltip: () => `Logical range named ${name}`,
         getUriPath: () => path,
 
         getChildren: () => {
@@ -256,6 +259,8 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
         getLabel: () => name,
         getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("tag"),
+        getTooltip: () =>
+            `Logical ranges for ${objectType} objects, named ${name}, defined in .objidconfig`,
         getUriPath: () => path,
 
         getChildren: () => {
@@ -285,6 +290,7 @@ export function getObjectRangesTreeItemProvider(manifest: AppManifest): NinjaTre
         getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("group-by-ref-type"),
         getDescription: () => ".objidconfig",
+        getTooltip: () => "Logical ranges for object types, defined in .objidconfig",
         getUriPath: () => path,
 
         getChildren: () => {
@@ -313,6 +319,7 @@ export function getObjectTypeRangesTreeItemProvider(
         getLabel: () => objectType,
         getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("layout"),
+        getTooltip: () => `Logical ranges for ${objectType} objects, defined in .objidconfig`,
         getUriPath: () => path,
 
         getChildren: () => {
@@ -382,7 +389,7 @@ export function getObjectTypeConsumptionTreeItemProvider(
         getIcon: () => new ThemeIcon(icon),
         getUriPath: () => path,
         getCollapsibleState: () => TreeItemCollapsibleState.None,
-        getTooltip: () => `${ids.length} assigned ${objectType} object(s)`,
+        getTooltip: () => `${ids.length} assigned ${objectType} object(s), ${remaining} available`,
         getDescription: () => `${pct}% (${ids.length} of ${size})`,
         getDecoration: () => {
             if (remaining > 10) {
@@ -422,7 +429,7 @@ export function getObjectTypeRangeConsumptionTreeItemProvider(
         getIcon: () => new ThemeIcon(icon),
         getUriPath: () => path,
         getCollapsibleState: () => TreeItemCollapsibleState.None,
-        getTooltip: () => `From ${range.from} to ${range.to}${addition}`,
+        getTooltip: () => `${ids.length} assigned ${objectType} object(s), ${remaining} available`,
         getDescription: () => `${pct}% (${ids.length} of ${size})`,
         getDecoration: () => {
             if (remaining > 10) {
