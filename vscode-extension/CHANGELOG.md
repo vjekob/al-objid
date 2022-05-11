@@ -11,6 +11,14 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 
 -   Range explorer includes logical ranges and object ranges from `.objidconfig` file.
 
+### Changed
+
+-   Range explorer does not propagate color and badges upwards in the hierarchy. For example, if there are
+    3 remaining codeunits in a range, then only the codeunits node is highlighted and shows the badge, but
+    the parent or any ancestors retain their existing style. This makes the actual nodes where attention
+    is actually needed stand out a lot better. With many more nodes in the new range explorer, propagated
+    highlighting and badges resulted in it being less obvious where exactly the problem is.
+
 ### Fixed
 
 -   License validation is fixed for `tableextension` and `pageextension` object. Seems that these kinds of
