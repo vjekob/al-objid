@@ -11,7 +11,7 @@ import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";
 import { AuthorizationStatusBar } from "./AuthorizationStatusBar";
 
-export class ObjIdConfigMonitor implements Disposable {
+export class __ObjIdConfigMonitor_obsolete_ implements Disposable {
     private _repos: { uri: Uri; manifest: __AppManifest_obsolete_ }[] = [];
     private _workspaceFoldersChangeEvent: Disposable;
     private _watchers: Disposable[] = [];

@@ -21,7 +21,7 @@ import { ExplorerDecorationsProvider } from "./features/RangeExplorer/ExplorerDe
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { Telemetry } from "./lib/Telemetry";
 import { ParserConnector } from "./features/ParserConnector";
-import { ObjIdConfigMonitor } from "./features/ObjIdConfigMonitor";
+import { __ObjIdConfigMonitor_obsolete_ } from "./features/__ObjIdConfigMonitor_obsolete_";
 import { copyRanges } from "./commands/copy-ranges";
 import { consolidateRanges } from "./commands/consolidate-ranges";
 import { createAppPool } from "./commands/create-app-pool";
