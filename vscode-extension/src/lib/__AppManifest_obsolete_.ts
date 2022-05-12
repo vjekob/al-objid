@@ -1,5 +1,5 @@
 import { Uri, workspace } from "vscode";
-import { AppIdCache } from "./AppIdCache";
+import { __AppIdCache_obsolete_ } from "./__AppIdCache_obsolete_";
 import path = require("path");
 import * as fs from "fs";
 import { ALRange, __AppManifest_obsolete_ } from "./types";
@@ -31,9 +31,9 @@ export function getManifest(uri: Uri): __AppManifest_obsolete_ | null {
             path: appPath,
             config: ObjIdConfig.instance(folderUri, manifest.name),
         };
-        manifest.id = AppIdCache.instance.getAppIdHash(manifest.ninja.unsafeOriginalId);
+        manifest.id = __AppIdCache_obsolete_.instance.getAppIdHash(manifest.ninja.unsafeOriginalId);
 
-        const encryptionKey = AppIdCache.instance.getAppIdHash(
+        const encryptionKey = __AppIdCache_obsolete_.instance.getAppIdHash(
             manifest.ninja.unsafeOriginalId.replace("-", "")
         );
 
