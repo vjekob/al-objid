@@ -1,3 +1,5 @@
+import * as path from "path";
+import * as fs from "fs";
 import { exec } from "child_process";
 import { extensions, Uri, window } from "vscode";
 import { LogLevel, output } from "../features/Output";
@@ -34,21 +36,35 @@ export class Git {
     }
     //#endregion
 
+    private isDirectory(fsPath: string): boolean {
+        if (!fs.existsSync(fsPath)) {
+            return false;
+        }
+
+        try {
+            const isDir = fs.lstatSync(fsPath).isDirectory();
+            return isDir;
+        } catch {
+            return false;
+        }
+    }
+
     private async execute(
         command: string,
         uri: Uri,
         split = true
     ): Promise<string[] | string | null> {
+        const cwd = this.isDirectory(uri.fsPath) ? uri.fsPath : path.dirname(uri.fsPath);
         return new Promise(resolve => {
             const gitCommand = `git ${command}`;
-            output.log(`[Git] Executing command: ${gitCommand}`);
-            exec(gitCommand, { cwd: uri.fsPath, windowsHide: true }, (error, stdout) => {
+            output.log(`[Git] Executing command: ${gitCommand}`, LogLevel.Verbose);
+            exec(gitCommand, { cwd, windowsHide: true }, (error, stdout) => {
                 if (error) {
-                    output.log(`[Git] --> Error executing Git: ${error}`);
+                    output.log(`[Git] Error executing Git: ${error}`);
                     resolve(null);
                     return;
                 }
-                output.log("--> Success!", LogLevel.Verbose);
+                output.log(`[Git] Successfully executed command: ${gitCommand}`, LogLevel.Verbose);
                 if (!split) {
                     resolve(stdout);
                     return;
@@ -131,8 +147,12 @@ export class Git {
     }
 
     public async getTopLevelPath(uri: Uri): Promise<string> {
-        const path = (await this.execute("rev-parse --show-toplevel", uri, false)) as string;
-        return path ? path.trim() : "";
+        const topLevelPath = (await this.execute(
+            "rev-parse --show-toplevel",
+            uri,
+            false
+        )) as string;
+        return topLevelPath ? topLevelPath.trim() : "";
     }
 
     public async fetch(uri: Uri): Promise<boolean> {

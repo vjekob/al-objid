@@ -160,14 +160,19 @@ export const UI = {
             window.showWarningMessage(
                 `An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`
             ),
-        showDeletedAuthorization: (manifest: __AppManifest_obsolete_) =>
+        showDeletedAuthorizationError: (name: string) =>
             window.showErrorMessage(
-                `Authorization file for ${manifest.name} was just deleted, and the app is still authorized. Please, make sure you understand the consequences.`,
+                `Authorization file for ${name} was just deleted, and the app is still authorized. Please, make sure you understand the consequences.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        showUnauthorizedBranch: (branch: string, manifest: __AppManifest_obsolete_) =>
+        showUnauthorizedBranch: (name: string) =>
             window.showWarningMessage(
-                `The ${branch} branch of ${manifest.name} does not contain authorization file and you won't be able to assign new object IDs.`,
+                `Current branch of ${name} does not contain a valid authorization key. You won't be able to assign new object IDs.`,
+                LABELS.BUTTON_LEARN_MORE
+            ),
+        showManualModificationWarning: (name: string) =>
+            window.showWarningMessage(
+                `Your authorization key is no longer valid. Please, undo your changes to ${CONFIG_FILE_NAME} as soon as posible. Until you do, you won't be able to assign new object IDs.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
     },

@@ -1,5 +1,7 @@
 import { Disposable } from "vscode";
 
+// TODO Either drop DisposableHolder or make it Disposable itself
+// Instead of calling its getDisposables, rather dispose of all disposables in the implemented dispose() method
 export abstract class DisposableHolder {
     private _disposables: Disposable[] = [];
 

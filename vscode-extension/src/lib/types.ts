@@ -64,14 +64,3 @@ export interface GitTopLevelPathContext {
     manifests: __AppManifest_obsolete_[];
     branch: string;
 }
-
-export enum ConfigurationProperty {
-    AuthKey = "authKey",
-    AppPoolId = "appPoolId",
-    BackEndUrl = "backEndUrl",
-    BackEndApiKey = "backEndApiKey",
-    Ranges = "idRanges",
-    ObjectRanges = "objectRanges",
-    BcLicense = "bcLicense",
-    LicenseReport = "licenseReport",
-}

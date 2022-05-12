@@ -10,6 +10,8 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 ### Added
 
 -   Range explorer includes logical ranges and object ranges from `.objidconfig` file.
+-   License actions are added to Explorer context menu. When right-clicking a `*.bclicense` file, there
+    are two more license options there: validate against license, and select default license.
 
 ### Changed
 

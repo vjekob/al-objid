@@ -3,7 +3,7 @@ import * as fs from "fs";
 import path = require("path");
 import * as os from "os";
 import { getSha256 } from "./Sha256";
-import { ConfigurationProperty } from "./types";
+import { ConfigurationProperty } from "./ObjIdConfig";
 
 async function waitForJsonActivation(): Promise<boolean> {
     // We need this because there is no other reliable way to await for activation of JSON language features, needed for symbol loading

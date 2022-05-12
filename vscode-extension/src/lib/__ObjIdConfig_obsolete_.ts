@@ -4,12 +4,13 @@ import * as fs from "fs";
 import { LogLevel, Output } from "../features/Output";
 import { stringify, parse } from "comment-json";
 import { PropertyBag } from "./PropertyBag";
-import { ConfigurationProperty, NinjaALRange } from "./types";
+import { NinjaALRange } from "./types";
 import { UI } from "./UI";
 import { ALObjectType, CONFIG_FILE_NAME, LABELS, TIME } from "./constants";
 import { CreateDiagnostic, Diagnostics, DIAGNOSTIC_CODE } from "../features/Diagnostics";
 import { ObjIdConfigSymbols } from "./ObjIdConfigSymbols";
 import { BCLicense } from "./BCLicense";
+import { ConfigurationProperty } from "./ObjIdConfig";
 
 const COMMENTS: PropertyBag<string> = {
     [ConfigurationProperty.AuthKey]:
@@ -20,8 +21,6 @@ const COMMENTS: PropertyBag<string> = {
         "Application pool this app belongs to. When defined, your object ID assignments are not per app, but per pool. DO NOT MANUALLY MODIFY THIS VALUE!",
     [ConfigurationProperty.BcLicense]:
         "Customer BC license file (*.bclicense) to check object assignments against",
-    [ConfigurationProperty.LicenseReport]:
-        "Customer license report file (*.txt) to check object assignments against",
 };
 
 const idRangeWarnings: PropertyBag<number> = {};
@@ -565,10 +564,6 @@ export class __ObjIdConfig_obsolete_ {
         }
 
         return await this._bcLicensePromise;
-    }
-
-    get licenseReport(): string | undefined {
-        return this.getProperty(ConfigurationProperty.LicenseReport);
     }
 
     /* TODO Implement custom back-end in .objIdConfig

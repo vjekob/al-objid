@@ -149,6 +149,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
         }
         this._disposed = true;
         this.disposeWatchers();
+        this._onDidChangeTreeData.dispose();
         this._workspaceFoldersChangeEvent.dispose();
     }
 }

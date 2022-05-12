@@ -4,7 +4,9 @@ export const EXTENSION_NAME = "AL Object ID Ninja";
 export const EXTENSION_VERSION =
     extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
 
+export const APP_FILE_NAME = "app.json";
 export const CONFIG_FILE_NAME = ".objidconfig";
+export const GIT_HEAD = ".git/HEAD";
 
 export const URLS = {
     AUTHORIZATION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md",
@@ -92,5 +94,6 @@ export const DOCUMENTS = {
     AUTHORIZED: "authorized",
     AUTHORIZATION_BRANCH_CHANGE: "authorization-branch-change",
     AUTHORIZATION_DELETED: "authorization-deleted",
+    AUTHORIZATION_MODIFIED: "authorization-modified",
     APP_POOLS: "app-pools",
 };

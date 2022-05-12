@@ -21,7 +21,6 @@ import { ExplorerDecorationsProvider } from "./features/RangeExplorer/ExplorerDe
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { Telemetry } from "./lib/Telemetry";
 import { ParserConnector } from "./features/ParserConnector";
-import { __ObjIdConfigMonitor_obsolete_ } from "./features/__ObjIdConfigMonitor_obsolete_";
 import { copyRanges } from "./commands/copy-ranges";
 import { consolidateRanges } from "./commands/consolidate-ranges";
 import { createAppPool } from "./commands/create-app-pool";
@@ -32,6 +31,7 @@ import { selectBCLicense } from "./commands/select-bclicense";
 import { quickFixRemoveDeclaration } from "./commands/quickfix-remove-declaration";
 import { quickFixSelectValidType } from "./commands/quickfix-select-valid-type";
 import { ConsumptionCache } from "./features/ConsumptionCache";
+import { WorkspaceWatcher } from "./features/WorkspaceWatcher";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
@@ -76,14 +76,16 @@ export function activate(context: ExtensionContext) {
         // CodeActions provider
         languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),
 
-        // Other
+        // Other VS Code features
         languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),
+
+        // Other Ninja features
+        WorkspaceWatcher.instance,
         AuthorizationStatusBar.instance.getDisposables(),
         Output.instance.getDisposables(),
         Config.instance.getDisposables(),
         new PollingHandler(),
         new NewsHandler(context),
-        new ObjIdConfigMonitor(),
         new HttpStatusHandler(context).getDisposables(),
         ParserConnector.instance,
         Diagnostics.instance,
