@@ -48,6 +48,10 @@ export class BCLicense {
         return this._valid;
     }
 
+    get uri(): Uri {
+        return this._uri;
+    }
+
     public async validate() {
         const uris = await getWorkspaceFolderFiles(this._uri);
         const objects = await getObjectDefinitions(uris);

@@ -246,7 +246,11 @@ export const UI = {
                 `There is no license configured for ${manifest.name}, there is nothing to validate.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        showInvalidLicense: () => window.showWarningMessage(`This is not a valid license file.`),
+        showInvalidLicenseError: () =>
+            window.showWarningMessage(
+                `This is not a valid license file.`,
+                LABELS.BUTTON_LEARN_MORE
+            ),
         noLicenseFilesFound: (manifest: AppManifest) =>
             window.showWarningMessage(`We could not find any license files in ${manifest.name}.`),
     },

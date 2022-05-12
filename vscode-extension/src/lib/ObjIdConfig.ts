@@ -541,7 +541,9 @@ export class ObjIdConfig {
             return;
         }
 
-        this._bcLicense = path.join(this._folder.uri.fsPath, relativePath);
+        this._bcLicense = path.isAbsolute(relativePath)
+            ? relativePath
+            : path.join(this._folder.uri.fsPath, relativePath);
         this.validateBcLicense(this._bcLicense).then(exists => {
             if (!exists) {
                 return;

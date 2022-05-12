@@ -114,9 +114,14 @@
                 "title": "Create a simple App Pool (Preview)"
             },
             {
-                "command": "vjeko-al-objid.validate-license-preview",
+                "command": "vjeko-al-objid.validate-bclicense",
                 "category": "Ninja",
-                "title": "Validate object IDs against license (Preview)"
+                "title": "Validate object IDs against license"
+            },
+            {
+                "command": "vjeko-al-objid.select-bclicense",
+                "category": "Ninja",
+                "title": "Select default license for validation"
             }
         ],
         "configuration": {
@@ -226,6 +231,18 @@
                     "when": "view == ninja-rangeExplorer && viewItem == ninja-folder"
                 }
             ],
+            "explorer/context": [
+                {
+                    "command": "vjeko-al-objid.validate-bclicense",
+                    "group": "1_modification@1",
+                    "when": "resourceExtname == .bclicense"
+                },
+                {
+                    "command": "vjeko-al-objid.select-bclicense",
+                    "group": "1_modification@2",
+                    "when": "resourceExtname == .bclicense"
+                }
+            ],
             "commandPalette": [
                 {
                     "command": "vjeko-al-objid.confirm-sync-object-ids",
@@ -260,7 +277,7 @@
                     "when": "vjeko-al-objid.active"
                 },
                 {
-                    "command": "vjeko-al-objid.validate-license-preview",
+                    "command": "vjeko-al-objid.validate-bclicense",
                     "when": "vjeko-al-objid.active"
                 }
             ]

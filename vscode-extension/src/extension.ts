@@ -26,7 +26,7 @@ import { copyRanges } from "./commands/copy-ranges";
 import { consolidateRanges } from "./commands/consolidate-ranges";
 import { createAppPool } from "./commands/create-app-pool";
 import { Diagnostics } from "./features/Diagnostics";
-import { validateLicense } from "./commands/validate-license";
+import { validateLicense } from "./commands/validate-bclicense";
 import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvider";
 import { selectBCLicense } from "./commands/select-bclicense";
 import { quickFixRemoveDeclaration } from "./commands/quickfix-remove-declaration";
@@ -48,14 +48,14 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand("vjeko-al-objid.copy-ranges", copyRanges),
         commands.registerCommand("vjeko-al-objid.consolidate-ranges", consolidateRanges),
         commands.registerCommand("vjeko-al-objid.create-app-pool-preview", createAppPool),
+        commands.registerCommand("vjeko-al-objid.validate-bclicense", validateLicense),
+        commands.registerCommand("vjeko-al-objid.select-bclicense", selectBCLicense),
 
         // Internal commands
         commands.registerCommand("vjeko-al-objid.commit-suggestion", commitSuggestionCommand),
         commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
         commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
         commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
-        commands.registerCommand("vjeko-al-objid.validate-license-preview", validateLicense),
-        commands.registerCommand("vjeko-al-objid.select-bclicense", selectBCLicense),
         commands.registerCommand(
             "vjeko-al-objid.quickfix-remove-declaration",
             quickFixRemoveDeclaration
