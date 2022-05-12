@@ -4,6 +4,8 @@ export const EXTENSION_NAME = "AL Object ID Ninja";
 export const EXTENSION_VERSION =
     extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
 
+export const CONFIG_FILE_NAME = ".objidconfig";
+
 export const URLS = {
     AUTHORIZATION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Authorization.md",
     SYNCHRONIZATION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Synchronization.md",

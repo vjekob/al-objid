@@ -1,10 +1,9 @@
 import { Uri } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { getAppNamesFromManifests, getManifest } from "../lib/__AppManifest_obsolete_";
-import { DOCUMENTS, LABELS } from "../lib/constants";
+import { DOCUMENTS, LABELS, CONFIG_FILE_NAME } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { Git } from "../lib/Git";
-import { CONFIG_FILE_NAME } from "../lib/ObjIdConfig";
 import { getSha256 } from "../lib/Sha256";
 import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";

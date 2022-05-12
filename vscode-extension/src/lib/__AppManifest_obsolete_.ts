@@ -4,7 +4,7 @@ import path = require("path");
 import * as fs from "fs";
 import { ALRange, __AppManifest_obsolete_ } from "./types";
 import { PropertyBag } from "./PropertyBag";
-import { ObjIdConfig } from "./ObjIdConfig";
+import { __ObjIdConfig_obsolete_ } from "./__ObjIdConfig_obsolete_";
 
 const encryptionKeys: PropertyBag<string> = {};
 const manifestMap: PropertyBag<__AppManifest_obsolete_> = {};
@@ -29,7 +29,7 @@ export function getManifest(uri: Uri): __AppManifest_obsolete_ | null {
             unsafeOriginalId: manifest.id,
             uri: folderUri,
             path: appPath,
-            config: ObjIdConfig.instance(folderUri, manifest.name),
+            config: __ObjIdConfig_obsolete_.instance(folderUri, manifest.name),
         };
         manifest.id = __AppIdCache_obsolete_.instance.getAppIdHash(manifest.ninja.unsafeOriginalId);
 

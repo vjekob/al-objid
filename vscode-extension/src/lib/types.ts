@@ -1,5 +1,5 @@
 import { Uri } from "vscode";
-import { ObjIdConfig } from "./ObjIdConfig";
+import { __ObjIdConfig_obsolete_ } from "./__ObjIdConfig_obsolete_";
 
 export interface ALRange {
     from: number;
@@ -47,7 +47,7 @@ export interface __AppManifest_obsolete_ {
         /**
          * AL Object ID Ninja configuration (from `.objidconfig` file)
          */
-        config: ObjIdConfig;
+        config: __ObjIdConfig_obsolete_;
     };
 }
 

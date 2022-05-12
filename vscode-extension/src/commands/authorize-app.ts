@@ -1,6 +1,5 @@
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { LogLevel, output } from "../features/Output";
-import { CONFIG_FILE_NAME } from "../lib/ObjIdConfig";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
@@ -8,7 +7,7 @@ import { Git } from "../lib/Git";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { showDocument } from "../lib/functions";
 import { getAppNamesFromManifests } from "../lib/__AppManifest_obsolete_";
-import { DOCUMENTS } from "../lib/constants";
+import { CONFIG_FILE_NAME, DOCUMENTS } from "../lib/constants";
 
 export const authorizeApp = async () => {
     const manifests = await ALWorkspace.pickFolders("to authorize");

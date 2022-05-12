@@ -1,17 +1,15 @@
 import { DiagnosticSeverity, DocumentSymbol, Uri, workspace, WorkspaceFolder } from "vscode";
-import path = require("path");
+import * as path from "path";
 import * as fs from "fs";
 import { LogLevel, Output } from "../features/Output";
 import { stringify, parse } from "comment-json";
 import { PropertyBag } from "./PropertyBag";
 import { ConfigurationProperty, NinjaALRange } from "./types";
 import { UI } from "./UI";
-import { ALObjectType, LABELS, TIME } from "./constants";
+import { ALObjectType, CONFIG_FILE_NAME, LABELS, TIME } from "./constants";
 import { CreateDiagnostic, Diagnostics, DIAGNOSTIC_CODE } from "../features/Diagnostics";
 import { ObjIdConfigSymbols } from "./ObjIdConfigSymbols";
 import { BCLicense } from "./BCLicense";
-
-export const CONFIG_FILE_NAME = ".objidconfig";
 
 const COMMENTS: PropertyBag<string> = {
     [ConfigurationProperty.AuthKey]:
@@ -28,8 +26,8 @@ const COMMENTS: PropertyBag<string> = {
 
 const idRangeWarnings: PropertyBag<number> = {};
 
-export class ObjIdConfig {
-    private static _instances = new WeakMap<Uri, ObjIdConfig>();
+export class __ObjIdConfig_obsolete_ {
+    private static _instances = new WeakMap<Uri, __ObjIdConfig_obsolete_>();
     private readonly _folder: WorkspaceFolder;
     private readonly _uri: Uri;
     private readonly _path: fs.PathLike;
@@ -39,13 +37,13 @@ export class ObjIdConfig {
     private _bcLicense: string | undefined = undefined;
     private _bcLicensePromise?: Promise<BCLicense | undefined>;
 
-    public static instance(uri: Uri, name: string): ObjIdConfig {
+    public static instance(uri: Uri, name: string): __ObjIdConfig_obsolete_ {
         let cached = this._instances.get(uri);
         if (cached) {
             return cached;
         }
 
-        cached = new ObjIdConfig(uri, name);
+        cached = new __ObjIdConfig_obsolete_(uri, name);
         this._instances.set(uri, cached);
         return cached;
     }
