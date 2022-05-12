@@ -136,7 +136,7 @@ export class ObjIdConfig {
 
     private showRangeWarning<T>(
         range: NinjaALRange,
-        showWarning: () => Promise<T>,
+        showWarning: () => Thenable<T>,
         rewarnDelay: number
     ): Promise<T> {
         return new Promise<T>(async resolve => {

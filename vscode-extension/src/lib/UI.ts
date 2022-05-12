@@ -161,12 +161,12 @@ export const UI = {
             window.showWarningMessage(
                 `An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`
             ),
-        showDeletedAuthorization: async (manifest: AppManifest) =>
+        showDeletedAuthorization: (manifest: AppManifest) =>
             window.showErrorMessage(
                 `Authorization file for ${manifest.name} was just deleted, and the app is still authorized. Please, make sure you understand the consequences.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        showUnauthorizedBranch: async (branch: string, manifest: AppManifest) =>
+        showUnauthorizedBranch: (branch: string, manifest: AppManifest) =>
             window.showWarningMessage(
                 `The ${branch} branch of ${manifest.name} does not contain authorization file and you won't be able to assign new object IDs.`,
                 LABELS.BUTTON_LEARN_MORE
@@ -174,23 +174,23 @@ export const UI = {
     },
 
     ranges: {
-        showLogicalRangesExistConfirmation: async (manifest: AppManifest) =>
+        showLogicalRangesExistConfirmation: (manifest: AppManifest) =>
             window.showQuickPick(Object.values(LABELS.COPY_RANGES_ARE_YOU_SURE), {
                 placeHolder: `Logical ranges are already defined for ${manifest.name}. Do you want to overwrite them?`,
             }),
-        showNoLogicalRangesMessage: async (manifest: AppManifest) =>
+        showNoLogicalRangesMessage: (manifest: AppManifest) =>
             window.showInformationMessage(
                 `No logical ranges are defined for ${manifest.name}. There is nothing to consolidate.`
             ),
-        showRangeFullyRepresentedMessage: async (manifest: AppManifest) =>
+        showRangeFullyRepresentedMessage: (manifest: AppManifest) =>
             window.showInformationMessage(
                 `All ranges in app.json for ${manifest.name} are represented as logical ranges in .objidconfig.`
             ),
-        showRangesConsolidatedMessage: async (manifest: AppManifest) =>
+        showRangesConsolidatedMessage: (manifest: AppManifest) =>
             window.showInformationMessage(
                 `Logical ranges for ${manifest.name} are now consolidated in .objidconfig.`
             ),
-        showInvalidRangeFromToError: async (name: string, range: NinjaALRange) =>
+        showInvalidRangeFromToError: (name: string, range: NinjaALRange) =>
             window.showErrorMessage(
                 `Range ${
                     range.description
@@ -199,7 +199,7 @@ export const UI = {
                 } in ${name} has "to" lower than "from". "from" must be lower, and "to" must be higher.`,
                 LABELS.FIX
             ),
-        showInvalidRangeTypeError: async (name: string, range: NinjaALRange) =>
+        showInvalidRangeTypeError: (name: string, range: NinjaALRange) =>
             window.showErrorMessage(
                 `Logical range ${
                     range.description
@@ -208,7 +208,7 @@ export const UI = {
                 } in ${name} is invalid. Both "from" and "to" must be non-zero numbers.`,
                 "OK"
             ),
-        showRangeOverlapError: async (name: string, range1: NinjaALRange, range2: NinjaALRange) =>
+        showRangeOverlapError: (name: string, range1: NinjaALRange, range2: NinjaALRange) =>
             window.showErrorMessage(
                 `Ranges logical ranges ${
                     range1.description
@@ -224,16 +224,16 @@ export const UI = {
     },
 
     pool: {
-        showInvalidAppPoolIdError: async (manifest: AppManifest) =>
+        showInvalidAppPoolIdError: (manifest: AppManifest) =>
             window.showErrorMessage(
                 `App Pool ID defined in .objidconfig for ${manifest.name} is invalid. Please make sure to only use pool IDs created using the appropriate Ninja command.`
             ),
-        showAppAuthorizedError: async (manifest: AppManifest) =>
+        showAppAuthorizedError: (manifest: AppManifest) =>
             window.showErrorMessage(
                 `App ${manifest.name} is authorized. Pools manage their own authorization, so only unauthorized apps can be included in app pools.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        showAppAlreadyInPoolError: async (manifest: AppManifest) =>
+        showAppAlreadyInPoolError: (manifest: AppManifest) =>
             window.showErrorMessage(
                 `App ${manifest.name} already belongs to a pool. One app can belong to only one pool.`,
                 LABELS.BUTTON_LEARN_MORE
@@ -241,12 +241,13 @@ export const UI = {
     },
 
     license: {
-        showNoLicenseMessage: async (manifest: AppManifest) =>
+        showNoLicenseMessage: (manifest: AppManifest) =>
             window.showInformationMessage(
                 `There is no license configured for ${manifest.name}, there is nothing to validate.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        noLicenseFilesFound: async (manifest: AppManifest) =>
+        showInvalidLicense: () => window.showWarningMessage(`This is not a valid license file.`),
+        noLicenseFilesFound: (manifest: AppManifest) =>
             window.showWarningMessage(`We could not find any license files in ${manifest.name}.`),
     },
 
