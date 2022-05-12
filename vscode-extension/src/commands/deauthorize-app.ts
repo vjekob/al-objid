@@ -7,7 +7,7 @@ import { Telemetry } from "../lib/Telemetry";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { Git } from "../lib/Git";
 import { showDocument } from "../lib/functions";
-import { getAppNamesFromManifests } from "../lib/AppManifest";
+import { getAppNamesFromManifests } from "../lib/__AppManifest_obsolete_";
 import { DOCUMENTS } from "../lib/constants";
 
 export const deauthorizeApp = async () => {

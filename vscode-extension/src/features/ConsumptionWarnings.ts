@@ -1,6 +1,6 @@
 import { ConsumptionData } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
-import { getCachedManifestFromAppId } from "../lib/AppManifest";
+import { getCachedManifestFromAppId } from "../lib/__AppManifest_obsolete_";
 import { UI } from "../lib/UI";
 import { LABELS } from "../lib/constants";
 import { ExtensionContext } from "vscode";

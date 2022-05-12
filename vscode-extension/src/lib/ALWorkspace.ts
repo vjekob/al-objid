@@ -1,7 +1,7 @@
 import { Uri, window, workspace, WorkspaceFolder } from "vscode";
-import { getManifest, getCachedManifestFromUri } from "./AppManifest";
+import { getManifest, getCachedManifestFromUri } from "./__AppManifest_obsolete_";
 import { QuickPickWrapper } from "./QuickPickWrapper";
-import { AppManifest } from "./types";
+import { __AppManifest_obsolete_ } from "./types";
 import { UI } from "./UI";
 
 export class ALWorkspace {
@@ -17,7 +17,7 @@ export class ALWorkspace {
     private static async pickFolderOrFolders(
         multi: boolean,
         operationDescription?: string
-    ): Promise<AppManifest[] | AppManifest | undefined> {
+    ): Promise<__AppManifest_obsolete_[] | __AppManifest_obsolete_ | undefined> {
         const workspaces = this.getALFolders();
         if (!workspaces || workspaces.length === 0) {
             UI.general.showNoWorkspacesOpenInfo();
@@ -29,7 +29,7 @@ export class ALWorkspace {
             return multi ? [manifest] : manifest;
         }
 
-        let quickPick = new QuickPickWrapper<AppManifest>(
+        let quickPick = new QuickPickWrapper<__AppManifest_obsolete_>(
             workspaces.map(w => {
                 let manifest = getCachedManifestFromUri(w.uri);
                 return {
@@ -54,19 +54,25 @@ export class ALWorkspace {
         return result;
     }
 
-    public static pickFolder(operationDescription?: string): Promise<AppManifest | undefined> {
+    public static pickFolder(
+        operationDescription?: string
+    ): Promise<__AppManifest_obsolete_ | undefined> {
         return this.pickFolderOrFolders(false, operationDescription) as Promise<
-            AppManifest | undefined
+            __AppManifest_obsolete_ | undefined
         >;
     }
 
-    public static pickFolders(operationDescription?: string): Promise<AppManifest[] | undefined> {
+    public static pickFolders(
+        operationDescription?: string
+    ): Promise<__AppManifest_obsolete_[] | undefined> {
         return this.pickFolderOrFolders(true, operationDescription) as Promise<
-            AppManifest[] | undefined
+            __AppManifest_obsolete_[] | undefined
         >;
     }
 
-    public static async selectWorkspaceFolder(uri?: Uri): Promise<AppManifest | undefined> {
+    public static async selectWorkspaceFolder(
+        uri?: Uri
+    ): Promise<__AppManifest_obsolete_ | undefined> {
         if (uri && this.isALWorkspace(uri)) {
             return getCachedManifestFromUri(uri);
         }

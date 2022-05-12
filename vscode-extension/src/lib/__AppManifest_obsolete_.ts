@@ -2,19 +2,19 @@ import { Uri, workspace } from "vscode";
 import { AppIdCache } from "./AppIdCache";
 import path = require("path");
 import * as fs from "fs";
-import { ALRange, AppManifest } from "./types";
+import { ALRange, __AppManifest_obsolete_ } from "./types";
 import { PropertyBag } from "./PropertyBag";
 import { ObjIdConfig } from "./ObjIdConfig";
 
 const encryptionKeys: PropertyBag<string> = {};
-const manifestMap: PropertyBag<AppManifest> = {};
-const uriMap: WeakMap<Uri, AppManifest> = new WeakMap();
+const manifestMap: PropertyBag<__AppManifest_obsolete_> = {};
+const uriMap: WeakMap<Uri, __AppManifest_obsolete_> = new WeakMap();
 
-interface AppManifestBackwardCompatibility extends AppManifest {
+interface AppManifestBackwardCompatibility extends __AppManifest_obsolete_ {
     idRange: ALRange;
 }
 
-export function getManifest(uri: Uri): AppManifest | null {
+export function getManifest(uri: Uri): __AppManifest_obsolete_ | null {
     const folder = workspace.getWorkspaceFolder(uri);
     if (!folder) return null;
 
@@ -72,7 +72,7 @@ function setAppEncryptionKey(appId: string, key: string) {
  * @param uri URI for which manifest is to be returned
  * @returns AppManifest for the URI
  */
-export function getCachedManifestFromUri(uri: Uri): AppManifest {
+export function getCachedManifestFromUri(uri: Uri): __AppManifest_obsolete_ {
     return uriMap.get(uri)!;
 }
 
@@ -80,11 +80,11 @@ export function getAppEncryptionKey(appId: string): string {
     return encryptionKeys[appId];
 }
 
-export function getCachedManifestFromAppId(appId: string): AppManifest {
+export function getCachedManifestFromAppId(appId: string): __AppManifest_obsolete_ {
     return manifestMap[appId];
 }
 
-export function getAppNamesFromManifests(manifests: AppManifest[]): string {
+export function getAppNamesFromManifests(manifests: __AppManifest_obsolete_[]): string {
     switch (manifests.length) {
         case 1:
             return manifests[0].name;

@@ -1,6 +1,6 @@
 import * as crypto from "crypto";
 import { output } from "../features/Output";
-import { getAppEncryptionKey } from "./AppManifest";
+import { getAppEncryptionKey } from "./__AppManifest_obsolete_";
 
 const ALGORITHM = "aes-256-cbc";
 var IV_LENGTH = 16;

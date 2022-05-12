@@ -1,5 +1,5 @@
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { ALRange, AppManifest, NinjaALRange } from "../lib/types";
+import { ALRange, __AppManifest_obsolete_, NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
 
 export async function consolidateRanges() {
@@ -44,7 +44,7 @@ export async function consolidateRanges() {
 }
 
 function consolidate(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     physicalRanges: ALRange[],
     logicalRanges: NinjaALRange[]
 ): NinjaALRange[] | undefined {

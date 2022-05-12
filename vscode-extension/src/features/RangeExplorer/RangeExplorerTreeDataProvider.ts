@@ -1,7 +1,7 @@
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
 import { Disposable, EventEmitter, TreeDataProvider, TreeItem, Uri, workspace } from "vscode";
 import { ALWorkspace } from "../../lib/ALWorkspace";
-import { getCachedManifestFromUri, getManifest } from "../../lib/AppManifest";
+import { getCachedManifestFromUri, getManifest } from "../../lib/__AppManifest_obsolete_";
 import { ALRange } from "../../lib/types";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
 import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";

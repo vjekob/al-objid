@@ -7,7 +7,7 @@ import {
     TreeItemLabel,
     Uri,
 } from "vscode";
-import { AppManifest } from "../../lib/types";
+import { __AppManifest_obsolete_ } from "../../lib/types";
 import { ExplorerDecorationsProvider } from "../RangeExplorer/ExplorerDecorationsProvider";
 import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
 import { TextTreeItem } from "./TextTreeItem";
@@ -33,13 +33,13 @@ export interface UpdateNinjaTreeItem {
 }
 
 export class NinjaTreeItem implements INinjaTreeItem, Disposable {
-    private readonly _manifest: AppManifest;
+    private readonly _manifest: __AppManifest_obsolete_;
     private readonly _provider: NinjaTreeItemProvider;
     private _children: INinjaTreeItem[] | undefined;
     private _childrenPromise: Promise<INinjaTreeItem[]> | undefined;
     private _disposed = false;
 
-    constructor(manifest: AppManifest, provider: NinjaTreeItemProvider) {
+    constructor(manifest: __AppManifest_obsolete_, provider: NinjaTreeItemProvider) {
         this._manifest = manifest;
         this._provider = provider;
     }

@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import { extensions, Uri, window } from "vscode";
 import { LogLevel, output } from "../features/Output";
-import { getAppNamesFromManifests } from "./AppManifest";
+import { getAppNamesFromManifests } from "./__AppManifest_obsolete_";
 import { LABELS } from "./constants";
 import { PropertyBag } from "./PropertyBag";
 import { GitCleanOperationContext, GitTopLevelPathContext } from "./types";

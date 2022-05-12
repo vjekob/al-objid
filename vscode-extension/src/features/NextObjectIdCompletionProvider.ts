@@ -12,14 +12,14 @@ import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
 import { Backend } from "../lib/Backend";
-import { getManifest } from "../lib/AppManifest";
+import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { UI } from "../lib/UI";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext, ParserConnector } from "./ParserConnector";
-import { AppManifest } from "../lib/types";
+import { __AppManifest_obsolete_ } from "../lib/types";
 import { getRangeForId, getSymbolAtPosition } from "../lib/functions";
 
 type SymbolInfo = {
@@ -32,7 +32,10 @@ let syncDisabled: PropertyBag<boolean> = {};
 let syncSkipped = 0;
 let stopAsking = false;
 
-export async function syncIfChosen(manifest: AppManifest, choice: Promise<string | undefined>) {
+export async function syncIfChosen(
+    manifest: __AppManifest_obsolete_,
+    choice: Promise<string | undefined>
+) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
             commands.executeCommand("vjeko-al-objid.sync-object-ids", {
@@ -177,7 +180,10 @@ async function getTypeAtPosition(
     return OBJECT_TYPES.includes(type) || isTableOrEnum(type) ? type : null;
 }
 
-function showNotificationsIfNecessary(manifest: AppManifest, objectId?: NextObjectIdInfo): boolean {
+function showNotificationsIfNecessary(
+    manifest: __AppManifest_obsolete_,
+    objectId?: NextObjectIdInfo
+): boolean {
     if (!objectId) return true;
 
     if (!objectId.hasConsumption) {

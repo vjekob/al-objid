@@ -1,6 +1,6 @@
 import path = require("path");
 import { commands, DocumentSymbol, Position, Uri } from "vscode";
-import { getCachedManifestFromAppId } from "./AppManifest";
+import { getCachedManifestFromAppId } from "./__AppManifest_obsolete_";
 import { ALRange } from "./types";
 import { UI } from "./UI";
 

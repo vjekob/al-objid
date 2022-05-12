@@ -1,11 +1,11 @@
 import { MarkdownString, StatusBarAlignment, StatusBarItem, window } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { getManifest } from "../lib/AppManifest";
+import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { EXTENSION_NAME, URLS } from "../lib/constants";
 import { DisposableHolder } from "./DisposableHolder";
 import { Backend } from "../lib/Backend";
 import { AuthorizedAppResponse } from "../lib/BackendTypes";
-import { AppManifest } from "../lib/types";
+import { __AppManifest_obsolete_ } from "../lib/types";
 
 export class AuthorizationStatusBar extends DisposableHolder {
     private _status: StatusBarItem;
@@ -43,7 +43,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
             : "";
     }
 
-    private async readUserInfo(manifest: AppManifest, authKey: string) {
+    private async readUserInfo(manifest: __AppManifest_obsolete_, authKey: string) {
         const authorized = !!authKey;
         const info = await Backend.getAuthInfo(manifest.id, authKey);
         if (info) {

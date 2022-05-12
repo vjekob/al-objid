@@ -13,7 +13,7 @@ export interface NinjaALRange extends ALRange {
 /**
  * Defines app manifest as declared in app.json
  */
-export interface AppManifest {
+export interface __AppManifest_obsolete_ {
     /**
      * **IMPORTANT!** This is not the original `id` from `app.json`. This is a SHA256 hash of that `id`.
      * You can find original `id` in `.ninja.unsafeOriginalId` property of this type.
@@ -52,16 +52,16 @@ export interface AppManifest {
 }
 
 export interface GitCleanOperationContext {
-    manifests: AppManifest[];
-    operation: (manifest: AppManifest) => Promise<boolean>;
-    getFilesToStage: (manifest: AppManifest) => string[];
-    learnMore: (manifests: AppManifest | AppManifest[]) => any;
-    getCommitMessage: (manifests: AppManifest[]) => string;
+    manifests: __AppManifest_obsolete_[];
+    operation: (manifest: __AppManifest_obsolete_) => Promise<boolean>;
+    getFilesToStage: (manifest: __AppManifest_obsolete_) => string[];
+    learnMore: (manifests: __AppManifest_obsolete_ | __AppManifest_obsolete_[]) => any;
+    getCommitMessage: (manifests: __AppManifest_obsolete_[]) => string;
 }
 
 export interface GitTopLevelPathContext {
     uri: Uri;
-    manifests: AppManifest[];
+    manifests: __AppManifest_obsolete_[];
     branch: string;
 }
 

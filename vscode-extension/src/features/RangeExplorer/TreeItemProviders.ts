@@ -1,6 +1,6 @@
 import { ThemeIcon, TreeItemCollapsibleState, Uri } from "vscode";
 import { ALObjectType } from "../../lib/constants";
-import { ALRange, AppManifest, NinjaALRange } from "../../lib/types";
+import { ALRange, __AppManifest_obsolete_, NinjaALRange } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
 import { INinjaTreeItem, NinjaTreeItem, UpdateNinjaTreeItem } from "../Explorer/NinjaTreeItem";
 import { NinjaTreeItemProvider } from "../Explorer/NinjaTreeItemProvider";
@@ -29,7 +29,7 @@ function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
 }
 
 export function getFolderTreeItemProvider(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     update: UpdateNinjaTreeItem
 ): NinjaTreeItemProvider {
     const subscription = ConsumptionCache.instance.onConsumptionUpdate(update => {
@@ -88,7 +88,7 @@ export function getFolderTreeItemProvider(
 }
 
 export function getRangeTreeItemProvider(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     range: ALRange,
     dropLogicalName: boolean,
     pathSoFar: string
@@ -149,7 +149,9 @@ export function getRangeTreeItemProvider(
     };
 }
 
-export function getPhysicalRangesTreeItemProvider(manifest: AppManifest): NinjaTreeItemProvider {
+export function getPhysicalRangesTreeItemProvider(
+    manifest: __AppManifest_obsolete_
+): NinjaTreeItemProvider {
     const path = "/ranges";
 
     return {
@@ -173,7 +175,9 @@ export function getPhysicalRangesTreeItemProvider(manifest: AppManifest): NinjaT
     };
 }
 
-export function getLogicalRangesTreeItemProvider(manifest: AppManifest): NinjaTreeItemProvider {
+export function getLogicalRangesTreeItemProvider(
+    manifest: __AppManifest_obsolete_
+): NinjaTreeItemProvider {
     const path = "/logicalranges";
 
     return {
@@ -210,7 +214,7 @@ export function getLogicalRangesTreeItemProvider(manifest: AppManifest): NinjaTr
 }
 
 export function getLogicalRangeTreeItemProvider(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     name: string,
     pathSoFar: string,
     children: NinjaALRange[]
@@ -243,7 +247,7 @@ export function getLogicalRangeTreeItemProvider(
 }
 
 export function getObjectTypeLogicalRangeTreeItemProvider(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     objectType: string,
     name: string,
     pathSoFar: string,
@@ -283,7 +287,9 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
     };
 }
 
-export function getObjectRangesTreeItemProvider(manifest: AppManifest): NinjaTreeItemProvider {
+export function getObjectRangesTreeItemProvider(
+    manifest: __AppManifest_obsolete_
+): NinjaTreeItemProvider {
     const path = "/objectranges";
     return {
         getLabel: () => "Object Ranges",
@@ -310,7 +316,7 @@ export function getObjectRangesTreeItemProvider(manifest: AppManifest): NinjaTre
 }
 
 export function getObjectTypeRangesTreeItemProvider(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     objectType: string
 ): NinjaTreeItemProvider {
     const path = `/objectranges/${objectType}`;
@@ -372,7 +378,7 @@ export function getObjectTypeRangesTreeItemProvider(
 }
 
 export function getObjectTypeConsumptionTreeItemProvider(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     objectType: string,
     ids: number[],
     size: number,
@@ -405,7 +411,7 @@ export function getObjectTypeConsumptionTreeItemProvider(
 }
 
 export function getObjectTypeRangeConsumptionTreeItemProvider(
-    manifest: AppManifest,
+    manifest: __AppManifest_obsolete_,
     range: ALRange,
     objectType: string,
     dropLogicalName: boolean,

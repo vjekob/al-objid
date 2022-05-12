@@ -20,7 +20,7 @@ import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
 import { ConsumptionCache } from "../features/ConsumptionCache";
-import { getCachedManifestFromAppId } from "./AppManifest";
+import { getCachedManifestFromAppId } from "./__AppManifest_obsolete_";
 import { RangeExplorerTreeDataProvider } from "../features/RangeExplorer/RangeExplorerTreeDataProvider";
 import { LABELS } from "./constants";
 import { env, Uri } from "vscode";

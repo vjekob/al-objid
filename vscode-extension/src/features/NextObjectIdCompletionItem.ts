@@ -11,7 +11,7 @@ import {
     WorkspaceEdit,
 } from "vscode";
 import { Backend } from "../lib/Backend";
-import { AppManifest, NinjaALRange } from "../lib/types";
+import { __AppManifest_obsolete_, NinjaALRange } from "../lib/types";
 import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
@@ -21,7 +21,7 @@ import { UI } from "../lib/UI";
 import { DOCUMENTS, LABELS } from "../lib/constants";
 import { syncIfChosen } from "./NextObjectIdCompletionProvider";
 
-export type CommitNextObjectId = (manifest: AppManifest) => Promise<NextObjectIdInfo>;
+export type CommitNextObjectId = (manifest: __AppManifest_obsolete_) => Promise<NextObjectIdInfo>;
 
 export class NextObjectIdCompletionItem extends CompletionItem {
     private _injectSemicolon: boolean = false;
@@ -44,7 +44,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
     constructor(
         type: string,
         objectId: NextObjectIdInfo,
-        manifest: AppManifest,
+        manifest: __AppManifest_obsolete_,
         position: Position,
         uri: Uri,
         nextIdContext: NextIdContext,
@@ -74,7 +74,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
         position: Position,
         uri: Uri,
         type: string,
-        manifest: AppManifest,
+        manifest: __AppManifest_obsolete_,
         objectId: NextObjectIdInfo
     ): Command {
         return {

@@ -1,14 +1,14 @@
 import * as path from "path";
 import { RelativePattern, Uri, window, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { getManifest } from "../lib/AppManifest";
+import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { BCLicense } from "../lib/BCLicense";
 import { LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
-import { AppManifest } from "../lib/types";
+import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";
 
-export async function selectBCLicense(manifestOrUri?: AppManifest | Uri) {
+export async function selectBCLicense(manifestOrUri?: __AppManifest_obsolete_ | Uri) {
     if (!manifestOrUri) {
         manifestOrUri = await ALWorkspace.selectWorkspaceFolder();
         if (!manifestOrUri) {
@@ -48,7 +48,9 @@ function selectLicenseFromUri(uri: Uri): string | undefined {
     }
 }
 
-async function selectLicenseFromManifest(manifest: AppManifest): Promise<string | undefined> {
+async function selectLicenseFromManifest(
+    manifest: __AppManifest_obsolete_
+): Promise<string | undefined> {
     const folderPath: string = manifest.ninja.uri.fsPath;
     const pattern = new RelativePattern(folderPath, "**/*.bclicense");
     const files = await workspace.findFiles(pattern, null);

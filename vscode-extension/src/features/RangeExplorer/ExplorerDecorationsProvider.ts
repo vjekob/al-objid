@@ -7,7 +7,7 @@ import {
     Uri,
 } from "vscode";
 import { PropertyBag } from "../../lib/PropertyBag";
-import { AppManifest } from "../../lib/types";
+import { __AppManifest_obsolete_ } from "../../lib/types";
 import { TreeItemDecoration } from "../Explorer/TreeItemDecoration";
 import { SeverityColors } from "../Explorer/TreeItemSeverity";
 
@@ -55,7 +55,7 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         this._onDidChangeFileDecorations.fire([uri]);
     }
 
-    releaseDecorations(manifest: AppManifest) {
+    releaseDecorations(manifest: __AppManifest_obsolete_) {
         delete this._decorations[manifest.id];
     }
 }

@@ -1,12 +1,12 @@
 import { Uri } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { getAppNamesFromManifests, getManifest } from "../lib/AppManifest";
+import { getAppNamesFromManifests, getManifest } from "../lib/__AppManifest_obsolete_";
 import { DOCUMENTS, LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { Git } from "../lib/Git";
 import { CONFIG_FILE_NAME } from "../lib/ObjIdConfig";
 import { getSha256 } from "../lib/Sha256";
-import { AppManifest } from "../lib/types";
+import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";
 
 export const createAppPool = async () => {
@@ -23,7 +23,7 @@ export const createAppPool = async () => {
     }
 };
 
-function prerequisitesMet(manifest: AppManifest): boolean {
+function prerequisitesMet(manifest: __AppManifest_obsolete_): boolean {
     if (manifest.ninja.config.appPoolId) {
         UI.pool.showAppAlreadyInPoolError(manifest).then(result => {
             if (result === LABELS.BUTTON_LEARN_MORE) {
@@ -81,6 +81,6 @@ async function createAppPoolForMultipleApps(uris: Uri[]) {
     });
 }
 
-function createAppPoolIdFromAppId(manifest: AppManifest): string {
+function createAppPoolIdFromAppId(manifest: __AppManifest_obsolete_): string {
     return getSha256(`al-objid.${manifest.ninja.unsafeOriginalId}.${Date.now()}`);
 }

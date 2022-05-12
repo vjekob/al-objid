@@ -7,7 +7,7 @@ import { Telemetry } from "../lib/Telemetry";
 import { Git } from "../lib/Git";
 import { ALWorkspace } from "../lib/ALWorkspace";
 import { showDocument } from "../lib/functions";
-import { getAppNamesFromManifests } from "../lib/AppManifest";
+import { getAppNamesFromManifests } from "../lib/__AppManifest_obsolete_";
 import { DOCUMENTS } from "../lib/constants";
 
 export const authorizeApp = async () => {
@@ -23,15 +23,20 @@ export const authorizeApp = async () => {
 
             Telemetry.instance.log("authorize", manifest.id);
             const gitUser = await Git.instance.getUserInfo(manifest.ninja.uri);
-            let response = await Backend.authorizeApp(manifest.id, gitUser.name, gitUser.email, async response => {
-                const { error } = response;
-                if (error.statusCode !== 405) {
-                    return false;
-                }
+            let response = await Backend.authorizeApp(
+                manifest.id,
+                gitUser.name,
+                gitUser.email,
+                async response => {
+                    const { error } = response;
+                    if (error.statusCode !== 405) {
+                        return false;
+                    }
 
-                UI.authorization.showAlreadyAuthorizedError(manifest);
-                return true;
-            });
+                    UI.authorization.showAlreadyAuthorizedError(manifest);
+                    return true;
+                }
+            );
 
             if (!response || !response.authKey) {
                 return false;

@@ -6,7 +6,7 @@ import {
     CodeAction,
     CodeActionKind,
 } from "vscode";
-import { getManifest } from "../lib/AppManifest";
+import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { ALObjectType } from "../lib/constants";
 import { getSymbolAtPosition } from "../lib/functions";
 import { DIAGNOSTIC_CODE } from "./Diagnostics";

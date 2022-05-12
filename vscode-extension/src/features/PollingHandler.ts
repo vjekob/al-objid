@@ -1,7 +1,7 @@
 import { NotificationsFromLog } from "./NotificationsFromLog";
 import { Disposable, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { getManifest } from "../lib/AppManifest";
+import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { Backend } from "../lib/Backend";
 import { PropertyBag } from "../lib/PropertyBag";
 import { FolderAuthorization } from "../lib/BackendTypes";

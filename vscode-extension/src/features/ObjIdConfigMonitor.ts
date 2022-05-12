@@ -1,18 +1,18 @@
 import path = require("path");
 import { Disposable, RelativePattern, Uri, workspace } from "vscode";
 import { ALWorkspace } from "../lib/ALWorkspace";
-import { getManifest } from "../lib/AppManifest";
+import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { Backend } from "../lib/Backend";
 import { DOCUMENTS, LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { Git } from "../lib/Git";
 import { Telemetry } from "../lib/Telemetry";
-import { AppManifest } from "../lib/types";
+import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";
 import { AuthorizationStatusBar } from "./AuthorizationStatusBar";
 
 export class ObjIdConfigMonitor implements Disposable {
-    private _repos: { uri: Uri; manifest: AppManifest }[] = [];
+    private _repos: { uri: Uri; manifest: __AppManifest_obsolete_ }[] = [];
     private _workspaceFoldersChangeEvent: Disposable;
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
@@ -53,13 +53,13 @@ export class ObjIdConfigMonitor implements Disposable {
         this._timeout = setTimeout(() => this.checkCurrentBranches(), 10000);
     }
 
-    private validateFile(manifest: AppManifest) {
+    private validateFile(manifest: __AppManifest_obsolete_) {
         manifest.ninja.config.idRanges; // This reads them, and reading validates them
         manifest.ninja.config.validateObjectRanges();
         manifest.ninja.config.bcLicense; // This reads them, and reading validates them
     }
 
-    private async onDeleted(manifest: AppManifest, uri: Uri) {
+    private async onDeleted(manifest: __AppManifest_obsolete_, uri: Uri) {
         const currentBranch = this._currentBranches[manifest.id];
         const { authKey } = manifest.ninja.config;
         const info = await Backend.getAuthInfo(manifest.id, authKey);
@@ -86,12 +86,12 @@ export class ObjIdConfigMonitor implements Disposable {
         }
     }
 
-    private async onDidChange(manifest: AppManifest, uri: Uri) {
+    private async onDidChange(manifest: __AppManifest_obsolete_, uri: Uri) {
         this.validateFile(manifest);
         AuthorizationStatusBar.instance.updateStatusBar();
     }
 
-    private async setUpWatcher(manifest: AppManifest, uri: Uri) {
+    private async setUpWatcher(manifest: __AppManifest_obsolete_, uri: Uri) {
         const watcher = workspace.createFileSystemWatcher(path.join(uri.fsPath, ".objidconfig"));
         watcher.onDidDelete(() => this.onDeleted(manifest, uri));
         watcher.onDidChange(() => this.onDidChange(manifest, uri));

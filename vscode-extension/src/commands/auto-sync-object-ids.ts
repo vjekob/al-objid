@@ -11,11 +11,11 @@ import {
 import { PropertyBag } from "../lib/PropertyBag";
 import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
-import { getCachedManifestFromUri } from "../lib/AppManifest";
+import { getCachedManifestFromUri } from "../lib/__AppManifest_obsolete_";
 import { Backend } from "../lib/Backend";
 import { LogLevel, output } from "../features/Output";
 import { Telemetry } from "../lib/Telemetry";
-import { AppManifest } from "../lib/types";
+import { __AppManifest_obsolete_ } from "../lib/types";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -130,7 +130,7 @@ function compressConsumption(consumption: ConsumptionInfo) {
 
 function compressConsumptions(
     consumptions: PropertyBag<ConsumptionInfo>,
-    manifests: AppManifest[]
+    manifests: __AppManifest_obsolete_[]
 ) {
     // First pass: consolidate per app pool
     const manifestMap: PropertyBag<string> = {};
@@ -167,7 +167,7 @@ function compressConsumptions(
 
 function authorizeConsumptions(
     consumptions: PropertyBag<ConsumptionInfo>,
-    manifests: AppManifest[]
+    manifests: __AppManifest_obsolete_[]
 ): AuthorizedAppConsumption[] {
     let result: AuthorizedAppConsumption[] = [];
     for (let key of Object.keys(consumptions)) {
