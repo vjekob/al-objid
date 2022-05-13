@@ -43,22 +43,44 @@ export class ALAppManifest {
         }
     }
 
+    /**
+     * Uri of the `app.json` file.
+     */
     public get uri() {
         return this._uri;
     }
 
+    /**
+     * The `id` property from the `app.json` file.
+     * 
+     * ***DO NOT USE THIS PROPERTY UNLESS YOU ABSOLUTELY NEED IT!***
+     * 
+     * **Instead, use the `hash` property from the parent object. The `id` property should be used
+     * only for informational purposes, typically when having to present it on screen.**
+     * 
+     * ***NEVER SEND THIS PROPERTY TO THE BACK END!***
+     */
     public get id() {
         return this._manifest.id;
     }
 
+    /**
+     * The `name` property from the `app.json` file.
+     */
     public get name() {
         return this._manifest.name;
     }
 
+    /**
+     * The `version` property from the `app.json` file.
+     */
     public get version() {
         return this._manifest.version;
     }
 
+    /**
+     * The `idRanges` property from the `app.json` file.
+     */
     public get idRanges() {
         return this._manifest.idRanges;
     }
