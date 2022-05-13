@@ -13,6 +13,7 @@ import { decrypt, encrypt } from "./Encryption";
 export class ALApp implements Disposable {
     private readonly _uri: Uri;
     private readonly _configUri: Uri;
+    private readonly _name: string;
     private readonly _manifestWatcher: FileWatcher;
     private readonly _manifestChanged: Disposable;
     private readonly _configWatcher: ObjIdConfigWatcher;
@@ -26,10 +27,10 @@ export class ALApp implements Disposable {
     private _hash: string | undefined;
     private _encryptionKey: string | undefined;
 
-    private constructor(uri: Uri, manifest: ALAppManifest) {
+    private constructor(uri: Uri, name: string, manifest: ALAppManifest) {
         this._uri = uri;
         this._manifest = manifest;
-        this._manifest.uri;
+        this._name = name;
         this._configUri = Uri.file(path.join(uri.fsPath, CONFIG_FILE_NAME));
         this._config = new ObjIdConfig(this._configUri, this.hash);
 
@@ -82,20 +83,24 @@ export class ALApp implements Disposable {
         }
 
         const manifest = ALAppManifest.tryCreate(manifestUri);
-        return manifest && new ALApp(uri, manifest);
+        return manifest && new ALApp(uri, folder.name, manifest);
     }
 
     /**
      * URI of the folder (root) of this AL app.
      */
-    public get uri() {
+    public get uri(): Uri {
         return this._uri;
+    }
+
+    public get name(): string {
+        return this._name;
     }
 
     /**
      * App manifest (`app.json`) representation as an object. This object is read-only.
      */
-    public get manifest() {
+    public get manifest(): ALAppManifest {
         return this._manifest;
     }
 
@@ -104,7 +109,7 @@ export class ALApp implements Disposable {
      * Any changes you make to its public properties will be persisted to the underlying
      * `.objidconfig` file.
      */
-    public get config() {
+    public get config(): ObjIdConfig {
         return this._config;
     }
 

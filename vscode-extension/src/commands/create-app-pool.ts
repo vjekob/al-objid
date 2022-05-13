@@ -1,30 +1,29 @@
 import { Uri } from "vscode";
-import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
-import { getAppNamesFromManifests, getManifest } from "../lib/__AppManifest_obsolete_";
 import { DOCUMENTS, LABELS, CONFIG_FILE_NAME } from "../lib/constants";
-import { showDocument } from "../lib/functions";
+import { getAppNames, showDocument } from "../lib/functions";
 import { Git } from "../lib/Git";
 import { getSha256 } from "../lib/Sha256";
-import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";
+import { WorkspaceManager } from "../features/WorkspaceManager";
+import { ALApp } from "../lib/ALApp";
 
 export const createAppPool = async () => {
-    const folders = __ALWorkspace_obsolete_.getALFolders();
-    if (!folders || folders.length === 0) {
+    const apps = WorkspaceManager.instance.alApps;
+    if (apps.length === 0) {
         await UI.general.showNoWorkspacesOpenInfo();
         return;
     }
 
-    if (folders.length === 1) {
-        await createAppPoolForSingleApp(folders[0].uri);
+    if (apps.length === 1) {
+        await createAppPoolForSingleApp(apps[0].uri);
     } else {
-        await createAppPoolForMultipleApps(folders.map(folder => folder.uri));
+        await createAppPoolForMultipleApps(apps.map(folder => folder.uri));
     }
 };
 
-function prerequisitesMet(manifest: __AppManifest_obsolete_): boolean {
-    if (manifest.ninja.config.appPoolId) {
-        UI.pool.showAppAlreadyInPoolError(manifest).then(result => {
+function prerequisitesMet(app: ALApp): boolean {
+    if (app.config.appPoolId) {
+        UI.pool.showAppAlreadyInPoolError(app).then(result => {
             if (result === LABELS.BUTTON_LEARN_MORE) {
                 showDocument(DOCUMENTS.APP_POOLS);
             }
@@ -32,8 +31,8 @@ function prerequisitesMet(manifest: __AppManifest_obsolete_): boolean {
         return false;
     }
 
-    if (manifest.ninja.config.authKey) {
-        UI.pool.showAppAuthorizedError(manifest).then(result => {
+    if (app.config.authKey) {
+        UI.pool.showAppAuthorizedError(app).then(result => {
             if (result === LABELS.BUTTON_LEARN_MORE) {
                 showDocument(DOCUMENTS.APP_POOLS);
             }
@@ -45,41 +44,41 @@ function prerequisitesMet(manifest: __AppManifest_obsolete_): boolean {
 }
 
 async function createAppPoolForSingleApp(uri: Uri) {
-    const manifest = getManifest(uri)!;
-    if (!prerequisitesMet(manifest)) {
+    const app = WorkspaceManager.instance.getALAppFromUri(uri)!;
+    if (!prerequisitesMet(app)) {
         return;
     }
 
-    manifest.ninja.config.appPoolId = createAppPoolIdFromAppId(manifest);
+    app.config.appPoolId = createAppPoolIdFromAppId(app);
 }
 
 async function createAppPoolForMultipleApps(uris: Uri[]) {
-    const manifests = await __ALWorkspace_obsolete_.pickFolders("to include in the pool");
-    if (!manifests || manifests.length === 0) {
+    const apps = await WorkspaceManager.instance.pickFolders("to include in the pool");
+    if (!apps || apps.length === 0) {
         return;
     }
 
-    for (let manifest of manifests) {
-        if (!prerequisitesMet(manifest)) {
+    for (let app of apps) {
+        if (!prerequisitesMet(app)) {
             return;
         }
     }
 
-    const poolId = createAppPoolIdFromAppId(manifests[0]);
+    const poolId = createAppPoolIdFromAppId(apps[0]);
 
     Git.instance.executeCleanOperation({
-        manifests,
-        operation: async manifest => {
-            manifest.ninja.config.appPoolId = poolId;
+        apps,
+        operation: async app => {
+            app.config.appPoolId = poolId;
             return true;
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument(DOCUMENTS.APP_POOLS),
-        getCommitMessage: manifests =>
-            `AL Object ID Ninja pool creation (preview) for ${getAppNamesFromManifests(manifests)}`,
+        getCommitMessage: apps => `AL Object ID Ninja pool creation (preview) for ${getAppNames(apps)}`,
     });
 }
 
-function createAppPoolIdFromAppId(manifest: __AppManifest_obsolete_): string {
-    return getSha256(`al-objid.${manifest.ninja.unsafeOriginalId}.${Date.now()}`);
+function createAppPoolIdFromAppId(app: ALApp): string {
+    // This one intentionally accesses the original id!
+    return getSha256(`al-objid.${app.manifest.id}.${Date.now()}`);
 }

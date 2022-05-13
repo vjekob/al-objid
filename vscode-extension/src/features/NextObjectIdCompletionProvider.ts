@@ -12,15 +12,15 @@ import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
 import { Backend } from "../lib/Backend";
-import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { UI } from "../lib/UI";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext, ParserConnector } from "./ParserConnector";
-import { __AppManifest_obsolete_ } from "../lib/types";
 import { getRangeForId, getSymbolAtPosition } from "../lib/functions";
+import { ALApp } from "../lib/ALApp";
+import { WorkspaceManager } from "./WorkspaceManager";
 
 type SymbolInfo = {
     type: string;
@@ -32,7 +32,7 @@ let syncDisabled: PropertyBag<boolean> = {};
 let syncSkipped = 0;
 let stopAsking = false;
 
-export async function syncIfChosen(manifest: __AppManifest_obsolete_, choice: Promise<string | undefined>) {
+export async function syncIfChosen(app: ALApp, choice: Promise<string | undefined>) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
             commands.executeCommand("vjeko-al-objid.sync-object-ids", {
@@ -44,7 +44,7 @@ export async function syncIfChosen(manifest: __AppManifest_obsolete_, choice: Pr
             env.openExternal(Uri.parse(URLS.EXTENSION_LEARN));
             break;
         default:
-            syncDisabled[manifest.id] = true;
+            syncDisabled[app.hash] = true;
             if (++syncSkipped > 1) {
                 if ((await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo()) === LABELS.BUTTON_DONT_ASK) {
                     stopAsking = true;
@@ -63,9 +63,18 @@ function isTableOrEnum(type: string) {
     );
 }
 
+// TODO Ninja does not properly suggest next object ID when inside conditional directive
+/*
+codeunit
+#if test
+50011       // here it will not suggest anything...
+#else
+50012       // ... nor here (but AL will, in both places)
+#endif
+*/
 function getSymbols(uri: Uri): string[] {
-    const manifest = getManifest(uri);
-    return manifest?.preprocessorSymbols || [];
+    const app = WorkspaceManager.instance.getALAppFromUri(uri);
+    return app?.manifest.preprocessorSymbols || [];
 }
 
 async function isTableField(
@@ -164,18 +173,18 @@ async function getTypeAtPosition(
     return OBJECT_TYPES.includes(type) || isTableOrEnum(type) ? type : null;
 }
 
-function showNotificationsIfNecessary(manifest: __AppManifest_obsolete_, objectId?: NextObjectIdInfo): boolean {
+function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): boolean {
     if (!objectId) return true;
 
     if (!objectId.hasConsumption) {
-        if (!syncDisabled[manifest.id] && !stopAsking) {
-            syncIfChosen(manifest, UI.nextId.showNoBackEndConsumptionInfo(manifest.name));
+        if (!syncDisabled[app.hash] && !stopAsking) {
+            syncIfChosen(app, UI.nextId.showNoBackEndConsumptionInfo(app));
         }
         return true;
     }
 
     if (!objectId.available) {
-        syncIfChosen(manifest, UI.nextId.showNoMoreNumbersWarning());
+        syncIfChosen(app, UI.nextId.showNoMoreNumbersWarning());
         return true;
     }
 
@@ -191,16 +200,20 @@ export class NextObjectIdCompletionProvider {
     ) {
         const nextIdContext: NextIdContext = { injectSemicolon: false };
         const type = await getTypeAtPosition(document, position, nextIdContext);
-        if (!type) return;
+        if (!type) {
+            return;
+        }
 
-        const manifest = getManifest(document.uri);
-        if (!manifest) return;
+        const app = WorkspaceManager.instance.getALAppFromUri(document.uri);
+        if (!app) {
+            return;
+        }
 
-        const { authKey } = manifest.ninja.config;
-        const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, authKey);
-        Telemetry.instance.log("getNextNo-fetch", manifest.id);
+        const { authKey } = app.config;
+        const objectId = await Backend.getNextNo(app.hash, type, app.manifest.idRanges, false, authKey);
+        Telemetry.instance.log("getNextNo-fetch", app.hash);
 
-        if (showNotificationsIfNecessary(manifest, objectId) || !objectId) return [];
+        if (showNotificationsIfNecessary(app, objectId) || !objectId) return [];
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
 
         if (Array.isArray(objectId.id)) {
@@ -210,10 +223,9 @@ export class NextObjectIdCompletionProvider {
 
             const items: NextObjectIdCompletionItem[] = [];
             const logicalNames: string[] = [];
-            const objIdConfig = manifest.ninja.config;
             for (let i = 0; i < objectId.id.length; i++) {
                 const id = objectId.id[i];
-                const range = getRangeForId(id as number, objIdConfig.getObjectRanges(type));
+                const range = getRangeForId(id as number, app.config.getObjectTypeRanges(type));
                 if (range && range.description) {
                     if (logicalNames.includes(range.description)) {
                         continue;
@@ -230,7 +242,7 @@ export class NextObjectIdCompletionProvider {
                     new NextObjectIdCompletionItem(
                         type,
                         objectIdCopy,
-                        manifest,
+                        app,
                         position,
                         document.uri,
                         deeperContext,
@@ -240,7 +252,7 @@ export class NextObjectIdCompletionProvider {
             }
             return items;
         } else {
-            return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri, nextIdContext)];
+            return [new NextObjectIdCompletionItem(type, objectId, app, position, document.uri, nextIdContext)];
         }
     }
 }

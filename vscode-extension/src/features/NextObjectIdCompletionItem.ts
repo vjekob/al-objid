@@ -11,7 +11,7 @@ import {
     WorkspaceEdit,
 } from "vscode";
 import { Backend } from "../lib/Backend";
-import { __AppManifest_obsolete_, NinjaALRange } from "../lib/types";
+import { NinjaALRange } from "../lib/types";
 import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/BackendTypes";
 import { Telemetry } from "../lib/Telemetry";
@@ -20,8 +20,9 @@ import { showDocument } from "../lib/functions";
 import { UI } from "../lib/UI";
 import { DOCUMENTS, LABELS } from "../lib/constants";
 import { syncIfChosen } from "./NextObjectIdCompletionProvider";
+import { ALApp } from "../lib/ALApp";
 
-export type CommitNextObjectId = (manifest: __AppManifest_obsolete_) => Promise<NextObjectIdInfo>;
+export type CommitNextObjectId = (app: ALApp) => Promise<NextObjectIdInfo>;
 
 export class NextObjectIdCompletionItem extends CompletionItem {
     private _injectSemicolon: boolean = false;
@@ -44,7 +45,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
     constructor(
         type: string,
         objectId: NextObjectIdInfo,
-        manifest: __AppManifest_obsolete_,
+        app: ALApp,
         position: Position,
         uri: Uri,
         nextIdContext: NextIdContext,
@@ -56,7 +57,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
         this._range = range;
 
         this.sortText = nextIdContext.additional ? `0.${nextIdContext.additional.ordinal / 1000}` : "0";
-        this.command = this.getCompletionCommand(position, uri, type, manifest, objectId);
+        this.command = this.getCompletionCommand(position, uri, type, app, objectId);
         this.documentation = this.getCompletionDocumentation(type, objectId);
         this.insertText = `${objectId.id}${this._injectSemicolon ? ";" : ""}`;
         this.detail = "AL Object ID Ninja";
@@ -64,30 +65,24 @@ export class NextObjectIdCompletionItem extends CompletionItem {
         this.kind = CompletionItemKind.Constant;
     }
 
-    getCompletionCommand(
-        position: Position,
-        uri: Uri,
-        type: string,
-        manifest: __AppManifest_obsolete_,
-        objectId: NextObjectIdInfo
-    ): Command {
+    getCompletionCommand(position: Position, uri: Uri, type: string, app: ALApp, objectId: NextObjectIdInfo): Command {
         return {
             command: "vjeko-al-objid.commit-suggestion",
             title: "",
             arguments: [
                 async () => {
                     output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`, LogLevel.Info);
-                    const { authKey } = manifest.ninja.config;
+                    const { authKey } = app.config;
                     const realId = await Backend.getNextNo(
-                        manifest.id,
+                        app.hash,
                         type,
-                        manifest.idRanges,
+                        app.manifest.idRanges,
                         true,
                         authKey,
                         objectId.id as number
                     );
                     const notChanged = !realId || this.isIdEqual(realId.id, objectId.id as number);
-                    Telemetry.instance.log("getNextNo-commit", manifest.id, notChanged ? undefined : "different");
+                    Telemetry.instance.log("getNextNo-commit", app.hash, notChanged ? undefined : "different");
                     if (notChanged) {
                         return;
                     }
@@ -105,7 +100,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
                                 }
                             });
                         } else {
-                            syncIfChosen(manifest, UI.nextId.showNoMoreNumbersWarning());
+                            syncIfChosen(app, UI.nextId.showNoMoreNumbersWarning());
                         }
                         replacement = "";
                     }

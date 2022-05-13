@@ -16,6 +16,17 @@ const CONSTANTS = {
     },
 };
 
+const wrapInPool = (app: ALApp, description: string) =>
+    app.config.appPoolId ? `pool to which ${description} belongs` : description;
+
+const describeApp = (app: ALApp) =>
+    wrapInPool(
+        app,
+        app.name.trim().toLowerCase() === app.manifest.name.trim().toLowerCase()
+            ? app.manifest.name
+            : `${app.manifest.name} (in folder ${app.name})`
+    );
+
 export const UI = {
     general: {
         showNoWorkspacesOpenInfo: () => window.showInformationMessage("There are no AL folders open. Nothing to do."),
@@ -74,9 +85,11 @@ export const UI = {
     },
 
     nextId: {
-        showNoBackEndConsumptionInfo: async (name: string) =>
+        showNoBackEndConsumptionInfo: async (app: ALApp) =>
             window.showInformationMessage(
-                `Azure back end has no information about consumed object IDs for ${name}. Do you want to synchronize?`,
+                `Azure back end has no information about consumed object IDs for ${
+                    app.config.appPoolId ? `app pool to which ${describeApp(app)} belongs` : `${describeApp(app)}`
+                }. Do you want to synchronize?`,
                 LABELS.BUTTON_SYNCHRONIZE,
                 "No",
                 LABELS.BUTTON_LEARN_MORE
@@ -112,14 +125,18 @@ export const UI = {
     },
 
     git: {
-        showNotRepoWarning: (manifest: __AppManifest_obsolete_, operation: string) =>
+        showNotRepoWarning: (app: ALApp, operation: string) =>
             window.showWarningMessage(
-                `There is no Git repository for application "${manifest.name}. You cannot ${operation} for an app unless you use Git to track it.`,
+                `There is no Git repository for application ${describeApp(
+                    app
+                )}. You cannot ${operation} for an app unless you use Git to track it.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        showNotCleanWarning: async (manifest: __AppManifest_obsolete_, operation: string) =>
+        showNotCleanWarning: async (app: ALApp, operation: string) =>
             window.showWarningMessage(
-                `Git repository for application "${manifest.name}" is not clean. Please commit, stash, or undo your changes before ${operation}."`,
+                `Git repository for application ${describeApp(
+                    app
+                )} is not clean. Please commit, stash, or undo your changes before ${operation}."`,
                 LABELS.BUTTON_LEARN_MORE
             ),
         showNoCurrentBranchError: async (name: string) =>
@@ -130,29 +147,37 @@ export const UI = {
     },
 
     authorization: {
-        showAlreadyAuthorizedError: async (manifest: __AppManifest_obsolete_) =>
+        showAlreadyAuthorizedError: async (app: ALApp) =>
             window.showErrorMessage(
-                `Application "${manifest.name}" is already authorized. You must first deauthorize it if you want to authorize it again.`
+                `Application ${describeApp(
+                    app
+                )} is already authorized. You must first deauthorize it if you want to authorize it again.`
             ),
-        showIncorrectKeyWarning: (manifest: __AppManifest_obsolete_) =>
+        showIncorrectKeyWarning: (app: ALApp) =>
             window.showWarningMessage(
-                `${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} "${manifest.name}".`
+                `${CONSTANTS.AUTHORIZATION.INCORRECT_KEY} ${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${describeApp(
+                    app
+                )}.`
             ),
-        showNotAuthorizedWarning: (manifest: __AppManifest_obsolete_) =>
+        showNotAuthorizedWarning: (app: ALApp) =>
             window.showWarningMessage(
-                `${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} "${manifest.name}" because it is not authorized.`
+                `${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${describeApp(app)} because it is not authorized.`
             ),
         showNoKeyError: (manifest: __AppManifest_obsolete_) =>
             window.showErrorMessage(
                 `You do not have an authorization key configured for app "${manifest.name}". Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`
             ),
-        showAuthorizationSuccessfulInfo: (manifest: __AppManifest_obsolete_) =>
+        showAuthorizationSuccessfulInfo: (app: ALApp) =>
             window.showInformationMessage(
-                `You have successfully authorized app "${manifest.name}" and we have committed it to your local Git repository. Please, push your changes to remote and create a pull request (if necessary) to share the authorization key with other developers on your team.`
+                `You have successfully authorized app ${describeApp(
+                    app
+                )} and we have committed it to your local Git repository. Please, push your changes to remote and create a pull request (if necessary) to share the authorization key with other developers on your team.`
             ),
-        showDeauthorizationSuccessfulInfo: (manifest: __AppManifest_obsolete_) =>
+        showDeauthorizationSuccessfulInfo: (app: ALApp) =>
             window.showInformationMessage(
-                `You have successfully deauthorized app "${manifest.name}". Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`
+                `You have successfully deauthorized app ${describeApp(
+                    app
+                )}. Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`
             ),
         showDeauthorizationFailedWarning: (manifest: __AppManifest_obsolete_, error: string) =>
             window.showWarningMessage(
@@ -231,16 +256,20 @@ export const UI = {
     pool: {
         showInvalidAppPoolIdError: (app: ALApp) =>
             window.showErrorMessage(
-                `App Pool ID defined in .objidconfig for ${app.manifest.name} is invalid. Please make sure to only use pool IDs created using the appropriate Ninja command.`
+                `App Pool ID defined in .objidconfig for ${describeApp(
+                    app
+                )} is invalid. Please make sure to only use pool IDs created using the appropriate Ninja command.`
             ),
-        showAppAuthorizedError: (manifest: __AppManifest_obsolete_) =>
+        showAppAuthorizedError: (app: ALApp) =>
             window.showErrorMessage(
-                `App ${manifest.name} is authorized. Pools manage their own authorization, so only unauthorized apps can be included in app pools.`,
+                `App ${describeApp(
+                    app
+                )} is authorized. Pools manage their own authorization, so only unauthorized apps can be included in app pools.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        showAppAlreadyInPoolError: (manifest: __AppManifest_obsolete_) =>
+        showAppAlreadyInPoolError: (app: ALApp) =>
             window.showErrorMessage(
-                `App ${manifest.name} already belongs to a pool. One app can belong to only one pool.`,
+                `App ${describeApp(app)} already belongs to a pool. One app can belong to only one pool.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
     },

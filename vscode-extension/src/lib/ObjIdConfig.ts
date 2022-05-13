@@ -166,7 +166,7 @@ export class ObjIdConfig {
      * @returns Ranges explicitly defined for specified object type
      */
     getObjectTypeRanges(objectType: string): NinjaALRange[] {
-        return this.objectRanges[objectType] || [];
+        return this.objectRanges[objectType] || this.idRanges;
     }
 
     public get bcLicense(): string {

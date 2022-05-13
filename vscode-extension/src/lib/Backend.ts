@@ -28,6 +28,7 @@ import { Telemetry } from "./Telemetry";
 import { getPoolIdFromAppIdIfAvailable, getRangeForId } from "./functions";
 import { ALRange, NinjaALRange } from "./types";
 
+// TODO All back-end methods that receive appId and/or authKey should instead receive ALApp and then access the necessary properties directly
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
 
 interface HttpRequest {

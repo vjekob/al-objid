@@ -60,28 +60,33 @@ export class ALAppManifest {
      *
      * ***NEVER SEND THIS PROPERTY TO THE BACK END!***
      */
-    public get id() {
-        return this._manifest.id;
+    // TODO Make sure this is only accessed when absolutely necessare (after all refactorings are done)
+    public get id(): string {
+        return this._manifest.id || "";
     }
 
     /**
      * The `name` property from the `app.json` file.
      */
-    public get name() {
-        return this._manifest.name;
+    public get name(): string {
+        return this._manifest.name || "";
     }
 
     /**
      * The `version` property from the `app.json` file.
      */
-    public get version() {
-        return this._manifest.version;
+    public get version(): string {
+        return this._manifest.version || "";
     }
 
     /**
      * The `idRanges` property from the `app.json` file.
      */
-    public get idRanges() {
-        return this._manifest.idRanges;
+    public get idRanges(): ALRange[] {
+        return this._manifest.idRanges || [];
+    }
+
+    public get preprocessorSymbols(): string[] {
+        return this._manifest.preprocessorSymbols || [];
     }
 }

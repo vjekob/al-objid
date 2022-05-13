@@ -1,4 +1,5 @@
 import { Uri } from "vscode";
+import { ALApp } from "./ALApp";
 import { __ObjIdConfig_obsolete_ } from "./__ObjIdConfig_obsolete_";
 
 export interface ALRange {
@@ -52,15 +53,15 @@ export interface __AppManifest_obsolete_ {
 }
 
 export interface GitCleanOperationContext {
-    manifests: __AppManifest_obsolete_[];
-    operation: (manifest: __AppManifest_obsolete_) => Promise<boolean>;
-    getFilesToStage: (manifest: __AppManifest_obsolete_) => string[];
-    learnMore: (manifests: __AppManifest_obsolete_ | __AppManifest_obsolete_[]) => any;
-    getCommitMessage: (manifests: __AppManifest_obsolete_[]) => string;
+    apps: ALApp[];
+    operation: (manifest: ALApp) => Promise<boolean>;
+    getFilesToStage: (manifest: ALApp) => string[];
+    learnMore: (manifests: ALApp | ALApp[]) => any;
+    getCommitMessage: (manifests: ALApp[]) => string;
 }
 
 export interface GitTopLevelPathContext {
     uri: Uri;
-    manifests: __AppManifest_obsolete_[];
+    apps: ALApp[];
     branch: string;
 }

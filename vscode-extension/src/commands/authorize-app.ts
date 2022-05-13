@@ -4,31 +4,30 @@ import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
 import { Git } from "../lib/Git";
-import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
-import { showDocument } from "../lib/functions";
-import { getAppNamesFromManifests } from "../lib/__AppManifest_obsolete_";
+import { getAppNames, showDocument } from "../lib/functions";
 import { CONFIG_FILE_NAME, DOCUMENTS } from "../lib/constants";
+import { WorkspaceManager } from "../features/WorkspaceManager";
 
 export const authorizeApp = async () => {
-    const manifests = await __ALWorkspace_obsolete_.pickFolders("to authorize");
-    if (!manifests) {
+    const apps = await WorkspaceManager.instance.pickFolders("to authorize");
+    if (!apps || apps.length === 0) {
         return;
     }
 
     const success = await Git.instance.executeCleanOperation({
-        manifests,
-        operation: async manifest => {
-            output.log(`Authorizing app "${manifest.name}" id ${manifest.id}`, LogLevel.Info);
+        apps,
+        operation: async app => {
+            output.log(`Authorizing app "${app.manifest.name}" id ${app.hash}`, LogLevel.Info);
 
-            Telemetry.instance.log("authorize", manifest.id);
-            const gitUser = await Git.instance.getUserInfo(manifest.ninja.uri);
-            let response = await Backend.authorizeApp(manifest.id, gitUser.name, gitUser.email, async response => {
+            Telemetry.instance.log("authorize", app.hash);
+            const gitUser = await Git.instance.getUserInfo(app.manifest.uri);
+            let response = await Backend.authorizeApp(app.hash, gitUser.name, gitUser.email, async response => {
                 const { error } = response;
                 if (error.statusCode !== 405) {
                     return false;
                 }
 
-                UI.authorization.showAlreadyAuthorizedError(manifest);
+                UI.authorization.showAlreadyAuthorizedError(app);
                 return true;
             });
 
@@ -36,14 +35,13 @@ export const authorizeApp = async () => {
                 return false;
             }
 
-            manifest.ninja.config.authKey = response.authKey;
-            UI.authorization.showAuthorizationSuccessfulInfo(manifest);
+            app.config.authKey = response.authKey;
+            UI.authorization.showAuthorizationSuccessfulInfo(app);
             return true;
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument(DOCUMENTS.AUTHORIZATION_GIT),
-        getCommitMessage: manifests =>
-            `AL Object ID Ninja app authorization for ${getAppNamesFromManifests(manifests)}`,
+        getCommitMessage: apps => `AL Object ID Ninja app authorization for ${getAppNames(apps)}`,
     });
 
     if (success) {

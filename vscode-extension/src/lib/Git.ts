@@ -3,11 +3,11 @@ import * as fs from "fs";
 import { exec } from "child_process";
 import { extensions, Uri, window } from "vscode";
 import { LogLevel, output } from "../features/Output";
-import { getAppNamesFromManifests } from "./__AppManifest_obsolete_";
 import { LABELS } from "./constants";
 import { PropertyBag } from "./PropertyBag";
 import { GitCleanOperationContext, GitTopLevelPathContext } from "./types";
 import { UI } from "./UI";
+import { getAppNames } from "./functions";
 
 /**
  * Represents a branch info with local and remote tracking info:
@@ -240,41 +240,41 @@ export class Git {
 
         // First pass - require all uris to belong to clean git repos and get top-level paths
         const topLevelPaths: PropertyBag<GitTopLevelPathContext> = {};
-        for (let manifest of context.manifests) {
-            if (!(await Git.instance.isInitialized(manifest.ninja.uri))) {
-                if ((await UI.git.showNotRepoWarning(manifest, "change authorization")) === LABELS.BUTTON_LEARN_MORE) {
-                    context.learnMore(context.manifests);
+        for (let app of context.apps) {
+            if (!(await Git.instance.isInitialized(app.uri))) {
+                if ((await UI.git.showNotRepoWarning(app, "change authorization")) === LABELS.BUTTON_LEARN_MORE) {
+                    context.learnMore(context.apps);
                 }
                 return false;
             }
 
-            if (!(await Git.instance.isClean(manifest.ninja.uri))) {
-                if ((await UI.git.showNotCleanWarning(manifest, "authorizing the app")) === LABELS.BUTTON_LEARN_MORE) {
-                    context.learnMore(context.manifests);
+            if (!(await Git.instance.isClean(app.uri))) {
+                if ((await UI.git.showNotCleanWarning(app, "authorizing the app")) === LABELS.BUTTON_LEARN_MORE) {
+                    context.learnMore(context.apps);
                 }
                 return false;
             }
 
-            const topLevelPath = await this.getTopLevelPath(manifest.ninja.uri);
+            const topLevelPath = await this.getTopLevelPath(app.uri);
             const topLevelPathInfo =
                 topLevelPaths[topLevelPath] ||
                 (topLevelPaths[topLevelPath] = {
-                    uri: (await this.getRepositoryRootUri(manifest.ninja.uri))!,
-                    manifests: [],
+                    uri: (await this.getRepositoryRootUri(app.uri))!,
+                    apps: [],
                     branch: "",
                 });
-            topLevelPathInfo.manifests.push(manifest);
+            topLevelPathInfo.apps.push(app);
         }
 
         // Second pass - confirm branch names for top-level Git directories
         for (let key of Object.keys(topLevelPaths)) {
             const topLevelPath = topLevelPaths[key];
-            const names = getAppNamesFromManifests(topLevelPath.manifests);
+            const names = getAppNames(topLevelPath.apps);
 
             const branch = await Git.instance.getCurrentBranchName(topLevelPath.uri);
             if (!branch) {
                 if ((await UI.git.showNoCurrentBranchError(names)) === LABELS.BUTTON_LEARN_MORE) {
-                    context.learnMore(topLevelPath.manifests);
+                    context.learnMore(topLevelPath.apps);
                 }
                 return false;
             }
@@ -291,16 +291,16 @@ export class Git {
             const topLevelPath = topLevelPaths[key];
 
             let commit = false;
-            for (let manifest of topLevelPath.manifests) {
-                if (!(await context.operation(manifest))) {
+            for (let app of topLevelPath.apps) {
+                if (!(await context.operation(app))) {
                     // Operation signalled that nothing should be committed
                     continue;
                 }
 
                 // Stage files that need to be staged
-                const files = context.getFilesToStage(manifest);
+                const files = context.getFilesToStage(app);
                 for (let file of files) {
-                    await this.stageFile(manifest.ninja.uri, file);
+                    await this.stageFile(app.manifest.uri, file);
                 }
 
                 // Indicate that commit is needed for this top-level path
@@ -309,7 +309,7 @@ export class Git {
 
             // Commit files
             if (commit) {
-                await this.commit(topLevelPath.uri, context.getCommitMessage(topLevelPath.manifests));
+                await this.commit(topLevelPath.uri, context.getCommitMessage(topLevelPath.apps));
                 atLeastOneSucceeded = true;
             }
         }

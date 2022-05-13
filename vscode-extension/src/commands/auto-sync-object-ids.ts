@@ -1,5 +1,4 @@
 import { env, ProgressLocation, Uri, window, workspace } from "vscode";
-import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { AuthorizedAppConsumption, ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS, URLS } from "../lib/constants";
 import { Git, GitBranchInfo } from "../lib/Git";
@@ -7,11 +6,11 @@ import { getObjectDefinitions, getWorkspaceFolderFiles, updateActualConsumption 
 import { PropertyBag } from "../lib/PropertyBag";
 import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
-import { getCachedManifestFromUri } from "../lib/__AppManifest_obsolete_";
 import { Backend } from "../lib/Backend";
 import { LogLevel, output } from "../features/Output";
 import { Telemetry } from "../lib/Telemetry";
-import { __AppManifest_obsolete_ } from "../lib/types";
+import { WorkspaceManager } from "../features/WorkspaceManager";
+import { ALApp } from "../lib/ALApp";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -114,22 +113,22 @@ function compressConsumption(consumption: ConsumptionInfo) {
     }
 }
 
-function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manifests: __AppManifest_obsolete_[]) {
+function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>, apps: ALApp[]) {
     // First pass: consolidate per app pool
-    const manifestMap: PropertyBag<string> = {};
+    const appMap: PropertyBag<string> = {};
     for (let key of Object.keys(consumptions)) {
-        let manifest = manifests.find(manifest => manifest.ninja.uri.fsPath === key)!;
-        const { appPoolId } = manifest.ninja.config;
+        let app = apps.find(app => app.uri.fsPath === key)!;
+        const { appPoolId } = app.config;
         if (!appPoolId) {
             continue;
         }
 
-        if (!manifestMap[appPoolId]) {
-            manifestMap[appPoolId] = key;
+        if (!appMap[appPoolId]) {
+            appMap[appPoolId] = key;
             continue;
         }
 
-        const poolConsumption = consumptions[manifestMap[appPoolId]];
+        const poolConsumption = consumptions[appMap[appPoolId]];
         const appConsumption = consumptions[key];
         delete consumptions[key];
 
@@ -148,16 +147,13 @@ function compressConsumptions(consumptions: PropertyBag<ConsumptionInfo>, manife
     }
 }
 
-function authorizeConsumptions(
-    consumptions: PropertyBag<ConsumptionInfo>,
-    manifests: __AppManifest_obsolete_[]
-): AuthorizedAppConsumption[] {
+function authorizeConsumptions(consumptions: PropertyBag<ConsumptionInfo>, apps: ALApp[]): AuthorizedAppConsumption[] {
     let result: AuthorizedAppConsumption[] = [];
     for (let key of Object.keys(consumptions)) {
-        let manifest = manifests.find(manifest => manifest.ninja.uri.fsPath === key)!;
+        let app = apps.find(app => app.uri.fsPath === key)!;
         result.push({
-            appId: manifest.id,
-            authKey: manifest.ninja.config.authKey,
+            appId: app.hash,
+            authKey: app.config.authKey,
             ids: consumptions[key],
         });
     }
@@ -196,10 +192,8 @@ export const autoSyncObjectIds = async () => {
             return autoSyncResult(AutoSyncResult.NoALFolders);
 
         // Pick folders
-        let manifests = auto
-            ? __ALWorkspace_obsolete_.getALFolders()?.map(workspace => getCachedManifestFromUri(workspace.uri))
-            : await __ALWorkspace_obsolete_.pickFolders();
-        if (!manifests || !manifests.length) {
+        let apps = auto ? WorkspaceManager.instance.alApps : await WorkspaceManager.instance.pickFolders();
+        if (!apps || !apps.length) {
             return autoSyncResult(AutoSyncResult.SilentFailure);
         }
 
@@ -210,16 +204,16 @@ export const autoSyncObjectIds = async () => {
         let setup: AutoSyncConfiguration[] = [];
         let nonGit = createNewConfig();
         setup.push(nonGit);
-        for (let manifest of manifests) {
-            let root = await Git.instance.getRepositoryRootUri(manifest.ninja.uri);
+        for (let app of apps) {
+            let root = await Git.instance.getRepositoryRootUri(app.uri);
             if (!root) {
-                nonGit.folders.push(manifest.ninja.uri);
+                nonGit.folders.push(app.uri);
                 continue;
             }
 
             let repoPath = root.fsPath;
             if (!repoFolders[repoPath]) repoFolders[repoPath] = [];
-            repoFolders[repoPath].push(manifest.ninja.uri);
+            repoFolders[repoPath].push(app.uri);
 
             if (repos.find(repo => repo.fsPath === repoPath)) continue;
 
@@ -327,8 +321,8 @@ export const autoSyncObjectIds = async () => {
             });
             await syncSingleConfiguration(config, consumptions);
         }
-        compressConsumptions(consumptions, manifests);
-        let payload = authorizeConsumptions(consumptions, manifests);
+        compressConsumptions(consumptions, apps);
+        let payload = authorizeConsumptions(consumptions, apps);
 
         Telemetry.instance.log("autoSyncIds");
         await Backend.autoSyncIds(payload, false);
