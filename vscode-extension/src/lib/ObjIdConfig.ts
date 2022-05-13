@@ -9,6 +9,7 @@ import { LogLevel, output } from "../features/Output";
 import { Backend } from "./backend/Backend";
 import { ALObjectType } from "./types/ALObjectType";
 import { BCLicense } from "./BCLicense";
+import { ObjIdConfigLinter } from "../features/linters/ObjIdConfigLinter";
 
 interface ObjIdConfigJson {
     authKey: string;
@@ -47,6 +48,9 @@ export class ObjIdConfig {
         this._backEndAppInfo = backEndAppInfo;
         this._folder = workspace.getWorkspaceFolder(uri)!;
         this._config = this.read();
+
+        const linter = new ObjIdConfigLinter(uri);
+        linter.validate();
     }
 
     private read(): ObjIdConfigJson {

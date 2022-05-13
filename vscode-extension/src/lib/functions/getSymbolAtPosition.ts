@@ -17,7 +17,7 @@ function getSymbolInChildren(
     matches: DocumentSymbol[]
 ): DocumentSymbol | null {
     for (let symbol of symbols) {
-        if (symbol.range.start.isBefore(position) && symbol.range.end.isAfter(position)) {
+        if (symbol.range.start.isBeforeOrEqual(position) && symbol.range.end.isAfterOrEqual(position)) {
             matches.push(symbol);
             bestMatch = getBestMatch(symbol, bestMatch);
         }

@@ -1,17 +1,61 @@
 import { WorkspaceManager } from "./WorkspaceManager";
-import { CodeActionProvider, TextDocument, Range, CodeActionContext, CodeAction, CodeActionKind } from "vscode";
+import {
+    CodeActionProvider,
+    TextDocument,
+    Range,
+    CodeActionContext,
+    CodeAction,
+    CodeActionKind,
+    Uri,
+    WorkspaceEdit,
+    TextEdit,
+    workspace,
+} from "vscode";
 import { ALObjectType } from "../lib/types/ALObjectType";
 import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
 import { DIAGNOSTIC_CODE } from "./Diagnostics";
 
 export class ObjIdConfigActionProvider implements CodeActionProvider {
-    async provideCodeActions(
+    private createAction(
+        actions: CodeAction[],
+        command: string,
+        args: any[],
+        title: string,
+        kind: CodeActionKind = CodeActionKind.QuickFix
+    ) {
+        const action = new CodeAction(title);
+        action.kind = kind;
+        action.command = { command, arguments: args, title };
+        actions.push(action);
+    }
+
+    private actions(actions: CodeAction[]) {
+        return {
+            objectIdConfig: {
+                fixInvalidProperty: async (uri: Uri, range: Range) => {
+                    const symbol = await getSymbolAtPosition(uri, range.start);
+                    if (!symbol) {
+                        return;
+                    }
+                    this.createAction(
+                        actions,
+                        "vjeko-al-objid.quickfix-remove-property",
+                        [uri, symbol],
+                        "Remove property",
+                        CodeActionKind.QuickFix
+                    );
+                },
+            },
+        };
+    }
+
+    public async provideCodeActions(
         document: TextDocument,
         range: Range,
         context: CodeActionContext
     ): Promise<CodeAction[] | undefined> {
         const ninjaIssues = context.diagnostics.filter(
-            diagnostic => typeof diagnostic.code === "string" && diagnostic.code.startsWith("NINJA")
+            diagnostic => typeof diagnostic.code === "string" && diagnostic.code.startsWith("NIN")
         );
         if (ninjaIssues.length === 0) {
             return;
@@ -31,7 +75,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     const remainingTypes = Object.values<string>(ALObjectType).filter(
                         type => !existingTypes.includes(type)
                     );
-                    createAction(
+                    this.createAction(
                         actions,
                         "vjeko-al-objid.quickfix-remove-declaration",
                         [app, symbol.name],
@@ -39,7 +83,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                         CodeActionKind.QuickFix
                     );
                     if (remainingTypes.length > 0) {
-                        createAction(
+                        this.createAction(
                             actions,
                             "vjeko-al-objid.quickfix-select-valid-type",
                             [document, symbol.selectionRange, remainingTypes],
@@ -50,23 +94,14 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     break;
 
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND:
-                    createAction(actions, "vjeko-al-objid.select-bclicense", [app], "Select a BC license file");
+                    this.createAction(actions, "vjeko-al-objid.select-bclicense", [app], "Select a BC license file");
+                    break;
+
+                case DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_PROPERTY:
+                    await this.actions(actions).objectIdConfig.fixInvalidProperty(document.uri, range);
                     break;
             }
         }
         return actions;
     }
-}
-
-function createAction(
-    actions: CodeAction[],
-    command: string,
-    args: any[],
-    title: string,
-    kind: CodeActionKind = CodeActionKind.QuickFix
-) {
-    const action = new CodeAction(title);
-    action.kind = kind;
-    action.command = { command, arguments: args, title };
-    actions.push(action);
 }

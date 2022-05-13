@@ -71,6 +71,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             title: "",
             arguments: [
                 async () => {
+                    //TODO Assigning from public range (1..50000) for enum values results in "No more objects..." error
                     output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`, LogLevel.Info);
                     const realId = await Backend.getNextNo(
                         app,

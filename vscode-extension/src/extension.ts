@@ -35,6 +35,7 @@ import { WorkspaceManager } from "./features/WorkspaceManager";
 import { TreeViews } from "./features/Explorer/TreeViews";
 import { expandAllRangeExplorer } from "./commands/expand-all-rangeExplorer";
 import { collapseAllRangeExplorer } from "./commands/collapse-all-rangeExplorer";
+import { quickFixRemoveProperty } from "./commands/quickfix-remove-property";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
@@ -61,6 +62,7 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
         commands.registerCommand("vjeko-al-objid.quickfix-remove-declaration", quickFixRemoveDeclaration),
         commands.registerCommand("vjeko-al-objid.quickfix-select-valid-type", quickFixSelectValidType),
+        commands.registerCommand("vjeko-al-objid.quickfix-remove-property", quickFixRemoveProperty),
         commands.registerCommand("vjeko-al-objid.expand-all-rangeExplorer", expandAllRangeExplorer),
         commands.registerCommand("vjeko-al-objid.collapse-all-rangeExplorer", collapseAllRangeExplorer),
 
