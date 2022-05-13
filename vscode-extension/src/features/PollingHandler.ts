@@ -2,7 +2,7 @@ import { NotificationsFromLog } from "./NotificationsFromLog";
 import { Disposable } from "vscode";
 import { Backend } from "../lib/Backend";
 import { PropertyBag } from "../lib/PropertyBag";
-import { FolderAuthorization } from "../lib/BackendTypes";
+import { FolderAuthorization } from "../lib/types/FolderAuthorization";
 import { ConsumptionCache } from "./ConsumptionCache";
 import { NewsHandler } from "./NewsHandler";
 import { output } from "./Output";

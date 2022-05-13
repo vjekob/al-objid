@@ -1,6 +1,9 @@
 import path = require("path");
 import { commands, Disposable, env, ExtensionContext, Uri, window } from "vscode";
-import { NewsActionType, NewsButton, NewsEntry, NewsType } from "../lib/BackendTypes";
+import { NewsEntry } from "../lib/types/NewsEntry";
+import { NewsButton } from "../lib/types/NewsButton";
+import { NewsActionType } from "../lib/types/NewsActionType";
+import { NewsType } from "../lib/types/NewsType";
 
 enum NewsEntryStatus {
     shown = 0,

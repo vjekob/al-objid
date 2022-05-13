@@ -1,5 +1,5 @@
 import { RelativePattern, Uri, workspace } from "vscode";
-import { ConsumptionInfo } from "./BackendTypes";
+import { ConsumptionInfo } from "./types/ConsumptionInfo";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { ALObject } from "@vjeko.com/al-parser-types-ninja";
 import { ParserConnector } from "../features/ParserConnector";

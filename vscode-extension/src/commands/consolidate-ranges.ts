@@ -1,4 +1,5 @@
-import { ALRange, NinjaALRange } from "../lib/types";
+import { NinjaALRange } from "../lib/types/NinjaALRange";
+import { ALRange } from "../lib/types/ALRange";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";

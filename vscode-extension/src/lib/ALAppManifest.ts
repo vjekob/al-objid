@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { Uri } from "vscode";
-import { ALRange } from "./types";
+import { ALRange } from "./types/ALRange";
 
 interface ALAppJson {
     id: string;

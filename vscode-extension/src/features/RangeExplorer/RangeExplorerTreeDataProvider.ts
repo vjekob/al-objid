@@ -1,6 +1,6 @@
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
 import { Disposable, EventEmitter, TreeDataProvider, TreeItem, Uri, workspace } from "vscode";
-import { ALRange } from "../../lib/types";
+import { ALRange } from "../../lib/types/ALRange";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
 import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";
 import { getFolderTreeItemProvider } from "./TreeItemProviders";

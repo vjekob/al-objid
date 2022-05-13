@@ -2,7 +2,7 @@ import { MarkdownString, StatusBarAlignment, StatusBarItem, window } from "vscod
 import { EXTENSION_NAME, URLS } from "../lib/constants";
 import { DisposableHolder } from "./DisposableHolder";
 import { Backend } from "../lib/Backend";
-import { AuthorizedAppResponse } from "../lib/BackendTypes";
+import { AuthorizedAppResponse } from "../lib/types/AuthorizedAppResponse";
 import { WorkspaceManager } from "./WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
 

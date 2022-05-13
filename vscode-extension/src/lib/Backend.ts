@@ -1,19 +1,17 @@
 import { NotificationsFromLog } from "./../features/NotificationsFromLog";
 import { HttpStatusHandler } from "../features/HttpStatusHandler";
 import { output } from "../features/Output";
-import {
-    AuthorizationDeletedInfo,
-    AuthorizationInfo,
-    AuthorizedAppConsumption,
-    ConsumptionInfo,
-    ConsumptionInfoWithTotal,
-    FolderAuthorization,
-    CheckResponse,
-    NextObjectIdInfo,
-    EventLogEntry,
-    ConsumptionData,
-    AuthorizedAppResponse,
-} from "./BackendTypes";
+import { ConsumptionData } from "./types/ConsumptionData";
+import { CheckResponse } from "./types/CheckResponse";
+import { ConsumptionInfoWithTotal } from "./types/ConsumptionInfoWithTotal";
+import { EventLogEntry } from "./types/EventLogEntry";
+import { AuthorizedAppConsumption } from "./types/AuthorizedAppConsumption";
+import { FolderAuthorization } from "./types/FolderAuthorization";
+import { AuthorizationDeletedInfo } from "./types/AuthorizationDeletedInfo";
+import { AuthorizedAppResponse } from "./types/AuthorizedAppResponse";
+import { AuthorizationInfo } from "./types/AuthorizationInfo";
+import { ConsumptionInfo } from "./types/ConsumptionInfo";
+import { NextObjectIdInfo } from "./types/NextObjectIdInfo";
 import { Config } from "./Config";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
@@ -23,8 +21,10 @@ import { RangeExplorerTreeDataProvider } from "../features/RangeExplorer/RangeEx
 import { LABELS } from "./constants";
 import { env, Uri } from "vscode";
 import { Telemetry } from "./Telemetry";
-import { getPoolIdFromAppIdIfAvailable, getRangeForId } from "./functions";
-import { ALRange, BackEndAppInfo, NinjaALRange } from "./types";
+import { getRangeForId } from "./functions/getRangeForId";
+import { BackEndAppInfo } from "./types/BackEndAppInfo";
+import { NinjaALRange } from "./types/NinjaALRange";
+import { ALRange } from "./types/ALRange";
 import { ALApp } from "./ALApp";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 
@@ -247,7 +247,7 @@ export class Backend {
             }
         }
 
-        const appId = getPoolIdFromAppIdIfAvailable(app.hash);
+        const appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(app.hash);
 
         const response = await sendRequest<NextObjectIdInfo>("/api/v2/getNext", commit ? "POST" : "GET", {
             appId,
@@ -264,7 +264,7 @@ export class Backend {
     static async syncIds(appId: string, ids: ConsumptionInfo, patch: boolean, authKey: string): Promise<boolean> {
         knownManagedApps[appId] = Promise.resolve(true);
 
-        appId = getPoolIdFromAppIdIfAvailable(appId);
+        appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(appId);
 
         const response = await sendRequest<ConsumptionInfo>("/api/v2/syncIds", patch ? "PATCH" : "POST", {
             appId,
@@ -279,7 +279,7 @@ export class Backend {
 
         for (let app of consumptions) {
             knownManagedApps[app.appId] = Promise.resolve(true);
-            app.appId = getPoolIdFromAppIdIfAvailable(app.appId);
+            app.appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(app.appId);
         }
         const response = await sendRequest<ConsumptionInfo>("/api/v2/autoSyncIds", patch ? "PATCH" : "POST", {
             appFolders: consumptions,
@@ -301,7 +301,7 @@ export class Backend {
             additional.gitEMail = app.encrypt(gitEMail);
         }
 
-        const appId = getPoolIdFromAppIdIfAvailable(app.hash);
+        const appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(app.hash);
 
         const response = await sendRequest<AuthorizationInfo>(
             "/api/v2/authorizeApp",
@@ -321,7 +321,7 @@ export class Backend {
             return;
         }
 
-        const appId = getPoolIdFromAppIdIfAvailable(app.hash);
+        const appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(app.hash);
 
         const response = await sendRequest<AuthorizedAppResponse>("/api/v2/authorizeApp", "GET", {
             appId,
@@ -340,7 +340,7 @@ export class Backend {
         authKey: string,
         errorHandler: ErrorHandler<AuthorizationDeletedInfo>
     ): Promise<boolean> {
-        appId = getPoolIdFromAppIdIfAvailable(appId);
+        appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(appId);
         const response = await sendRequest<AuthorizationDeletedInfo>(
             "/api/v2/authorizeApp",
             "DELETE",
@@ -390,7 +390,7 @@ export class Backend {
 
         // Update payload for app pools
         for (let folder of payload) {
-            folder.appId = getPoolIdFromAppIdIfAvailable(folder.appId);
+            folder.appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(folder.appId);
         }
 
         // We check only those apps that we know are managed by the back end
@@ -409,7 +409,7 @@ export class Backend {
             return;
         }
 
-        appId = getPoolIdFromAppIdIfAvailable(appId);
+        appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(appId);
 
         const response = await sendRequest<ConsumptionInfoWithTotal>("/api/v2/getConsumption", "GET", {
             appId,
@@ -419,7 +419,7 @@ export class Backend {
     }
 
     static async checkApp(appId: string): Promise<boolean> {
-        appId = getPoolIdFromAppIdIfAvailable(appId);
+        appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(appId);
 
         const response = await sendRequest<boolean>("/api/v2/checkApp", "GET", { appId });
         return response.value ?? false;

@@ -2,7 +2,7 @@ import { Uri } from "vscode";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { LogLevel, output } from "../features/Output";
-import { ConsumptionInfo } from "../lib/BackendTypes";
+import { ConsumptionInfo } from "../lib/types/ConsumptionInfo";
 import { LABELS } from "../lib/constants";
 import { getActualConsumption, getObjectDefinitions, getWorkspaceFolderFiles } from "../lib/ObjectIds";
 import { Telemetry } from "../lib/Telemetry";

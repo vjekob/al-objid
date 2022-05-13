@@ -2,7 +2,7 @@ import { commands, DocumentSymbol, Uri } from "vscode";
 import * as fs from "fs";
 import path = require("path");
 import * as os from "os";
-import { getSha256 } from "./Sha256";
+import { getSha256 } from "./functions/getSha256";
 import { ConfigurationProperty } from "./ObjIdConfig";
 
 async function waitForJsonActivation(): Promise<boolean> {

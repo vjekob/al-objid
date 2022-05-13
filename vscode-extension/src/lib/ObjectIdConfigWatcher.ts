@@ -2,7 +2,7 @@ import { ObjIdConfig } from "./ObjIdConfig";
 import { Disposable } from "vscode";
 import { DOCUMENTS, LABELS } from "./constants";
 import { FileWatcher } from "./FileWatcher";
-import { showDocument } from "./functions";
+import { showDocument } from "./showDocument";
 import { Telemetry } from "./Telemetry";
 import { UI } from "./UI";
 

@@ -1,8 +1,8 @@
 import { window } from "vscode";
 import { LogLevel, Output } from "../features/Output";
-import { NinjaALRange } from "./types";
+import { NinjaALRange } from "./types/NinjaALRange";
 import { CONFIG_FILE_NAME, EXTENSION_NAME, LABELS } from "./constants";
-import { EventLogEntry } from "./BackendTypes";
+import { EventLogEntry } from "./types/EventLogEntry";
 import { ALApp } from "./ALApp";
 
 const CONSTANTS = {

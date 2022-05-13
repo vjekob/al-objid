@@ -1,7 +1,7 @@
 import { Uri } from "vscode";
 import { BCLicense } from "../lib/BCLicense";
 import { LABELS } from "../lib/constants";
-import { showDocument } from "../lib/functions";
+import { showDocument } from "../lib/showDocument";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 

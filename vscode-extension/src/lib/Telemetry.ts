@@ -1,6 +1,6 @@
 import { PropertyBag } from "./PropertyBag";
 import { ExtensionContext } from "vscode";
-import { getSha256 } from "./Sha256";
+import { getSha256 } from "./functions/getSha256";
 import { Backend } from "./Backend";
 import { EXTENSION_VERSION } from "./constants";
 

@@ -1,5 +1,6 @@
 import { env, ProgressLocation, Uri, window, workspace } from "vscode";
-import { AuthorizedAppConsumption, ConsumptionInfo } from "../lib/BackendTypes";
+import { AuthorizedAppConsumption } from "../lib/types/AuthorizedAppConsumption";
+import { ConsumptionInfo } from "../lib/types/ConsumptionInfo";
 import { LABELS, URLS } from "../lib/constants";
 import { Git, GitBranchInfo } from "../lib/Git";
 import { getObjectDefinitions, getWorkspaceFolderFiles, updateActualConsumption } from "../lib/ObjectIds";

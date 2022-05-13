@@ -4,7 +4,8 @@ import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
 import { Git } from "../lib/Git";
-import { getAppNames, showDocument } from "../lib/functions";
+import { getAppNames } from "../lib/functions/getAppNames";
+import { showDocument } from "../lib/showDocument";
 import { CONFIG_FILE_NAME, DOCUMENTS } from "../lib/constants";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 

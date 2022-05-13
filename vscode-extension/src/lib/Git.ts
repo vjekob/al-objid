@@ -5,9 +5,10 @@ import { extensions, Uri, window } from "vscode";
 import { LogLevel, output } from "../features/Output";
 import { LABELS } from "./constants";
 import { PropertyBag } from "./PropertyBag";
-import { GitCleanOperationContext, GitTopLevelPathContext } from "./types";
+import { GitTopLevelPathContext } from "./types/GitTopLevelPathContext";
+import { GitCleanOperationContext } from "./types/GitCleanOperationContext";
 import { UI } from "./UI";
-import { getAppNames } from "./functions";
+import { getAppNames } from "./functions/getAppNames";
 
 /**
  * Represents a branch info with local and remote tracking info:

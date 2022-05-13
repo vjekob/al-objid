@@ -14,11 +14,12 @@ import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { output } from "./Output";
-import { NextObjectIdInfo } from "../lib/BackendTypes";
+import { NextObjectIdInfo } from "../lib/types/NextObjectIdInfo";
 import { PropertyBag } from "../lib/PropertyBag";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext, ParserConnector } from "./ParserConnector";
-import { getRangeForId, getSymbolAtPosition } from "../lib/functions";
+import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
+import { getRangeForId } from "../lib/functions/getRangeForId";
 import { ALApp } from "../lib/ALApp";
 import { WorkspaceManager } from "./WorkspaceManager";
 

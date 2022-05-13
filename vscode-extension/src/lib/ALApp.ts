@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import { Disposable, EventEmitter, Uri, WorkspaceFolder } from "vscode";
-import { getSha256 } from "./Sha256";
+import { getSha256 } from "./functions/getSha256";
 import { ALAppManifest } from "./ALAppManifest";
 import { ObjIdConfig } from "./ObjIdConfig";
 import { APP_FILE_NAME, CONFIG_FILE_NAME } from "./constants";
@@ -9,7 +9,7 @@ import { output } from "../features/Output";
 import { FileWatcher } from "./FileWatcher";
 import { ObjIdConfigWatcher } from "./ObjectIdConfigWatcher";
 import { decrypt, encrypt } from "./Encryption";
-import { BackEndAppInfo } from "./types";
+import { BackEndAppInfo } from "./types/BackEndAppInfo";
 
 export class ALApp implements Disposable, BackEndAppInfo {
     private readonly _uri: Uri;

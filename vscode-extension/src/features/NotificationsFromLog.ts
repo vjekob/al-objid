@@ -1,4 +1,4 @@
-import { EventLogEntry } from "../lib/BackendTypes";
+import { EventLogEntry } from "../lib/types/EventLogEntry";
 import { Config } from "../lib/Config";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "./WorkspaceManager";

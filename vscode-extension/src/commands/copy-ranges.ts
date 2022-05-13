@@ -1,6 +1,6 @@
 import { DOCUMENTS, LABELS } from "../lib/constants";
-import { showDocument } from "../lib/functions";
-import { NinjaALRange } from "../lib/types";
+import { showDocument } from "../lib/showDocument";
+import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 

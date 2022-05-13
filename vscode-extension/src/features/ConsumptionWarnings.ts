@@ -1,4 +1,4 @@
-import { ConsumptionData } from "../lib/BackendTypes";
+import { ConsumptionData } from "../lib/types/ConsumptionData";
 import { PropertyBag } from "../lib/PropertyBag";
 import { UI } from "../lib/UI";
 import { LABELS } from "../lib/constants";

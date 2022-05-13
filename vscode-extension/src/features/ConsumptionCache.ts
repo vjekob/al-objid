@@ -1,5 +1,5 @@
 import { Disposable, EventEmitter } from "vscode";
-import { ConsumptionData } from "../lib/BackendTypes";
+import { ConsumptionData } from "../lib/types/ConsumptionData";
 import { OBJECT_TYPES } from "../lib/constants";
 import { PropertyBag } from "../lib/PropertyBag";
 import { ConsumptionWarnings } from "./ConsumptionWarnings";

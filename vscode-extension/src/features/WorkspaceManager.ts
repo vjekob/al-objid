@@ -140,14 +140,33 @@ export class WorkspaceManager implements Disposable {
         return this._appHashMap[hash];
     }
 
+    /**
+     * Shows a quick-pick menu that allows the user to pick a single app from the list of open apps. Auto-selects the
+     * app if there is only one app in the workspace (in that case, the quick-pick menu is not shown).
+     * @param operationDescription Description of the operation, to show in the quick-pick menu
+     * @returns Promise to either selected app, or undefined
+     */
     public pickFolder(operationDescription?: string): Promise<ALApp | undefined> {
         return this.pickFolderOrFolders(false, operationDescription) as Promise<ALApp | undefined>;
     }
 
+    /**
+     * Shows a quick-pick menu that allows the user to pick multiple apps from the list of open apps. Auto-selects
+     * the app if there is only one app in the workspace (in that case, the quick-pick menu is not shown).
+     * @param operationDescription Description of the operation to show in the quick-pick menu
+     * @returns Promise to either array of selected apps, or undefined
+     */
     public pickFolders(operationDescription?: string): Promise<ALApp[] | undefined> {
         return this.pickFolderOrFolders(true, operationDescription) as Promise<ALApp[] | undefined>;
     }
 
+    /**
+     * Returns the `ALApp` instance to which the specified Uri belongs. If Uri is not specified, then it attempts to read it
+     * from the currently open document. If that document doesn't belong to an AL app, then the quick-pick menu is shown and
+     * the user is asked to select a single folder.
+     * @param uri Uri of the file or folder to select
+     * @returns Promise to either selected app, or undefined
+     */
     public async selectWorkspaceFolder(uri?: Uri): Promise<ALApp | undefined> {
         if (uri && this.isALUri(uri)) {
             return this.getALAppFromUri(uri);
@@ -161,6 +180,35 @@ export class WorkspaceManager implements Disposable {
         return this.pickFolder();
     }
 
+    /**
+     * Returns app pool ID that specified app identified by hash belongs to. If the app does not exist, or does not belong
+     * to a pool, then the same passed as `appHash` parameter is returned.
+     * @param appHash Hash of the app for which the app pool is being determined
+     * @returns Pool ID of the pool, if the specified hash belongs to a pool; otherwise the app hash is returned
+     */
+    getPoolIdFromAppIdIfAvailable(appHash: string): string {
+        const app = this.getALAppFromHash(appHash);
+        if (!app) {
+            return appHash;
+        }
+        const { appPoolId } = app.config;
+        if (!appPoolId) {
+            return appHash;
+        }
+
+        if (appPoolId.length !== 64 || !/[0-9A-Fa-f]{6}/g.test(appPoolId)) {
+            UI.pool.showInvalidAppPoolIdError(app);
+            return appHash;
+        }
+
+        return appPoolId;
+    }
+
+    /**
+     * From Disposable.
+     *
+     * **Do not call directly.**
+     */
     public dispose() {
         if (this._disposed) {
             return;
