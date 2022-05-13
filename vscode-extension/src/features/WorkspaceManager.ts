@@ -6,6 +6,7 @@ export class WorkspaceWatcher implements Disposable {
     private _disposed = false;
     private _workspaceFoldersChangeEvent: Disposable;
     private _apps: ALApp[] = [];
+    private _folders: WorkspaceFolder[] = [];
 
     private constructor() {
         this._workspaceFoldersChangeEvent = workspace.onDidChangeWorkspaceFolders(
@@ -27,6 +28,14 @@ export class WorkspaceWatcher implements Disposable {
             }
             return stillExists;
         });
+        this._folders = this._folders.filter(
+            oldFolder =>
+                !removed.find(
+                    removedFolder =>
+                        removedFolder.uri.scheme === oldFolder.uri.scheme &&
+                        removedFolder.uri.fsPath === oldFolder.uri.fsPath
+                )
+        );
 
         // Add any folders that are added to the workspace
         this.addFoldersToWatch(added as WorkspaceFolder[]);
@@ -40,6 +49,7 @@ export class WorkspaceWatcher implements Disposable {
             }
             this._apps.push(app);
         }
+        this._folders.push(...folders);
     }
 
     public dispose() {

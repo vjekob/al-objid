@@ -6,6 +6,7 @@ const ALGORITHM = "aes-256-cbc";
 var IV_LENGTH = 16;
 const IV_SEPARATOR = "?";
 
+// TODO Remove __encrypt_obsolete_ function
 export function __encrypt_obsolete_(text: string, appId: string): string | undefined {
     try {
         const key = Buffer.from(getAppEncryptionKey(appId), "utf-8");
@@ -20,6 +21,7 @@ export function __encrypt_obsolete_(text: string, appId: string): string | undef
     }
 }
 
+// TODO Remove __decrypt_obsolete_ function
 export function __decrypt_obsolete_(encrypted: string, appId: string): string | undefined {
     try {
         const key = Buffer.from(getAppEncryptionKey(appId), "utf-8");
