@@ -1,8 +1,7 @@
 import { Disposable, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
-import { __AppManifest_obsolete_ } from "../../lib/types";
+import { ALApp } from "../../lib/ALApp";
 import { ExplorerDecorationsProvider } from "../RangeExplorer/ExplorerDecorationsProvider";
 import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
-import { TextTreeItem } from "./TextTreeItem";
 import { TreeItemDecoration } from "./TreeItemDecoration";
 import { SeverityColors } from "./TreeItemSeverity";
 
@@ -25,14 +24,14 @@ export interface UpdateNinjaTreeItem {
 }
 
 export class NinjaTreeItem implements INinjaTreeItem, Disposable {
-    private readonly _manifest: __AppManifest_obsolete_;
+    private readonly _app: ALApp;
     private readonly _provider: NinjaTreeItemProvider;
     private _children: INinjaTreeItem[] | undefined;
     private _childrenPromise: Promise<INinjaTreeItem[]> | undefined;
     private _disposed = false;
 
-    constructor(manifest: __AppManifest_obsolete_, provider: NinjaTreeItemProvider) {
-        this._manifest = manifest;
+    constructor(app: ALApp, provider: NinjaTreeItemProvider) {
+        this._app = app;
         this._provider = provider;
     }
 
@@ -114,10 +113,10 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
                 iconPath: iconPath as NinjaTreeItemIconType,
                 resourceUri: Uri.from({
                     scheme: "ninja",
-                    authority: this._manifest.id,
+                    authority: this._app.hash,
                     path: uriPath as string,
                 }),
-                id: `ninja/${this._manifest.id}${uriPath}`,
+                id: `ninja/${this._app.hash}${uriPath}`,
                 contextValue: contextValue as string | undefined,
             });
         };

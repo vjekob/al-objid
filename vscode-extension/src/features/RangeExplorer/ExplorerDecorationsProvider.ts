@@ -1,6 +1,6 @@
 import { EventEmitter, FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from "vscode";
+import { ALApp } from "../../lib/ALApp";
 import { PropertyBag } from "../../lib/PropertyBag";
-import { __AppManifest_obsolete_ } from "../../lib/types";
 import { TreeItemDecoration } from "../Explorer/TreeItemDecoration";
 import { SeverityColors } from "../Explorer/TreeItemSeverity";
 
@@ -11,7 +11,8 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         return this._instance || (this._instance = new ExplorerDecorationsProvider());
     }
 
-    private _decorations: PropertyBag<PropertyBag<TreeItemDecoration>> = {};
+    private readonly _decorations: PropertyBag<PropertyBag<TreeItemDecoration>> = {};
+    private readonly _uriMap: PropertyBag<Uri[]> = {};
 
     private _onDidChangeFileDecorations = new EventEmitter<Uri[]>();
     readonly onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;
@@ -41,14 +42,22 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
     decorate(uri: Uri, decoration: TreeItemDecoration) {
         if (!this._decorations[uri.authority]) {
             this._decorations[uri.authority] = {};
+            this._uriMap[uri.authority] = [];
         }
 
         const map = this._decorations[uri.authority];
+        const uriMap = this._uriMap[uri.authority];
         map[uri.path] = decoration;
+        uriMap.push(uri);
         this._onDidChangeFileDecorations.fire([uri]);
     }
 
-    releaseDecorations(manifest: __AppManifest_obsolete_) {
-        delete this._decorations[manifest.id];
+    releaseDecorations(app: ALApp) {
+        const uris = this._uriMap[app.hash];
+        delete this._decorations[app.hash];
+        delete this._uriMap[app.hash];
+        if (uris.length > 0) {
+            this._onDidChangeFileDecorations.fire(uris);
+        }
     }
 }

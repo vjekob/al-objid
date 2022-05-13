@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
-import { Disposable, Uri, WorkspaceFolder } from "vscode";
+import { Disposable, EventEmitter, Uri, WorkspaceFolder } from "vscode";
 import { getSha256 } from "./Sha256";
 import { ALAppManifest } from "./ALAppManifest";
 import { ObjIdConfig } from "./ObjIdConfig";
@@ -16,6 +16,10 @@ export class ALApp implements Disposable {
     private readonly _manifestWatcher: FileWatcher;
     private readonly _manifestChanged: Disposable;
     private readonly _configWatcher: ObjIdConfigWatcher;
+    private readonly _onManifestChanged = new EventEmitter<Uri>();
+    private readonly _onConfigChanged = new EventEmitter<Uri>();
+    public readonly onManifestChanged = this._onManifestChanged.event;
+    public readonly onConfigChanged = this._onConfigChanged.event;
     private _diposed = false;
     private _manifest: ALAppManifest;
     private _config: ObjIdConfig;
@@ -30,7 +34,7 @@ export class ALApp implements Disposable {
         this._config = new ObjIdConfig(this._configUri, this.hash);
 
         this._manifestWatcher = new FileWatcher(manifest.uri);
-        this._manifestChanged = this._manifestWatcher.onChanged(() => this.onManifestChanged());
+        this._manifestChanged = this._manifestWatcher.onChanged(() => this.onManifestChangedFromWatcher());
 
         this._configWatcher = new ObjIdConfigWatcher(
             this._config,
@@ -38,23 +42,32 @@ export class ALApp implements Disposable {
                 hash: this.hash,
                 name: this._manifest.name,
             }),
-            () => this.setUpConfigFile()
+            () => {
+                const newConfig = this.setUpConfigFile();
+                this._onConfigChanged.fire(newConfig.uri);
+                return newConfig;
+            }
         );
     }
 
-    private onManifestChanged() {
+    private onManifestChangedFromWatcher() {
         output.log(`Change detected on ${this._manifest.uri.fsPath}`);
         const manifest = ALAppManifest.tryCreate(this._manifest.uri);
-        if (manifest) {
-            const oldId = this._manifest.id;
-            this._manifest = manifest;
-            if (manifest.id !== oldId) {
-                output.log(`Manifest id changed from ${oldId} to ${manifest.id}, resetting hash and encryption key.`);
-                this._hash = undefined;
-                this._encryptionKey = undefined;
-                this._configWatcher.updateConfigAfterAppIdChange(this.setUpConfigFile());
-            }
+        if (!manifest) {
+            // This can only mean that the new manifest is not a valid JSON that we can parse.
+            // Until it is edited again, and parsable again, we keep the old manifest in memory.
+            return;
         }
+
+        const oldId = this._manifest.id;
+        this._manifest = manifest;
+        if (manifest.id !== oldId) {
+            output.log(`Manifest id changed from ${oldId} to ${manifest.id}, resetting hash and encryption key.`);
+            this._hash = undefined;
+            this._encryptionKey = undefined;
+            this._configWatcher.updateConfigAfterAppIdChange(this.setUpConfigFile());
+        }
+        this._onManifestChanged.fire(this._manifest.uri);
     }
 
     private setUpConfigFile(): ObjIdConfig {
@@ -143,10 +156,6 @@ export class ALApp implements Disposable {
      * @returns Boolean value indicating whether this ALApp instance represents the specified workspace folder.
      */
     public isFolder(folder: WorkspaceFolder): boolean {
-        if (folder.uri.scheme !== this._uri.scheme) {
-            return false;
-        }
-
         return folder.uri.fsPath == this._uri.fsPath;
     }
 
@@ -158,5 +167,7 @@ export class ALApp implements Disposable {
         this._manifestChanged.dispose();
         this._manifestWatcher.dispose();
         this._configWatcher.dispose();
+        this._onManifestChanged.dispose();
+        this._onConfigChanged.dispose();
     }
 }

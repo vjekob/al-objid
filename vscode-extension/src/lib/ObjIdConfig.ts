@@ -5,6 +5,7 @@ import { NinjaALRange } from "./types";
 import { stringify, parse } from "comment-json";
 import { LogLevel, output } from "../features/Output";
 import { Backend } from "./Backend";
+import { ALObjectType } from "./constants";
 
 interface ObjIdConfigJson {
     authKey: string;
@@ -32,6 +33,7 @@ export class ObjIdConfig {
     private readonly _appIdHash: string;
     private readonly _config: ObjIdConfigJson;
     private _authKeyValidPromise: Promise<boolean> | undefined;
+    private _logicalRangeNames: string[] | undefined;
 
     public constructor(uri: Uri, appIdHash: string) {
         this._uri = uri;
@@ -126,7 +128,45 @@ export class ObjIdConfig {
     }
 
     public get objectRanges(): PropertyBag<NinjaALRange[]> {
-        return this._config.objectRanges;
+        return this._config.objectRanges || {};
+    }
+
+    /**
+     * Returns the object types specified in `objectRanges` property.
+     */
+    get objectTypesSpecified(): string[] {
+        const validTypes = Object.values<string>(ALObjectType);
+        return Object.keys(this.objectRanges).filter(type => validTypes.includes(type));
+    }
+
+    /**
+     * Returns names of logical ranges specified in `idRanges` property.
+     */
+    get logicalRangeNames(): string[] {
+        if (this._logicalRangeNames) {
+            return this._logicalRangeNames;
+        }
+
+        const names: string[] = [];
+        const ranges = this._config.idRanges;
+        for (let range of ranges) {
+            if (names.find(name => name.toLowerCase().trim() === range.description.toLowerCase().trim())) {
+                continue;
+            }
+            names.push(range.description);
+        }
+        this._logicalRangeNames = names;
+        return names;
+    }
+
+    /**
+     * Gets explicitly defined ranges for the specified object type. These are ranges specified in `objectRanges`
+     * property.
+     * @param objectType Object type for which to get ranges
+     * @returns Ranges explicitly defined for specified object type
+     */
+    getObjectTypeRanges(objectType: string): NinjaALRange[] {
+        return this.objectRanges[objectType] || [];
     }
 
     public get bcLicense(): string {

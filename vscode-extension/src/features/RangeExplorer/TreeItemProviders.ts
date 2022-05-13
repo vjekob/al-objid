@@ -1,6 +1,7 @@
-import { ThemeIcon, TreeItemCollapsibleState, Uri } from "vscode";
+import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { ALApp } from "../../lib/ALApp";
 import { ALObjectType } from "../../lib/constants";
-import { ALRange, __AppManifest_obsolete_, NinjaALRange } from "../../lib/types";
+import { ALRange, NinjaALRange } from "../../lib/types";
 import { ConsumptionCache } from "../ConsumptionCache";
 import { INinjaTreeItem, NinjaTreeItem, UpdateNinjaTreeItem } from "../Explorer/NinjaTreeItem";
 import { NinjaTreeItemProvider } from "../Explorer/NinjaTreeItemProvider";
@@ -28,44 +29,41 @@ function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
     return severity;
 }
 
-export function getFolderTreeItemProvider(
-    manifest: __AppManifest_obsolete_,
-    update: UpdateNinjaTreeItem
-): NinjaTreeItemProvider {
+export function getFolderTreeItemProvider(app: ALApp, update: UpdateNinjaTreeItem): NinjaTreeItemProvider {
     const subscription = ConsumptionCache.instance.onConsumptionUpdate(update => {
-        if (update.appId !== manifest.id) {
+        if (update.appId !== app.hash) {
             return;
         }
     });
 
     return {
-        getLabel: () => manifest.name,
+        getLabel: () => app.manifest.name,
         getIcon: () => ThemeIcon.Folder,
         getUriPath: () => "",
         getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
-        getTooltip: () => `${manifest.name} v${manifest.version}`,
-        getDescription: () => manifest.version,
+        getTooltip: () => `${app.manifest.name} v${app.manifest.version}`,
+        getDescription: () => app.manifest.version,
         getContextValue: () => "ninja-folder", // Referenced in package.json "when" view condition
 
         getChildren: () => {
-            const hasLogical = manifest.ninja.config.hasIdRanges();
-            const hasObject = manifest.ninja.config.explicitObjectTypeRanges.length > 0;
+            const hasLogical = app.config.idRanges.length > 0;
+            const hasObject = app.config.objectTypesSpecified.length > 0;
 
             let children: INinjaTreeItem[] = [];
 
             if (!hasLogical && !hasObject) {
-                children = manifest.idRanges.map(
-                    range => new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, range, false, ""))
+                children = app.manifest.idRanges.map(
+                    range => new NinjaTreeItem(app, getRangeTreeItemProvider(app, range, false, ""))
                 );
             } else {
-                children = [new NinjaTreeItem(manifest, getPhysicalRangesTreeItemProvider(manifest))];
+                children = [new NinjaTreeItem(app, getPhysicalRangesTreeItemProvider(app))];
             }
 
             if (hasLogical) {
-                children!.push(new NinjaTreeItem(manifest, getLogicalRangesTreeItemProvider(manifest)));
+                children!.push(new NinjaTreeItem(app, getLogicalRangesTreeItemProvider(app)));
             }
             if (hasObject) {
-                children!.push(new NinjaTreeItem(manifest, getObjectRangesTreeItemProvider(manifest)));
+                children!.push(new NinjaTreeItem(app, getObjectRangesTreeItemProvider(app)));
             }
 
             return children;
@@ -78,7 +76,7 @@ export function getFolderTreeItemProvider(
 }
 
 export function getRangeTreeItemProvider(
-    manifest: __AppManifest_obsolete_,
+    app: ALApp,
     range: ALRange,
     dropLogicalName: boolean,
     pathSoFar: string
@@ -96,7 +94,7 @@ export function getRangeTreeItemProvider(
         getDescription: () => description,
 
         getChildren: () => {
-            const consumption = ConsumptionCache.instance.getConsumption(manifest.id) || {};
+            const consumption = ConsumptionCache.instance.getConsumption(app.hash) || {};
 
             const children: INinjaTreeItem[] = [];
             for (let key of Object.values<string>(ALObjectType)) {
@@ -110,9 +108,9 @@ export function getRangeTreeItemProvider(
                 }
                 children.push(
                     new NinjaTreeItem(
-                        manifest,
+                        app,
                         getObjectTypeConsumptionTreeItemProvider(
-                            manifest,
+                            app,
                             key,
                             consumption[key as ALObjectType].filter(id => id >= range.from && id <= range.to),
                             range.to - range.from + 1,
@@ -137,7 +135,7 @@ export function getRangeTreeItemProvider(
     };
 }
 
-export function getPhysicalRangesTreeItemProvider(manifest: __AppManifest_obsolete_): NinjaTreeItemProvider {
+export function getPhysicalRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvider {
     const path = "/ranges";
 
     return {
@@ -149,15 +147,13 @@ export function getPhysicalRangesTreeItemProvider(manifest: __AppManifest_obsole
         getUriPath: () => path,
 
         getChildren: () => {
-            const ranges = manifest.idRanges;
-            return ranges.map(
-                range => new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, range, false, path))
-            );
+            const ranges = app.manifest.idRanges;
+            return ranges.map(range => new NinjaTreeItem(app, getRangeTreeItemProvider(app, range, false, path)));
         },
     };
 }
 
-export function getLogicalRangesTreeItemProvider(manifest: __AppManifest_obsolete_): NinjaTreeItemProvider {
+export function getLogicalRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvider {
     const path = "/logicalranges";
 
     return {
@@ -169,8 +165,8 @@ export function getLogicalRangesTreeItemProvider(manifest: __AppManifest_obsolet
         getUriPath: () => path,
 
         getChildren: () => {
-            const logicalRangeNames = manifest.ninja.config.logicalRangeNames;
-            const logicalRanges = manifest.ninja.config.idRanges;
+            const logicalRangeNames = app.config.logicalRangeNames;
+            const logicalRanges = app.config.idRanges;
 
             const children = logicalRangeNames.map(name => {
                 const compareName = (name || "").toLowerCase().trim();
@@ -178,8 +174,8 @@ export function getLogicalRangesTreeItemProvider(manifest: __AppManifest_obsolet
                     range => (range.description || "").toLowerCase().trim() === compareName
                 );
                 return ranges.length === 1
-                    ? new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, ranges[0], false, path))
-                    : new NinjaTreeItem(manifest, getLogicalRangeTreeItemProvider(manifest, name, path, logicalRanges));
+                    ? new NinjaTreeItem(app, getRangeTreeItemProvider(app, ranges[0], false, path))
+                    : new NinjaTreeItem(app, getLogicalRangeTreeItemProvider(app, name, path, logicalRanges));
             });
 
             return children;
@@ -188,7 +184,7 @@ export function getLogicalRangesTreeItemProvider(manifest: __AppManifest_obsolet
 }
 
 export function getLogicalRangeTreeItemProvider(
-    manifest: __AppManifest_obsolete_,
+    manifest: ALApp,
     name: string,
     pathSoFar: string,
     children: NinjaALRange[]
@@ -215,7 +211,7 @@ export function getLogicalRangeTreeItemProvider(
 }
 
 export function getObjectTypeLogicalRangeTreeItemProvider(
-    manifest: __AppManifest_obsolete_,
+    manifest: ALApp,
     objectType: string,
     name: string,
     pathSoFar: string,
@@ -246,7 +242,7 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
     };
 }
 
-export function getObjectRangesTreeItemProvider(manifest: __AppManifest_obsolete_): NinjaTreeItemProvider {
+export function getObjectRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvider {
     const path = "/objectranges";
     return {
         getLabel: () => "Object Ranges",
@@ -257,10 +253,8 @@ export function getObjectRangesTreeItemProvider(manifest: __AppManifest_obsolete
         getUriPath: () => path,
 
         getChildren: () => {
-            const objectTypes = manifest.ninja.config.explicitObjectTypeRanges;
-
-            const children = objectTypes.map(
-                objectType => new NinjaTreeItem(manifest, getObjectTypeRangesTreeItemProvider(manifest, objectType))
+            const children = app.config.objectTypesSpecified.map(
+                objectType => new NinjaTreeItem(app, getObjectTypeRangesTreeItemProvider(app, objectType))
             );
 
             return children;
@@ -268,10 +262,7 @@ export function getObjectRangesTreeItemProvider(manifest: __AppManifest_obsolete
     };
 }
 
-export function getObjectTypeRangesTreeItemProvider(
-    manifest: __AppManifest_obsolete_,
-    objectType: string
-): NinjaTreeItemProvider {
+export function getObjectTypeRangesTreeItemProvider(app: ALApp, objectType: string): NinjaTreeItemProvider {
     const path = `/objectranges/${objectType}`;
 
     return {
@@ -282,7 +273,7 @@ export function getObjectTypeRangesTreeItemProvider(
         getUriPath: () => path,
 
         getChildren: () => {
-            const logicalRanges = manifest.ninja.config.getObjectRanges(objectType);
+            const logicalRanges = app.config.getObjectTypeRanges(objectType);
             const logicalRangeNames = logicalRanges.reduce<string[]>((results, range) => {
                 if (
                     results.find(
@@ -303,12 +294,12 @@ export function getObjectTypeRangesTreeItemProvider(
                 );
                 return ranges.length === 1
                     ? new NinjaTreeItem(
-                          manifest,
-                          getObjectTypeRangeConsumptionTreeItemProvider(manifest, ranges[0], objectType, false, path)
+                          app,
+                          getObjectTypeRangeConsumptionTreeItemProvider(app, ranges[0], objectType, false, path)
                       )
                     : new NinjaTreeItem(
-                          manifest,
-                          getObjectTypeLogicalRangeTreeItemProvider(manifest, objectType, name, path, logicalRanges)
+                          app,
+                          getObjectTypeLogicalRangeTreeItemProvider(app, objectType, name, path, logicalRanges)
                       );
             });
 
@@ -318,7 +309,7 @@ export function getObjectTypeRangesTreeItemProvider(
 }
 
 export function getObjectTypeConsumptionTreeItemProvider(
-    manifest: __AppManifest_obsolete_,
+    app: ALApp,
     objectType: string,
     ids: number[],
     size: number,
@@ -351,7 +342,7 @@ export function getObjectTypeConsumptionTreeItemProvider(
 }
 
 export function getObjectTypeRangeConsumptionTreeItemProvider(
-    manifest: __AppManifest_obsolete_,
+    app: ALApp,
     range: ALRange,
     objectType: string,
     dropLogicalName: boolean,
@@ -361,7 +352,7 @@ export function getObjectTypeRangeConsumptionTreeItemProvider(
     const addition = description && !dropLogicalName ? ` (${description})` : "";
     const path = `${pathSoFar}/${range.from}-${range.to}`;
 
-    const consumption = ConsumptionCache.instance.getConsumption(manifest.id) || {};
+    const consumption = ConsumptionCache.instance.getConsumption(app.hash) || {};
     const objConsumption = consumption[objectType as ALObjectType] || [];
     const ids = objConsumption.filter(id => id >= range.from && id <= range.to);
     const size = range.to - range.from + 1;

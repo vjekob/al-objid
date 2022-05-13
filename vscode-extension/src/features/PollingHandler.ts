@@ -1,7 +1,5 @@
 import { NotificationsFromLog } from "./NotificationsFromLog";
-import { Disposable, workspace } from "vscode";
-import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
-import { getManifest } from "../lib/__AppManifest_obsolete_";
+import { Disposable } from "vscode";
 import { Backend } from "../lib/Backend";
 import { PropertyBag } from "../lib/PropertyBag";
 import { FolderAuthorization } from "../lib/BackendTypes";
@@ -9,6 +7,7 @@ import { ConsumptionCache } from "./ConsumptionCache";
 import { NewsHandler } from "./NewsHandler";
 import { output } from "./Output";
 import { RangeExplorerTreeDataProvider } from "./RangeExplorer/RangeExplorerTreeDataProvider";
+import { WorkspaceManager } from "./WorkspaceManager";
 
 const DEFAULT_POLLING_INTERVAL = 15 * 1000; // 15 seconds
 const MAX_POLLING_INTERVAL = 15 * 60 * 1000; // 15 minutes
@@ -29,17 +28,20 @@ export class PollingHandler implements Disposable {
     }
 
     private async check() {
-        if (this._disposed) return;
+        if (this._disposed) {
+            return;
+        }
 
-        let folders = workspace.workspaceFolders?.filter(folder => __ALWorkspace_obsolete_.isALWorkspace(folder.uri));
-        if (!folders) return;
+        let alApps = WorkspaceManager.instance.alApps;
+        if (alApps.length === 0) {
+            return;
+        }
 
         let payload: FolderAuthorization[] = [];
-        for (let folder of folders) {
-            let manifest = getManifest(folder.uri)!;
-            this._appName[manifest.id] = manifest.name;
-            let { authKey } = manifest.ninja.config;
-            payload.push({ appId: manifest.id, authKey });
+        for (let app of alApps) {
+            this._appName[app.hash] = app.manifest.name;
+            let { authKey } = app.config;
+            payload.push({ appId: app.hash, authKey });
         }
 
         let updates = await Backend.check(payload);

@@ -31,7 +31,7 @@ import { selectBCLicense } from "./commands/select-bclicense";
 import { quickFixRemoveDeclaration } from "./commands/quickfix-remove-declaration";
 import { quickFixSelectValidType } from "./commands/quickfix-select-valid-type";
 import { ConsumptionCache } from "./features/ConsumptionCache";
-import { WorkspaceWatcher } from "./features/WorkspaceManager";
+import { WorkspaceManager } from "./features/WorkspaceManager";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
@@ -56,21 +56,12 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand("vjeko-al-objid.sync-object-ids", syncObjectIds),
         commands.registerCommand("vjeko-al-objid.authorize-app", authorizeApp),
         commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
-        commands.registerCommand(
-            "vjeko-al-objid.quickfix-remove-declaration",
-            quickFixRemoveDeclaration
-        ),
-        commands.registerCommand(
-            "vjeko-al-objid.quickfix-select-valid-type",
-            quickFixSelectValidType
-        ),
+        commands.registerCommand("vjeko-al-objid.quickfix-remove-declaration", quickFixRemoveDeclaration),
+        commands.registerCommand("vjeko-al-objid.quickfix-select-valid-type", quickFixSelectValidType),
 
         // Tree view
         RangeExplorerTreeDataProvider.instance,
-        window.registerTreeDataProvider(
-            "ninja-rangeExplorer",
-            RangeExplorerTreeDataProvider.instance
-        ),
+        window.registerTreeDataProvider("ninja-rangeExplorer", RangeExplorerTreeDataProvider.instance),
         window.registerFileDecorationProvider(ExplorerDecorationsProvider.instance),
 
         // CodeActions provider
@@ -80,7 +71,7 @@ export function activate(context: ExtensionContext) {
         languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),
 
         // Other Ninja features
-        WorkspaceWatcher.instance,
+        WorkspaceManager.instance,
         AuthorizationStatusBar.instance.getDisposables(),
         Output.instance.getDisposables(),
         Config.instance.getDisposables(),

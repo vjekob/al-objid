@@ -3,6 +3,7 @@ import { LogLevel, Output } from "../features/Output";
 import { __AppManifest_obsolete_, NinjaALRange } from "./types";
 import { CONFIG_FILE_NAME, EXTENSION_NAME, LABELS } from "./constants";
 import { EventLogEntry } from "./BackendTypes";
+import { ALApp } from "./ALApp";
 
 const CONSTANTS = {
     BACKEND: {
@@ -228,9 +229,9 @@ export const UI = {
     },
 
     pool: {
-        showInvalidAppPoolIdError: (manifest: __AppManifest_obsolete_) =>
+        showInvalidAppPoolIdError: (app: ALApp) =>
             window.showErrorMessage(
-                `App Pool ID defined in .objidconfig for ${manifest.name} is invalid. Please make sure to only use pool IDs created using the appropriate Ninja command.`
+                `App Pool ID defined in .objidconfig for ${app.manifest.name} is invalid. Please make sure to only use pool IDs created using the appropriate Ninja command.`
             ),
         showAppAuthorizedError: (manifest: __AppManifest_obsolete_) =>
             window.showErrorMessage(

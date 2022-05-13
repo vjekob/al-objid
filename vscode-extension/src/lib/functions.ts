@@ -3,6 +3,7 @@ import { commands, DocumentSymbol, Position, Uri } from "vscode";
 import { getCachedManifestFromAppId } from "./__AppManifest_obsolete_";
 import { ALRange } from "./types";
 import { UI } from "./UI";
+import { WorkspaceManager } from "../features/WorkspaceManager";
 
 function getBestMatch(checkSymbol: DocumentSymbol, bestMatch: DocumentSymbol | null): DocumentSymbol {
     if (!bestMatch) {
@@ -67,14 +68,18 @@ export function getRangeForId<T extends ALRange>(id: number, ranges: T[]): T | u
 }
 
 export function getPoolIdFromAppIdIfAvailable(appId: string): string {
-    const manifest = getCachedManifestFromAppId(appId);
-    const { appPoolId } = manifest.ninja.config;
+    const app = WorkspaceManager.instance.getALAppFromHash(appId);
+    if (!app) {
+        debugger;
+        return appId;
+    }
+    const { appPoolId } = app.config;
     if (!appPoolId) {
         return appId;
     }
 
     if (appPoolId.length !== 64 || !/[0-9A-Fa-f]{6}/g.test(appPoolId)) {
-        UI.pool.showInvalidAppPoolIdError(manifest);
+        UI.pool.showInvalidAppPoolIdError(app);
         return appId;
     }
 
