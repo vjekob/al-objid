@@ -8,6 +8,7 @@ import { INinjaTreeItem, NinjaTreeItem, UpdateNinjaTreeItem } from "../Explorer/
 import { NinjaTreeItemProvider } from "../Explorer/NinjaTreeItemProvider";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
 import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
+import { ExpandCollapseController } from "../Explorer/ExpandCollapseController";
 
 const severityIconMap: { [key: number]: string | undefined } = {
     [TreeItemSeverity.none]: undefined,
@@ -30,7 +31,11 @@ function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
     return severity;
 }
 
-export function getFolderTreeItemProvider(app: ALApp, update: UpdateNinjaTreeItem): NinjaTreeItemProvider {
+export function getFolderTreeItemProvider(
+    app: ALApp,
+    controller: ExpandCollapseController | undefined,
+    update: UpdateNinjaTreeItem
+): NinjaTreeItemProvider {
     const subscription = ConsumptionCache.instance.onConsumptionUpdate(update => {
         if (update.appId !== app.hash) {
             return;
@@ -41,7 +46,8 @@ export function getFolderTreeItemProvider(app: ALApp, update: UpdateNinjaTreeIte
         getLabel: () => app.manifest.name,
         getIcon: () => ThemeIcon.Folder,
         getUriPath: () => "",
-        getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
+        getCollapsibleState: () =>
+            controller?.isCollapseAll ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded,
         getTooltip: () => `${app.manifest.name} v${app.manifest.version}`,
         getDescription: () => app.manifest.version,
         getContextValue: () => "ninja-folder", // Referenced in package.json "when" view condition

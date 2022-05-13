@@ -32,6 +32,8 @@ import { quickFixRemoveDeclaration } from "./commands/quickfix-remove-declaratio
 import { quickFixSelectValidType } from "./commands/quickfix-select-valid-type";
 import { ConsumptionCache } from "./features/ConsumptionCache";
 import { WorkspaceManager } from "./features/WorkspaceManager";
+import { TreeViews } from "./features/Explorer/TreeViews";
+import { expandAllRangeExplorer } from "./commands/expand-all-rangeExplorer";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
@@ -58,10 +60,11 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand("vjeko-al-objid.deauthorize-app", deauthorizeApp),
         commands.registerCommand("vjeko-al-objid.quickfix-remove-declaration", quickFixRemoveDeclaration),
         commands.registerCommand("vjeko-al-objid.quickfix-select-valid-type", quickFixSelectValidType),
+        commands.registerCommand("vjeko-al-objid.expand-all-rangeExplorer", expandAllRangeExplorer),
 
         // Tree view
         RangeExplorerTreeDataProvider.instance,
-        window.registerTreeDataProvider("ninja-rangeExplorer", RangeExplorerTreeDataProvider.instance),
+        TreeViews.instance.registerView("ninja-rangeExplorer", RangeExplorerTreeDataProvider.instance),
         window.registerFileDecorationProvider(ExplorerDecorationsProvider.instance),
 
         // CodeActions provider

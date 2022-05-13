@@ -122,6 +122,11 @@
                 "command": "vjeko-al-objid.select-bclicense",
                 "category": "Ninja",
                 "title": "Select default license for validation"
+            },
+            {
+                "command": "vjeko-al-objid.expand-all-rangeExplorer",
+                "category": "Ninja",
+                "title": "Expand all"
             }
         ],
         "configuration": {
@@ -220,6 +225,11 @@
             "view/title": [
                 {
                     "command": "vjeko-al-objid.auto-sync-object-ids",
+                    "group": "navigation",
+                    "when": "view == ninja-rangeExplorer"
+                },
+                {
+                    "command": "vjeko-al-objid.expand-all-rangeExplorer",
                     "group": "navigation",
                     "when": "view == ninja-rangeExplorer"
                 }

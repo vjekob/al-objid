@@ -1,10 +1,12 @@
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
-import { Disposable, EventEmitter, TreeDataProvider, TreeItem, Uri, workspace } from "vscode";
+import { Disposable, EventEmitter, TreeItem, Uri, workspace } from "vscode";
 import { ALRange } from "../../lib/types/ALRange";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
 import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";
 import { getFolderTreeItemProvider } from "./TreeItemProviders";
 import { WorkspaceManager } from "../WorkspaceManager";
+import { NinjaTreeDataProvider } from "../Explorer/NinjaTreeDataProvider";
+import { ExpandCollapseController } from "../Explorer/ExpandCollapseController";
 
 // TODO Display any "no consumption yet" (and similar) nodes grayed out
 // Also, propagate this decoration to their parents
@@ -22,7 +24,7 @@ import { WorkspaceManager } from "../WorkspaceManager";
 //                  assignment made through Ninja
 // - "Release":     releases the ID in the back end and makes it available for re-assignment
 
-export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTreeItem>, Disposable {
+export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Disposable {
     public static _instance: RangeExplorerTreeDataProvider;
 
     private constructor() {
@@ -37,6 +39,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
     }
 
     private _workspaceFoldersChangeEvent: Disposable;
+    private _expandCollapseController: ExpandCollapseController | undefined;
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
 
@@ -79,7 +82,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
             return apps.map(app => {
                 const folderItem = new NinjaTreeItem(
                     app,
-                    getFolderTreeItemProvider(app, item => {
+                    getFolderTreeItemProvider(app, this._expandCollapseController, item => {
                         this._onDidChangeTreeData.fire(item);
                     })
                 );
@@ -117,6 +120,10 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
             disposable.dispose();
         }
         this._watchers = [];
+    }
+
+    public registerExpandCollapseController(controller: ExpandCollapseController): void {
+        this._expandCollapseController = controller;
     }
 
     dispose() {
