@@ -14,7 +14,6 @@ export type NinjaTreeItemIcon = NinjaTreeItemIconType | Promise<NinjaTreeItemIco
 export interface INinjaTreeItem {
     getTreeItem: () => TreeItem | Promise<TreeItem>;
     children: INinjaTreeItem[] | Promise<INinjaTreeItem[]>;
-    // parent: NinjaTreeItem | undefined; // TODO The `parent` property is unnecessary
 }
 
 export interface UpdateNinjaTreeItem {

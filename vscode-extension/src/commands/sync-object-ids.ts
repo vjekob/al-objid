@@ -29,7 +29,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     let authKey = app.config.authKey;
 
     if (!options?.merge && !options?.skipQuestion) {
-        let consumption = await Backend.getConsumption(app.hash, authKey);
+        let consumption = await Backend.getConsumption(app);
         if (consumption?._total) {
             let answer = await UI.sync.showAreYouSure();
             if (answer === LABELS.SYNC_ARE_YOU_SURE.NO) return;
@@ -43,7 +43,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     const consumption: ConsumptionInfo = getActualConsumption(objects);
 
     Telemetry.instance.log("syncIds", app.hash);
-    if (await Backend.syncIds(app.hash, consumption, !!options?.merge, app.config.authKey)) {
+    if (await Backend.syncIds(app, consumption, !!options?.merge)) {
         UI.sync.showSuccessInfo(app);
     }
 };

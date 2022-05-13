@@ -123,6 +123,13 @@ export class ALApp implements Disposable, BackEndAppInfo {
     }
 
     /**
+     * Returns the `authKey` property from the `.objidconfig` file. This property is here to implement BackEndAppInfo.
+     */
+    public get authKey(): string {
+        return this._config.authKey;
+    }
+
+    /**
      * Encryption key of the app ID, to be used for encrypting potentially sensitive information
      * during back-end communication. Never send
      */

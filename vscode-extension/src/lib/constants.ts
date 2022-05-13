@@ -64,3 +64,12 @@ export const DOCUMENTS = {
     APP_ID_CHANGE: "authorization-app-id-change",
     APP_POOLS: "app-pools",
 };
+
+export const TELEMETRY_HOST_NAME = "alninja-telemetry.azurewebsites.net";
+
+export const API_RESULT = {
+    NOT_SENT: Symbol("NOT_SENT"),
+    SUCCESS: Symbol("SUCCESS"),
+    ERROR_HANDLED: Symbol("ERROR_HANDLED"),
+    ERROR_NOT_HANDLED: Symbol("ERROR_NOT_HANDLED"),
+};

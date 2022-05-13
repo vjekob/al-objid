@@ -5,6 +5,8 @@ import { CONFIG_FILE_NAME, EXTENSION_NAME, LABELS } from "./constants";
 import { EventLogEntry } from "./types/EventLogEntry";
 import { ALApp } from "./ALApp";
 
+// TODO All "learn more" messages should wrap their learn more action to reduce complexity of consumers
+
 const CONSTANTS = {
     BACKEND: {
         CANNOT_COMMUNICATE: "Cannot communicate with the back-end API.",
