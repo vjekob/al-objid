@@ -1,32 +1,27 @@
 import * as path from "path";
 import { RelativePattern, Uri, window, workspace } from "vscode";
-import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
-import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { BCLicense } from "../lib/BCLicense";
 import { LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
-import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";
+import { ALApp } from "../lib/ALApp";
+import { WorkspaceManager } from "../features/WorkspaceManager";
 
-export async function selectBCLicense(manifestOrUri?: __AppManifest_obsolete_ | Uri) {
-    if (!manifestOrUri) {
-        manifestOrUri = await __ALWorkspace_obsolete_.selectWorkspaceFolder();
-        if (!manifestOrUri) {
+export async function selectBCLicense(appOrUri?: ALApp | Uri) {
+    if (!appOrUri) {
+        appOrUri = await WorkspaceManager.instance.selectWorkspaceFolder();
+        if (!appOrUri) {
             return;
         }
     }
 
     const licensePath =
-        manifestOrUri instanceof Uri
-            ? selectLicenseFromUri(manifestOrUri)
-            : await selectLicenseFromManifest(manifestOrUri);
+        appOrUri instanceof Uri ? selectLicenseFromUri(appOrUri) : await selectLicenseFromManifest(appOrUri);
     if (!licensePath) {
         return;
     }
 
-    const folderPath = workspace.getWorkspaceFolder(
-        manifestOrUri instanceof Uri ? manifestOrUri : manifestOrUri.ninja.uri
-    )!.uri.fsPath;
+    const folderPath = workspace.getWorkspaceFolder(appOrUri instanceof Uri ? appOrUri : appOrUri.uri)!.uri.fsPath;
 
     const bcLicense = new BCLicense(path.join(folderPath, licensePath));
     if (!bcLicense.isValid) {
@@ -36,24 +31,24 @@ export async function selectBCLicense(manifestOrUri?: __AppManifest_obsolete_ | 
         return;
     }
 
-    const manifest = getManifest(bcLicense.uri)!;
-    manifest.ninja.config.bcLicense = licensePath;
+    const app = WorkspaceManager.instance.getALAppFromUri(bcLicense.uri)!;
+    app.config.bcLicense = licensePath;
 }
 
 function selectLicenseFromUri(uri: Uri): string | undefined {
-    const manifest = getManifest(uri);
-    if (manifest) {
+    const app = WorkspaceManager.instance.getALAppFromUri(uri);
+    if (app) {
         const folder = workspace.getWorkspaceFolder(uri)!;
         return `.${uri.fsPath.substring(folder.uri.fsPath.length)}`;
     }
 }
 
-async function selectLicenseFromManifest(manifest: __AppManifest_obsolete_): Promise<string | undefined> {
-    const folderPath: string = manifest.ninja.uri.fsPath;
+async function selectLicenseFromManifest(app: ALApp): Promise<string | undefined> {
+    const folderPath: string = app.uri.fsPath;
     const pattern = new RelativePattern(folderPath, "**/*.bclicense");
     const files = await workspace.findFiles(pattern, null);
     if (files.length === 0) {
-        UI.license.noLicenseFilesFound(manifest);
+        UI.license.noLicenseFilesFound(app);
         return;
     }
 

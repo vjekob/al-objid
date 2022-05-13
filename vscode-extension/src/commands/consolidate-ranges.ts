@@ -1,56 +1,53 @@
-import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
-import { ALRange, __AppManifest_obsolete_, NinjaALRange } from "../lib/types";
+import { ALRange, NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
+import { WorkspaceManager } from "../features/WorkspaceManager";
+import { ALApp } from "../lib/ALApp";
 
 export async function consolidateRanges() {
-    const manifest = await __ALWorkspace_obsolete_.selectWorkspaceFolder();
-    if (!manifest) {
+    const app = await WorkspaceManager.instance.selectWorkspaceFolder();
+    if (!app) {
         return;
     }
 
     // Create a sorted clone of app.json ranges and .objidconfig (logical) ranges
-    let ranges = manifest.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));
+    let ranges = app.manifest.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));
 
     // Consolidate logical ranges
     let consolidated = false;
-    const logicalRanges = manifest.ninja.config.idRanges
+    const logicalRanges = app.config.idRanges
         .sort((left, right) => left.from - right.from)
         .map(range => ({ ...range }));
-    const consolidatedRanges = consolidate(manifest, ranges, logicalRanges);
+    const consolidatedRanges = consolidate(app, ranges, logicalRanges);
     if (consolidatedRanges) {
-        manifest.ninja.config.idRanges = consolidatedRanges;
+        app.config.idRanges = consolidatedRanges;
         consolidated = true;
     }
 
     // Consolidate explicit object type logical ranges
-    const explicitTypes = manifest.ninja.config.explicitObjectTypeRanges;
+    const explicitTypes = app.config.objectTypesSpecified;
     for (let type of explicitTypes) {
-        const logicalRanges = manifest.ninja.config
-            .getObjectRanges(type)
+        const logicalRanges = app.config
+            .getObjectTypeRanges(type)
             .sort((left, right) => left.from - right.from)
             .map(range => ({ ...range }));
-        const consolidatedRanges = consolidate(manifest, ranges, logicalRanges);
+        const consolidatedRanges = consolidate(app, ranges, logicalRanges);
         if (consolidatedRanges) {
-            manifest.ninja.config.setObjectRanges(type, consolidatedRanges);
+            app.config.setObjectTypeRanges(type, consolidatedRanges);
             consolidated = true;
         }
     }
 
     if (consolidated) {
-        UI.ranges.showRangesConsolidatedMessage(manifest);
+        UI.ranges.showRangesConsolidatedMessage(app);
     }
 }
 
-function consolidate(
-    manifest: __AppManifest_obsolete_,
-    physicalRanges: ALRange[],
-    logicalRanges: NinjaALRange[]
-): NinjaALRange[] | undefined {
+function consolidate(app: ALApp, physicalRanges: ALRange[], logicalRanges: NinjaALRange[]): NinjaALRange[] | undefined {
     // Creating a clone of physical ranges to eliminate side effects
     physicalRanges = [...physicalRanges.map(range => ({ ...range }))];
 
     if (logicalRanges.length === 0) {
-        UI.ranges.showNoLogicalRangesMessage(manifest);
+        UI.ranges.showNoLogicalRangesMessage(app);
         return;
     }
 

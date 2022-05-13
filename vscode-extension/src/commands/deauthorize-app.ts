@@ -25,7 +25,7 @@ export const deauthorizeApp = async () => {
             }
 
             Telemetry.instance.log("deauthorize", app.hash);
-            let response = await Backend.deauthorizeApp(app.hash, app.config.authKey || "", async response => {
+            let response = await Backend.deauthorizeApp(app.hash, app.config.authKey, async response => {
                 switch (response.error.statusCode) {
                     case 401:
                         UI.authorization.showIncorrectKeyWarning(app);

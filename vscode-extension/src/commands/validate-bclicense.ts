@@ -1,9 +1,9 @@
 import { Uri } from "vscode";
-import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { BCLicense } from "../lib/BCLicense";
 import { LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { UI } from "../lib/UI";
+import { WorkspaceManager } from "../features/WorkspaceManager";
 
 export async function validateLicense(uri: any) {
     const license = await (uri ? getExplicitLicense(uri) : getDefaultLicense());
@@ -28,14 +28,14 @@ async function getExplicitLicense(uri: Uri): Promise<BCLicense | string | undefi
 }
 
 async function getDefaultLicense(): Promise<BCLicense | string | undefined> {
-    const manifest = await __ALWorkspace_obsolete_.selectWorkspaceFolder();
-    if (!manifest) {
+    const app = await WorkspaceManager.instance.selectWorkspaceFolder();
+    if (!app) {
         return;
     }
 
-    const license = await manifest.ninja.config.getLicenseObject();
+    const license = await app.config.getLicenseObject();
     if (!license?.isValid) {
-        return UI.license.showNoLicenseMessage(manifest);
+        return UI.license.showNoLicenseMessage(app);
     }
 
     return license;

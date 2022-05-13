@@ -64,9 +64,9 @@ export const UI = {
     },
 
     sync: {
-        showSuccessInfo: (manifest?: __AppManifest_obsolete_) =>
+        showSuccessInfo: (app?: ALApp) =>
             window.showInformationMessage(
-                `Object IDs${manifest ? ` for ${manifest.name}` : ""} are now in sync with the Azure back end.`
+                `Object IDs${app ? ` for ${describeApp(app)}` : ""} are now in sync with the Azure back end.`
             ),
         showAreYouSure: async () =>
             window.showQuickPick(Object.values(LABELS.SYNC_ARE_YOU_SURE), {
@@ -206,20 +206,24 @@ export const UI = {
     },
 
     ranges: {
-        showLogicalRangesExistConfirmation: (manifest: __AppManifest_obsolete_) =>
+        showLogicalRangesExistConfirmation: (app: ALApp) =>
             window.showQuickPick(Object.values(LABELS.COPY_RANGES_ARE_YOU_SURE), {
-                placeHolder: `Logical ranges are already defined for ${manifest.name}. Do you want to overwrite them?`,
+                placeHolder: `Logical ranges are already defined for ${describeApp(
+                    app
+                )}. Do you want to overwrite them?`,
             }),
-        showNoLogicalRangesMessage: (manifest: __AppManifest_obsolete_) =>
+        showNoLogicalRangesMessage: (app: ALApp) =>
             window.showInformationMessage(
-                `No logical ranges are defined for ${manifest.name}. There is nothing to consolidate.`
+                `No logical ranges are defined for ${describeApp(app)}. There is nothing to consolidate.`
             ),
         showRangeFullyRepresentedMessage: (manifest: __AppManifest_obsolete_) =>
             window.showInformationMessage(
                 `All ranges in app.json for ${manifest.name} are represented as logical ranges in .objidconfig.`
             ),
-        showRangesConsolidatedMessage: (manifest: __AppManifest_obsolete_) =>
-            window.showInformationMessage(`Logical ranges for ${manifest.name} are now consolidated in .objidconfig.`),
+        showRangesConsolidatedMessage: (app: ALApp) =>
+            window.showInformationMessage(
+                `Logical ranges for ${describeApp(app)} are now consolidated in .objidconfig.`
+            ),
         showInvalidRangeFromToError: (name: string, range: NinjaALRange) =>
             window.showErrorMessage(
                 `Range ${
@@ -275,15 +279,15 @@ export const UI = {
     },
 
     license: {
-        showNoLicenseMessage: (manifest: __AppManifest_obsolete_) =>
+        showNoLicenseMessage: (app: ALApp) =>
             window.showInformationMessage(
-                `There is no license configured for ${manifest.name}, there is nothing to validate.`,
+                `There is no license configured for ${describeApp(app)}, there is nothing to validate.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
         showInvalidLicenseError: () =>
             window.showWarningMessage(`This is not a valid license file.`, LABELS.BUTTON_LEARN_MORE),
-        noLicenseFilesFound: (manifest: __AppManifest_obsolete_) =>
-            window.showWarningMessage(`We could not find any license files in ${manifest.name}.`),
+        noLicenseFilesFound: (app: ALApp) =>
+            window.showWarningMessage(`We could not find any license files in ${describeApp(app)}.`),
     },
 
     log: {

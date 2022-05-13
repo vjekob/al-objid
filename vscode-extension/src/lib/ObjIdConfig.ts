@@ -1,11 +1,13 @@
 import * as fs from "fs";
-import { Uri } from "vscode";
+import * as path from "path";
+import { Uri, workspace, WorkspaceFolder } from "vscode";
 import { PropertyBag } from "./PropertyBag";
 import { NinjaALRange } from "./types";
 import { stringify, parse } from "comment-json";
 import { LogLevel, output } from "../features/Output";
 import { Backend } from "./Backend";
 import { ALObjectType } from "./constants";
+import { BCLicense } from "./BCLicense";
 
 interface ObjIdConfigJson {
     authKey: string;
@@ -32,12 +34,17 @@ export class ObjIdConfig {
     private readonly _uri: Uri;
     private readonly _appIdHash: string;
     private readonly _config: ObjIdConfigJson;
+    private readonly _folder: WorkspaceFolder;
     private _authKeyValidPromise: Promise<boolean> | undefined;
     private _logicalRangeNames: string[] | undefined;
+    private _bcLicense: string | undefined = undefined;
+    private _bcLicensePromise?: Promise<BCLicense | undefined>;
+    private _bcLicensePropertiesSet = false;
 
     public constructor(uri: Uri, appIdHash: string) {
         this._uri = uri;
         this._appIdHash = appIdHash;
+        this._folder = workspace.getWorkspaceFolder(uri)!;
         this._config = this.read();
     }
 
@@ -86,6 +93,28 @@ export class ObjIdConfig {
             this.removeComment(this._config as any, property);
         }
         this.write();
+    }
+
+    private setBcLicenseProperties() {
+        if (this._bcLicensePropertiesSet) {
+            return;
+        }
+        this._bcLicensePropertiesSet = true;
+
+        const relativePath = this._config.bcLicense;
+        if (!relativePath) {
+            return;
+        }
+
+        this._bcLicense = path.isAbsolute(relativePath)
+            ? relativePath
+            : path.join(this._folder.uri.fsPath, relativePath);
+
+        if (fs.existsSync(this._bcLicense)) {
+            this._bcLicensePromise = new Promise<BCLicense | undefined>(resolve =>
+                setTimeout(() => resolve(new BCLicense(this._bcLicense!)))
+            );
+        }
     }
 
     public get uri() {
@@ -169,11 +198,36 @@ export class ObjIdConfig {
         return this.objectRanges[objectType] || this.idRanges;
     }
 
-    public get bcLicense(): string {
-        return this._config.bcLicense || "";
+    /**
+     * Sets (or clears/unsets) explicit ranges for an object type.
+     * @param objectType Object type for which to set ranges
+     * @param value Ranges to set or undefined to unset
+     */
+    setObjectTypeRanges(objectType: string, value: NinjaALRange[] | undefined) {
+        const allObjectRanges = this.objectRanges;
+        if (value) {
+            allObjectRanges[objectType] = value;
+        } else {
+            delete allObjectRanges[objectType];
+        }
+        this.setProperty(ConfigurationProperty.ObjectRanges, allObjectRanges);
     }
 
-    public set BCLicense(value: string | undefined) {
+    public get bcLicense(): string | undefined {
+        this.setBcLicenseProperties();
+        return this._bcLicense;
+    }
+
+    public set bcLicense(value: string | undefined) {
         this.setProperty(ConfigurationProperty.BcLicense, value);
+    }
+
+    public async getLicenseObject(): Promise<BCLicense | undefined> {
+        this.setBcLicenseProperties();
+        if (!this._bcLicensePromise) {
+            return undefined;
+        }
+
+        return await this._bcLicensePromise;
     }
 }
