@@ -21,7 +21,7 @@ export const authorizeApp = async () => {
 
             Telemetry.instance.log("authorize", app.hash);
             const gitUser = await Git.instance.getUserInfo(app.manifest.uri);
-            let response = await Backend.authorizeApp(app.hash, gitUser.name, gitUser.email, async response => {
+            let response = await Backend.authorizeApp(app, gitUser.name, gitUser.email, async response => {
                 const { error } = response;
                 if (error.statusCode !== 405) {
                     return false;

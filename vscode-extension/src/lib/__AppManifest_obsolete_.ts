@@ -62,36 +62,6 @@ function setAppEncryptionKey(appId: string, key: string) {
     encryptionKeys[appId] = key.substring(numeric, numeric + 32);
 }
 
-/**
- * This function returns a cached manifest from an URI. It is not safe to just call this
- * function without actually knowing that the URI is a valid AL app root URI. It is only
- * safe to call this function in conjunction with previously calling `ALWorkspace.getALFolders`
- * or when the same URI has previously been used with `getManifest`.
- * @param uri URI for which manifest is to be returned
- * @returns AppManifest for the URI
- */
-export function getCachedManifestFromUri(uri: Uri): __AppManifest_obsolete_ {
-    return uriMap.get(uri)!;
-}
-
-export function getAppEncryptionKey(appId: string): string {
-    return encryptionKeys[appId];
-}
-
 export function getCachedManifestFromAppId(appId: string): __AppManifest_obsolete_ {
     return manifestMap[appId];
-}
-
-export function getAppNamesFromManifests(manifests: __AppManifest_obsolete_[]): string {
-    switch (manifests.length) {
-        case 1:
-            return manifests[0].name;
-        case 2:
-            return manifests.map(manifest => manifest.name).join(" and ");
-        default:
-            return `${manifests
-                .slice(0, manifests.length - 1)
-                .map(manifest => manifest.name)
-                .join(", ")}, and ${manifests[manifests.length - 1].name}`;
-    }
 }

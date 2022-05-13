@@ -9,8 +9,9 @@ import { output } from "../features/Output";
 import { FileWatcher } from "./FileWatcher";
 import { ObjIdConfigWatcher } from "./ObjectIdConfigWatcher";
 import { decrypt, encrypt } from "./Encryption";
+import { BackEndAppInfo } from "./types";
 
-export class ALApp implements Disposable {
+export class ALApp implements Disposable, BackEndAppInfo {
     private readonly _uri: Uri;
     private readonly _configUri: Uri;
     private readonly _name: string;
@@ -32,7 +33,7 @@ export class ALApp implements Disposable {
         this._manifest = manifest;
         this._name = name;
         this._configUri = Uri.file(path.join(uri.fsPath, CONFIG_FILE_NAME));
-        this._config = new ObjIdConfig(this._configUri, this.hash);
+        this._config = new ObjIdConfig(this._configUri, this);
 
         this._manifestWatcher = new FileWatcher(manifest.uri);
         this._manifestChanged = this._manifestWatcher.onChanged(() => this.onManifestChangedFromWatcher());
@@ -72,7 +73,7 @@ export class ALApp implements Disposable {
     }
 
     private setUpConfigFile(): ObjIdConfig {
-        return (this._config = new ObjIdConfig(this._configUri, this.hash));
+        return (this._config = new ObjIdConfig(this._configUri, this));
     }
 
     public static tryCreate(folder: WorkspaceFolder): ALApp | undefined {

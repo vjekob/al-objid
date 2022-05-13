@@ -15,7 +15,6 @@ import {
     AuthorizedAppResponse,
 } from "./BackendTypes";
 import { Config } from "./Config";
-import { __decrypt_obsolete_, __encrypt_obsolete_ } from "./Encryption";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
@@ -26,7 +25,9 @@ import { LABELS } from "./constants";
 import { env, Uri } from "vscode";
 import { Telemetry } from "./Telemetry";
 import { getPoolIdFromAppIdIfAvailable, getRangeForId } from "./functions";
-import { ALRange, NinjaALRange } from "./types";
+import { ALRange, BackEndAppInfo, NinjaALRange } from "./types";
+import { ALApp } from "./ALApp";
+import { WorkspaceManager } from "../features/WorkspaceManager";
 
 // TODO All back-end methods that receive appId and/or authKey should instead receive ALApp and then access the necessary properties directly
 type ErrorHandler<T> = (response: HttpResponse<T>, request: HttpRequest) => Promise<boolean>;
@@ -131,7 +132,10 @@ async function sendRequest<T>(
     };
 
     if (Config.instance.includeUserName && data && typeof data === "object" && !Array.isArray(data) && data.appId) {
-        data.user = __encrypt_obsolete_(Config.instance.userName, data.appId);
+        const app = WorkspaceManager.instance.getALAppFromHash(data.appId);
+        if (app) {
+            data.user = app.encrypt(Config.instance.userName);
+        }
     }
 
     return await executeWithStopwatchAsync(async () => {
@@ -286,20 +290,20 @@ export class Backend {
     }
 
     static async authorizeApp(
-        appId: string,
+        app: ALApp,
         gitUser: string,
         gitEMail: string,
         errorHandler: ErrorHandler<AuthorizationInfo>
     ): Promise<AuthorizationInfo | undefined> {
-        knownManagedApps[appId] = Promise.resolve(true);
+        knownManagedApps[app.hash] = Promise.resolve(true);
         const additional: any = {};
 
         if (Config.instance.includeUserName) {
-            additional.gitUser = __encrypt_obsolete_(gitUser, appId);
-            additional.gitEMail = __encrypt_obsolete_(gitEMail, appId);
+            additional.gitUser = app.encrypt(gitUser);
+            additional.gitEMail = app.encrypt(gitEMail);
         }
 
-        appId = getPoolIdFromAppIdIfAvailable(appId);
+        const appId = getPoolIdFromAppIdIfAvailable(app.hash);
 
         const response = await sendRequest<AuthorizationInfo>(
             "/api/v2/authorizeApp",
@@ -313,13 +317,13 @@ export class Backend {
         return response.value;
     }
 
-    static async getAuthInfo(appId: string, authKey: string): Promise<AuthorizedAppResponse | undefined> {
+    static async getAuthInfo(app: BackEndAppInfo, authKey: string): Promise<AuthorizedAppResponse | undefined> {
         // If the app is known to not be managed by the back end, then we exit
-        if (!(await isKnownManagedApp(appId, true))) {
+        if (!(await isKnownManagedApp(app.hash, true))) {
             return;
         }
 
-        appId = getPoolIdFromAppIdIfAvailable(appId);
+        const appId = getPoolIdFromAppIdIfAvailable(app.hash);
 
         const response = await sendRequest<AuthorizedAppResponse>("/api/v2/authorizeApp", "GET", {
             appId,
@@ -327,8 +331,8 @@ export class Backend {
         });
         const result = response.value;
         if (result && result.user) {
-            result.user.name = __decrypt_obsolete_(result.user.name, appId) || "";
-            result.user.email = __decrypt_obsolete_(result.user.email, appId) || "";
+            result.user.name = app.decrypt(result.user.name) || "";
+            result.user.email = app.decrypt(result.user.email) || "";
         }
         return result;
     }

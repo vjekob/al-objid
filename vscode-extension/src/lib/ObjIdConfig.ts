@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { Uri, workspace, WorkspaceFolder } from "vscode";
 import { PropertyBag } from "./PropertyBag";
-import { NinjaALRange } from "./types";
+import { BackEndAppInfo, NinjaALRange } from "./types";
 import { stringify, parse } from "comment-json";
 import { LogLevel, output } from "../features/Output";
 import { Backend } from "./Backend";
@@ -32,7 +32,7 @@ const COMMENTS: PropertyBag<string> = {
 
 export class ObjIdConfig {
     private readonly _uri: Uri;
-    private readonly _appIdHash: string;
+    private readonly _backEndAppInfo: BackEndAppInfo;
     private readonly _config: ObjIdConfigJson;
     private readonly _folder: WorkspaceFolder;
     private _authKeyValidPromise: Promise<boolean> | undefined;
@@ -41,9 +41,9 @@ export class ObjIdConfig {
     private _bcLicensePromise?: Promise<BCLicense | undefined>;
     private _bcLicensePropertiesSet = false;
 
-    public constructor(uri: Uri, appIdHash: string) {
+    public constructor(uri: Uri, backEndAppInfo: BackEndAppInfo) {
         this._uri = uri;
-        this._appIdHash = appIdHash;
+        this._backEndAppInfo = backEndAppInfo;
         this._folder = workspace.getWorkspaceFolder(uri)!;
         this._config = this.read();
     }
@@ -134,7 +134,7 @@ export class ObjIdConfig {
             return this._authKeyValidPromise;
         }
         this._authKeyValidPromise = new Promise<boolean>(async resolve => {
-            const info = await Backend.getAuthInfo(this._appIdHash, this.authKey);
+            const info = await Backend.getAuthInfo(this._backEndAppInfo, this.authKey);
             resolve(!info || !info.authorized || info.valid);
         });
         return this._authKeyValidPromise;

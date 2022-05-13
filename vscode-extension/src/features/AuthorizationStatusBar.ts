@@ -1,11 +1,10 @@
 import { MarkdownString, StatusBarAlignment, StatusBarItem, window } from "vscode";
-import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { EXTENSION_NAME, URLS } from "../lib/constants";
 import { DisposableHolder } from "./DisposableHolder";
 import { Backend } from "../lib/Backend";
 import { AuthorizedAppResponse } from "../lib/BackendTypes";
-import { __AppManifest_obsolete_ } from "../lib/types";
 import { WorkspaceManager } from "./WorkspaceManager";
+import { ALApp } from "../lib/ALApp";
 
 export class AuthorizationStatusBar extends DisposableHolder {
     private _status: StatusBarItem;
@@ -41,10 +40,10 @@ export class AuthorizationStatusBar extends DisposableHolder {
             : "";
     }
 
-    private async readUserInfo(manifest: __AppManifest_obsolete_, authKey: string) {
+    private async readUserInfo(app: ALApp, authKey: string) {
         const authorized = !!authKey;
         // TODO Use app.config.isValid rather than accessing back end again
-        const info = await Backend.getAuthInfo(manifest.id, authKey);
+        const info = await Backend.getAuthInfo(app, authKey);
         if (info) {
             if (info.authorized === authorized) {
                 if (!info.valid && info.authorized) {
@@ -54,7 +53,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
                     );
                     return;
                 }
-                this.updateTooltip(manifest!.name, authorized, this.getUserInfoText(info));
+                this.updateTooltip(app!.name, authorized, this.getUserInfoText(info));
             } else {
                 this._status.text = `$(${authorized ? "warning" : "error"}) Invalid authorization`;
                 this._status.tooltip = new MarkdownString(
@@ -77,8 +76,8 @@ export class AuthorizationStatusBar extends DisposableHolder {
             return;
         }
 
-        let manifest = getManifest(document.uri)!;
-        let authKey = manifest?.ninja.config?.authKey;
+        let manifest = WorkspaceManager.instance.getALAppFromUri(document.uri)!;
+        let authKey = manifest?.config.authKey;
 
         if (manifest) {
             this.readUserInfo(manifest, authKey);
