@@ -1,6 +1,6 @@
-import { Config } from "./Config";
-import { TELEMETRY_HOST_NAME } from "./constants";
-import { HttpEndpoint } from "./types/HttpEndpoint";
+import { Config } from "../Config";
+import { TELEMETRY_HOST_NAME } from "../constants";
+import { HttpEndpoint } from "./HttpEndpoint";
 
 export class HttpEndpoints {
     static get default(): HttpEndpoint {

@@ -1,13 +1,13 @@
 import { env, ProgressLocation, Uri, window, workspace } from "vscode";
-import { AuthorizedAppConsumption } from "../lib/types/AuthorizedAppConsumption";
+import { AuthorizedAppConsumption } from "../lib/backend/AuthorizedAppConsumption";
 import { ConsumptionInfo } from "../lib/types/ConsumptionInfo";
 import { LABELS, URLS } from "../lib/constants";
 import { Git, GitBranchInfo } from "../lib/Git";
 import { getObjectDefinitions, getWorkspaceFolderFiles, updateActualConsumption } from "../lib/ObjectIds";
-import { PropertyBag } from "../lib/PropertyBag";
+import { PropertyBag } from "../lib/types/PropertyBag";
 import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
-import { Backend } from "../lib/Backend";
+import { Backend } from "../lib/backend/Backend";
 import { LogLevel, output } from "../features/Output";
 import { Telemetry } from "../lib/Telemetry";
 import { WorkspaceManager } from "../features/WorkspaceManager";

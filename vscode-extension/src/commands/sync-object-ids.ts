@@ -1,5 +1,5 @@
 import { Uri } from "vscode";
-import { Backend } from "../lib/Backend";
+import { Backend } from "../lib/backend/Backend";
 import { UI } from "../lib/UI";
 import { LogLevel, output } from "../features/Output";
 import { ConsumptionInfo } from "../lib/types/ConsumptionInfo";

@@ -10,13 +10,13 @@ import {
     workspace,
     WorkspaceEdit,
 } from "vscode";
-import { Backend } from "../lib/Backend";
+import { Backend } from "../lib/backend/Backend";
 import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/types/NextObjectIdInfo";
 import { Telemetry } from "../lib/Telemetry";
 import { NextIdContext } from "./ParserConnector";
-import { showDocument } from "../lib/showDocument";
+import { showDocument } from "../lib/functions/showDocument";
 import { UI } from "../lib/UI";
 import { DOCUMENTS, LABELS } from "../lib/constants";
 import { syncIfChosen } from "./NextObjectIdCompletionProvider";

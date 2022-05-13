@@ -1,8 +1,8 @@
 import { MarkdownString, StatusBarAlignment, StatusBarItem, window } from "vscode";
 import { EXTENSION_NAME, URLS } from "../lib/constants";
 import { DisposableHolder } from "./DisposableHolder";
-import { Backend } from "../lib/Backend";
-import { AuthorizedAppResponse } from "../lib/types/AuthorizedAppResponse";
+import { Backend } from "../lib/backend/Backend";
+import { AuthorizedAppResponse } from "../lib/backend/AuthorizedAppResponse";
 import { WorkspaceManager } from "./WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
 

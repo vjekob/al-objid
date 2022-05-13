@@ -1,7 +1,7 @@
 import { Disposable, EventEmitter } from "vscode";
 import { ConsumptionData } from "../lib/types/ConsumptionData";
 import { ALObjectType } from "../lib/types/ALObjectType";
-import { PropertyBag } from "../lib/PropertyBag";
+import { PropertyBag } from "../lib/types/PropertyBag";
 import { ConsumptionWarnings } from "./ConsumptionWarnings";
 
 export interface ConsumptionEventInfo {

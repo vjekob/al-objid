@@ -1,7 +1,7 @@
-import { PropertyBag } from "./PropertyBag";
+import { PropertyBag } from "./types/PropertyBag";
 import { ExtensionContext } from "vscode";
 import { getSha256 } from "./functions/getSha256";
-import { Backend } from "./Backend";
+import { Backend } from "./backend/Backend";
 import { EXTENSION_VERSION } from "./constants";
 
 const TELEMETRY_USER_SHA = "telemetry.userSha";

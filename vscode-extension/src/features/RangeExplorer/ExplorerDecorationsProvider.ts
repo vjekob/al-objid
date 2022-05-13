@@ -1,6 +1,6 @@
 import { EventEmitter, FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from "vscode";
 import { ALApp } from "../../lib/ALApp";
-import { PropertyBag } from "../../lib/PropertyBag";
+import { PropertyBag } from "../../lib/types/PropertyBag";
 import { TreeItemDecoration } from "../Explorer/TreeItemDecoration";
 import { SeverityColors } from "../Explorer/TreeItemSeverity";
 

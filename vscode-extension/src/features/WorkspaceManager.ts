@@ -1,6 +1,6 @@
 import { Disposable, Uri, window, workspace, WorkspaceFolder, WorkspaceFoldersChangeEvent } from "vscode";
 import { ALApp } from "../lib/ALApp";
-import { PropertyBag } from "../lib/PropertyBag";
+import { PropertyBag } from "../lib/types/PropertyBag";
 import { QuickPickWrapper } from "../lib/QuickPickWrapper";
 import { UI } from "../lib/UI";
 

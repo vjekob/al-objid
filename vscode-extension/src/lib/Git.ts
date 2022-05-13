@@ -4,7 +4,7 @@ import { exec } from "child_process";
 import { extensions, Uri, window } from "vscode";
 import { LogLevel, output } from "../features/Output";
 import { LABELS } from "./constants";
-import { PropertyBag } from "./PropertyBag";
+import { PropertyBag } from "./types/PropertyBag";
 import { GitTopLevelPathContext } from "./types/GitTopLevelPathContext";
 import { GitCleanOperationContext } from "./types/GitCleanOperationContext";
 import { UI } from "./UI";

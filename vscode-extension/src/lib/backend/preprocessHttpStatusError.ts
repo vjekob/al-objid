@@ -1,4 +1,4 @@
-import { HttpStatusHandler } from "../features/HttpStatusHandler";
+import { HttpStatusHandler } from "../../features/HttpStatusHandler";
 
 export function preprocessHttpStatusError(error: any): boolean {
     if (typeof error === "object" && error) {

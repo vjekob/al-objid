@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticCollection, DiagnosticSeverity, Disposable, languages, Range, Uri } from "vscode";
-import { PropertyBag } from "../lib/PropertyBag";
+import { PropertyBag } from "../lib/types/PropertyBag";
 
 export interface CreateDiagnostic {
     (range: Range, message: string, severity?: DiagnosticSeverity, code?: string): Diagnostic;

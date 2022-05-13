@@ -1,8 +1,8 @@
 import { NotificationsFromLog } from "./NotificationsFromLog";
 import { Disposable } from "vscode";
-import { Backend } from "../lib/Backend";
-import { PropertyBag } from "../lib/PropertyBag";
-import { FolderAuthorization } from "../lib/types/FolderAuthorization";
+import { Backend } from "../lib/backend/Backend";
+import { PropertyBag } from "../lib/types/PropertyBag";
+import { FolderAuthorization } from "../lib/backend/FolderAuthorization";
 import { ConsumptionCache } from "./ConsumptionCache";
 import { NewsHandler } from "./NewsHandler";
 import { output } from "./Output";

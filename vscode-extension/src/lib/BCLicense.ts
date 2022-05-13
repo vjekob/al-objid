@@ -3,7 +3,7 @@ import * as xml2js from "xml2js";
 import { DiagnosticSeverity, Position, Range, Uri, workspace } from "vscode";
 import { Diagnostics, DIAGNOSTIC_CODE } from "../features/Diagnostics";
 import { getObjectDefinitions, getWorkspaceFolderFiles } from "./ObjectIds";
-import { PropertyBag } from "./PropertyBag";
+import { PropertyBag } from "./types/PropertyBag";
 
 const objectTypeToPermissionTypeMap: any = {
     codeunit: "Codeunit",

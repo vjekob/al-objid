@@ -1,5 +1,5 @@
 import { DOCUMENTS, LABELS } from "../lib/constants";
-import { showDocument } from "../lib/showDocument";
+import { showDocument } from "../lib/functions/showDocument";
 import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";

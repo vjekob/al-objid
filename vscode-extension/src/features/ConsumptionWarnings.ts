@@ -1,5 +1,5 @@
 import { ConsumptionData } from "../lib/types/ConsumptionData";
-import { PropertyBag } from "../lib/PropertyBag";
+import { PropertyBag } from "../lib/types/PropertyBag";
 import { UI } from "../lib/UI";
 import { LABELS } from "../lib/constants";
 import { ExtensionContext } from "vscode";

@@ -1,7 +1,7 @@
 import { Uri } from "vscode";
 import { DOCUMENTS, LABELS, CONFIG_FILE_NAME } from "../lib/constants";
 import { getAppNames } from "../lib/functions/getAppNames";
-import { showDocument } from "../lib/showDocument";
+import { showDocument } from "../lib/functions/showDocument";
 import { Git } from "../lib/Git";
 import { getSha256 } from "../lib/functions/getSha256";
 import { UI } from "../lib/UI";

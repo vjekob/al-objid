@@ -1,4 +1,4 @@
-import { ConsumptionInfo } from "./ConsumptionInfo";
+import { ConsumptionInfo } from "../types/ConsumptionInfo";
 
 export interface AuthorizedAppConsumption {
     appId: string;

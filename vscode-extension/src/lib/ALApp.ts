@@ -9,7 +9,7 @@ import { output } from "../features/Output";
 import { FileWatcher } from "./FileWatcher";
 import { ObjIdConfigWatcher } from "./ObjectIdConfigWatcher";
 import { decrypt, encrypt } from "./Encryption";
-import { BackEndAppInfo } from "./types/BackEndAppInfo";
+import { BackEndAppInfo } from "./backend/BackEndAppInfo";
 
 export class ALApp implements Disposable, BackEndAppInfo {
     private readonly _uri: Uri;

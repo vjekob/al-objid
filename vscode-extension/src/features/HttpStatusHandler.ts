@@ -1,6 +1,6 @@
 import { env, ExtensionContext, Uri, window } from "vscode";
 import { EXTENSION_NAME, EXTENSION_VERSION, LABELS } from "../lib/constants";
-import { PropertyBag } from "../lib/PropertyBag";
+import { PropertyBag } from "../lib/types/PropertyBag";
 import { DisposableHolder } from "./DisposableHolder";
 import { LogLevel, output } from "./Output";
 

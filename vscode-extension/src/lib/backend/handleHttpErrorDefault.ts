@@ -1,5 +1,5 @@
-import { Config } from "./Config";
-import { UI } from "./UI";
+import { Config } from "../Config";
+import { UI } from "../UI";
 import { HttpRequest } from "./HttpRequest";
 import { HttpResponse } from "./HttpResponse";
 

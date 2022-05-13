@@ -1,11 +1,11 @@
 import { AuthorizationStatusBar } from "../features/AuthorizationStatusBar";
 import { LogLevel, output } from "../features/Output";
-import { Backend } from "../lib/Backend";
+import { Backend } from "../lib/backend/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
 import { Git } from "../lib/Git";
 import { getAppNames } from "../lib/functions/getAppNames";
-import { showDocument } from "../lib/showDocument";
+import { showDocument } from "../lib/functions/showDocument";
 import { CONFIG_FILE_NAME, DOCUMENTS } from "../lib/constants";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 
