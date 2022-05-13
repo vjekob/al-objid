@@ -10,7 +10,7 @@ export interface NinjaTreeItemProvider {
     getTooltip?: () => string | Promise<string>;
     getContextValue?: () => string | Promise<string>;
     getDescription?: () => string | Promise<string>;
-    getChildren?: () => INinjaTreeItem[];
+    getChildren?: (parent: INinjaTreeItem) => INinjaTreeItem[];
     getDecoration?: () => TreeItemDecoration | undefined | Promise<TreeItemDecoration | undefined>;
     dispose?: () => void;
 }

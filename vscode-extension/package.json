@@ -126,7 +126,14 @@
             {
                 "command": "vjeko-al-objid.expand-all-rangeExplorer",
                 "category": "Ninja",
-                "title": "Expand all"
+                "title": "Expand all",
+                "icon": "$(expand-all)"
+            },
+            {
+                "command": "vjeko-al-objid.collapse-all-rangeExplorer",
+                "category": "Ninja",
+                "title": "Collapse all",
+                "icon": "$(collapse-all)"
             }
         ],
         "configuration": {
@@ -231,7 +238,12 @@
                 {
                     "command": "vjeko-al-objid.expand-all-rangeExplorer",
                     "group": "navigation",
-                    "when": "view == ninja-rangeExplorer"
+                    "when": "view == ninja-rangeExplorer && ninja-rangeExplorer.hasCollapsed == true"
+                },
+                {
+                    "command": "vjeko-al-objid.collapse-all-rangeExplorer",
+                    "group": "navigation",
+                    "when": "view == ninja-rangeExplorer && ninja-rangeExplorer.hasExpanded == true"
                 }
             ],
             "view/item/context": [

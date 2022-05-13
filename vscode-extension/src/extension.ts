@@ -34,6 +34,7 @@ import { ConsumptionCache } from "./features/ConsumptionCache";
 import { WorkspaceManager } from "./features/WorkspaceManager";
 import { TreeViews } from "./features/Explorer/TreeViews";
 import { expandAllRangeExplorer } from "./commands/expand-all-rangeExplorer";
+import { collapseAllRangeExplorer } from "./commands/collapse-all-rangeExplorer";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
@@ -61,6 +62,7 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand("vjeko-al-objid.quickfix-remove-declaration", quickFixRemoveDeclaration),
         commands.registerCommand("vjeko-al-objid.quickfix-select-valid-type", quickFixSelectValidType),
         commands.registerCommand("vjeko-al-objid.expand-all-rangeExplorer", expandAllRangeExplorer),
+        commands.registerCommand("vjeko-al-objid.collapse-all-rangeExplorer", collapseAllRangeExplorer),
 
         // Tree view
         RangeExplorerTreeDataProvider.instance,

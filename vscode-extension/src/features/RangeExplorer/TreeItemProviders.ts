@@ -31,11 +31,7 @@ function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
     return severity;
 }
 
-export function getFolderTreeItemProvider(
-    app: ALApp,
-    controller: ExpandCollapseController | undefined,
-    update: UpdateNinjaTreeItem
-): NinjaTreeItemProvider {
+export function getFolderTreeItemProvider(app: ALApp, update: UpdateNinjaTreeItem): NinjaTreeItemProvider {
     const subscription = ConsumptionCache.instance.onConsumptionUpdate(update => {
         if (update.appId !== app.hash) {
             return;
@@ -46,8 +42,7 @@ export function getFolderTreeItemProvider(
         getLabel: () => app.manifest.name,
         getIcon: () => ThemeIcon.Folder,
         getUriPath: () => "",
-        getCollapsibleState: () =>
-            controller?.isCollapseAll ? TreeItemCollapsibleState.Collapsed : TreeItemCollapsibleState.Expanded,
+        getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getTooltip: () => `${app.manifest.name} v${app.manifest.version}`,
         getDescription: () => app.manifest.version,
         getContextValue: () => "ninja-folder", // Referenced in package.json "when" view condition
@@ -100,7 +95,7 @@ export function getRangeTreeItemProvider(
         getTooltip: () => `From ${range.from} to ${range.to}${addition}`,
         getDescription: () => description,
 
-        getChildren: () => {
+        getChildren: parent => {
             const consumption = ConsumptionCache.instance.getConsumption(app.hash) || {};
 
             const children: INinjaTreeItem[] = [];
@@ -132,7 +127,7 @@ export function getRangeTreeItemProvider(
                     new TextTreeItem(
                         "No consumption yet",
                         `No ids are assigned in this range (${range.from} to ${range.to}).`,
-                        undefined
+                        parent
                     )
                 );
             }

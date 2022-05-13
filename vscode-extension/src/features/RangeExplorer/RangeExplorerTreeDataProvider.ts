@@ -64,7 +64,7 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
     }
 
     getTreeItem(element: INinjaTreeItem): TreeItem | Promise<TreeItem> {
-        return element.getTreeItem();
+        return element.getTreeItem(this._expandCollapseController!);
     }
 
     getChildren(element?: INinjaTreeItem): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
@@ -82,7 +82,7 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
             return apps.map(app => {
                 const folderItem = new NinjaTreeItem(
                     app,
-                    getFolderTreeItemProvider(app, this._expandCollapseController, item => {
+                    getFolderTreeItemProvider(app, item => {
                         this._onDidChangeTreeData.fire(item);
                     })
                 );
@@ -124,6 +124,9 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
 
     public registerExpandCollapseController(controller: ExpandCollapseController): void {
         this._expandCollapseController = controller;
+        this._expandCollapseController.setRefresh(() => {
+            this.refresh();
+        });
     }
 
     dispose() {

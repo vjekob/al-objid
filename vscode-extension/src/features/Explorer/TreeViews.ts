@@ -19,11 +19,17 @@ export class TreeViews {
     public registerView(id: string, provider: NinjaTreeDataProvider): TreeView<INinjaTreeItem> {
         const view = window.createTreeView(id, { treeDataProvider: provider });
 
-        const controller = new ExpandCollapseController();
+        const controller = new ExpandCollapseController(id);
         provider.registerExpandCollapseController(controller);
 
-        view.onDidCollapseElement(() => controller.reset());
-        view.onDidExpandElement(() => controller.reset());
+        view.onDidCollapseElement(e => {
+            controller.collapse(e.element.id);
+            controller.reset();
+        });
+        view.onDidExpandElement(e => {
+            controller.expand(e.element.id);
+            controller.reset();
+        });
 
         this._controllers[id] = controller;
         this._views[id] = view;

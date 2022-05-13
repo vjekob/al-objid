@@ -1,6 +1,7 @@
 import { Disposable, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
 import { ALApp } from "../../lib/ALApp";
 import { ExplorerDecorationsProvider } from "../RangeExplorer/ExplorerDecorationsProvider";
+import { ExpandCollapseController } from "./ExpandCollapseController";
 import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
 import { TreeItemDecoration } from "./TreeItemDecoration";
 import { SeverityColors } from "./TreeItemSeverity";
@@ -12,7 +13,8 @@ export type NinjaTreeItemLabel = NinjaTreeItemLabelType | Promise<NinjaTreeItemL
 export type NinjaTreeItemIcon = NinjaTreeItemIconType | Promise<NinjaTreeItemIconType>;
 
 export interface INinjaTreeItem {
-    getTreeItem: () => TreeItem | Promise<TreeItem>;
+    id: string;
+    getTreeItem: (controller: ExpandCollapseController) => TreeItem | Promise<TreeItem>;
     children: INinjaTreeItem[] | Promise<INinjaTreeItem[]>;
 }
 
@@ -25,6 +27,7 @@ export interface UpdateNinjaTreeItem {
 export class NinjaTreeItem implements INinjaTreeItem, Disposable {
     private readonly _app: ALApp;
     private readonly _provider: NinjaTreeItemProvider;
+    private _id: string | undefined;
     private _children: INinjaTreeItem[] | undefined;
     private _childrenPromise: Promise<INinjaTreeItem[]> | undefined;
     private _disposed = false;
@@ -45,7 +48,7 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
         return item;
     }
 
-    getTreeItem(): TreeItem | Promise<TreeItem> {
+    getTreeItem(controller: ExpandCollapseController): TreeItem | Promise<TreeItem> {
         const promises: Promise<any>[] = [];
 
         const decomposePromise = <T>(target: T | Promise<T>, assign: (result: T) => void) => {
@@ -104,10 +107,12 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
                     new ThemeColor(SeverityColors[`${(decoration as TreeItemDecoration).severity}`])
                 );
             }
+            this._id = `ninja/${this._app.hash}${uriPath}`;
+            const state = controller?.getState(this._id) || (collapsibleState as TreeItemCollapsibleState);
             return this.createItem({
                 label: label as NinjaTreeItemLabelType,
                 description: description as string | undefined,
-                collapsibleState: collapsibleState as TreeItemCollapsibleState,
+                collapsibleState: state,
                 tooltip: tooltip as string,
                 iconPath: iconPath as NinjaTreeItemIconType,
                 resourceUri: Uri.from({
@@ -115,7 +120,7 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
                     authority: this._app.hash,
                     path: uriPath as string,
                 }),
-                id: `ninja/${this._app.hash}${uriPath}`,
+                id: `${this._id}.${Date.now()}`, // Date.now() is there to allow programmatic expand/collapse
                 contextValue: contextValue as string | undefined,
             });
         };
@@ -144,7 +149,7 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
         }
 
         if (typeof this._provider.getChildren === "function") {
-            const children = this._provider.getChildren();
+            const children = this._provider.getChildren(this);
             if (children instanceof Promise) {
                 this._childrenPromise = children;
                 this._childrenPromise.then(result => {
@@ -158,6 +163,10 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
         }
 
         return [];
+    }
+
+    public get id(): string {
+        return this._id || "";
     }
 
     public dispose() {

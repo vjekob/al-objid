@@ -12,6 +12,7 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 -   Range explorer includes logical ranges and object ranges from `.objidconfig` file.
 -   License actions are added to Explorer context menu. When right-clicking a `*.bclicense` file, there
     are two more license options there: validate against license, and select default license.
+-   Range explorer contains expand all and collapse all icons. ([Git issue #18](https://github.com/vjekob/al-objid/issues/18))
 
 ### Changed
 

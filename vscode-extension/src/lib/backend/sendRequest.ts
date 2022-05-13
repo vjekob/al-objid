@@ -80,7 +80,7 @@ export async function sendRequest<T>(
                     NotificationsFromLog.instance.updateLog(appId, _log as EventLogEntry[], app.manifest.name);
                     // TODO Drop imperative range explorer updates and replace them with events
                     if (ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData)) {
-                        RangeExplorerTreeDataProvider.instance.refresh(app.uri);
+                        RangeExplorerTreeDataProvider.instance.refresh();
                     }
                 }
             }
