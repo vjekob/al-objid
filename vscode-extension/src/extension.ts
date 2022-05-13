@@ -31,7 +31,7 @@ import { selectBCLicense } from "./commands/select-bclicense";
 import { quickFixRemoveDeclaration } from "./commands/quickfix-remove-declaration";
 import { quickFixSelectValidType } from "./commands/quickfix-select-valid-type";
 import { ConsumptionCache } from "./features/ConsumptionCache";
-import { WorkspaceWatcher } from "./features/WorkspaceWatcher";
+import { WorkspaceWatcher } from "./features/WorkspaceManager";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
