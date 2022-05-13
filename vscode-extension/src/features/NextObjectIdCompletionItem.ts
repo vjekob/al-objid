@@ -72,13 +72,11 @@ export class NextObjectIdCompletionItem extends CompletionItem {
             arguments: [
                 async () => {
                     output.log(`Committing object ID auto-complete for ${type} ${objectId.id}`, LogLevel.Info);
-                    const { authKey } = app.config;
                     const realId = await Backend.getNextNo(
-                        app.hash,
+                        app,
                         type,
                         app.manifest.idRanges,
                         true,
-                        authKey,
                         objectId.id as number
                     );
                     const notChanged = !realId || this.isIdEqual(realId.id, objectId.id as number);

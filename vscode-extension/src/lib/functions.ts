@@ -71,7 +71,6 @@ export function getRangeForId<T extends ALRange>(id: number, ranges: T[]): T | u
 export function getPoolIdFromAppIdIfAvailable(appId: string): string {
     const app = WorkspaceManager.instance.getALAppFromHash(appId);
     if (!app) {
-        debugger;
         return appId;
     }
     const { appPoolId } = app.config;

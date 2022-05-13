@@ -19,7 +19,6 @@ import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
 import { ConsumptionCache } from "../features/ConsumptionCache";
-import { getCachedManifestFromAppId } from "./__AppManifest_obsolete_";
 import { RangeExplorerTreeDataProvider } from "../features/RangeExplorer/RangeExplorerTreeDataProvider";
 import { LABELS } from "./constants";
 import { env, Uri } from "vscode";
@@ -147,11 +146,13 @@ async function sendRequest<T>(
             if (appInfo) {
                 const { appId } = data;
                 const { _log, ...consumptions } = appInfo;
-                const manifest = getCachedManifestFromAppId(appId);
-                NotificationsFromLog.instance.updateLog(appId, _log as EventLogEntry[], manifest.name);
-                // TODO Drop imperative range explorer updates and replace them with events
-                if (ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData)) {
-                    RangeExplorerTreeDataProvider.instance.refresh(manifest.ninja.uri);
+                const app = WorkspaceManager.instance.getALAppFromHash(appId);
+                if (app) {
+                    NotificationsFromLog.instance.updateLog(appId, _log as EventLogEntry[], app.manifest.name);
+                    // TODO Drop imperative range explorer updates and replace them with events
+                    if (ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData)) {
+                        RangeExplorerTreeDataProvider.instance.refresh(app.uri);
+                    }
                 }
             }
         } catch (error: any) {
@@ -213,23 +214,20 @@ async function isKnownManagedApp(appId: string, forceCheck: boolean = false): Pr
 
 export class Backend {
     static async getNextNo(
-        appId: string,
+        app: ALApp,
         type: string,
         ranges: ALRange[],
         commit: boolean,
-        authKey: string,
         require?: number
     ): Promise<NextObjectIdInfo | undefined> {
-        if (!(await isKnownManagedApp(appId))) {
+        if (!(await isKnownManagedApp(app.hash))) {
             if (!commit) {
-                knownManagedApps[appId] = Promise.resolve(true);
+                knownManagedApps[app.hash] = Promise.resolve(true);
             }
         }
 
-        const manifest = getCachedManifestFromAppId(appId);
-        const objIdConfig = manifest.ninja.config;
         const additionalOptions = {} as NextObjectIdInfo;
-        const idRanges = objIdConfig.getObjectRanges(type);
+        const idRanges = app.config.getObjectTypeRanges(type);
         if (Config.instance.requestPerRange || idRanges.length > 0) {
             additionalOptions.perRange = true;
             if (commit && require) {
@@ -249,13 +247,13 @@ export class Backend {
             }
         }
 
-        appId = getPoolIdFromAppIdIfAvailable(appId);
+        const appId = getPoolIdFromAppIdIfAvailable(app.hash);
 
         const response = await sendRequest<NextObjectIdInfo>("/api/v2/getNext", commit ? "POST" : "GET", {
             appId,
             type,
             ranges,
-            authKey,
+            authKey: app.config.authKey,
             ...additionalOptions,
         });
         if (response.status === API_RESULT.SUCCESS)

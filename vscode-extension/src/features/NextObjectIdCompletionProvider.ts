@@ -209,8 +209,7 @@ export class NextObjectIdCompletionProvider {
             return;
         }
 
-        const { authKey } = app.config;
-        const objectId = await Backend.getNextNo(app.hash, type, app.manifest.idRanges, false, authKey);
+        const objectId = await Backend.getNextNo(app, type, app.manifest.idRanges, false);
         Telemetry.instance.log("getNextNo-fetch", app.hash);
 
         if (showNotificationsIfNecessary(app, objectId) || !objectId) return [];

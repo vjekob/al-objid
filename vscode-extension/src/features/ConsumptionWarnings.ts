@@ -1,9 +1,9 @@
 import { ConsumptionData } from "../lib/BackendTypes";
 import { PropertyBag } from "../lib/PropertyBag";
-import { getCachedManifestFromAppId } from "../lib/__AppManifest_obsolete_";
 import { UI } from "../lib/UI";
 import { LABELS } from "../lib/constants";
 import { ExtensionContext } from "vscode";
+import { WorkspaceManager } from "./WorkspaceManager";
 
 export class ConsumptionWarnings {
     //#region Singleton
@@ -33,24 +33,28 @@ export class ConsumptionWarnings {
         }
         this._warningLevels[warningId] = remaining;
         this._shownWarnings[warningId] = true;
-        const manifest = getCachedManifestFromAppId(appId);
-        const result = await UI.nextId.showNumbersAboutToRunOut(manifest.name, type, remaining);
+        const app = WorkspaceManager.instance.getALAppFromHash(appId);
+        if (!app) {
+            return;
+        }
+
+        const result = await UI.nextId.showNumbersAboutToRunOut(app.manifest.name, type, remaining);
         delete this._shownWarnings[warningId];
 
         if (result === LABELS.BUTTON_DONT_SHOW_AGAIN) {
-            UI.nextId.showDisabledOnlyForAppAndType(manifest.name, type);
+            UI.nextId.showDisabledOnlyForAppAndType(app.name, type);
             this._context!.globalState.update(warningId, true);
         }
     }
 
     public checkRemainingIds(appId: string, consumption: ConsumptionData) {
-        const manifest = getCachedManifestFromAppId(appId);
-        if (!manifest) {
+        const app = WorkspaceManager.instance.getALAppFromHash(appId);
+        if (!app) {
             // TODO Notifications for app pools are not handled at the moment
             return;
         }
 
-        const available = manifest.idRanges.reduce(
+        const available = app.manifest.idRanges.reduce(
             (previous, current) => previous + Math.max(current.to - current.from, 0) + 1,
             0
         );
@@ -63,7 +67,7 @@ export class ConsumptionWarnings {
 
         for (let type of Object.keys(consumption)) {
             const total = (consumption as any)[type].filter(
-                (id: number) => manifest.idRanges.filter(range => range.from <= id && range.to >= id).length > 0
+                (id: number) => app.manifest.idRanges.filter(range => range.from <= id && range.to >= id).length > 0
             ).length;
             if (total >= warningLevel) {
                 this.showWarning(appId, type, available - total);

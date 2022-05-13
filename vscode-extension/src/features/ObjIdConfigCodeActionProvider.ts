@@ -1,5 +1,5 @@
+import { WorkspaceManager } from "./WorkspaceManager";
 import { CodeActionProvider, TextDocument, Range, CodeActionContext, CodeAction, CodeActionKind } from "vscode";
-import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { ALObjectType } from "../lib/constants";
 import { getSymbolAtPosition } from "../lib/functions";
 import { DIAGNOSTIC_CODE } from "./Diagnostics";
@@ -17,8 +17,8 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
             return;
         }
 
-        const manifest = getManifest(document.uri);
-        if (!manifest) {
+        const app = WorkspaceManager.instance.getALAppFromUri(document.uri);
+        if (!app) {
             return;
         }
 
@@ -27,14 +27,14 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
             switch (issue.code) {
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_OBJECT_TYPE:
                     const symbol = (await getSymbolAtPosition(document.uri, range.start))!;
-                    const existingTypes = manifest.ninja.config.explicitObjectTypeRanges;
+                    const existingTypes = app.config.objectTypesSpecified;
                     const remainingTypes = Object.values<string>(ALObjectType).filter(
                         type => !existingTypes.includes(type)
                     );
                     createAction(
                         actions,
                         "vjeko-al-objid.quickfix-remove-declaration",
-                        [manifest, symbol.name],
+                        [app, symbol.name],
                         "Remove declaration",
                         CodeActionKind.QuickFix
                     );
@@ -50,7 +50,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     break;
 
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND:
-                    createAction(actions, "vjeko-al-objid.select-bclicense", [manifest], "Select a BC license file");
+                    createAction(actions, "vjeko-al-objid.select-bclicense", [app], "Select a BC license file");
                     break;
             }
         }
