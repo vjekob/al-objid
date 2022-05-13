@@ -165,14 +165,19 @@ export const UI = {
                 `Authorization file for ${name} was just deleted, and the app is still authorized. Please, make sure you understand the consequences.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
-        showUnauthorizedBranch: (name: string) =>
+        showUnauthorizedBranchWarning: (name: string) =>
             window.showWarningMessage(
                 `Current branch of ${name} does not contain a valid authorization key. You won't be able to assign new object IDs.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
         showManualModificationWarning: (name: string) =>
             window.showWarningMessage(
-                `Your authorization key is no longer valid. Please, undo your changes to ${CONFIG_FILE_NAME} as soon as posible. Until you do, you won't be able to assign new object IDs.`,
+                `Your authorization key for ${name} is no longer valid. Please, undo your changes to ${CONFIG_FILE_NAME} as soon as posible. Until you do, you won't be able to assign new object IDs.`,
+                LABELS.BUTTON_LEARN_MORE
+            ),
+        showAppIdChangedWarning: (name: string) =>
+            window.showWarningMessage(
+                `You have changed the app id for ${name}. It now probably contains a stale authorization key. Please, check the authKey property in ${CONFIG_FILE_NAME}.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
     },

@@ -1,6 +1,5 @@
 import { ObjIdConfig } from "./ObjIdConfig";
-import { Disposable, Uri } from "vscode";
-import { Backend } from "./Backend";
+import { Disposable } from "vscode";
 import { DOCUMENTS, LABELS } from "./constants";
 import { FileWatcher } from "./FileWatcher";
 import { showDocument } from "./functions";
@@ -71,7 +70,7 @@ export class ObjIdConfigWatcher implements Disposable {
 
     private async showUnauthorizedBranch(name: string) {
         this.showWithDocumentation(
-            UI.authorization.showUnauthorizedBranch(name),
+            UI.authorization.showUnauthorizedBranchWarning(name),
             DOCUMENTS.AUTHORIZATION_BRANCH_CHANGE
         );
     }
@@ -96,6 +95,24 @@ export class ObjIdConfigWatcher implements Disposable {
         if (response === LABELS.BUTTON_LEARN_MORE) {
             showDocument(document);
         }
+    }
+
+    public async updateConfigAfterAppIdChange(config: ObjIdConfig) {
+        this._config = config;
+        if (!this._config.authKey) {
+            return;
+        }
+
+        const valid = await this._config.isAuthKeyValid();
+        if (valid) {
+            return;
+        }
+
+        const { name } = this._getAppInfo();
+        this.showWithDocumentation(
+            UI.authorization.showAppIdChangedWarning(name),
+            DOCUMENTS.APP_ID_CHANGE
+        );
     }
 
     public dispose() {

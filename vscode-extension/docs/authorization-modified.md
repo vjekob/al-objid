@@ -3,7 +3,7 @@
 AL Object ID Ninja thinks that you have just modified the authorization key in the `.objidconfig`
 file.
 
-**If this is the case, then please undo this operation using as soon as possible!**
+**If this is the case, then please undo this operation as soon as possible!**
 
 If this is a false alarm (for example, you have switched to a branch that doesn't contain
 authorization key, and Ninja failed to detect the branch change), then please ignore this

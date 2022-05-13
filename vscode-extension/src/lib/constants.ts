@@ -95,5 +95,6 @@ export const DOCUMENTS = {
     AUTHORIZATION_BRANCH_CHANGE: "authorization-branch-change",
     AUTHORIZATION_DELETED: "authorization-deleted",
     AUTHORIZATION_MODIFIED: "authorization-modified",
+    APP_ID_CHANGE: "authorization-app-id-change",
     APP_POOLS: "app-pools",
 };

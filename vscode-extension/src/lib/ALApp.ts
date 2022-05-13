@@ -37,7 +37,7 @@ export class ALApp implements Disposable {
                 hash: this.hash,
                 name: this._manifest.name,
             }),
-            () => (this._config = new ObjIdConfig(this._configUri, this.hash))
+            () => this.setUpConfigFile()
         );
     }
 
@@ -45,15 +45,21 @@ export class ALApp implements Disposable {
         output.log(`Change detected on ${this._manifest.uri.fsPath}`);
         const manifest = ALAppManifest.tryCreate(this._manifest.uri);
         if (manifest) {
-            if (manifest.id !== this._manifest.id) {
+            const oldId = this._manifest.id;
+            this._manifest = manifest;
+            if (manifest.id !== oldId) {
                 output.log(
-                    `Manifest id changed from ${this._manifest.id} to ${manifest.id}, resetting hash and encryption key.`
+                    `Manifest id changed from ${oldId} to ${manifest.id}, resetting hash and encryption key.`
                 );
                 this._hash = undefined;
                 this._encryptionKey = undefined;
+                this._configWatcher.updateConfigAfterAppIdChange(this.setUpConfigFile());
             }
-            this._manifest = manifest;
         }
+    }
+
+    private setUpConfigFile(): ObjIdConfig {
+        return (this._config = new ObjIdConfig(this._configUri, this.hash));
     }
 
     public static tryCreate(folder: WorkspaceFolder): ALApp | undefined {
