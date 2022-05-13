@@ -1,6 +1,6 @@
 import { window } from "vscode";
 import { LogLevel, Output } from "../features/Output";
-import { __AppManifest_obsolete_, NinjaALRange } from "./types";
+import { NinjaALRange } from "./types";
 import { CONFIG_FILE_NAME, EXTENSION_NAME, LABELS } from "./constants";
 import { EventLogEntry } from "./BackendTypes";
 import { ALApp } from "./ALApp";
@@ -163,10 +163,6 @@ export const UI = {
             window.showWarningMessage(
                 `${CONSTANTS.AUTHORIZATION.CANNOT_DEAUTHORIZE} ${describeApp(app)} because it is not authorized.`
             ),
-        showNoKeyError: (manifest: __AppManifest_obsolete_) =>
-            window.showErrorMessage(
-                `You do not have an authorization key configured for app "${manifest.name}". Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`
-            ),
         showAuthorizationSuccessfulInfo: (app: ALApp) =>
             window.showInformationMessage(
                 `You have successfully authorized app ${describeApp(
@@ -178,10 +174,6 @@ export const UI = {
                 `You have successfully deauthorized app ${describeApp(
                     app
                 )}. Please make sure that ${CONFIG_FILE_NAME} file is present in the root folder of your app.`
-            ),
-        showDeauthorizationFailedWarning: (manifest: __AppManifest_obsolete_, error: string) =>
-            window.showWarningMessage(
-                `An error occurred while deleting the authorization file for app "${manifest.name}": ${error}`
             ),
         showDeletedAuthorizationError: (name: string) =>
             window.showErrorMessage(
@@ -215,10 +207,6 @@ export const UI = {
         showNoLogicalRangesMessage: (app: ALApp) =>
             window.showInformationMessage(
                 `No logical ranges are defined for ${describeApp(app)}. There is nothing to consolidate.`
-            ),
-        showRangeFullyRepresentedMessage: (manifest: __AppManifest_obsolete_) =>
-            window.showInformationMessage(
-                `All ranges in app.json for ${manifest.name} are represented as logical ranges in .objidconfig.`
             ),
         showRangesConsolidatedMessage: (app: ALApp) =>
             window.showInformationMessage(
