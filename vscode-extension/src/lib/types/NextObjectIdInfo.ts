@@ -1,5 +1,3 @@
-//TODO Move each back-end type into its own file
-
 export interface NextObjectIdInfo {
     id: number | number[];
     updated: boolean;

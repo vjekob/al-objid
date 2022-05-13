@@ -60,7 +60,6 @@ export class ALAppManifest {
      *
      * ***NEVER SEND THIS PROPERTY TO THE BACK END!***
      */
-    // TODO Make sure this is only accessed when absolutely necessare (after all refactorings are done)
     public get id(): string {
         return this._manifest.id || "";
     }

@@ -15,23 +15,6 @@ export const URLS = {
     AUTO_SYNC_DIRTY: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSyncDirty.md",
 };
 
-export const OBJECT_TYPES = [
-    "codeunit",
-    "enum",
-    "enumextension",
-    "page",
-    "pageextension",
-    "permissionset",
-    "permissionsetextension",
-    "query",
-    "report",
-    "reportextension",
-    "table",
-    "tableextension",
-    "xmlport",
-];
-
-// TODO replace the array above with the enum below (and make sure to break nothing in the proces)
 export enum ALObjectType {
     codeunit = "codeunit",
     enum = "enum",

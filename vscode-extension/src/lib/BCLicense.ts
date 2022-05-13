@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import { DiagnosticSeverity, Position, Range, Uri, workspace } from "vscode";
 import * as xml2js from "xml2js";
+import { DiagnosticSeverity, Position, Range, Uri, workspace } from "vscode";
 import { Diagnostics, DIAGNOSTIC_CODE } from "../features/Diagnostics";
 import { getObjectDefinitions, getWorkspaceFolderFiles } from "./ObjectIds";
 import { PropertyBag } from "./PropertyBag";
@@ -10,14 +10,14 @@ const objectTypeToPermissionTypeMap: any = {
     enum: "",
     enumextension: "",
     page: "Page",
-    pageextension: "", // "Page", // TODO Handle pageextension validation through a property setting (strict license validation)
+    pageextension: "",
     permissionset: "",
     permissionsetextension: "",
     query: "Query",
     report: "Report",
     reportextension: "Report",
     table: "TableDescription",
-    tableextension: "", // "TableDescription", // TODO Handle tableextension validation through a property setting (strict license validation)
+    tableextension: "",
     xmlport: "XMLPort",
 };
 

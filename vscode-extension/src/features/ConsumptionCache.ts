@@ -1,6 +1,6 @@
 import { Disposable, EventEmitter } from "vscode";
 import { ConsumptionData } from "../lib/types/ConsumptionData";
-import { OBJECT_TYPES } from "../lib/constants";
+import { ALObjectType } from "../lib/constants";
 import { PropertyBag } from "../lib/PropertyBag";
 import { ConsumptionWarnings } from "./ConsumptionWarnings";
 
@@ -29,7 +29,7 @@ export class ConsumptionCache implements Disposable {
     public updateConsumption(appId: string, consumption: ConsumptionData): boolean {
         const keys = Object.keys(consumption);
         for (let key of keys) {
-            if (!OBJECT_TYPES.includes(key)) {
+            if (!Object.values<string>(ALObjectType).includes(key)) {
                 delete (consumption as any)[key];
             }
         }

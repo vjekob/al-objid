@@ -10,7 +10,7 @@ import {
 } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
-import { LABELS, OBJECT_TYPES, URLS } from "../lib/constants";
+import { ALObjectType, LABELS, URLS } from "../lib/constants";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { output } from "./Output";
@@ -171,7 +171,7 @@ async function getTypeAtPosition(
     if (type === null) return null;
 
     type = type.toLowerCase();
-    return OBJECT_TYPES.includes(type) || isTableOrEnum(type) ? type : null;
+    return Object.values<string>(ALObjectType).includes(type) || isTableOrEnum(type) ? type : null;
 }
 
 function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): boolean {
