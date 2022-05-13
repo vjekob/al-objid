@@ -7,7 +7,7 @@ import { NinjaALRange } from "./types/NinjaALRange";
 import { stringify, parse } from "comment-json";
 import { LogLevel, output } from "../features/Output";
 import { Backend } from "./Backend";
-import { ALObjectType } from "./constants";
+import { ALObjectType } from "./types/ALObjectType";
 import { BCLicense } from "./BCLicense";
 
 interface ObjIdConfigJson {

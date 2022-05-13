@@ -1,6 +1,6 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { ALApp } from "../../lib/ALApp";
-import { ALObjectType } from "../../lib/constants";
+import { ALObjectType } from "../../lib/types/ALObjectType";
 import { NinjaALRange } from "../../lib/types/NinjaALRange";
 import { ALRange } from "../../lib/types/ALRange";
 import { ConsumptionCache } from "../ConsumptionCache";

@@ -1,6 +1,6 @@
 import { WorkspaceManager } from "./WorkspaceManager";
 import { CodeActionProvider, TextDocument, Range, CodeActionContext, CodeAction, CodeActionKind } from "vscode";
-import { ALObjectType } from "../lib/constants";
+import { ALObjectType } from "../lib/types/ALObjectType";
 import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
 import { DIAGNOSTIC_CODE } from "./Diagnostics";
 

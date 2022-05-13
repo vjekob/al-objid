@@ -15,22 +15,6 @@ export const URLS = {
     AUTO_SYNC_DIRTY: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSyncDirty.md",
 };
 
-export enum ALObjectType {
-    codeunit = "codeunit",
-    enum = "enum",
-    enumextension = "enumextension",
-    page = "page",
-    pageextension = "pageextension",
-    permissionset = "permissionset",
-    permissionsetextension = "permissionsetextension",
-    query = "query",
-    report = "report",
-    reportextension = "reportextension",
-    table = "table",
-    tableextension = "tableextension",
-    xmlport = "xmlport",
-}
-
 export const LABELS = {
     BUTTON_SYNCHRONIZE: "Synchronize",
     BUTTON_LEARN_MORE: "Learn more",

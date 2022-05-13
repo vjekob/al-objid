@@ -10,7 +10,8 @@ import {
 } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
-import { ALObjectType, LABELS, URLS } from "../lib/constants";
+import { LABELS, URLS } from "../lib/constants";
+import { ALObjectType } from "../lib/types/ALObjectType";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { output } from "./Output";
