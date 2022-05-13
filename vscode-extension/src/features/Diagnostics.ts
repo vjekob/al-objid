@@ -1,12 +1,4 @@
-import {
-    Diagnostic,
-    DiagnosticCollection,
-    DiagnosticSeverity,
-    Disposable,
-    languages,
-    Range,
-    Uri,
-} from "vscode";
+import { Diagnostic, DiagnosticCollection, DiagnosticSeverity, Disposable, languages, Range, Uri } from "vscode";
 import { PropertyBag } from "../lib/PropertyBag";
 
 export interface CreateDiagnostic {

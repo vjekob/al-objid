@@ -35,11 +35,7 @@ export class HttpStatusHandler extends DisposableHolder {
             LABELS.BUTTON_LEARN_MORE
         );
         if (response === LABELS.BUTTON_LEARN_MORE) {
-            env.openExternal(
-                Uri.parse(
-                    "https://vjeko.com/2021/10/01/important-announcement-for-al-object-id-ninja/"
-                )
-            );
+            env.openExternal(Uri.parse("https://vjeko.com/2021/10/01/important-announcement-for-al-object-id-ninja/"));
         }
     }
 
@@ -74,9 +70,7 @@ export class HttpStatusHandler extends DisposableHolder {
             );
             if (response === LABELS.BUTTON_LEARN_MORE) {
                 env.openExternal(
-                    Uri.parse(
-                        "https://vjeko.com/why-is-using-old-versions-of-al-object-id-ninja-not-a-good-idea/"
-                    )
+                    Uri.parse("https://vjeko.com/why-is-using-old-versions-of-al-object-id-ninja-not-a-good-idea/")
                 );
             }
         },

@@ -64,10 +64,7 @@ export class BCLicense {
                 uriCache[object.path] = uri;
             }
             const objectUri = uriCache[object.path];
-            const diagnose = Diagnostics.instance.createDiagnostics(
-                objectUri,
-                `bclicense.${object.type}.${object.id}`
-            );
+            const diagnose = Diagnostics.instance.createDiagnostics(objectUri, `bclicense.${object.type}.${object.id}`);
             const mappedType = objectTypeToPermissionTypeMap[object.type];
             let permissions = cache[mappedType];
             if (!permissions) {

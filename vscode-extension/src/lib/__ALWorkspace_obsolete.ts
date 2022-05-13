@@ -41,12 +41,8 @@ export class __ALWorkspace_obsolete_ {
             })
         );
         quickPick.placeholder = multi
-            ? `Choose AL workspace folders${
-                  operationDescription ? ` ${operationDescription}` : ""
-              }...`
-            : `Select an AL workspace folder${
-                  operationDescription ? ` ${operationDescription}` : ""
-              }...`;
+            ? `Choose AL workspace folders${operationDescription ? ` ${operationDescription}` : ""}...`
+            : `Select an AL workspace folder${operationDescription ? ` ${operationDescription}` : ""}...`;
         quickPick.ignoreFocusOut = multi;
 
         let result = await (multi ? quickPick.pickMany() : quickPick.pickOne());
@@ -54,25 +50,15 @@ export class __ALWorkspace_obsolete_ {
         return result;
     }
 
-    public static pickFolder(
-        operationDescription?: string
-    ): Promise<__AppManifest_obsolete_ | undefined> {
-        return this.pickFolderOrFolders(false, operationDescription) as Promise<
-            __AppManifest_obsolete_ | undefined
-        >;
+    public static pickFolder(operationDescription?: string): Promise<__AppManifest_obsolete_ | undefined> {
+        return this.pickFolderOrFolders(false, operationDescription) as Promise<__AppManifest_obsolete_ | undefined>;
     }
 
-    public static pickFolders(
-        operationDescription?: string
-    ): Promise<__AppManifest_obsolete_[] | undefined> {
-        return this.pickFolderOrFolders(true, operationDescription) as Promise<
-            __AppManifest_obsolete_[] | undefined
-        >;
+    public static pickFolders(operationDescription?: string): Promise<__AppManifest_obsolete_[] | undefined> {
+        return this.pickFolderOrFolders(true, operationDescription) as Promise<__AppManifest_obsolete_[] | undefined>;
     }
 
-    public static async selectWorkspaceFolder(
-        uri?: Uri
-    ): Promise<__AppManifest_obsolete_ | undefined> {
+    public static async selectWorkspaceFolder(uri?: Uri): Promise<__AppManifest_obsolete_ | undefined> {
         if (uri && this.isALWorkspace(uri)) {
             return getCachedManifestFromUri(uri);
         }

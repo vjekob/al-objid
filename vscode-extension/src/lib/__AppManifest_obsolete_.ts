@@ -22,9 +22,7 @@ export function getManifest(uri: Uri): __AppManifest_obsolete_ | null {
 
     const appPath = path.join(folder.uri.fsPath, "app.json");
     try {
-        const manifest = JSON.parse(
-            fs.readFileSync(appPath).toString()
-        ) as AppManifestBackwardCompatibility;
+        const manifest = JSON.parse(fs.readFileSync(appPath).toString()) as AppManifestBackwardCompatibility;
         manifest.ninja = {
             unsafeOriginalId: manifest.id,
             uri: folderUri,

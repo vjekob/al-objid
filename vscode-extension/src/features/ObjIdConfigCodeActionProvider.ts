@@ -1,11 +1,4 @@
-import {
-    CodeActionProvider,
-    TextDocument,
-    Range,
-    CodeActionContext,
-    CodeAction,
-    CodeActionKind,
-} from "vscode";
+import { CodeActionProvider, TextDocument, Range, CodeActionContext, CodeAction, CodeActionKind } from "vscode";
 import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { ALObjectType } from "../lib/constants";
 import { getSymbolAtPosition } from "../lib/functions";
@@ -57,12 +50,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     break;
 
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND:
-                    createAction(
-                        actions,
-                        "vjeko-al-objid.select-bclicense",
-                        [manifest],
-                        "Select a BC license file"
-                    );
+                    createAction(actions, "vjeko-al-objid.select-bclicense", [manifest], "Select a BC license file");
                     break;
             }
         }

@@ -1,12 +1,4 @@
-import {
-    Disposable,
-    ThemeColor,
-    ThemeIcon,
-    TreeItem,
-    TreeItemCollapsibleState,
-    TreeItemLabel,
-    Uri,
-} from "vscode";
+import { Disposable, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
 import { __AppManifest_obsolete_ } from "../../lib/types";
 import { ExplorerDecorationsProvider } from "../RangeExplorer/ExplorerDecorationsProvider";
 import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
@@ -103,10 +95,7 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
 
         const decorate = (uri: Uri) => {
             if (decoration) {
-                ExplorerDecorationsProvider.instance.decorate(
-                    uri,
-                    decoration as TreeItemDecoration
-                );
+                ExplorerDecorationsProvider.instance.decorate(uri, decoration as TreeItemDecoration);
             }
         };
 

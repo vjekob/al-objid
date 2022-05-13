@@ -32,10 +32,7 @@ let syncDisabled: PropertyBag<boolean> = {};
 let syncSkipped = 0;
 let stopAsking = false;
 
-export async function syncIfChosen(
-    manifest: __AppManifest_obsolete_,
-    choice: Promise<string | undefined>
-) {
+export async function syncIfChosen(manifest: __AppManifest_obsolete_, choice: Promise<string | undefined>) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
             commands.executeCommand("vjeko-al-objid.sync-object-ids", {
@@ -49,10 +46,7 @@ export async function syncIfChosen(
         default:
             syncDisabled[manifest.id] = true;
             if (++syncSkipped > 1) {
-                if (
-                    (await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo()) ===
-                    LABELS.BUTTON_DONT_ASK
-                ) {
+                if ((await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo()) === LABELS.BUTTON_DONT_ASK) {
                     stopAsking = true;
                 }
             }
@@ -79,12 +73,7 @@ async function isTableField(
     position: Position,
     context: NextIdContext
 ): Promise<boolean | string> {
-    return await ParserConnector.instance.checkField(
-        document.getText(),
-        position,
-        getSymbols(document.uri),
-        context
-    );
+    return await ParserConnector.instance.checkField(document.getText(), position, getSymbols(document.uri), context);
 }
 
 async function isEnumValue(
@@ -92,12 +81,7 @@ async function isEnumValue(
     position: Position,
     context: NextIdContext
 ): Promise<boolean | string> {
-    return await ParserConnector.instance.checkValue(
-        document.getText(),
-        position,
-        getSymbols(document.uri),
-        context
-    );
+    return await ParserConnector.instance.checkValue(document.getText(), position, getSymbols(document.uri), context);
 }
 
 async function getTypeAtPositionRaw(
@@ -180,10 +164,7 @@ async function getTypeAtPosition(
     return OBJECT_TYPES.includes(type) || isTableOrEnum(type) ? type : null;
 }
 
-function showNotificationsIfNecessary(
-    manifest: __AppManifest_obsolete_,
-    objectId?: NextObjectIdInfo
-): boolean {
+function showNotificationsIfNecessary(manifest: __AppManifest_obsolete_, objectId?: NextObjectIdInfo): boolean {
     if (!objectId) return true;
 
     if (!objectId.hasConsumption) {
@@ -216,13 +197,7 @@ export class NextObjectIdCompletionProvider {
         if (!manifest) return;
 
         const { authKey } = manifest.ninja.config;
-        const objectId = await Backend.getNextNo(
-            manifest.id,
-            type,
-            manifest.idRanges,
-            false,
-            authKey
-        );
+        const objectId = await Backend.getNextNo(manifest.id, type, manifest.idRanges, false, authKey);
         Telemetry.instance.log("getNextNo-fetch", manifest.id);
 
         if (showNotificationsIfNecessary(manifest, objectId) || !objectId) return [];
@@ -265,16 +240,7 @@ export class NextObjectIdCompletionProvider {
             }
             return items;
         } else {
-            return [
-                new NextObjectIdCompletionItem(
-                    type,
-                    objectId,
-                    manifest,
-                    position,
-                    document.uri,
-                    nextIdContext
-                ),
-            ];
+            return [new NextObjectIdCompletionItem(type, objectId, manifest, position, document.uri, nextIdContext)];
         }
     }
 }

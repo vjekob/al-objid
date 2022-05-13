@@ -4,10 +4,7 @@ import { getCachedManifestFromAppId } from "./__AppManifest_obsolete_";
 import { ALRange } from "./types";
 import { UI } from "./UI";
 
-function getBestMatch(
-    checkSymbol: DocumentSymbol,
-    bestMatch: DocumentSymbol | null
-): DocumentSymbol {
+function getBestMatch(checkSymbol: DocumentSymbol, bestMatch: DocumentSymbol | null): DocumentSymbol {
     if (!bestMatch) {
         return checkSymbol;
     }
@@ -58,10 +55,7 @@ export async function getSymbolAtPosition(
 }
 
 export function showDocument(document: string) {
-    commands.executeCommand(
-        "markdown.showPreview",
-        Uri.file(path.join(__dirname, `../../docs/${document}.md`))
-    );
+    commands.executeCommand("markdown.showPreview", Uri.file(path.join(__dirname, `../../docs/${document}.md`)));
 }
 
 export function getRangeForId<T extends ALRange>(id: number, ranges: T[]): T | undefined {

@@ -49,11 +49,7 @@ export class Git {
         }
     }
 
-    private async execute(
-        command: string,
-        uri: Uri,
-        split = true
-    ): Promise<string[] | string | null> {
+    private async execute(command: string, uri: Uri, split = true): Promise<string[] | string | null> {
         const cwd = this.isDirectory(uri.fsPath) ? uri.fsPath : path.dirname(uri.fsPath);
         return new Promise(resolve => {
             const gitCommand = `git ${command}`;
@@ -111,12 +107,8 @@ export class Git {
     }
 
     public async getUserInfo(uri: Uri): Promise<{ name: string; email: string }> {
-        const name = (
-            ((await this.execute("config user.name", uri, false)) as string) || ""
-        ).trim();
-        const email = (
-            ((await this.execute("config user.email", uri, false)) as string) || ""
-        ).trim();
+        const name = (((await this.execute("config user.name", uri, false)) as string) || "").trim();
+        const email = (((await this.execute("config user.email", uri, false)) as string) || "").trim();
         return {
             name,
             email,
@@ -147,11 +139,7 @@ export class Git {
     }
 
     public async getTopLevelPath(uri: Uri): Promise<string> {
-        const topLevelPath = (await this.execute(
-            "rev-parse --show-toplevel",
-            uri,
-            false
-        )) as string;
+        const topLevelPath = (await this.execute("rev-parse --show-toplevel", uri, false)) as string;
         return topLevelPath ? topLevelPath.trim() : "";
     }
 
@@ -222,9 +210,7 @@ export class Git {
     }
 
     public async getCurrentBranchName(uri: Uri): Promise<string> {
-        let output = (await this.execute("branch --show-current", uri, false)) as
-            | string
-            | undefined;
+        let output = (await this.execute("branch --show-current", uri, false)) as string | undefined;
         return (output && output.trim()) || "";
     }
 
@@ -233,11 +219,7 @@ export class Git {
         return !!output;
     }
 
-    public async trackRemoteBranch(
-        uri: Uri,
-        remoteBranch: string,
-        newBranch: string
-    ): Promise<boolean> {
+    public async trackRemoteBranch(uri: Uri, remoteBranch: string, newBranch: string): Promise<boolean> {
         let output = await this.execute(`branch ${newBranch} --track ${remoteBranch}`, uri, false);
         return !!output;
     }
@@ -260,20 +242,14 @@ export class Git {
         const topLevelPaths: PropertyBag<GitTopLevelPathContext> = {};
         for (let manifest of context.manifests) {
             if (!(await Git.instance.isInitialized(manifest.ninja.uri))) {
-                if (
-                    (await UI.git.showNotRepoWarning(manifest, "change authorization")) ===
-                    LABELS.BUTTON_LEARN_MORE
-                ) {
+                if ((await UI.git.showNotRepoWarning(manifest, "change authorization")) === LABELS.BUTTON_LEARN_MORE) {
                     context.learnMore(context.manifests);
                 }
                 return false;
             }
 
             if (!(await Git.instance.isClean(manifest.ninja.uri))) {
-                if (
-                    (await UI.git.showNotCleanWarning(manifest, "authorizing the app")) ===
-                    LABELS.BUTTON_LEARN_MORE
-                ) {
+                if ((await UI.git.showNotCleanWarning(manifest, "authorizing the app")) === LABELS.BUTTON_LEARN_MORE) {
                     context.learnMore(context.manifests);
                 }
                 return false;
@@ -333,10 +309,7 @@ export class Git {
 
             // Commit files
             if (commit) {
-                await this.commit(
-                    topLevelPath.uri,
-                    context.getCommitMessage(topLevelPath.manifests)
-                );
+                await this.commit(topLevelPath.uri, context.getCommitMessage(topLevelPath.manifests));
                 atLeastOneSucceeded = true;
             }
         }

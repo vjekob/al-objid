@@ -9,9 +9,7 @@ export async function consolidateRanges() {
     }
 
     // Create a sorted clone of app.json ranges and .objidconfig (logical) ranges
-    let ranges = manifest.idRanges
-        .sort((left, right) => left.from - right.from)
-        .map(range => ({ ...range }));
+    let ranges = manifest.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));
 
     // Consolidate logical ranges
     let consolidated = false;
@@ -148,8 +146,7 @@ function consolidate(
                 combinedRanges.push(range);
                 continue;
 
-            case combinedRange.to === range.from - 1 &&
-                combinedRange.description === range.description:
+            case combinedRange.to === range.from - 1 && combinedRange.description === range.description:
                 combinedRange.to = range.to;
                 continue;
 
@@ -162,10 +159,7 @@ function consolidate(
     // Sort resulting ranges according to original sort order
     const logicalNames = logicalRanges.reduce<string[]>(
         (names, range) => (
-            range.description &&
-                !names.includes(range.description) &&
-                names.push(range.description),
-            names
+            range.description && !names.includes(range.description) && names.push(range.description), names
         ),
         []
     );

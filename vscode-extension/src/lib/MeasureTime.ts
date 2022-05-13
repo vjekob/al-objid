@@ -1,10 +1,7 @@
 import { performance } from "perf_hooks";
 import { output } from "../features/Output";
 
-export async function executeWithStopwatchAsync<T>(
-    thenable: () => Thenable<T>,
-    operation: string
-): Promise<T> {
+export async function executeWithStopwatchAsync<T>(thenable: () => Thenable<T>, operation: string): Promise<T> {
     const start = performance.now();
     let result = await thenable();
     const duration = performance.now() - start;

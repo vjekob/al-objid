@@ -48,9 +48,7 @@ function selectLicenseFromUri(uri: Uri): string | undefined {
     }
 }
 
-async function selectLicenseFromManifest(
-    manifest: __AppManifest_obsolete_
-): Promise<string | undefined> {
+async function selectLicenseFromManifest(manifest: __AppManifest_obsolete_): Promise<string | undefined> {
     const folderPath: string = manifest.ninja.uri.fsPath;
     const pattern = new RelativePattern(folderPath, "**/*.bclicense");
     const files = await workspace.findFiles(pattern, null);

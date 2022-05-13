@@ -17,8 +17,7 @@ const CONSTANTS = {
 
 export const UI = {
     general: {
-        showNoWorkspacesOpenInfo: () =>
-            window.showInformationMessage("There are no AL folders open. Nothing to do."),
+        showNoWorkspacesOpenInfo: () => window.showInformationMessage("There are no AL folders open. Nothing to do."),
         showReleaseNotes: (version: string) =>
             window.showInformationMessage(
                 `AL Object ID Ninja has been updated to version ${version}.`,
@@ -55,9 +54,7 @@ export const UI = {
     sync: {
         showSuccessInfo: (manifest?: __AppManifest_obsolete_) =>
             window.showInformationMessage(
-                `Object IDs${
-                    manifest ? ` for ${manifest.name}` : ""
-                } are now in sync with the Azure back end.`
+                `Object IDs${manifest ? ` for ${manifest.name}` : ""} are now in sync with the Azure back end.`
             ),
         showAreYouSure: async () =>
             window.showQuickPick(Object.values(LABELS.SYNC_ARE_YOU_SURE), {
@@ -196,9 +193,7 @@ export const UI = {
                 `All ranges in app.json for ${manifest.name} are represented as logical ranges in .objidconfig.`
             ),
         showRangesConsolidatedMessage: (manifest: __AppManifest_obsolete_) =>
-            window.showInformationMessage(
-                `Logical ranges for ${manifest.name} are now consolidated in .objidconfig.`
-            ),
+            window.showInformationMessage(`Logical ranges for ${manifest.name} are now consolidated in .objidconfig.`),
         showInvalidRangeFromToError: (name: string, range: NinjaALRange) =>
             window.showErrorMessage(
                 `Range ${
@@ -256,10 +251,7 @@ export const UI = {
                 LABELS.BUTTON_LEARN_MORE
             ),
         showInvalidLicenseError: () =>
-            window.showWarningMessage(
-                `This is not a valid license file.`,
-                LABELS.BUTTON_LEARN_MORE
-            ),
+            window.showWarningMessage(`This is not a valid license file.`, LABELS.BUTTON_LEARN_MORE),
         noLicenseFilesFound: (manifest: __AppManifest_obsolete_) =>
             window.showWarningMessage(`We could not find any license files in ${manifest.name}.`),
     },

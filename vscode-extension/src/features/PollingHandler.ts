@@ -31,9 +31,7 @@ export class PollingHandler implements Disposable {
     private async check() {
         if (this._disposed) return;
 
-        let folders = workspace.workspaceFolders?.filter(folder =>
-            __ALWorkspace_obsolete_.isALWorkspace(folder.uri)
-        );
+        let folders = workspace.workspaceFolders?.filter(folder => __ALWorkspace_obsolete_.isALWorkspace(folder.uri));
         if (!folders) return;
 
         let payload: FolderAuthorization[] = [];
@@ -94,9 +92,7 @@ export class PollingHandler implements Disposable {
             try {
                 await this.check();
             } catch (e: any) {
-                output.log(
-                    `An error occurred while executing polling check handler: ${e?.message || e}`
-                );
+                output.log(`An error occurred while executing polling check handler: ${e?.message || e}`);
             }
 
             this.scheduleNext();

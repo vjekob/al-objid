@@ -55,27 +55,17 @@ export function getFolderTreeItemProvider(
 
             if (!hasLogical && !hasObject) {
                 children = manifest.idRanges.map(
-                    range =>
-                        new NinjaTreeItem(
-                            manifest,
-                            getRangeTreeItemProvider(manifest, range, false, "")
-                        )
+                    range => new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, range, false, ""))
                 );
             } else {
-                children = [
-                    new NinjaTreeItem(manifest, getPhysicalRangesTreeItemProvider(manifest)),
-                ];
+                children = [new NinjaTreeItem(manifest, getPhysicalRangesTreeItemProvider(manifest))];
             }
 
             if (hasLogical) {
-                children!.push(
-                    new NinjaTreeItem(manifest, getLogicalRangesTreeItemProvider(manifest))
-                );
+                children!.push(new NinjaTreeItem(manifest, getLogicalRangesTreeItemProvider(manifest)));
             }
             if (hasObject) {
-                children!.push(
-                    new NinjaTreeItem(manifest, getObjectRangesTreeItemProvider(manifest))
-                );
+                children!.push(new NinjaTreeItem(manifest, getObjectRangesTreeItemProvider(manifest)));
             }
 
             return children;
@@ -124,9 +114,7 @@ export function getRangeTreeItemProvider(
                         getObjectTypeConsumptionTreeItemProvider(
                             manifest,
                             key,
-                            consumption[key as ALObjectType].filter(
-                                id => id >= range.from && id <= range.to
-                            ),
+                            consumption[key as ALObjectType].filter(id => id >= range.from && id <= range.to),
                             range.to - range.from + 1,
                             path
                         )
@@ -149,9 +137,7 @@ export function getRangeTreeItemProvider(
     };
 }
 
-export function getPhysicalRangesTreeItemProvider(
-    manifest: __AppManifest_obsolete_
-): NinjaTreeItemProvider {
+export function getPhysicalRangesTreeItemProvider(manifest: __AppManifest_obsolete_): NinjaTreeItemProvider {
     const path = "/ranges";
 
     return {
@@ -165,19 +151,13 @@ export function getPhysicalRangesTreeItemProvider(
         getChildren: () => {
             const ranges = manifest.idRanges;
             return ranges.map(
-                range =>
-                    new NinjaTreeItem(
-                        manifest,
-                        getRangeTreeItemProvider(manifest, range, false, path)
-                    )
+                range => new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, range, false, path))
             );
         },
     };
 }
 
-export function getLogicalRangesTreeItemProvider(
-    manifest: __AppManifest_obsolete_
-): NinjaTreeItemProvider {
+export function getLogicalRangesTreeItemProvider(manifest: __AppManifest_obsolete_): NinjaTreeItemProvider {
     const path = "/logicalranges";
 
     return {
@@ -198,14 +178,8 @@ export function getLogicalRangesTreeItemProvider(
                     range => (range.description || "").toLowerCase().trim() === compareName
                 );
                 return ranges.length === 1
-                    ? new NinjaTreeItem(
-                          manifest,
-                          getRangeTreeItemProvider(manifest, ranges[0], false, path)
-                      )
-                    : new NinjaTreeItem(
-                          manifest,
-                          getLogicalRangeTreeItemProvider(manifest, name, path, logicalRanges)
-                      );
+                    ? new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, ranges[0], false, path))
+                    : new NinjaTreeItem(manifest, getLogicalRangeTreeItemProvider(manifest, name, path, logicalRanges));
             });
 
             return children;
@@ -220,9 +194,7 @@ export function getLogicalRangeTreeItemProvider(
     children: NinjaALRange[]
 ): NinjaTreeItemProvider {
     const nameLower = (name || "").toLowerCase().trim();
-    const ranges = children.filter(
-        range => (range.description || "").toLowerCase().trim() === nameLower
-    );
+    const ranges = children.filter(range => (range.description || "").toLowerCase().trim() === nameLower);
     const path = `${pathSoFar}/${name || "$noname$"}`;
 
     return {
@@ -234,11 +206,7 @@ export function getLogicalRangeTreeItemProvider(
 
         getChildren: () => {
             const children = ranges.map(
-                range =>
-                    new NinjaTreeItem(
-                        manifest,
-                        getRangeTreeItemProvider(manifest, range, true, path)
-                    )
+                range => new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, range, true, path))
             );
 
             return children;
@@ -254,17 +222,14 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
     children: NinjaALRange[]
 ): NinjaTreeItemProvider {
     const nameLower = (name || "").toLowerCase().trim();
-    const ranges = children.filter(
-        range => (range.description || "").toLowerCase().trim() === nameLower
-    );
+    const ranges = children.filter(range => (range.description || "").toLowerCase().trim() === nameLower);
     const path = `${pathSoFar}/${name || "$noname$"}`;
 
     return {
         getLabel: () => name,
         getCollapsibleState: () => TreeItemCollapsibleState.Expanded,
         getIcon: () => new ThemeIcon("tag"),
-        getTooltip: () =>
-            `Logical ranges for ${objectType} objects, named ${name}, defined in .objidconfig`,
+        getTooltip: () => `Logical ranges for ${objectType} objects, named ${name}, defined in .objidconfig`,
         getUriPath: () => path,
 
         getChildren: () => {
@@ -272,13 +237,7 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
                 range =>
                     new NinjaTreeItem(
                         manifest,
-                        getObjectTypeRangeConsumptionTreeItemProvider(
-                            manifest,
-                            range,
-                            objectType,
-                            true,
-                            path
-                        )
+                        getObjectTypeRangeConsumptionTreeItemProvider(manifest, range, objectType, true, path)
                     )
             );
 
@@ -287,9 +246,7 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
     };
 }
 
-export function getObjectRangesTreeItemProvider(
-    manifest: __AppManifest_obsolete_
-): NinjaTreeItemProvider {
+export function getObjectRangesTreeItemProvider(manifest: __AppManifest_obsolete_): NinjaTreeItemProvider {
     const path = "/objectranges";
     return {
         getLabel: () => "Object Ranges",
@@ -303,11 +260,7 @@ export function getObjectRangesTreeItemProvider(
             const objectTypes = manifest.ninja.config.explicitObjectTypeRanges;
 
             const children = objectTypes.map(
-                objectType =>
-                    new NinjaTreeItem(
-                        manifest,
-                        getObjectTypeRangesTreeItemProvider(manifest, objectType)
-                    )
+                objectType => new NinjaTreeItem(manifest, getObjectTypeRangesTreeItemProvider(manifest, objectType))
             );
 
             return children;
@@ -334,8 +287,7 @@ export function getObjectTypeRangesTreeItemProvider(
                 if (
                     results.find(
                         left =>
-                            (left || "").toLowerCase().trim() ===
-                            (range.description || "").toLocaleLowerCase().trim()
+                            (left || "").toLowerCase().trim() === (range.description || "").toLocaleLowerCase().trim()
                     )
                 ) {
                     return results;
@@ -352,23 +304,11 @@ export function getObjectTypeRangesTreeItemProvider(
                 return ranges.length === 1
                     ? new NinjaTreeItem(
                           manifest,
-                          getObjectTypeRangeConsumptionTreeItemProvider(
-                              manifest,
-                              ranges[0],
-                              objectType,
-                              false,
-                              path
-                          )
+                          getObjectTypeRangeConsumptionTreeItemProvider(manifest, ranges[0], objectType, false, path)
                       )
                     : new NinjaTreeItem(
                           manifest,
-                          getObjectTypeLogicalRangeTreeItemProvider(
-                              manifest,
-                              objectType,
-                              name,
-                              path,
-                              logicalRanges
-                          )
+                          getObjectTypeLogicalRangeTreeItemProvider(manifest, objectType, name, path, logicalRanges)
                       );
             });
 

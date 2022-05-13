@@ -49,9 +49,7 @@ export class ALApp implements Disposable {
             const oldId = this._manifest.id;
             this._manifest = manifest;
             if (manifest.id !== oldId) {
-                output.log(
-                    `Manifest id changed from ${oldId} to ${manifest.id}, resetting hash and encryption key.`
-                );
+                output.log(`Manifest id changed from ${oldId} to ${manifest.id}, resetting hash and encryption key.`);
                 this._hash = undefined;
                 this._encryptionKey = undefined;
                 this._configWatcher.updateConfigAfterAppIdChange(this.setUpConfigFile());
@@ -107,7 +105,7 @@ export class ALApp implements Disposable {
 
     /**
      * Encryption key of the app ID, to be used for encrypting potentially sensitive information
-     * during back-end communication. Never send 
+     * during back-end communication. Never send
      */
     public get encryptionKey() {
         if (this._encryptionKey) {

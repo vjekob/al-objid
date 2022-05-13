@@ -13,9 +13,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
 
     private constructor() {
         super();
-        this.registerDisposable(
-            (this._status = window.createStatusBarItem(StatusBarAlignment.Left, 1))
-        );
+        this.registerDisposable((this._status = window.createStatusBarItem(StatusBarAlignment.Left, 1)));
         window.onDidChangeActiveTextEditor(this.updateStatusBar, this);
     }
 
@@ -64,9 +62,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
                             ? "You have authorization file (`.objidconfig`) but the app is not authorized."
                             : "You have no authorization file (`.objidconfig`), but the app is authorized."
                     } Try to pull latest changes from your Git.${
-                        info && info.user
-                            ? `\n\nThis app was last authorized by ${this.getUserInfoText(info)}`
-                            : ""
+                        info && info.user ? `\n\nThis app was last authorized by ${this.getUserInfoText(info)}` : ""
                     }`
                 );
             }
@@ -87,9 +83,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
             this.readUserInfo(manifest, authKey);
         }
 
-        this._status.text = `$(${authKey ? "lock" : "unlock"}) ${
-            authKey ? "Authorized" : "Unauthorized"
-        }`;
+        this._status.text = `$(${authKey ? "lock" : "unlock"}) ${authKey ? "Authorized" : "Unauthorized"}`;
         this._status.command = authKey ? undefined : "vjeko-al-objid.confirm-authorize-app";
         this.updateTooltip(manifest!.name, !!authKey, "");
         this._status.show();

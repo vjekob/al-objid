@@ -43,9 +43,7 @@ export class Telemetry {
 
     private getAppSha(appId: string): string {
         if (!this._appSha[appId]) {
-            this._appSha[appId] = this._context!.globalState.get<string>(
-                this.getAppShaGlobalStateKey(appId)
-            );
+            this._appSha[appId] = this._context!.globalState.get<string>(this.getAppShaGlobalStateKey(appId));
         }
         if (!this._appSha[appId]) {
             const now = Date.now();

@@ -1,8 +1,7 @@
 import { extensions } from "vscode";
 
 export const EXTENSION_NAME = "AL Object ID Ninja";
-export const EXTENSION_VERSION =
-    extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
+export const EXTENSION_VERSION = extensions.getExtension("vjeko.vjeko-al-objid")?.packageJSON?.version;
 
 export const APP_FILE_NAME = "app.json";
 export const CONFIG_FILE_NAME = ".objidconfig";

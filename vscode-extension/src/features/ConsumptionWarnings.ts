@@ -63,8 +63,7 @@ export class ConsumptionWarnings {
 
         for (let type of Object.keys(consumption)) {
             const total = (consumption as any)[type].filter(
-                (id: number) =>
-                    manifest.idRanges.filter(range => range.from <= id && range.to >= id).length > 0
+                (id: number) => manifest.idRanges.filter(range => range.from <= id && range.to >= id).length > 0
             ).length;
             if (total >= warningLevel) {
                 this.showWarning(appId, type, available - total);

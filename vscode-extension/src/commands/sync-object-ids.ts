@@ -6,11 +6,7 @@ import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { LogLevel, output } from "../features/Output";
 import { ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
-import {
-    getActualConsumption,
-    getObjectDefinitions,
-    getWorkspaceFolderFiles,
-} from "../lib/ObjectIds";
+import { getActualConsumption, getObjectDefinitions, getWorkspaceFolderFiles } from "../lib/ObjectIds";
 import { Telemetry } from "../lib/Telemetry";
 import { __AppManifest_obsolete_ } from "../lib/types";
 
@@ -55,14 +51,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     const consumption: ConsumptionInfo = getActualConsumption(objects);
 
     Telemetry.instance.log("syncIds", appId);
-    if (
-        await Backend.syncIds(
-            appId,
-            consumption,
-            !!options?.merge,
-            manifest.ninja.config.authKey || ""
-        )
-    ) {
+    if (await Backend.syncIds(appId, consumption, !!options?.merge, manifest.ninja.config.authKey || "")) {
         UI.sync.showSuccessInfo(manifest);
     }
 };

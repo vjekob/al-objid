@@ -62,9 +62,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
             watcherAppId.onDidChange(e => this.refresh(e));
             this._watchers.push(watcherAppId);
 
-            const watcherObjIdConfig = workspace.createFileSystemWatcher(
-                `${manifest.ninja.config.path}`
-            );
+            const watcherObjIdConfig = workspace.createFileSystemWatcher(`${manifest.ninja.config.path}`);
             watcherObjIdConfig.onDidChange(e => this.refresh(e));
             this._watchers.push(watcherObjIdConfig);
         }
@@ -78,26 +76,12 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
         if (!element) {
             let folders = __ALWorkspace_obsolete_.getALFolders();
             if (!folders) {
-                return [
-                    new TextTreeItem(
-                        "No AL workspaces are open.",
-                        "There is nothing to show here",
-                        undefined
-                    ),
-                ];
+                return [new TextTreeItem("No AL workspaces are open.", "There is nothing to show here", undefined)];
             }
 
-            folders = folders.filter(
-                folder => !getCachedManifestFromUri(folder.uri).ninja.config.appPoolId
-            );
+            folders = folders.filter(folder => !getCachedManifestFromUri(folder.uri).ninja.config.appPoolId);
             if (!folders) {
-                return [
-                    new TextTreeItem(
-                        "Only app pools available.",
-                        "There is nothing to show here",
-                        undefined
-                    ),
-                ];
+                return [new TextTreeItem("Only app pools available.", "There is nothing to show here", undefined)];
             }
             return folders?.map(folder => {
                 const manifest = getManifest(folder.uri)!;

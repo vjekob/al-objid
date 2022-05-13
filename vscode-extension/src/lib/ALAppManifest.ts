@@ -52,12 +52,12 @@ export class ALAppManifest {
 
     /**
      * The `id` property from the `app.json` file.
-     * 
+     *
      * ***DO NOT USE THIS PROPERTY UNLESS YOU ABSOLUTELY NEED IT!***
-     * 
+     *
      * **Instead, use the `hash` property from the parent object. The `id` property should be used
      * only for informational purposes, typically when having to present it on screen.**
-     * 
+     *
      * ***NEVER SEND THIS PROPERTY TO THE BACK END!***
      */
     public get id() {

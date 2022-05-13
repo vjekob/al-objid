@@ -82,9 +82,7 @@ class Endpoints {
 (async () => {
     if (Config.instance.isBackEndConfigInError) {
         if ((await UI.general.showBackEndConfigurationError()) === LABELS.BUTTON_LEARN_MORE) {
-            env.openExternal(
-                Uri.parse("https://github.com/vjekob/al-objid/blob/master/doc/DeployingBackEnd.md")
-            );
+            env.openExternal(Uri.parse("https://github.com/vjekob/al-objid/blob/master/doc/DeployingBackEnd.md"));
         }
     }
 })();
@@ -122,9 +120,7 @@ async function sendRequest<T>(
 
     if (Config.instance.useVerboseOutputLogging) {
         let { authKey, ...log } = data;
-        output.log(
-            `[Verbose] sending request to https://${hostname}${path}: ${JSON.stringify(log)}`
-        );
+        output.log(`[Verbose] sending request to https://${hostname}${path}: ${JSON.stringify(log)}`);
     }
 
     const request: HttpRequest = { hostname, path, method, data };
@@ -133,13 +129,7 @@ async function sendRequest<T>(
         status: API_RESULT.NOT_SENT,
     };
 
-    if (
-        Config.instance.includeUserName &&
-        data &&
-        typeof data === "object" &&
-        !Array.isArray(data) &&
-        data.appId
-    ) {
+    if (Config.instance.includeUserName && data && typeof data === "object" && !Array.isArray(data) && data.appId) {
         data.user = __encrypt_obsolete_(Config.instance.userName, data.appId);
     }
 
@@ -153,18 +143,9 @@ async function sendRequest<T>(
                 const { appId } = data;
                 const { _log, ...consumptions } = appInfo;
                 const manifest = getCachedManifestFromAppId(appId);
-                NotificationsFromLog.instance.updateLog(
-                    appId,
-                    _log as EventLogEntry[],
-                    manifest.name
-                );
+                NotificationsFromLog.instance.updateLog(appId, _log as EventLogEntry[], manifest.name);
                 // TODO Drop imperative range explorer updates and replace them with events
-                if (
-                    ConsumptionCache.instance.updateConsumption(
-                        appId,
-                        consumptions as ConsumptionData
-                    )
-                ) {
+                if (ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData)) {
                     RangeExplorerTreeDataProvider.instance.refresh(manifest.ninja.uri);
                 }
             }
@@ -174,15 +155,10 @@ async function sendRequest<T>(
                 response.status = API_RESULT.ERROR_HANDLED;
                 return response;
             }
-            output.log(
-                `Sending ${method} request to ${path} endpoint resulted in an error: ${JSON.stringify(
-                    error
-                )}`
-            );
+            output.log(`Sending ${method} request to ${path} endpoint resulted in an error: ${JSON.stringify(error)}`);
             response.error = error;
             response.status = API_RESULT.ERROR_NOT_HANDLED;
-            if (!errorHandler || !(await errorHandler(response, request)))
-                handleErrorDefault(response, request);
+            if (!errorHandler || !(await errorHandler(response, request))) handleErrorDefault(response, request);
         }
         return response;
     }, `Sending ${method} request to ${path} endpoint`);
@@ -207,17 +183,12 @@ function handleErrorDefault<T>(response: HttpResponse<T>, request: HttpRequest):
     const { error } = response;
     const { hostname } = request;
     if (error.error && error.error.code === "ENOTFOUND") {
-        UI.backend.showEndpointNotFoundError(
-            hostname,
-            Config.instance.isDefaultBackEndConfiguration
-        );
+        UI.backend.showEndpointNotFoundError(hostname, Config.instance.isDefaultBackEndConfiguration);
     }
     if (error.statusCode) {
         switch (error.statusCode) {
             case 401:
-                UI.backend.showEndpointUnauthorizedError(
-                    Config.instance.isDefaultBackEndConfiguration
-                );
+                UI.backend.showEndpointUnauthorizedError(Config.instance.isDefaultBackEndConfiguration);
         }
     }
 }
@@ -266,9 +237,7 @@ export class Backend {
                     const currentRange = getRangeForId(require, ranges as NinjaALRange[]);
                     if (currentRange) {
                         ranges = (ranges as NinjaALRange[]).filter(range =>
-                            currentRange.description
-                                ? range.description === currentRange.description
-                                : true
+                            currentRange.description ? range.description === currentRange.description : true
                         );
                     }
                 }
@@ -277,55 +246,41 @@ export class Backend {
 
         appId = getPoolIdFromAppIdIfAvailable(appId);
 
-        const response = await sendRequest<NextObjectIdInfo>(
-            "/api/v2/getNext",
-            commit ? "POST" : "GET",
-            {
-                appId,
-                type,
-                ranges,
-                authKey,
-                ...additionalOptions,
-            }
-        );
+        const response = await sendRequest<NextObjectIdInfo>("/api/v2/getNext", commit ? "POST" : "GET", {
+            appId,
+            type,
+            ranges,
+            authKey,
+            ...additionalOptions,
+        });
         if (response.status === API_RESULT.SUCCESS)
             output.log(`Received next ${type} ID response: ${JSON.stringify(response.value)}`);
         return response.value;
     }
 
-    static async syncIds(
-        appId: string,
-        ids: ConsumptionInfo,
-        patch: boolean,
-        authKey: string
-    ): Promise<boolean> {
+    static async syncIds(appId: string, ids: ConsumptionInfo, patch: boolean, authKey: string): Promise<boolean> {
         knownManagedApps[appId] = Promise.resolve(true);
 
         appId = getPoolIdFromAppIdIfAvailable(appId);
 
-        const response = await sendRequest<ConsumptionInfo>(
-            "/api/v2/syncIds",
-            patch ? "PATCH" : "POST",
-            { appId, ids, authKey }
-        );
+        const response = await sendRequest<ConsumptionInfo>("/api/v2/syncIds", patch ? "PATCH" : "POST", {
+            appId,
+            ids,
+            authKey,
+        });
         return !!response.value;
     }
 
-    static async autoSyncIds(
-        consumptions: AuthorizedAppConsumption[],
-        patch: boolean
-    ): Promise<boolean> {
+    static async autoSyncIds(consumptions: AuthorizedAppConsumption[], patch: boolean): Promise<boolean> {
         consumptions = JSON.parse(JSON.stringify(consumptions)); // Cloning to avoid side effects
 
         for (let app of consumptions) {
             knownManagedApps[app.appId] = Promise.resolve(true);
             app.appId = getPoolIdFromAppIdIfAvailable(app.appId);
         }
-        const response = await sendRequest<ConsumptionInfo>(
-            "/api/v2/autoSyncIds",
-            patch ? "PATCH" : "POST",
-            { appFolders: consumptions }
-        );
+        const response = await sendRequest<ConsumptionInfo>("/api/v2/autoSyncIds", patch ? "PATCH" : "POST", {
+            appFolders: consumptions,
+        });
         return !!response.value;
     }
 
@@ -357,10 +312,7 @@ export class Backend {
         return response.value;
     }
 
-    static async getAuthInfo(
-        appId: string,
-        authKey: string
-    ): Promise<AuthorizedAppResponse | undefined> {
+    static async getAuthInfo(appId: string, authKey: string): Promise<AuthorizedAppResponse | undefined> {
         // If the app is known to not be managed by the back end, then we exit
         if (!(await isKnownManagedApp(appId, true))) {
             return;
@@ -449,21 +401,17 @@ export class Backend {
         return response.value;
     }
 
-    static async getConsumption(
-        appId: string,
-        authKey: string
-    ): Promise<ConsumptionInfoWithTotal | undefined> {
+    static async getConsumption(appId: string, authKey: string): Promise<ConsumptionInfoWithTotal | undefined> {
         if (!(await isKnownManagedApp(appId))) {
             return;
         }
 
         appId = getPoolIdFromAppIdIfAvailable(appId);
 
-        const response = await sendRequest<ConsumptionInfoWithTotal>(
-            "/api/v2/getConsumption",
-            "GET",
-            { appId, authKey }
-        );
+        const response = await sendRequest<ConsumptionInfoWithTotal>("/api/v2/getConsumption", "GET", {
+            appId,
+            authKey,
+        });
         return response.value;
     }
 
@@ -474,12 +422,7 @@ export class Backend {
         return response.value ?? false;
     }
 
-    static async telemetry(
-        appSha: string | undefined,
-        userSha: string,
-        event: string,
-        context?: any
-    ) {
+    static async telemetry(appSha: string | undefined, userSha: string, event: string, context?: any) {
         if (appSha && !(await isKnownManagedApp(appSha))) {
             // No telemetry is logged for non-managed apps
             return;

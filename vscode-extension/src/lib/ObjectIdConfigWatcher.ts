@@ -109,10 +109,7 @@ export class ObjIdConfigWatcher implements Disposable {
         }
 
         const { name } = this._getAppInfo();
-        this.showWithDocumentation(
-            UI.authorization.showAppIdChangedWarning(name),
-            DOCUMENTS.APP_ID_CHANGE
-        );
+        this.showWithDocumentation(UI.authorization.showAppIdChangedWarning(name), DOCUMENTS.APP_ID_CHANGE);
     }
 
     public dispose() {

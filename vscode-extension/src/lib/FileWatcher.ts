@@ -1,11 +1,4 @@
-import {
-    Disposable,
-    EventEmitter,
-    FileSystemWatcher,
-    RelativePattern,
-    Uri,
-    workspace,
-} from "vscode";
+import { Disposable, EventEmitter, FileSystemWatcher, RelativePattern, Uri, workspace } from "vscode";
 import { GIT_HEAD } from "./constants";
 import { Git } from "./Git";
 

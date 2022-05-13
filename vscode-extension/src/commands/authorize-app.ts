@@ -22,20 +22,15 @@ export const authorizeApp = async () => {
 
             Telemetry.instance.log("authorize", manifest.id);
             const gitUser = await Git.instance.getUserInfo(manifest.ninja.uri);
-            let response = await Backend.authorizeApp(
-                manifest.id,
-                gitUser.name,
-                gitUser.email,
-                async response => {
-                    const { error } = response;
-                    if (error.statusCode !== 405) {
-                        return false;
-                    }
-
-                    UI.authorization.showAlreadyAuthorizedError(manifest);
-                    return true;
+            let response = await Backend.authorizeApp(manifest.id, gitUser.name, gitUser.email, async response => {
+                const { error } = response;
+                if (error.statusCode !== 405) {
+                    return false;
                 }
-            );
+
+                UI.authorization.showAlreadyAuthorizedError(manifest);
+                return true;
+            });
 
             if (!response || !response.authKey) {
                 return false;

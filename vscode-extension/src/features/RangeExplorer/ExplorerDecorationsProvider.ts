@@ -1,11 +1,4 @@
-import {
-    EventEmitter,
-    FileDecoration,
-    FileDecorationProvider,
-    ProviderResult,
-    ThemeColor,
-    Uri,
-} from "vscode";
+import { EventEmitter, FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from "vscode";
 import { PropertyBag } from "../../lib/PropertyBag";
 import { __AppManifest_obsolete_ } from "../../lib/types";
 import { TreeItemDecoration } from "../Explorer/TreeItemDecoration";

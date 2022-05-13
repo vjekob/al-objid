@@ -14,10 +14,7 @@ export async function getWorkspaceFolderFiles(uri: Uri): Promise<Uri[]> {
 }
 
 export async function getObjectDefinitions(uris: Uri[]): Promise<ALObject[]> {
-    return executeWithStopwatchAsync(
-        () => ParserConnector.instance.parse(uris),
-        `Parsing ${uris.length} object files`
-    );
+    return executeWithStopwatchAsync(() => ParserConnector.instance.parse(uris), `Parsing ${uris.length} object files`);
 }
 
 export function updateActualConsumption(objects: ALObject[], consumption: ConsumptionInfo): void {

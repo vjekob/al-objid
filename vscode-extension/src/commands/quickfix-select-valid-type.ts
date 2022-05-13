@@ -1,10 +1,6 @@
 import { Range, TextDocument, TextEdit, window, workspace, WorkspaceEdit } from "vscode";
 
-export async function quickFixSelectValidType(
-    document: TextDocument,
-    range: Range,
-    remainingTypes: string[]
-) {
+export async function quickFixSelectValidType(document: TextDocument, range: Range, remainingTypes: string[]) {
     const selectedType = await window.showQuickPick(remainingTypes, {
         placeHolder: "Select an object type...",
     });
