@@ -2,7 +2,7 @@ import { Uri } from "vscode";
 import { getCachedManifestFromAppId } from "../lib/__AppManifest_obsolete_";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { LogLevel, output } from "../features/Output";
 import { ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS } from "../lib/constants";
@@ -27,7 +27,7 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     let uri: Uri | undefined;
     let manifest: __AppManifest_obsolete_ | undefined;
     if (!appId) {
-        manifest = await ALWorkspace.selectWorkspaceFolder(options?.uri);
+        manifest = await __ALWorkspace_obsolete_.selectWorkspaceFolder(options?.uri);
         if (!manifest) {
             return;
         }

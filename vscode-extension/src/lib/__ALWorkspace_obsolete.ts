@@ -4,7 +4,7 @@ import { QuickPickWrapper } from "./QuickPickWrapper";
 import { __AppManifest_obsolete_ } from "./types";
 import { UI } from "./UI";
 
-export class ALWorkspace {
+export class __ALWorkspace_obsolete_ {
     public static isALWorkspace(uri: Uri): boolean {
         let manifest = getManifest(uri);
         return typeof manifest?.id === "string";

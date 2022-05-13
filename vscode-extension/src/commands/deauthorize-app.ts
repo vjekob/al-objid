@@ -3,14 +3,14 @@ import { LogLevel, output } from "../features/Output";
 import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { Git } from "../lib/Git";
 import { showDocument } from "../lib/functions";
 import { getAppNamesFromManifests } from "../lib/__AppManifest_obsolete_";
 import { DOCUMENTS, CONFIG_FILE_NAME } from "../lib/constants";
 
 export const deauthorizeApp = async () => {
-    const manifests = await ALWorkspace.pickFolders("to deauthorize");
+    const manifests = await __ALWorkspace_obsolete_.pickFolders("to deauthorize");
     if (!manifests) {
         return;
     }

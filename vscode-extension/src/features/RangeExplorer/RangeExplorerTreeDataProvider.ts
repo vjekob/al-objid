@@ -1,6 +1,6 @@
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
 import { Disposable, EventEmitter, TreeDataProvider, TreeItem, Uri, workspace } from "vscode";
-import { ALWorkspace } from "../../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../../lib/__ALWorkspace_obsolete";
 import { getCachedManifestFromUri, getManifest } from "../../lib/__AppManifest_obsolete_";
 import { ALRange } from "../../lib/types";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
@@ -51,7 +51,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
     }
 
     private setUpWatchers() {
-        let folders = ALWorkspace.getALFolders();
+        let folders = __ALWorkspace_obsolete_.getALFolders();
         if (!folders) {
             return;
         }
@@ -76,7 +76,7 @@ export class RangeExplorerTreeDataProvider implements TreeDataProvider<INinjaTre
 
     getChildren(element?: INinjaTreeItem): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
         if (!element) {
-            let folders = ALWorkspace.getALFolders();
+            let folders = __ALWorkspace_obsolete_.getALFolders();
             if (!folders) {
                 return [
                     new TextTreeItem(

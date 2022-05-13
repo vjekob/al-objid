@@ -4,13 +4,13 @@ import { Backend } from "../lib/Backend";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
 import { Git } from "../lib/Git";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { showDocument } from "../lib/functions";
 import { getAppNamesFromManifests } from "../lib/__AppManifest_obsolete_";
 import { CONFIG_FILE_NAME, DOCUMENTS } from "../lib/constants";
 
 export const authorizeApp = async () => {
-    const manifests = await ALWorkspace.pickFolders("to authorize");
+    const manifests = await __ALWorkspace_obsolete_.pickFolders("to authorize");
     if (!manifests) {
         return;
     }

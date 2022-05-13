@@ -1,11 +1,11 @@
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { DOCUMENTS, LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
 import { NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
 
 export async function copyRanges() {
-    const manifest = await ALWorkspace.selectWorkspaceFolder();
+    const manifest = await __ALWorkspace_obsolete_.selectWorkspaceFolder();
     if (!manifest) {
         return;
     }

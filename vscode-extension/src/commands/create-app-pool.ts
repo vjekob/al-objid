@@ -1,5 +1,5 @@
 import { Uri } from "vscode";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { getAppNamesFromManifests, getManifest } from "../lib/__AppManifest_obsolete_";
 import { DOCUMENTS, LABELS, CONFIG_FILE_NAME } from "../lib/constants";
 import { showDocument } from "../lib/functions";
@@ -9,7 +9,7 @@ import { __AppManifest_obsolete_ } from "../lib/types";
 import { UI } from "../lib/UI";
 
 export const createAppPool = async () => {
-    const folders = ALWorkspace.getALFolders();
+    const folders = __ALWorkspace_obsolete_.getALFolders();
     if (!folders || folders.length === 0) {
         await UI.general.showNoWorkspacesOpenInfo();
         return;
@@ -54,7 +54,7 @@ async function createAppPoolForSingleApp(uri: Uri) {
 }
 
 async function createAppPoolForMultipleApps(uris: Uri[]) {
-    const manifests = await ALWorkspace.pickFolders("to include in the pool");
+    const manifests = await __ALWorkspace_obsolete_.pickFolders("to include in the pool");
     if (!manifests || manifests.length === 0) {
         return;
     }

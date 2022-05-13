@@ -1,5 +1,5 @@
 import { Uri } from "vscode";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { BCLicense } from "../lib/BCLicense";
 import { LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions";
@@ -28,7 +28,7 @@ async function getExplicitLicense(uri: Uri): Promise<BCLicense | string | undefi
 }
 
 async function getDefaultLicense(): Promise<BCLicense | string | undefined> {
-    const manifest = await ALWorkspace.selectWorkspaceFolder();
+    const manifest = await __ALWorkspace_obsolete_.selectWorkspaceFolder();
     if (!manifest) {
         return;
     }

@@ -1,6 +1,6 @@
 import { NotificationsFromLog } from "./NotificationsFromLog";
 import { Disposable, workspace } from "vscode";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { Backend } from "../lib/Backend";
 import { PropertyBag } from "../lib/PropertyBag";
@@ -32,7 +32,7 @@ export class PollingHandler implements Disposable {
         if (this._disposed) return;
 
         let folders = workspace.workspaceFolders?.filter(folder =>
-            ALWorkspace.isALWorkspace(folder.uri)
+            __ALWorkspace_obsolete_.isALWorkspace(folder.uri)
         );
         if (!folders) return;
 

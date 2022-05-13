@@ -1,6 +1,6 @@
 import * as path from "path";
 import { RelativePattern, Uri, window, workspace } from "vscode";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { BCLicense } from "../lib/BCLicense";
 import { LABELS } from "../lib/constants";
@@ -10,7 +10,7 @@ import { UI } from "../lib/UI";
 
 export async function selectBCLicense(manifestOrUri?: __AppManifest_obsolete_ | Uri) {
     if (!manifestOrUri) {
-        manifestOrUri = await ALWorkspace.selectWorkspaceFolder();
+        manifestOrUri = await __ALWorkspace_obsolete_.selectWorkspaceFolder();
         if (!manifestOrUri) {
             return;
         }

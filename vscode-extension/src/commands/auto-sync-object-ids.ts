@@ -1,5 +1,5 @@
 import { env, ProgressLocation, Uri, window, workspace } from "vscode";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { AuthorizedAppConsumption, ConsumptionInfo } from "../lib/BackendTypes";
 import { LABELS, URLS } from "../lib/constants";
 import { Git, GitBranchInfo } from "../lib/Git";
@@ -216,10 +216,10 @@ export const autoSyncObjectIds = async () => {
 
             // Pick folders
             let manifests = auto
-                ? ALWorkspace.getALFolders()?.map(workspace =>
-                      getCachedManifestFromUri(workspace.uri)
-                  )
-                : await ALWorkspace.pickFolders();
+                ? __ALWorkspace_obsolete_
+                      .getALFolders()
+                      ?.map(workspace => getCachedManifestFromUri(workspace.uri))
+                : await __ALWorkspace_obsolete_.pickFolders();
             if (!manifests || !manifests.length) {
                 return autoSyncResult(AutoSyncResult.SilentFailure);
             }

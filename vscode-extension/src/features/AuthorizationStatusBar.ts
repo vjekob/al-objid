@@ -1,5 +1,5 @@
 import { MarkdownString, StatusBarAlignment, StatusBarItem, window } from "vscode";
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { getManifest } from "../lib/__AppManifest_obsolete_";
 import { EXTENSION_NAME, URLS } from "../lib/constants";
 import { DisposableHolder } from "./DisposableHolder";
@@ -75,7 +75,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
 
     public updateStatusBar() {
         let document = window.activeTextEditor?.document;
-        if (!document || !ALWorkspace.isALWorkspace(document.uri)) {
+        if (!document || !__ALWorkspace_obsolete_.isALWorkspace(document.uri)) {
             this._status.hide();
             return;
         }

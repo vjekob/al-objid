@@ -1,9 +1,9 @@
-import { ALWorkspace } from "../lib/ALWorkspace";
+import { __ALWorkspace_obsolete_ } from "../lib/__ALWorkspace_obsolete";
 import { ALRange, __AppManifest_obsolete_, NinjaALRange } from "../lib/types";
 import { UI } from "../lib/UI";
 
 export async function consolidateRanges() {
-    const manifest = await ALWorkspace.selectWorkspaceFolder();
+    const manifest = await __ALWorkspace_obsolete_.selectWorkspaceFolder();
     if (!manifest) {
         return;
     }
