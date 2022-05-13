@@ -15,7 +15,7 @@ import {
     AuthorizedAppResponse,
 } from "./BackendTypes";
 import { Config } from "./Config";
-import { decrypt, encrypt } from "./Encryption";
+import { __decrypt_obsolete_, __encrypt_obsolete_ } from "./Encryption";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "./MeasureTime";
 import { UI } from "./UI";
@@ -140,7 +140,7 @@ async function sendRequest<T>(
         !Array.isArray(data) &&
         data.appId
     ) {
-        data.user = encrypt(Config.instance.userName, data.appId);
+        data.user = __encrypt_obsolete_(Config.instance.userName, data.appId);
     }
 
     return await executeWithStopwatchAsync(async () => {
@@ -339,8 +339,8 @@ export class Backend {
         const additional: any = {};
 
         if (Config.instance.includeUserName) {
-            additional.gitUser = encrypt(gitUser, appId);
-            additional.gitEMail = encrypt(gitEMail, appId);
+            additional.gitUser = __encrypt_obsolete_(gitUser, appId);
+            additional.gitEMail = __encrypt_obsolete_(gitEMail, appId);
         }
 
         appId = getPoolIdFromAppIdIfAvailable(appId);
@@ -374,8 +374,8 @@ export class Backend {
         });
         const result = response.value;
         if (result && result.user) {
-            result.user.name = decrypt(result.user.name, appId) || "";
-            result.user.email = decrypt(result.user.email, appId) || "";
+            result.user.name = __decrypt_obsolete_(result.user.name, appId) || "";
+            result.user.email = __decrypt_obsolete_(result.user.email, appId) || "";
         }
         return result;
     }

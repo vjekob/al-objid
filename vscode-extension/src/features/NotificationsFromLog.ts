@@ -1,13 +1,13 @@
 import { EventLogEntry } from "../lib/BackendTypes";
 import { Config } from "../lib/Config";
-import { decrypt } from "../lib/Encryption";
+import { __decrypt_obsolete_ } from "../lib/Encryption";
 import { UI } from "../lib/UI";
 
 export class NotificationsFromLog {
     //#region Singleton
     private static _instance: NotificationsFromLog;
 
-    private constructor() {}
+    private constructor() { }
 
     public static get instance(): NotificationsFromLog {
         return this._instance || (this._instance = new NotificationsFromLog());
@@ -40,7 +40,7 @@ export class NotificationsFromLog {
             }
 
             if (event.user) {
-                event.user = decrypt(event.user, appId) || "Unknown user";
+                event.user = __decrypt_obsolete_(event.user, appId) || "Unknown user";
                 if (event.user === Config.instance.userName) {
                     continue;
                 }

@@ -6,7 +6,7 @@ const ALGORITHM = "aes-256-cbc";
 var IV_LENGTH = 16;
 const IV_SEPARATOR = "?";
 
-export function encrypt(text: string, appId: string): string | undefined {
+export function __encrypt_obsolete_(text: string, appId: string): string | undefined {
     try {
         const key = Buffer.from(getAppEncryptionKey(appId), "utf-8");
         const iv = crypto.randomBytes(IV_LENGTH);
@@ -20,7 +20,7 @@ export function encrypt(text: string, appId: string): string | undefined {
     }
 }
 
-export function decrypt(encrypted: string, appId: string): string | undefined {
+export function __decrypt_obsolete_(encrypted: string, appId: string): string | undefined {
     try {
         const key = Buffer.from(getAppEncryptionKey(appId), "utf-8");
         const parts = encrypted.split(IV_SEPARATOR);
