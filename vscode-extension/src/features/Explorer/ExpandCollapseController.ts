@@ -69,6 +69,7 @@ export class ExpandCollapseController {
             return;
         }
         this._treeState[id] = TreeItemCollapsibleState.Expanded;
+        this.setHasExpanded(true);
     }
 
     public collapse(id: string) {
@@ -76,6 +77,7 @@ export class ExpandCollapseController {
             return;
         }
         this._treeState[id] = TreeItemCollapsibleState.Collapsed;
+        this.setHasCollapsed(true);
     }
 
     public getState(id: string): TreeItemCollapsibleState | undefined {
