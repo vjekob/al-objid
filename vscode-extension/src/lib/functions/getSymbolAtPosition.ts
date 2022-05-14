@@ -1,4 +1,5 @@
 import { commands, DocumentSymbol, Position, Uri } from "vscode";
+import { CodeCommand } from "../../commands/commands";
 
 function getBestMatch(checkSymbol: DocumentSymbol, bestMatch: DocumentSymbol | null): DocumentSymbol {
     if (!bestMatch) {
@@ -42,7 +43,7 @@ export async function getSymbolAtPosition(
     }
     try {
         const symbols: DocumentSymbol[] = (await commands.executeCommand(
-            "vscode.executeDocumentSymbolProvider",
+            CodeCommand.ExecuteDocumentSymbolProvider,
             uri
         )) as DocumentSymbol[];
         return getSymbolInChildren(position, symbols, null, matches);

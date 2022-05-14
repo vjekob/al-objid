@@ -1,5 +1,6 @@
 import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import { NinjaCommand } from "./commands";
 
 const OPTION = {
     YES: "Yes, authorize the app and make it more secure",
@@ -14,7 +15,7 @@ const OPTION_AGAIN = {
 };
 
 async function executeAuthorization() {
-    commands.executeCommand("vjeko-al-objid.authorize-app");
+    commands.executeCommand(NinjaCommand.AuthorizeApp);
 }
 
 async function confirmAgain() {

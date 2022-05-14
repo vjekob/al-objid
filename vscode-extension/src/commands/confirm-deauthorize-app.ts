@@ -1,5 +1,6 @@
 import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import { NinjaCommand } from "./commands";
 
 const OPTION = {
     YES: "Yes, I am sure about it",
@@ -8,7 +9,7 @@ const OPTION = {
 };
 
 async function executeDeuthorization() {
-    commands.executeCommand("vjeko-al-objid.deauthorize-app");
+    commands.executeCommand(NinjaCommand.DeauthorizeApp);
 }
 
 export const confirmDeauthorizeApp = async () => {

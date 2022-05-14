@@ -4,6 +4,7 @@ import { NewsEntry } from "../lib/types/NewsEntry";
 import { NewsButton } from "../lib/types/NewsButton";
 import { NewsActionType } from "../lib/types/NewsActionType";
 import { NewsType } from "../lib/types/NewsType";
+import { CodeCommand } from "../commands/commands";
 
 enum NewsEntryStatus {
     shown = 0,
@@ -130,7 +131,7 @@ export class NewsHandler implements Disposable {
 
         [NewsType.openmd]: async (entry: NewsEntry) => {
             let uri = Uri.file(path.join(__dirname, `../../docs/${entry.message}`));
-            commands.executeCommand("markdown.showPreview", uri);
+            commands.executeCommand(CodeCommand.MarkdownShowPreview, uri);
         },
     };
 

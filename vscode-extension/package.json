@@ -215,16 +215,14 @@
                     "name": "Range Explorer",
                     "icon": "images/tree-view.svg",
                     "contextualTitle": "Range Explorer",
-                    "type": "tree",
-                    "when": "vjeko-al-objid.active == true"
+                    "type": "tree"
                 },
                 {
                     "id": "ninja-licenseExplorer",
                     "name": "License Explorer",
                     "icon": "images/tree-view.svg",
                     "contextualTitle": "License Explorer",
-                    "type": "tree",
-                    "when": "vjeko-al-objid.active == true"
+                    "type": "tree"
                 }
             ]
         },
@@ -267,40 +265,31 @@
             ],
             "commandPalette": [
                 {
-                    "command": "vjeko-al-objid.confirm-sync-object-ids",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.confirm-sync-object-ids"
                 },
                 {
-                    "command": "vjeko-al-objid.confirm-authorize-app",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.confirm-authorize-app"
                 },
                 {
-                    "command": "vjeko-al-objid.confirm-deauthorize-app",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.confirm-deauthorize-app"
                 },
                 {
-                    "command": "vjeko-al-objid.auto-sync-object-ids",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.auto-sync-object-ids"
                 },
                 {
-                    "command": "vjeko-al-objid.show-release-notes",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.show-release-notes"
                 },
                 {
-                    "command": "vjeko-al-objid.copy-ranges",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.copy-ranges"
                 },
                 {
-                    "command": "vjeko-al-objid.consolidate-ranges",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.consolidate-ranges"
                 },
                 {
-                    "command": "vjeko-al-objid.create-app-pool-preview",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.create-app-pool-preview"
                 },
                 {
-                    "command": "vjeko-al-objid.validate-bclicense",
-                    "when": "vjeko-al-objid.active"
+                    "command": "vjeko-al-objid.validate-bclicense"
                 }
             ]
         }

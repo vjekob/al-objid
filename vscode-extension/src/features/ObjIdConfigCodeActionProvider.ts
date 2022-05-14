@@ -1,19 +1,9 @@
 import { WorkspaceManager } from "./WorkspaceManager";
-import {
-    CodeActionProvider,
-    TextDocument,
-    Range,
-    CodeActionContext,
-    CodeAction,
-    CodeActionKind,
-    Uri,
-    WorkspaceEdit,
-    TextEdit,
-    workspace,
-} from "vscode";
+import { CodeActionProvider, TextDocument, Range, CodeActionContext, CodeAction, CodeActionKind, Uri } from "vscode";
 import { ALObjectType } from "../lib/types/ALObjectType";
 import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
 import { DIAGNOSTIC_CODE } from "./Diagnostics";
+import { NinjaCommand } from "../commands/commands";
 
 export class ObjIdConfigActionProvider implements CodeActionProvider {
     private createAction(
@@ -39,7 +29,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     }
                     this.createAction(
                         actions,
-                        "vjeko-al-objid.quickfix-remove-property",
+                        NinjaCommand.QuickFixRemoveProperty,
                         [uri, symbol],
                         "Remove property",
                         CodeActionKind.QuickFix
@@ -77,7 +67,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     );
                     this.createAction(
                         actions,
-                        "vjeko-al-objid.quickfix-remove-declaration",
+                        NinjaCommand.QuickFixRemoveDeclaration,
                         [app, symbol.name],
                         "Remove declaration",
                         CodeActionKind.QuickFix
@@ -85,7 +75,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     if (remainingTypes.length > 0) {
                         this.createAction(
                             actions,
-                            "vjeko-al-objid.quickfix-select-valid-type",
+                            NinjaCommand.QuickFixSelectValidType,
                             [document, symbol.selectionRange, remainingTypes],
                             "Select valid object type",
                             CodeActionKind.QuickFix
@@ -94,7 +84,7 @@ export class ObjIdConfigActionProvider implements CodeActionProvider {
                     break;
 
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.LICENSE_FILE_NOT_FOUND:
-                    this.createAction(actions, "vjeko-al-objid.select-bclicense", [app], "Select a BC license file");
+                    this.createAction(actions, NinjaCommand.SelectBCLicense, [app], "Select a BC license file");
                     break;
 
                 case DIAGNOSTIC_CODE.OBJIDCONFIG.INVALID_PROPERTY:

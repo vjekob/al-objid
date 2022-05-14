@@ -4,6 +4,7 @@ import path = require("path");
 import * as os from "os";
 import { getSha256 } from "./functions/getSha256";
 import { ConfigurationProperty } from "./ObjIdConfig";
+import { CodeCommand } from "../commands/commands";
 
 async function waitForJsonActivation(): Promise<boolean> {
     // We need this because there is no other reliable way to await for activation of JSON language features, needed for symbol loading
@@ -21,7 +22,7 @@ async function waitForJsonActivation(): Promise<boolean> {
     while (Date.now() < start + 60000) {
         available = await new Promise<boolean>(resolve => {
             setTimeout(async () => {
-                const symbols = await commands.executeCommand("vscode.executeDocumentSymbolProvider", tempUri);
+                const symbols = await commands.executeCommand(CodeCommand.ExecuteDocumentSymbolProvider, tempUri);
                 if (symbols) {
                     resolve(true);
                 }
@@ -62,7 +63,7 @@ export class ObjIdConfigSymbols {
                 return;
             }
 
-            const symbols = await (commands.executeCommand("vscode.executeDocumentSymbolProvider", uri) as Promise<
+            const symbols = await (commands.executeCommand(CodeCommand.ExecuteDocumentSymbolProvider, uri) as Promise<
                 DocumentSymbol[] | undefined
             >);
             resolve(symbols);

@@ -5,6 +5,7 @@ import { Backend } from "../lib/backend/Backend";
 import { AuthorizedAppResponse } from "../lib/backend/AuthorizedAppResponse";
 import { WorkspaceManager } from "./WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
+import { NinjaCommand } from "../commands/commands";
 
 export class AuthorizationStatusBar extends DisposableHolder {
     private _status: StatusBarItem;
@@ -84,7 +85,7 @@ export class AuthorizationStatusBar extends DisposableHolder {
         }
 
         this._status.text = `$(${authKey ? "lock" : "unlock"}) ${authKey ? "Authorized" : "Unauthorized"}`;
-        this._status.command = authKey ? undefined : "vjeko-al-objid.confirm-authorize-app";
+        this._status.command = authKey ? undefined : NinjaCommand.ConfirmAuthorizeApp;
         this.updateTooltip(manifest!.name, !!authKey, "");
         this._status.show();
     }

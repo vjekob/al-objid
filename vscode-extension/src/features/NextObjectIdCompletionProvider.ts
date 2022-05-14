@@ -23,6 +23,7 @@ import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
 import { getRangeForId } from "../lib/functions/getRangeForId";
 import { ALApp } from "../lib/ALApp";
 import { WorkspaceManager } from "./WorkspaceManager";
+import { NinjaCommand } from "../commands/commands";
 
 type SymbolInfo = {
     type: string;
@@ -37,7 +38,7 @@ let stopAsking = false;
 export async function syncIfChosen(app: ALApp, choice: Promise<string | undefined>) {
     switch (await choice) {
         case LABELS.BUTTON_SYNCHRONIZE:
-            commands.executeCommand("vjeko-al-objid.sync-object-ids", {
+            commands.executeCommand(NinjaCommand.SyncObjectIds, {
                 skipQuestion: true,
             });
             break;

@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { commands, DiagnosticSeverity, DocumentSymbol, Uri } from "vscode";
+import { CodeCommand } from "../../commands/commands";
 import { LABELS, TIME } from "../../lib/constants";
 import { ConfigurationProperty } from "../../lib/ObjIdConfig";
 import { ALObjectType } from "../../lib/types/ALObjectType";
@@ -34,7 +35,7 @@ export class ObjIdConfigLinter {
                 return;
             }
 
-            const symbols = await (commands.executeCommand("vscode.executeDocumentSymbolProvider", uri) as Promise<
+            const symbols = await (commands.executeCommand(CodeCommand.ExecuteDocumentSymbolProvider, uri) as Promise<
                 DocumentSymbol[] | undefined
             >);
             resolve(symbols);

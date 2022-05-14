@@ -7,7 +7,7 @@
  *
  * @param commit Callback to invoke when this command executes
  */
-export const commitSuggestionCommand = (commit: Function) => {
+export const commitSuggestion = (commit: Function) => {
     if (typeof commit === "function") {
         commit();
     }

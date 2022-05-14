@@ -1,4 +1,5 @@
 import { commands, TreeItemCollapsibleState } from "vscode";
+import { CodeCommand } from "../../commands/commands";
 import { PropertyBag } from "../../lib/types/PropertyBag";
 
 export class ExpandCollapseController {
@@ -9,11 +10,11 @@ export class ExpandCollapseController {
     private _treeState: PropertyBag<TreeItemCollapsibleState> = {};
 
     private setHasExpanded(value: boolean) {
-        commands.executeCommand("setContext", `${this._id}.hasExpanded`, value);
+        commands.executeCommand(CodeCommand.SetContext, `${this._id}.hasExpanded`, value);
     }
 
     private setHasCollapsed(value: boolean) {
-        commands.executeCommand("setContext", `${this._id}.hasCollapsed`, value);
+        commands.executeCommand(CodeCommand.SetContext, `${this._id}.hasCollapsed`, value);
     }
 
     public constructor(id: string) {

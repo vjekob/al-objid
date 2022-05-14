@@ -1,5 +1,6 @@
 import { commands, env, TreeItem, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import { NinjaCommand } from "./commands";
 
 const OPTION = {
     UPDATE: "Update. I want to merge actual object ID assignments with what's already recorded.",
@@ -16,7 +17,7 @@ export const confirmSyncObjectIds = async (item: TreeItem) => {
         case OPTION.REPLACE:
         case OPTION.UPDATE:
             commands.executeCommand(
-                "vjeko-al-objid.sync-object-ids",
+                NinjaCommand.SyncObjectIds,
                 { merge: result === OPTION.UPDATE },
                 item?.resourceUri?.path.substring(1)
             );

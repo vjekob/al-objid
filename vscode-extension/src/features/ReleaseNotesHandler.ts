@@ -5,6 +5,7 @@ import { Config } from "../lib/Config";
 import { ALREADY_USED, EXTENSION_VERSION, LABELS } from "../lib/constants";
 import { UI } from "../lib/UI";
 import { Telemetry } from "../lib/Telemetry";
+import { CodeCommand } from "../commands/commands";
 
 export class ReleaseNotesHandler {
     private static _instance: ReleaseNotesHandler;
@@ -69,7 +70,7 @@ export class ReleaseNotesHandler {
     }
 
     private openReleaseNotesPanel(version: string) {
-        commands.executeCommand("markdown.showPreview", this.releaseNotesUri(version));
+        commands.executeCommand(CodeCommand.MarkdownShowPreview, this.releaseNotesUri(version));
     }
 
     private checkNotes(version: string, context: ExtensionContext) {
