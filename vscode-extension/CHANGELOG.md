@@ -5,7 +5,7 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## [2.7.0] - 2022-05-12
+## [2.7.0] - 2022-05-19
 
 ### Added
 
@@ -21,6 +21,17 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
     the parent or any ancestors retain their existing style. This makes the actual nodes where attention
     is actually needed stand out a lot better. With many more nodes in the new range explorer, propagated
     highlighting and badges resulted in it being less obvious where exactly the problem is.
+-   Code base is massively refactored around how AL workspaces, and `app.json` and `.objidconfig` files are
+    handled. This refactoring not only makes code far cleaner and easier to maintain and extend, but also
+    improves performance and stability.
+-   Completely new `.objidconfig` linter is included. It performs better, and depends on new AL workspace
+    infrastructure. Also, linting diagnostic messages are more consistent and straightforward.
+
+### Removed
+
+-   Several warning messages about `.objidconfig` misconfiguration are excluded. They are now covered by
+    linter.
+-   Several quick-fix actions for `.objidconfig` are removed. They may be added in a later version.
 
 ### Fixed
 

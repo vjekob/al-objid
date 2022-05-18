@@ -223,28 +223,6 @@ export const UI = {
                 } has "to" lower than "from". "from" must be lower, and "to" must be higher.`,
                 LABELS.FIX
             ),
-        showInvalidRangeTypeError: (range: NinjaALRange) =>
-            window.showErrorMessage(
-                `Logical range ${
-                    range.description
-                        ? `${range.description} (${range.from}..${range.to})`
-                        : `${range.from}..${range.to}`
-                } is invalid. Both "from" and "to" must be non-zero numbers.`,
-                "OK"
-            ),
-        showRangeOverlapError: (range1: NinjaALRange, range2: NinjaALRange) =>
-            window.showErrorMessage(
-                `Ranges logical ranges ${
-                    range1.description
-                        ? `${range1.description} (${range1.from}..${range1.to})`
-                        : `${range1.from}..${range1.to}`
-                } and ${
-                    range2.description
-                        ? `${range2.description} (${range2.from}..${range2.to})`
-                        : `${range2.from}..${range2.to}`
-                } overlap. Until you fix this issue, your logical range configuration in .objidconfig will be ignored.`,
-                "OK"
-            ),
     },
 
     pool: {
