@@ -134,6 +134,10 @@ export class ObjIdConfig {
         this.setProperty(ConfigurationProperty.AuthKey, value);
     }
 
+    public removeProperty(name: string) {
+        this.setProperty(name as ConfigurationProperty, undefined);
+    }
+
     public async isAuthKeyValid(): Promise<boolean> {
         if (this._authKeyValidPromise) {
             return this._authKeyValidPromise;
@@ -184,6 +188,9 @@ export class ObjIdConfig {
         const names: string[] = [];
         const ranges = this._config.idRanges;
         for (let range of ranges) {
+            if (!range || !range.description) {
+                continue;
+            }
             if (names.find(name => name.toLowerCase().trim() === range.description.toLowerCase().trim())) {
                 continue;
             }

@@ -7,19 +7,19 @@ export interface CreateDiagnostic {
 
 export const DIAGNOSTIC_CODE = {
     OBJIDCONFIG: {
-        INVALID_TYPE: "NIN101",
-        MISSING_PROPERTY: "NIN102",
-        RANGES_OVERLAP: "NIN103",
-        TO_BEFORE_FROM: "NIN104",
-        MISSING_DESCRIPTION: "NIN105",
-        LICENSE_FILE_NOT_FOUND: "NIN106",
-        INVALID_OBJECT_TYPE: "NIN107",
-
-        INVALID_PROPERTY: "NIN108",
+        INVALID_PROPERTY: "N0101",
+        MISSING_PROPERTY: "N0102",
+        IDRANGES_INVALID_TYPE: "N0103",
+        IDRANGES_INVALID_NUMBER: "N0104",
+        IDRANGES_TO_BEFORE_FROM: "N0105",
+        IDRANGES_OVERLAP: "N0106",
+        INVALID_OBJECT_TYPE: "N0107",
+        LICENSE_FILE_NOT_FOUND: "N0108",
+        LICENSE_FILE_INVALID: "N0109",
     },
 
     BCLICENSE: {
-        UNAVAILABLE: "NIN101",
+        UNAVAILABLE: "N0101",
     },
 };
 
@@ -83,6 +83,7 @@ export class Diagnostics implements Disposable {
 
         return (range, message, severity, code) => {
             const diagnostic = new Diagnostic(range, message, severity);
+            diagnostic.source = "Ninja";
             diagnostic.code = code;
             newDiagnostics.push(diagnostic);
             scheduleUpdate();

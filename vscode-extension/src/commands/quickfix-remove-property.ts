@@ -1,7 +1,8 @@
-import { DocumentSymbol, TextEdit, Uri, workspace, WorkspaceEdit } from "vscode";
+import { ALApp } from "../lib/ALApp";
 
-export async function quickFixRemoveProperty(uri: Uri, symbol: DocumentSymbol) {
-    let remove = new WorkspaceEdit();
-    remove.set(uri, [TextEdit.delete(symbol.range)]);
-    workspace.applyEdit(remove);
+/**
+ * Removes an invalid property from the root of the `.objidconfig` object
+ */
+export async function quickFixRemoveProperty(app: ALApp, type: string) {
+    app.config.removeProperty(type);
 }
