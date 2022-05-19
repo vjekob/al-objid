@@ -222,7 +222,8 @@
                     "name": "License Explorer",
                     "icon": "images/tree-view.svg",
                     "contextualTitle": "License Explorer",
-                    "type": "tree"
+                    "type": "tree",
+                    "when": "false"
                 }
             ]
         },
