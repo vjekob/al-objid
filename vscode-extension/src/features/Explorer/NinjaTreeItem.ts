@@ -108,7 +108,10 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
                 );
             }
             this._id = `ninja/${this._app.hash}${uriPath}`;
-            const state = controller?.getState(this._id) || (collapsibleState as TreeItemCollapsibleState);
+            const state =
+                (collapsibleState as TreeItemCollapsibleState) === TreeItemCollapsibleState.None
+                    ? TreeItemCollapsibleState.None
+                    : controller?.getState(this._id) || (collapsibleState as TreeItemCollapsibleState);
             return this.createItem({
                 label: label as NinjaTreeItemLabelType,
                 description: description as string | undefined,
