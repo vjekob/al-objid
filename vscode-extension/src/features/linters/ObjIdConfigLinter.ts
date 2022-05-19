@@ -15,6 +15,8 @@ export class ObjIdConfigLinter {
     private readonly _idRangesPromise: Promise<DocumentSymbol | undefined>;
     private readonly _objectRangesPromise: Promise<DocumentSymbol | undefined>;
     private readonly _bcLicensePromise: Promise<DocumentSymbol | undefined>;
+    private readonly _authKeyPromise: Promise<DocumentSymbol | undefined>;
+    private readonly _appPoolIdPromise: Promise<DocumentSymbol | undefined>;
 
     constructor(uri: Uri) {
         this._uri = uri;
@@ -24,6 +26,8 @@ export class ObjIdConfigLinter {
             this._idRangesPromise = Promise.resolve(undefined);
             this._objectRangesPromise = Promise.resolve(undefined);
             this._bcLicensePromise = Promise.resolve(undefined);
+            this._authKeyPromise = Promise.resolve(undefined);
+            this._appPoolIdPromise = Promise.resolve(undefined);
             return;
         }
 
@@ -42,6 +46,8 @@ export class ObjIdConfigLinter {
         this._idRangesPromise = this.getPropertyPromise(ConfigurationProperty.Ranges);
         this._objectRangesPromise = this.getPropertyPromise(ConfigurationProperty.ObjectRanges);
         this._bcLicensePromise = this.getPropertyPromise(ConfigurationProperty.BcLicense);
+        this._authKeyPromise = this.getPropertyPromise(ConfigurationProperty.AuthKey);
+        this._appPoolIdPromise = this.getPropertyPromise(ConfigurationProperty.AppPoolId);
     }
 
     private getPropertyPromise(name: string) {
@@ -301,6 +307,26 @@ export class ObjIdConfigLinter {
         }
     }
 
+    private async validateAuthKey() {
+        const authKey = await this._authKeyPromise;
+        if (!authKey) {
+            return;
+        }
+
+        const diagnose = Diagnostics.instance.createDiagnostics(this._uri, "objidconfig.authKey");
+        this.expectType(authKey, SymbolKind.String, "String", diagnose);
+    }
+
+    private async validateAppPoolId() {
+        const appPoolId = await this._appPoolIdPromise;
+        if (!appPoolId) {
+            return;
+        }
+
+        const diagnose = Diagnostics.instance.createDiagnostics(this._uri, "objidconfig.appPoolId");
+        this.expectType(appPoolId, SymbolKind.String, "String", diagnose);
+    }
+
     //#endregion
 
     public validate() {
@@ -308,5 +334,7 @@ export class ObjIdConfigLinter {
         this.validateIdRanges();
         this.validateObjectTypes();
         this.validateBcLicense();
+        this.validateAuthKey();
+        this.validateAppPoolId();
     }
 }

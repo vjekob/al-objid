@@ -1,10 +1,11 @@
 import { ObjIdConfig } from "./ObjIdConfig";
-import { Disposable } from "vscode";
+import { Disposable, workspace } from "vscode";
 import { DOCUMENTS, LABELS } from "./constants";
 import { FileWatcher } from "./FileWatcher";
 import { showDocument } from "./functions/showDocument";
 import { Telemetry } from "./Telemetry";
 import { UI } from "./UI";
+import { ObjIdConfigLinter } from "../features/linters/ObjIdConfigLinter";
 
 type GetAppInfo = () => {
     name: string;
@@ -16,9 +17,11 @@ export class ObjIdConfigWatcher implements Disposable {
     private readonly _created: Disposable;
     private readonly _changed: Disposable;
     private readonly _deleted: Disposable;
+    private readonly _edited: Disposable;
     private readonly _reload: () => ObjIdConfig;
     private readonly _getAppInfo: GetAppInfo;
     private _config: ObjIdConfig;
+    private _timeout: NodeJS.Timeout | undefined;
     private _disposed = false;
 
     public constructor(config: ObjIdConfig, getappInfo: GetAppInfo, reload: () => ObjIdConfig) {
@@ -29,6 +32,9 @@ export class ObjIdConfigWatcher implements Disposable {
         this._created = this._configWatcher.onCreated(() => this.onConfigCreated());
         this._changed = this._configWatcher.onChanged(gitEvent => this.onConfigChanged(gitEvent));
         this._deleted = this._configWatcher.onDeleted(gitEvent => this.onConfigDeleted(gitEvent));
+        this._edited = workspace.onDidChangeTextDocument(
+            e => e.document.uri.fsPath === this._config.uri.fsPath && this.onEdited()
+        );
     }
 
     private async onConfigCreated() {
@@ -66,6 +72,17 @@ export class ObjIdConfigWatcher implements Disposable {
             this.showDeletedAuthorizationError(hash, name);
         }
         this._config = this._reload();
+    }
+
+    private onEdited() {
+        if (this._timeout) {
+            clearTimeout(this._timeout);
+        }
+
+        this._timeout = setTimeout(() => {
+            const linter = new ObjIdConfigLinter(this._config.uri);
+            linter.validate();
+        }, 250);
     }
 
     private async showUnauthorizedBranch(name: string) {
@@ -121,6 +138,7 @@ export class ObjIdConfigWatcher implements Disposable {
         this._created.dispose();
         this._changed.dispose();
         this._deleted.dispose();
+        this._edited.dispose();
         this._configWatcher.dispose();
     }
 }
