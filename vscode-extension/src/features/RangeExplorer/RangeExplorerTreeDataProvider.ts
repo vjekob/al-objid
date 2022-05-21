@@ -7,6 +7,9 @@ import { getFolderTreeItemProvider } from "./TreeItemProviders";
 import { WorkspaceManager } from "../WorkspaceManager";
 import { NinjaTreeDataProvider } from "../Explorer/NinjaTreeDataProvider";
 import { ExpandCollapseController } from "../Explorer/ExpandCollapseController";
+import { ALFoldersChangedEvent } from "../../lib/types/ALFoldersChangedEvent";
+import { PropertyBag } from "../../lib/types/PropertyBag";
+import { ALApp } from "../../lib/ALApp";
 
 // TODO Display any "no consumption yet" (and similar) nodes grayed out
 // Also, propagate this decoration to their parents
@@ -29,7 +32,7 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
 
     private constructor() {
         this.setUpWatchers();
-        this._workspaceFoldersChangeEvent = workspace.onDidChangeWorkspaceFolders(
+        this._workspaceFoldersChangeEvent = WorkspaceManager.instance.onDidChangeALFolders(
             this.onDidChangeWorkspaceFolders.bind(this)
         );
     }
@@ -40,26 +43,33 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
 
     private _workspaceFoldersChangeEvent: Disposable;
     private _expandCollapseController: ExpandCollapseController | undefined;
+    private _watchersMap: PropertyBag<Disposable[]> = {};
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
 
     private _onDidChangeTreeData = new EventEmitter<INinjaTreeItem | void>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-    private onDidChangeWorkspaceFolders() {
-        this.disposeWatchers();
-        this.setUpWatchers();
+    private onDidChangeWorkspaceFolders({ added, removed }: ALFoldersChangedEvent) {
+        this.disposeWatchers(removed);
+        this.setUpWatchers(added);
         this.refresh();
     }
 
-    private setUpWatchers() {
-        let apps = WorkspaceManager.instance.alApps;
+    private setUpWatchers(alApps?: ALApp[]) {
+        let apps = alApps;
+        if (!apps || !apps.length) {
+            apps = WorkspaceManager.instance.alApps;
+        }
         if (apps.length === 0) {
             return;
         }
         for (let app of apps) {
-            this._watchers.push(app.onManifestChanged(uri => this.refresh(uri)));
-            this._watchers.push(app.onConfigChanged(uri => this.refresh(uri)));
+            const manifestChangedWatcher = app.onManifestChanged(uri => this.refresh(uri));
+            const confingChangedWatcher = app.onConfigChanged(uri => this.refresh(uri));
+            this._watchers.push(manifestChangedWatcher);
+            this._watchers.push(confingChangedWatcher);
+            this._watchersMap[app.uri.fsPath] = [manifestChangedWatcher, confingChangedWatcher];
         }
     }
 
@@ -115,7 +125,19 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
         this._onDidChangeTreeData.fire();
     }
 
-    private disposeWatchers() {
+    private disposeWatchers(removed?: Uri[]) {
+        if (removed) {
+            for (let uri of removed) {
+                const watchers = this._watchersMap[uri.fsPath];
+                if (watchers && watchers.length) {
+                    for (let disposable of watchers) {
+                        disposable.dispose();
+                    }
+                }
+            }
+            return;
+        }
+
         for (let disposable of this._watchers) {
             disposable.dispose();
         }

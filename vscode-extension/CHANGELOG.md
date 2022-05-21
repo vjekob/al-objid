@@ -5,6 +5,15 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.8.0] - 2022-05-26
+
+### Changed
+
+-   Range explorer is optimized. It now reacts in a faster and a more efficient way to changing AL
+    folders in the workspace. Previously, it refreshed the entire contents every time a change in
+    workspace folder structure occurred; now, it refreshes only the content that actually changed,
+    and ignores any non-AL folder changes.
+
 ## [2.7.0] - 2022-05-19
 
 ### Added
