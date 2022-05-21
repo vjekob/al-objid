@@ -4,11 +4,10 @@ import { ALObjectType } from "../../lib/types/ALObjectType";
 import { NinjaALRange } from "../../lib/types/NinjaALRange";
 import { ALRange } from "../../lib/types/ALRange";
 import { ConsumptionCache } from "../ConsumptionCache";
-import { INinjaTreeItem, NinjaTreeItem, UpdateNinjaTreeItem } from "../Explorer/NinjaTreeItem";
+import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";
 import { NinjaTreeItemProvider } from "../Explorer/NinjaTreeItemProvider";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
 import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
-import { ExpandCollapseController } from "../Explorer/ExpandCollapseController";
 
 const severityIconMap: { [key: number]: string | undefined } = {
     [TreeItemSeverity.none]: undefined,
@@ -31,11 +30,12 @@ function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
     return severity;
 }
 
-export function getFolderTreeItemProvider(app: ALApp, update: UpdateNinjaTreeItem): NinjaTreeItemProvider {
-    const subscription = ConsumptionCache.instance.onConsumptionUpdate(update => {
-        if (update.appId !== app.hash) {
+export function getFolderTreeItemProvider(app: ALApp, update: () => void): NinjaTreeItemProvider {
+    const subscription = ConsumptionCache.instance.onConsumptionUpdate(e => {
+        if (e.appId !== app.hash) {
             return;
         }
+        update();
     });
 
     return {

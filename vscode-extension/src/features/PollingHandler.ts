@@ -6,7 +6,6 @@ import { FolderAuthorization } from "../lib/backend/FolderAuthorization";
 import { ConsumptionCache } from "./ConsumptionCache";
 import { NewsHandler } from "./NewsHandler";
 import { output } from "./Output";
-import { RangeExplorerTreeDataProvider } from "./RangeExplorer/RangeExplorerTreeDataProvider";
 import { WorkspaceManager } from "./WorkspaceManager";
 
 const DEFAULT_POLLING_INTERVAL = 15 * 1000; // 15 seconds
@@ -69,11 +68,6 @@ export class PollingHandler implements Disposable {
             this.backOff();
         } else {
             this._pollingInterval = DEFAULT_POLLING_INTERVAL;
-        }
-
-        // TODO Drop imperative consumption updates and replace them with events
-        if (consumptionUpdates) {
-            RangeExplorerTreeDataProvider.instance.refresh();
         }
     }
 

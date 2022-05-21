@@ -1,6 +1,6 @@
 import { Disposable, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
 import { ALApp } from "../../lib/ALApp";
-import { ExplorerDecorationsProvider } from "../RangeExplorer/ExplorerDecorationsProvider";
+import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
 import { ExpandCollapseController } from "./ExpandCollapseController";
 import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
 import { TreeItemDecoration } from "./TreeItemDecoration";
@@ -16,12 +16,6 @@ export interface INinjaTreeItem {
     id: string;
     getTreeItem: (controller: ExpandCollapseController) => TreeItem | Promise<TreeItem>;
     children: INinjaTreeItem[] | Promise<INinjaTreeItem[]>;
-}
-
-export interface UpdateNinjaTreeItem {
-    // TODO Updating should work not by directly calling the update method
-    // Instead, update should populate item(s) into an array that is later refreshed through a single call to event.fire
-    (item: INinjaTreeItem): void;
 }
 
 export class NinjaTreeItem implements INinjaTreeItem, Disposable {

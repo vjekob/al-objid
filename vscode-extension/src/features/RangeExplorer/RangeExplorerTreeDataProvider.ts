@@ -14,8 +14,6 @@ import { ALApp } from "../../lib/ALApp";
 // TODO Display any "no consumption yet" (and similar) nodes grayed out
 // Also, propagate this decoration to their parents
 
-// TODO When editing .objidconfig or app.json, refresh range explorer
-
 // TODO Show individual IDs in range explorer, title = object id, description = file path
 // When clicking on object id, opens the document and selects that id
 // For any object consumed not by this repo, indicate with a different color that it comes from another repo
@@ -92,8 +90,8 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
             return apps.map(app => {
                 const folderItem = new NinjaTreeItem(
                     app,
-                    getFolderTreeItemProvider(app, item => {
-                        this._onDidChangeTreeData.fire(item);
+                    getFolderTreeItemProvider(app, () => {
+                        this.refresh();
                     })
                 );
                 this._watchers.push(folderItem);
@@ -102,17 +100,6 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
         }
 
         return element.children;
-    }
-
-    public getUriString(appId: string, range?: ALRange, objectType?: string): string {
-        let result = `ninja://range/${appId}`;
-        if (range) {
-            result = `${result}/${range.from}-${range.to}`;
-        }
-        if (objectType) {
-            result = `${result}/${objectType}`;
-        }
-        return result;
     }
 
     refresh(uri?: Uri) {

@@ -6,7 +6,6 @@ import { Config } from "../Config";
 import { HttpMethod, Https } from "./Https";
 import { executeWithStopwatchAsync } from "../MeasureTime";
 import { ConsumptionCache } from "../../features/ConsumptionCache";
-import { RangeExplorerTreeDataProvider } from "../../features/RangeExplorer/RangeExplorerTreeDataProvider";
 import { API_RESULT } from "../constants";
 import { WorkspaceManager } from "../../features/WorkspaceManager";
 import { HttpRequest } from "./HttpRequest";
@@ -78,10 +77,7 @@ export async function sendRequest<T>(
                 const app = WorkspaceManager.instance.getALAppFromHash(appId);
                 if (app) {
                     NotificationsFromLog.instance.updateLog(appId, _log as EventLogEntry[], app.manifest.name);
-                    // TODO Drop imperative range explorer updates and replace them with events
-                    if (ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData)) {
-                        RangeExplorerTreeDataProvider.instance.refresh();
-                    }
+                    ConsumptionCache.instance.updateConsumption(appId, consumptions as ConsumptionData);
                 }
             }
         } catch (error: any) {
