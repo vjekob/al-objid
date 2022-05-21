@@ -26,17 +26,11 @@ import { ALApp } from "../../lib/ALApp";
 // - "Release":     releases the ID in the back end and makes it available for re-assignment
 
 export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Disposable {
-    public static _instance: RangeExplorerTreeDataProvider;
-
-    private constructor() {
+    public constructor() {
         this.setUpWatchers();
         this._workspaceFoldersChangeEvent = WorkspaceManager.instance.onDidChangeALFolders(
             this.onDidChangeWorkspaceFolders.bind(this)
         );
-    }
-
-    public static get instance() {
-        return this._instance || (this._instance = new RangeExplorerTreeDataProvider());
     }
 
     private _workspaceFoldersChangeEvent: Disposable;

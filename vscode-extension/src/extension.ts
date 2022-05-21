@@ -23,12 +23,14 @@ export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
     Telemetry.instance.setContext(context);
 
+    const rangeExplorer = new RangeExplorerTreeDataProvider();
+
     context.subscriptions.push(
         ...registerCommands(),
 
-        // Tree view
-        RangeExplorerTreeDataProvider.instance,
-        TreeViews.instance.registerView("ninja-rangeExplorer", RangeExplorerTreeDataProvider.instance),
+        // Tree views
+        rangeExplorer,
+        TreeViews.instance.registerView("ninja-rangeExplorer", rangeExplorer),
         window.registerFileDecorationProvider(ExplorerDecorationsProvider.instance),
 
         // CodeActions provider
