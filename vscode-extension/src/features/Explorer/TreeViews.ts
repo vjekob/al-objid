@@ -1,8 +1,8 @@
 import { TreeView, window } from "vscode";
 import { PropertyBag } from "../../lib/types/PropertyBag";
 import { ExpandCollapseController } from "./ExpandCollapseController";
-import { NinjaTreeDataProvider } from "./NinjaTreeDataProvider";
-import { INinjaTreeItem } from "./NinjaTreeItem";
+import { __obsolete_NinjaTreeDataProvider_ } from "./__obsolete_NinjaTreeDataProvider_";
+import { __obsolete_INinjaTreeItem_ } from "./__obsolete_NinjaTreeItem_";
 
 export class TreeViews {
     private static _instance: TreeViews;
@@ -16,7 +16,7 @@ export class TreeViews {
     private _views: PropertyBag<TreeView<any>> = {};
     private _controllers: PropertyBag<ExpandCollapseController> = {};
 
-    public registerView(id: string, provider: NinjaTreeDataProvider): TreeView<INinjaTreeItem> {
+    public registerView(id: string, provider: __obsolete_NinjaTreeDataProvider_): TreeView<__obsolete_INinjaTreeItem_> {
         const view = window.createTreeView(id, { treeDataProvider: provider });
 
         const controller = new ExpandCollapseController(id);

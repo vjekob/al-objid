@@ -1,19 +1,19 @@
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import { INinjaTreeItem } from "./NinjaTreeItem";
+import { __obsolete_INinjaTreeItem_ } from "./__obsolete_NinjaTreeItem_";
 
-export class TextTreeItem implements INinjaTreeItem {
+export class TextTreeItem implements __obsolete_INinjaTreeItem_ {
     private readonly _text: string;
     private readonly _tooltip: string;
     private readonly _id: string;
 
-    constructor(text: string, tooltip: string, parent: INinjaTreeItem | undefined) {
+    constructor(text: string, tooltip: string, parent: __obsolete_INinjaTreeItem_ | undefined) {
         this.parent = parent;
         this._text = text;
         this._tooltip = tooltip;
         this._id = `${parent?.id || ""}.[${text}]`;
     }
 
-    public readonly parent: INinjaTreeItem | undefined;
+    public readonly parent: __obsolete_INinjaTreeItem_ | undefined;
 
     public children = [];
 

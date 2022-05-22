@@ -4,8 +4,8 @@ import { ALObjectType } from "../../lib/types/ALObjectType";
 import { NinjaALRange } from "../../lib/types/NinjaALRange";
 import { ALRange } from "../../lib/types/ALRange";
 import { ConsumptionCache } from "../ConsumptionCache";
-import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";
-import { NinjaTreeItemProvider } from "../Explorer/NinjaTreeItemProvider";
+import { __obsolete_INinjaTreeItem_, __obsolete_NinjaTreeItem_ } from "../Explorer/__obsolete_NinjaTreeItem_";
+import { __obsolete_NinjaTreeItemProvider_ } from "../Explorer/__obsolete_NinjaTreeItemProvider_";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
 import { TreeItemSeverity } from "../Explorer/TreeItemSeverity";
 
@@ -30,7 +30,7 @@ function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
     return severity;
 }
 
-export function getFolderTreeItemProvider(app: ALApp, update: () => void): NinjaTreeItemProvider {
+export function getFolderTreeItemProvider(app: ALApp, update: () => void): __obsolete_NinjaTreeItemProvider_ {
     const subscription = ConsumptionCache.instance.onConsumptionUpdate(e => {
         if (e.appId !== app.hash) {
             return;
@@ -51,21 +51,21 @@ export function getFolderTreeItemProvider(app: ALApp, update: () => void): Ninja
             const hasLogical = app.config.idRanges.length > 0;
             const hasObject = app.config.objectTypesSpecified.length > 0;
 
-            let children: INinjaTreeItem[] = [];
+            let children: __obsolete_INinjaTreeItem_[] = [];
 
             if (!hasLogical && !hasObject) {
                 children = app.manifest.idRanges.map(
-                    range => new NinjaTreeItem(app, getRangeTreeItemProvider(app, range, false, ""))
+                    range => new __obsolete_NinjaTreeItem_(app, getRangeTreeItemProvider(app, range, false, ""))
                 );
             } else {
-                children = [new NinjaTreeItem(app, getPhysicalRangesTreeItemProvider(app))];
+                children = [new __obsolete_NinjaTreeItem_(app, getPhysicalRangesTreeItemProvider(app))];
             }
 
             if (hasLogical) {
-                children!.push(new NinjaTreeItem(app, getLogicalRangesTreeItemProvider(app)));
+                children!.push(new __obsolete_NinjaTreeItem_(app, getLogicalRangesTreeItemProvider(app)));
             }
             if (hasObject) {
-                children!.push(new NinjaTreeItem(app, getObjectRangesTreeItemProvider(app)));
+                children!.push(new __obsolete_NinjaTreeItem_(app, getObjectRangesTreeItemProvider(app)));
             }
 
             return children;
@@ -82,7 +82,7 @@ export function getRangeTreeItemProvider(
     range: ALRange,
     dropLogicalName: boolean,
     pathSoFar: string
-): NinjaTreeItemProvider {
+): __obsolete_NinjaTreeItemProvider_ {
     const description = dropLogicalName ? "" : (range as NinjaALRange).description || "";
     const addition = description && !dropLogicalName ? ` (${description})` : "";
     const path = `${pathSoFar}/${range.from}-${range.to}`;
@@ -98,7 +98,7 @@ export function getRangeTreeItemProvider(
         getChildren: parent => {
             const consumption = ConsumptionCache.instance.getConsumption(app.hash) || {};
 
-            const children: INinjaTreeItem[] = [];
+            const children: __obsolete_INinjaTreeItem_[] = [];
             for (let key of Object.values<string>(ALObjectType)) {
                 const type = key as ALObjectType;
                 if (consumption[type] === undefined || consumption[type].length === 0) {
@@ -109,7 +109,7 @@ export function getRangeTreeItemProvider(
                     continue;
                 }
                 children.push(
-                    new NinjaTreeItem(
+                    new __obsolete_NinjaTreeItem_(
                         app,
                         getObjectTypeConsumptionTreeItemProvider(
                             app,
@@ -137,7 +137,7 @@ export function getRangeTreeItemProvider(
     };
 }
 
-export function getPhysicalRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvider {
+export function getPhysicalRangesTreeItemProvider(app: ALApp): __obsolete_NinjaTreeItemProvider_ {
     const path = "/ranges";
 
     return {
@@ -150,12 +150,14 @@ export function getPhysicalRangesTreeItemProvider(app: ALApp): NinjaTreeItemProv
 
         getChildren: () => {
             const ranges = app.manifest.idRanges;
-            return ranges.map(range => new NinjaTreeItem(app, getRangeTreeItemProvider(app, range, false, path)));
+            return ranges.map(
+                range => new __obsolete_NinjaTreeItem_(app, getRangeTreeItemProvider(app, range, false, path))
+            );
         },
     };
 }
 
-export function getLogicalRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvider {
+export function getLogicalRangesTreeItemProvider(app: ALApp): __obsolete_NinjaTreeItemProvider_ {
     const path = "/logicalranges";
 
     return {
@@ -176,8 +178,11 @@ export function getLogicalRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvi
                     range => (range.description || "").toLowerCase().trim() === compareName
                 );
                 return ranges.length === 1
-                    ? new NinjaTreeItem(app, getRangeTreeItemProvider(app, ranges[0], false, path))
-                    : new NinjaTreeItem(app, getLogicalRangeTreeItemProvider(app, name, path, logicalRanges));
+                    ? new __obsolete_NinjaTreeItem_(app, getRangeTreeItemProvider(app, ranges[0], false, path))
+                    : new __obsolete_NinjaTreeItem_(
+                          app,
+                          getLogicalRangeTreeItemProvider(app, name, path, logicalRanges)
+                      );
             });
 
             return children;
@@ -190,7 +195,7 @@ export function getLogicalRangeTreeItemProvider(
     name: string,
     pathSoFar: string,
     children: NinjaALRange[]
-): NinjaTreeItemProvider {
+): __obsolete_NinjaTreeItemProvider_ {
     const nameLower = (name || "").toLowerCase().trim();
     const ranges = children.filter(range => (range.description || "").toLowerCase().trim() === nameLower);
     const path = `${pathSoFar}/${name || "$noname$"}`;
@@ -204,7 +209,7 @@ export function getLogicalRangeTreeItemProvider(
 
         getChildren: () => {
             const children = ranges.map(
-                range => new NinjaTreeItem(manifest, getRangeTreeItemProvider(manifest, range, true, path))
+                range => new __obsolete_NinjaTreeItem_(manifest, getRangeTreeItemProvider(manifest, range, true, path))
             );
 
             return children;
@@ -218,7 +223,7 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
     name: string,
     pathSoFar: string,
     children: NinjaALRange[]
-): NinjaTreeItemProvider {
+): __obsolete_NinjaTreeItemProvider_ {
     const nameLower = (name || "").toLowerCase().trim();
     const ranges = children.filter(range => (range.description || "").toLowerCase().trim() === nameLower);
     const path = `${pathSoFar}/${name || "$noname$"}`;
@@ -233,7 +238,7 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
         getChildren: () => {
             const children = ranges.map(
                 range =>
-                    new NinjaTreeItem(
+                    new __obsolete_NinjaTreeItem_(
                         manifest,
                         getObjectTypeRangeConsumptionTreeItemProvider(manifest, range, objectType, true, path)
                     )
@@ -244,7 +249,7 @@ export function getObjectTypeLogicalRangeTreeItemProvider(
     };
 }
 
-export function getObjectRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvider {
+export function getObjectRangesTreeItemProvider(app: ALApp): __obsolete_NinjaTreeItemProvider_ {
     const path = "/objectranges";
     return {
         getLabel: () => "Object Ranges",
@@ -256,7 +261,7 @@ export function getObjectRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvid
 
         getChildren: () => {
             const children = app.config.objectTypesSpecified.map(
-                objectType => new NinjaTreeItem(app, getObjectTypeRangesTreeItemProvider(app, objectType))
+                objectType => new __obsolete_NinjaTreeItem_(app, getObjectTypeRangesTreeItemProvider(app, objectType))
             );
 
             return children;
@@ -264,7 +269,7 @@ export function getObjectRangesTreeItemProvider(app: ALApp): NinjaTreeItemProvid
     };
 }
 
-export function getObjectTypeRangesTreeItemProvider(app: ALApp, objectType: string): NinjaTreeItemProvider {
+export function getObjectTypeRangesTreeItemProvider(app: ALApp, objectType: string): __obsolete_NinjaTreeItemProvider_ {
     const path = `/objectranges/${objectType}`;
 
     return {
@@ -295,11 +300,11 @@ export function getObjectTypeRangesTreeItemProvider(app: ALApp, objectType: stri
                     range => (range.description || "").toLowerCase().trim() === compareName
                 );
                 return ranges.length === 1
-                    ? new NinjaTreeItem(
+                    ? new __obsolete_NinjaTreeItem_(
                           app,
                           getObjectTypeRangeConsumptionTreeItemProvider(app, ranges[0], objectType, false, path)
                       )
-                    : new NinjaTreeItem(
+                    : new __obsolete_NinjaTreeItem_(
                           app,
                           getObjectTypeLogicalRangeTreeItemProvider(app, objectType, name, path, logicalRanges)
                       );
@@ -316,7 +321,7 @@ export function getObjectTypeConsumptionTreeItemProvider(
     ids: number[],
     size: number,
     pathSoFar: string
-): NinjaTreeItemProvider {
+): __obsolete_NinjaTreeItemProvider_ {
     const path = `${pathSoFar}/${objectType}`;
     const pct = Math.round((ids.length / size) * 100);
     const remaining = size - ids.length;
@@ -349,7 +354,7 @@ export function getObjectTypeRangeConsumptionTreeItemProvider(
     objectType: string,
     dropLogicalName: boolean,
     pathSoFar: string
-): NinjaTreeItemProvider {
+): __obsolete_NinjaTreeItemProvider_ {
     const description = dropLogicalName ? "" : (range as NinjaALRange).description || "";
     const addition = description && !dropLogicalName ? ` (${description})` : "";
     const path = `${pathSoFar}/${range.from}-${range.to}`;

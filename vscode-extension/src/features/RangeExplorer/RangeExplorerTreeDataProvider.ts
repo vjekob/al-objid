@@ -1,10 +1,10 @@
 import { ExplorerDecorationsProvider } from "../Explorer/ExplorerDecorationsProvider";
 import { Disposable, EventEmitter, TreeItem, Uri } from "vscode";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
-import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";
-import { getFolderTreeItemProvider } from "./TreeItemProviders";
+import { __obsolete_INinjaTreeItem_, __obsolete_NinjaTreeItem_ } from "../Explorer/__obsolete_NinjaTreeItem_";
+import { getFolderTreeItemProvider } from "./__obsolete_TreeItemProviders_";
 import { WorkspaceManager } from "../WorkspaceManager";
-import { NinjaTreeDataProvider } from "../Explorer/NinjaTreeDataProvider";
+import { __obsolete_NinjaTreeDataProvider_ } from "../Explorer/__obsolete_NinjaTreeDataProvider_";
 import { ExpandCollapseController } from "../Explorer/ExpandCollapseController";
 import { ALFoldersChangedEvent } from "../../lib/types/ALFoldersChangedEvent";
 import { PropertyBag } from "../../lib/types/PropertyBag";
@@ -24,7 +24,7 @@ import { ALApp } from "../../lib/ALApp";
 //                  assignment made through Ninja
 // - "Release":     releases the ID in the back end and makes it available for re-assignment
 
-export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Disposable {
+export class RangeExplorerTreeDataProvider implements __obsolete_NinjaTreeDataProvider_, Disposable {
     public constructor() {
         this.setUpWatchers();
         this._workspaceFoldersChangeEvent = WorkspaceManager.instance.onDidChangeALFolders(
@@ -38,7 +38,7 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
 
-    private _onDidChangeTreeData = new EventEmitter<INinjaTreeItem | void>();
+    private _onDidChangeTreeData = new EventEmitter<__obsolete_INinjaTreeItem_ | void>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private onDidChangeWorkspaceFolders({ added, removed }: ALFoldersChangedEvent) {
@@ -67,14 +67,16 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
     /**
      * Implements TreeDataProvider<T>
      */
-    public getTreeItem(element: INinjaTreeItem): TreeItem | Promise<TreeItem> {
+    public getTreeItem(element: __obsolete_INinjaTreeItem_): TreeItem | Promise<TreeItem> {
         return element.getTreeItem(this._expandCollapseController!);
     }
 
     /**
      * Implements TreeDataProvider<T>
      */
-    public getChildren(element?: INinjaTreeItem): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
+    public getChildren(
+        element?: __obsolete_INinjaTreeItem_
+    ): __obsolete_INinjaTreeItem_[] | Promise<__obsolete_INinjaTreeItem_[]> {
         if (!element) {
             let apps = WorkspaceManager.instance.alApps;
             if (apps.length === 0) {
@@ -87,7 +89,7 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
             }
 
             return apps.map(app => {
-                const folderItem = new NinjaTreeItem(
+                const folderItem = new __obsolete_NinjaTreeItem_(
                     app,
                     getFolderTreeItemProvider(app, () => {
                         this.refresh();

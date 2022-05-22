@@ -2,31 +2,35 @@ import { Disposable, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState, 
 import { ALApp } from "../../lib/ALApp";
 import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
 import { ExpandCollapseController } from "./ExpandCollapseController";
-import { NinjaTreeItemProvider } from "./NinjaTreeItemProvider";
+import { __obsolete_NinjaTreeItemProvider_ } from "./__obsolete_NinjaTreeItemProvider_";
 import { TreeItemDecoration } from "./TreeItemDecoration";
 import { SeverityColors } from "./TreeItemSeverity";
 
-type NinjaTreeItemLabelType = string | TreeItemLabel;
-type NinjaTreeItemIconType = string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon;
+type __obsolete_NinjaTreeItemLabelType_ = string | TreeItemLabel;
+type __obsolete_NinjaTreeItemIconType_ = string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon;
 
-export type NinjaTreeItemLabel = NinjaTreeItemLabelType | Promise<NinjaTreeItemLabelType>;
-export type NinjaTreeItemIcon = NinjaTreeItemIconType | Promise<NinjaTreeItemIconType>;
+export type __obsolete_NinjaTreeItemLabel_ =
+    | __obsolete_NinjaTreeItemLabelType_
+    | Promise<__obsolete_NinjaTreeItemLabelType_>;
+export type __obsolete_NinjaTreeItemIcon_ =
+    | __obsolete_NinjaTreeItemIconType_
+    | Promise<__obsolete_NinjaTreeItemIconType_>;
 
-export interface INinjaTreeItem {
+export interface __obsolete_INinjaTreeItem_ {
     id: string;
     getTreeItem: (controller: ExpandCollapseController) => TreeItem | Promise<TreeItem>;
-    children: INinjaTreeItem[] | Promise<INinjaTreeItem[]>;
+    children: __obsolete_INinjaTreeItem_[] | Promise<__obsolete_INinjaTreeItem_[]>;
 }
 
-export class NinjaTreeItem implements INinjaTreeItem, Disposable {
+export class __obsolete_NinjaTreeItem_ implements __obsolete_INinjaTreeItem_, Disposable {
     private readonly _app: ALApp;
-    private readonly _provider: NinjaTreeItemProvider;
+    private readonly _provider: __obsolete_NinjaTreeItemProvider_;
     private _id: string | undefined;
-    private _children: INinjaTreeItem[] | undefined;
-    private _childrenPromise: Promise<INinjaTreeItem[]> | undefined;
+    private _children: __obsolete_INinjaTreeItem_[] | undefined;
+    private _childrenPromise: Promise<__obsolete_INinjaTreeItem_[]> | undefined;
     private _disposed = false;
 
-    constructor(app: ALApp, provider: NinjaTreeItemProvider) {
+    constructor(app: ALApp, provider: __obsolete_NinjaTreeItemProvider_) {
         this._app = app;
         this._provider = provider;
     }
@@ -107,11 +111,11 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
                     ? TreeItemCollapsibleState.None
                     : controller?.getState(this._id) || (collapsibleState as TreeItemCollapsibleState);
             return this.createItem({
-                label: label as NinjaTreeItemLabelType,
+                label: label as __obsolete_NinjaTreeItemLabelType_,
                 description: description as string | undefined,
                 collapsibleState: state,
                 tooltip: tooltip as string,
-                iconPath: iconPath as NinjaTreeItemIconType,
+                iconPath: iconPath as __obsolete_NinjaTreeItemIconType_,
                 resourceUri: Uri.from({
                     scheme: "ninja",
                     authority: this._app.hash,
@@ -136,7 +140,7 @@ export class NinjaTreeItem implements INinjaTreeItem, Disposable {
         return item;
     }
 
-    public get children(): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
+    public get children(): __obsolete_INinjaTreeItem_[] | Promise<__obsolete_INinjaTreeItem_[]> {
         if (this._children) {
             return this._children;
         }
