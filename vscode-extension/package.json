@@ -291,6 +291,14 @@
                 },
                 {
                     "command": "vjeko-al-objid.validate-bclicense"
+                },
+                {
+                    "command": "vjeko-al-objid.expand-all-rangeExplorer",
+                    "when": "false"
+                },
+                {
+                    "command": "vjeko-al-objid.collapse-all-rangeExplorer",
+                    "when": "false"
                 }
             ]
         }
