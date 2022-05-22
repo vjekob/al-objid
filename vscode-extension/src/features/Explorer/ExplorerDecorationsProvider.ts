@@ -1,8 +1,8 @@
 import { EventEmitter, FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from "vscode";
 import { ALApp } from "../../lib/ALApp";
 import { PropertyBag } from "../../lib/types/PropertyBag";
-import { TreeItemDecoration } from "../Explorer/TreeItemDecoration";
-import { SeverityColors } from "../Explorer/TreeItemSeverity";
+import { TreeItemDecoration } from "./TreeItemDecoration";
+import { SeverityColors } from "./TreeItemSeverity";
 
 export class ExplorerDecorationsProvider implements FileDecorationProvider {
     private static _instance: ExplorerDecorationsProvider;

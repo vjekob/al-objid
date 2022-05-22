@@ -8,7 +8,7 @@ import { Config } from "./lib/Config";
 import { HttpStatusHandler } from "./features/HttpStatusHandler";
 import { ReleaseNotesHandler } from "./features/ReleaseNotesHandler";
 import { RangeExplorerTreeDataProvider } from "./features/RangeExplorer/RangeExplorerTreeDataProvider";
-import { ExplorerDecorationsProvider } from "./features/RangeExplorer/ExplorerDecorationsProvider";
+import { ExplorerDecorationsProvider } from "./features/Explorer/ExplorerDecorationsProvider";
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { Telemetry } from "./lib/Telemetry";
 import { ParserConnector } from "./features/ParserConnector";

@@ -1,6 +1,5 @@
-import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
-import { Disposable, EventEmitter, TreeItem, Uri, workspace } from "vscode";
-import { ALRange } from "../../lib/types/ALRange";
+import { ExplorerDecorationsProvider } from "../Explorer/ExplorerDecorationsProvider";
+import { Disposable, EventEmitter, TreeItem, Uri } from "vscode";
 import { TextTreeItem } from "../Explorer/TextTreeItem";
 import { INinjaTreeItem, NinjaTreeItem } from "../Explorer/NinjaTreeItem";
 import { getFolderTreeItemProvider } from "./TreeItemProviders";
@@ -65,11 +64,17 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
         }
     }
 
-    getTreeItem(element: INinjaTreeItem): TreeItem | Promise<TreeItem> {
+    /**
+     * Implements TreeDataProvider<T>
+     */
+    public getTreeItem(element: INinjaTreeItem): TreeItem | Promise<TreeItem> {
         return element.getTreeItem(this._expandCollapseController!);
     }
 
-    getChildren(element?: INinjaTreeItem): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
+    /**
+     * Implements TreeDataProvider<T>
+     */
+    public getChildren(element?: INinjaTreeItem): INinjaTreeItem[] | Promise<INinjaTreeItem[]> {
         if (!element) {
             let apps = WorkspaceManager.instance.alApps;
             if (apps.length === 0) {
@@ -96,7 +101,7 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
         return element.children;
     }
 
-    refresh(uri?: Uri) {
+    private refresh(uri?: Uri) {
         if (uri) {
             const app = WorkspaceManager.instance.getALAppFromUri(uri);
             if (app) {
@@ -132,7 +137,10 @@ export class RangeExplorerTreeDataProvider implements NinjaTreeDataProvider, Dis
         });
     }
 
-    dispose() {
+    /**
+     * Implements Disposable
+     */
+    public dispose() {
         if (this._disposed) {
             return;
         }
