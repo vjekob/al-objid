@@ -4,16 +4,15 @@ import { ExpandCollapseController } from "./ExpandCollapseController";
 import { __obsolete_NinjaTreeDataProvider_ } from "./__obsolete_NinjaTreeDataProvider_";
 import { __obsolete_INinjaTreeItem_ } from "./__obsolete_NinjaTreeItem_";
 
-export class TreeViews {
-    private static _instance: TreeViews;
+export class __obsolete_TreeViews_ {
+    private static _instance: __obsolete_TreeViews_;
 
     private constructor() {}
 
     public static get instance() {
-        return this._instance || (this._instance = new TreeViews());
+        return this._instance || (this._instance = new __obsolete_TreeViews_());
     }
 
-    private _views: PropertyBag<TreeView<any>> = {};
     private _controllers: PropertyBag<ExpandCollapseController> = {};
 
     public registerView(id: string, provider: __obsolete_NinjaTreeDataProvider_): TreeView<__obsolete_INinjaTreeItem_> {
@@ -32,7 +31,6 @@ export class TreeViews {
         });
 
         this._controllers[id] = controller;
-        this._views[id] = view;
 
         return view;
     }

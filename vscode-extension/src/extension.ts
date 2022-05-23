@@ -16,7 +16,7 @@ import { Diagnostics } from "./features/Diagnostics";
 import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvider";
 import { ConsumptionCache } from "./features/ConsumptionCache";
 import { WorkspaceManager } from "./features/WorkspaceManager";
-import { TreeViews } from "./features/Explorer/TreeViews";
+import { __obsolete_TreeViews_ } from "./features/Explorer/__obsolete_TreeViews_";
 import { registerCommands } from "./commands/commands";
 
 export function activate(context: ExtensionContext) {
@@ -30,7 +30,7 @@ export function activate(context: ExtensionContext) {
 
         // Tree views
         rangeExplorer,
-        TreeViews.instance.registerView("ninja-rangeExplorer", rangeExplorer),
+        __obsolete_TreeViews_.instance.registerView("ninja-rangeExplorer", rangeExplorer),
         window.registerFileDecorationProvider(ExplorerDecorationsProvider.instance),
 
         // CodeActions provider
