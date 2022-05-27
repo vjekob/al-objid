@@ -5,9 +5,10 @@ export class TextNode extends Node {
     protected _label = "";
     protected _collapsibleState = TreeItemCollapsibleState.None;
 
-    constructor(parent: Node, description: string) {
-        super(parent);
+    constructor(description: string, tooltip: string) {
+        super(undefined);
         this._description = description;
+        this._tooltip = tooltip;
     }
 
     protected override completeTreeItem(item: TreeItem): void {

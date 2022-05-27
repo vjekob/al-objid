@@ -35,4 +35,6 @@ export abstract class Node {
     public getChildren(): Node[] | Promise<Node[]> {
         return this._children;
     }
+
+    public id: string | undefined;
 }

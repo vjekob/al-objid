@@ -15,14 +15,13 @@ import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvi
 import { ConsumptionCache } from "./features/ConsumptionCache";
 import { WorkspaceManager } from "./features/WorkspaceManager";
 import { registerCommands } from "./commands/commands";
-import { NinjaTreeView } from "./features/Explorer/NinjaTreeView";
-import { createRangeEplorerRoot } from "./features/RangeExplorer/RangeExplorerTreeDataProvider";
+import { RangeExplorerView } from "./features/RangeExplorer/RangeExplorerView";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
     Telemetry.instance.setContext(context);
 
-    const rangeExplorer = new NinjaTreeView("ninja-rangeExplorer", createRangeEplorerRoot);
+    const rangeExplorer = new RangeExplorerView("ninja-rangeExplorer");
 
     context.subscriptions.push(
         ...registerCommands(),
