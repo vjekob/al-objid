@@ -22,7 +22,7 @@ export class ALAppManifest {
     public static tryCreate(uri: Uri): ALAppManifest | undefined {
         try {
             const contents = fs.readFileSync(uri.fsPath).toString();
-            const appObj = JSON.parse(contents);
+            const appObj = JSON.parse(contents.replace(/^\uFEFF/, ""));
 
             const expectProperty = (property: string, type = "string") =>
                 appObj.hasOwnProperty(property) && typeof appObj[property] === type;
