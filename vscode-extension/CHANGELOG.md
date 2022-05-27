@@ -5,7 +5,13 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## [2.7.1] - 2022-05-28
+## [2.8.1] - 2022-05-28
+
+### Fixed
+
+-   Fixes issues with `package.json` and `CHANGELOG.md` (version 2.8.0 published accidentally instead of 2.7.1).
+
+## [2.8.0] - 2022-05-28
 
 ### Fixed
 
