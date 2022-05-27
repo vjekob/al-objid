@@ -26,7 +26,7 @@ export function createRangeEplorerRoot(app: ALApp, update: (item: NinjaTreeItem)
             if (!hasLogical && !hasObject) {
                 children = app.manifest.idRanges.map(range => createRangeTreeItemProvider(item, range, false));
             } else {
-                [createPhysicalRangesTreeItemProvider(item as NinjaAppTreeItem)];
+                children!.push(createPhysicalRangesTreeItemProvider(item as NinjaAppTreeItem));
             }
 
             if (hasLogical) {
