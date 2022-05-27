@@ -1,29 +1,22 @@
-import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import { __obsolete_INinjaTreeItem_ } from "./__obsolete_NinjaTreeItem_";
+import { MarkdownString, ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { ALApp } from "../../lib/ALApp";
+import { NinjaTreeItem } from "./NinjaTreeItem";
 
-export class TextTreeItem implements __obsolete_INinjaTreeItem_ {
-    private readonly _text: string;
-    private readonly _tooltip: string;
-    private readonly _id: string;
-
-    constructor(text: string, tooltip: string, parent: __obsolete_INinjaTreeItem_ | undefined) {
+export class TextTreeItem implements NinjaTreeItem {
+    public constructor(text: string, tooltip: string | MarkdownString, parent?: NinjaTreeItem) {
+        this.app = parent?.app;
         this.parent = parent;
-        this._text = text;
-        this._tooltip = tooltip;
-        this._id = `${parent?.id || ""}.[${text}]`;
+        this.description = text;
+        this.tooltip = tooltip;
+        this.path = `[${text}]`;
     }
 
-    public readonly parent: __obsolete_INinjaTreeItem_ | undefined;
-
-    public children = [];
-
-    public getTreeItem() {
-        const item = new TreeItem(this._text, TreeItemCollapsibleState.None);
-        item.tooltip = this._tooltip;
-        return item;
-    }
-
-    public get id() {
-        return this._id;
-    }
+    public readonly app: ALApp | undefined;
+    public readonly parent: NinjaTreeItem | undefined;
+    public readonly tooltip: string | MarkdownString;
+    public readonly description: string;
+    readonly label: string = "";
+    public readonly path: string;
+    public readonly icon = "";
+    public readonly collapsibleState = TreeItemCollapsibleState.None;
 }

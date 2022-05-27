@@ -1,6 +1,6 @@
-import { __obsolete_TreeViews_ } from "../features/Explorer/__obsolete_TreeViews_";
+import { ExpandCollapseController } from "../features/Explorer/ExpandCollapseController";
 
 export function collapseAllRangeExplorer() {
-    const controller = __obsolete_TreeViews_.instance.getExpandCollapse("ninja-rangeExplorer");
+    const controller = ExpandCollapseController.getController("ninja-rangeExplorer");
     controller?.collapseAll();
 }

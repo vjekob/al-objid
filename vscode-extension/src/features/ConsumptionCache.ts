@@ -1,4 +1,4 @@
-import { Disposable, EventEmitter } from "vscode";
+import { Disposable, Event, EventEmitter } from "vscode";
 import { ConsumptionData } from "../lib/types/ConsumptionData";
 import { ALObjectType } from "../lib/types/ALObjectType";
 import { PropertyBag } from "../lib/types/PropertyBag";
@@ -22,9 +22,16 @@ export class ConsumptionCache implements Disposable {
 
     private _disposed: boolean = false;
     private _cache: PropertyBag<ConsumptionData> = {};
-    private readonly _onConsumptionUpdate = new EventEmitter<ConsumptionEventInfo>();
+    private readonly _onConsumptionUpdateEmitter = new EventEmitter<ConsumptionEventInfo>();
+    private readonly _onConsumptionUpdateEvent = this._onConsumptionUpdateEmitter.event;
 
-    public readonly onConsumptionUpdate = this._onConsumptionUpdate.event;
+    public onConsumptionUpdate(appId: string, onUpdate: () => void): Disposable {
+        return this._onConsumptionUpdateEvent(e => {
+            if (e.appId === appId) {
+                onUpdate();
+            }
+        });
+    }
 
     public updateConsumption(appId: string, consumption: ConsumptionData): boolean {
         const keys = Object.keys(consumption);
@@ -37,7 +44,7 @@ export class ConsumptionCache implements Disposable {
         if (updated) {
             this._cache[appId] = consumption;
             ConsumptionWarnings.instance.checkRemainingIds(appId, consumption);
-            this._onConsumptionUpdate.fire({ appId, consumption });
+            this._onConsumptionUpdateEmitter.fire({ appId, consumption });
         }
         return updated;
     }
@@ -51,6 +58,6 @@ export class ConsumptionCache implements Disposable {
             return;
         }
         this._disposed = true;
-        this._onConsumptionUpdate.dispose();
+        this._onConsumptionUpdateEmitter.dispose();
     }
 }

@@ -3,10 +3,16 @@ import { CodeCommand } from "../../commands/commands";
 import { PropertyBag } from "../../lib/types/PropertyBag";
 
 export class ExpandCollapseController {
+    private static _controllers: PropertyBag<ExpandCollapseController> = {};
+
+    public static getController(id: string): ExpandCollapseController | undefined {
+        return this._controllers[id];
+    }
+
     private readonly _id: string;
+    private readonly _refresh: (() => void) | undefined;
     private _expandAll: boolean = false;
     private _collapseAll: boolean = false;
-    private _refresh: (() => void) | undefined;
     private _treeState: PropertyBag<TreeItemCollapsibleState> = {};
 
     private setHasExpanded(value: boolean) {
@@ -17,14 +23,17 @@ export class ExpandCollapseController {
         commands.executeCommand(CodeCommand.SetContext, `${this._id}.hasCollapsed`, value);
     }
 
-    public constructor(id: string) {
-        this._id = id;
-        this.setHasExpanded(true);
-        this.setHasCollapsed(true);
+    private reset() {
+        this._expandAll = false;
+        this._collapseAll = false;
     }
 
-    public setRefresh(refresh: () => void) {
+    public constructor(id: string, refresh: () => void) {
+        this._id = id;
         this._refresh = refresh;
+        this.setHasExpanded(true);
+        this.setHasCollapsed(true);
+        ExpandCollapseController._controllers[id] = this;
     }
 
     public get isExpandAll() {
@@ -59,17 +68,13 @@ export class ExpandCollapseController {
         this._refresh && this._refresh();
     }
 
-    public reset() {
-        this._expandAll = false;
-        this._collapseAll = false;
-    }
-
     public expand(id: string) {
         if (!id) {
             return;
         }
         this._treeState[id] = TreeItemCollapsibleState.Expanded;
         this.setHasExpanded(true);
+        this.reset();
     }
 
     public collapse(id: string) {
@@ -78,6 +83,7 @@ export class ExpandCollapseController {
         }
         this._treeState[id] = TreeItemCollapsibleState.Collapsed;
         this.setHasCollapsed(true);
+        this.reset();
     }
 
     public getState(id: string): TreeItemCollapsibleState | undefined {

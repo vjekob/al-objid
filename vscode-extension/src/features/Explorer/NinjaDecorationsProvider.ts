@@ -4,13 +4,7 @@ import { PropertyBag } from "../../lib/types/PropertyBag";
 import { TreeItemDecoration } from "./TreeItemDecoration";
 import { SeverityColors } from "./TreeItemSeverity";
 
-export class ExplorerDecorationsProvider implements FileDecorationProvider {
-    private static _instance: ExplorerDecorationsProvider;
-    private constructor() {}
-    public static get instance() {
-        return this._instance || (this._instance = new ExplorerDecorationsProvider());
-    }
-
+export class NinjaDecorationsProvider implements FileDecorationProvider {
     private readonly _decorations: PropertyBag<PropertyBag<TreeItemDecoration>> = {};
     private readonly _uriMap: PropertyBag<Uri[]> = {};
 
@@ -39,7 +33,7 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         };
     }
 
-    decorate(uri: Uri, decoration: TreeItemDecoration) {
+    public decorate(uri: Uri, decoration: TreeItemDecoration) {
         if (!this._decorations[uri.authority]) {
             this._decorations[uri.authority] = {};
             this._uriMap[uri.authority] = [];
@@ -52,7 +46,7 @@ export class ExplorerDecorationsProvider implements FileDecorationProvider {
         this._onDidChangeFileDecorations.fire([uri]);
     }
 
-    releaseDecorations(app: ALApp) {
+    public releaseDecorations(app: ALApp) {
         const uris = this._uriMap[app.hash];
         delete this._decorations[app.hash];
         delete this._uriMap[app.hash];

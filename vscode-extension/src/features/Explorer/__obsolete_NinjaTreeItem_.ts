@@ -1,6 +1,6 @@
 import { Disposable, ThemeColor, ThemeIcon, TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
 import { ALApp } from "../../lib/ALApp";
-import { ExplorerDecorationsProvider } from "./ExplorerDecorationsProvider";
+import { NinjaDecorationsProvider } from "./NinjaDecorationsProvider";
 import { ExpandCollapseController } from "./ExpandCollapseController";
 import { __obsolete_NinjaTreeItemProvider_ } from "./__obsolete_NinjaTreeItemProvider_";
 import { TreeItemDecoration } from "./TreeItemDecoration";
@@ -94,7 +94,8 @@ export class __obsolete_NinjaTreeItem_ implements __obsolete_INinjaTreeItem_, Di
 
         const decorate = (uri: Uri) => {
             if (decoration) {
-                ExplorerDecorationsProvider.instance.decorate(uri, decoration as TreeItemDecoration);
+                // TODO Refactor this to use composed instance of decorations provider
+                // NinjaDecorationsProvider.instance.decorate(uri, decoration as TreeItemDecoration);
             }
         };
 

@@ -31,12 +31,12 @@ function getSeverityFromRemaining(remaining: number): TreeItemSeverity {
 }
 
 export function getFolderTreeItemProvider(app: ALApp, update: () => void): __obsolete_NinjaTreeItemProvider_ {
-    const subscription = ConsumptionCache.instance.onConsumptionUpdate(e => {
-        if (e.appId !== app.hash) {
-            return;
-        }
-        update();
-    });
+    // const subscription = ConsumptionCache.instance.onConsumptionUpdate(e => {
+    //     if (e.appId !== app.hash) {
+    //         return;
+    //     }
+    //     update();
+    // });
 
     return {
         getLabel: () => app.manifest.name,
@@ -72,7 +72,7 @@ export function getFolderTreeItemProvider(app: ALApp, update: () => void): __obs
         },
 
         dispose: () => {
-            subscription.dispose();
+            // subscription.dispose();
         },
     };
 }
@@ -123,13 +123,14 @@ export function getRangeTreeItemProvider(
             }
 
             if (children.length === 0) {
-                children.push(
-                    new TextTreeItem(
-                        "No consumption yet",
-                        `No ids are assigned in this range (${range.from} to ${range.to}).`,
-                        parent
-                    )
-                );
+                children
+                    .push
+                    // new TextTreeItem(
+                    //     "No consumption yet",
+                    //     `No ids are assigned in this range (${range.from} to ${range.to}).`,
+                    //     parent
+                    // )
+                    ();
             }
 
             return children;

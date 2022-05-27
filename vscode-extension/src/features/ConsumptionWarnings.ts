@@ -50,7 +50,7 @@ export class ConsumptionWarnings {
     public checkRemainingIds(appId: string, consumption: ConsumptionData) {
         const app = WorkspaceManager.instance.getALAppFromHash(appId);
         if (!app) {
-            // TODO Notifications for app pools are not handled at the moment
+            // TODO Handle notifications for app pools
             return;
         }
 
