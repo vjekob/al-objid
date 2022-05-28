@@ -1,6 +1,6 @@
 import { Uri, ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { AppAwareNode } from "../Explorer/AppAwareNode";
-import { getSeverityFromRemaining, SeverityIcons } from "../Explorer/DecorationSeverity";
+import { AppAwareNode } from "../AppAwareNode";
+import { getSeverityFromRemaining, SeverityIcons } from "../DecorationSeverity";
 import { ObjectTypeNode } from "./ObjectTypeNode";
 
 export class ObjectTypeConsumptionNode extends ObjectTypeNode {

@@ -1,4 +1,4 @@
-import { AppAwareDescendantNode, AppAwareNode } from "../Explorer/AppAwareNode";
+import { AppAwareDescendantNode, AppAwareNode } from "../AppAwareNode";
 
 export abstract class ObjectTypeNode extends AppAwareDescendantNode {
     protected readonly _objectType: string;

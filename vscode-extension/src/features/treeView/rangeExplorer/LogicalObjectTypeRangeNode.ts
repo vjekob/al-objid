@@ -1,8 +1,8 @@
 import { LogicalObjectTypeRangeConsumptionNode } from "./LogicalObjectTypeRangeConsumptionNode";
 import { Uri, ThemeIcon, TreeItemLabel, TreeItemCollapsibleState } from "vscode";
-import { NinjaALRange } from "../../lib/types/NinjaALRange";
-import { AppAwareDescendantNode, AppAwareNode } from "../Explorer/AppAwareNode";
-import { Node } from "../Explorer/Node";
+import { NinjaALRange } from "../../../lib/types/NinjaALRange";
+import { AppAwareDescendantNode, AppAwareNode } from "../AppAwareNode";
+import { Node } from "../Node";
 
 /**
  * Represents a logical range defined for a specific object type.

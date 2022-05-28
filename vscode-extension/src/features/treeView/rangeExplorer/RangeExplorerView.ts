@@ -1,7 +1,7 @@
-import { ALApp } from "../../lib/ALApp";
-import { NinjaTreeView } from "../Explorer/NinjaTreeView";
-import { RootNode } from "../Explorer/RootNode";
-import { ViewController } from "../Explorer/ViewController";
+import { ALApp } from "../../../lib/ALApp";
+import { NinjaTreeView } from "../NinjaTreeView";
+import { RootNode } from "../RootNode";
+import { ViewController } from "../ViewController";
 import { RangeExplorerRootNode } from "./RangeExplorerRootNode";
 
 // TODO Display any "no consumption yet" (and similar) nodes grayed out

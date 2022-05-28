@@ -7,7 +7,6 @@ import { Output } from "./features/Output";
 import { Config } from "./lib/Config";
 import { HttpStatusHandler } from "./features/HttpStatusHandler";
 import { ReleaseNotesHandler } from "./features/ReleaseNotesHandler";
-import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { Telemetry } from "./lib/Telemetry";
 import { ParserConnector } from "./features/ParserConnector";
 import { Diagnostics } from "./features/Diagnostics";
@@ -15,20 +14,18 @@ import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvi
 import { ConsumptionCache } from "./features/ConsumptionCache";
 import { WorkspaceManager } from "./features/WorkspaceManager";
 import { registerCommands } from "./commands/commands";
-import { RangeExplorerView } from "./features/RangeExplorer/RangeExplorerView";
+import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
+import { RangeExplorerView } from "./features/treeView/rangeExplorer/RangeExplorerView";
 
 export function activate(context: ExtensionContext) {
     ConsumptionWarnings.instance.setContext(context);
     Telemetry.instance.setContext(context);
 
-    const rangeExplorer = new RangeExplorerView("ninja-rangeExplorer");
-
     context.subscriptions.push(
         ...registerCommands(),
 
         // Tree views
-        rangeExplorer,
-        // __obsolete_TreeViews_.instance.registerView("ninja-rangeExplorer", rangeExplorer),
+        new RangeExplorerView("ninja-rangeExplorer"),
 
         // CodeActions provider
         languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),

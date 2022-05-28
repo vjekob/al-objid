@@ -1,6 +1,6 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { AppAwareNode, AppAwareDescendantNode } from "../Explorer/AppAwareNode";
-import { Node } from "../Explorer/Node";
+import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
+import { Node } from "../Node";
 import { LogicalRangeGroupNode } from "./LogicalRangeGroupNode";
 import { LogicalRangeNode } from "./LogicalRangeNode";
 

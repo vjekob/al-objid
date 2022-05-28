@@ -1,5 +1,5 @@
-import { Node } from "../Explorer/Node";
-import { RootNode } from "../Explorer/RootNode";
+import { Node } from "../Node";
+import { RootNode } from "../RootNode";
 import { LogicalRangesGroupNode } from "./LogicalRangesGroupNode";
 import { ObjectTypeRangesGroupNode } from "./ObjectTypeRangesGroupNode";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";

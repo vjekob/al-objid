@@ -1,12 +1,12 @@
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
-import { ALObjectType } from "../../lib/types/ALObjectType";
-import { ALRange } from "../../lib/types/ALRange";
-import { ConsumptionData } from "../../lib/types/ConsumptionData";
-import { NinjaALRange } from "../../lib/types/NinjaALRange";
-import { ConsumptionCache } from "../ConsumptionCache";
-import { AppAwareNode, AppAwareDescendantNode } from "../Explorer/AppAwareNode";
-import { Node } from "../Explorer/Node";
-import { TextNode } from "../Explorer/TextNode";
+import { ALObjectType } from "../../../lib/types/ALObjectType";
+import { ALRange } from "../../../lib/types/ALRange";
+import { ConsumptionData } from "../../../lib/types/ConsumptionData";
+import { NinjaALRange } from "../../../lib/types/NinjaALRange";
+import { ConsumptionCache } from "../../ConsumptionCache";
+import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
+import { Node } from "../Node";
+import { TextNode } from "../TextNode";
 import { ObjectTypeConsumptionNode } from "./ObjectTypeConsumptionNode";
 
 /**

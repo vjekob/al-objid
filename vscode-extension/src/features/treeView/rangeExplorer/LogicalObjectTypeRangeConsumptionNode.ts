@@ -1,9 +1,9 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { ALObjectType } from "../../lib/types/ALObjectType";
-import { NinjaALRange } from "../../lib/types/NinjaALRange";
-import { AppAwareNode } from "../Explorer/AppAwareNode";
-import { getSeverityFromRemaining, SeverityIcons } from "../Explorer/DecorationSeverity";
-import { Node } from "../Explorer/Node";
+import { ALObjectType } from "../../../lib/types/ALObjectType";
+import { NinjaALRange } from "../../../lib/types/NinjaALRange";
+import { AppAwareNode } from "../AppAwareNode";
+import { getSeverityFromRemaining, SeverityIcons } from "../DecorationSeverity";
+import { Node } from "../Node";
 import { RangeNode } from "./RangeNode";
 
 export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {

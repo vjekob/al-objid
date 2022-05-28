@@ -1,7 +1,7 @@
 import { LogicalObjectTypeRangeConsumptionNode } from "./LogicalObjectTypeRangeConsumptionNode";
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { AppAwareNode } from "../Explorer/AppAwareNode";
-import { Node } from "../Explorer/Node";
+import { AppAwareNode } from "../AppAwareNode";
+import { Node } from "../Node";
 import { ObjectTypeNode } from "./ObjectTypeNode";
 import { LogicalObjectTypeRangeNode } from "./LogicalObjectTypeRangeNode";
 
