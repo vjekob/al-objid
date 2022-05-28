@@ -11,6 +11,7 @@ import { copyRanges } from "./copy-ranges";
 import { createAppPool } from "./create-app-pool";
 import { deauthorizeApp } from "./deauthorize-app";
 import { expandAllRangeExplorer } from "./expand-all-rangeExplorer";
+import { goToDefinition } from "./go-to-definition";
 import { quickFixRemoveDeclaration } from "./quickfix-remove-declaration";
 import { quickFixRemoveProperty } from "./quickfix-remove-property";
 import { quickFixSelectValidType } from "./quickfix-select-valid-type";
@@ -46,6 +47,7 @@ export enum NinjaCommand {
     QuickFixRemoveProperty = "vjeko-al-objid.quickfix-remove-property",
     ExpandAllRangeExplorer = "vjeko-al-objid.expand-all-rangeExplorer",
     CollapseAllRangeExplorer = "vjeko-al-objid.collapse-all-rangeExplorer",
+    GoToDefinition = "vjeko-al-objid.go-to-definition",
 }
 
 export const commandMap: { [key: string]: (...args: any[]) => any } = {
@@ -68,6 +70,7 @@ export const commandMap: { [key: string]: (...args: any[]) => any } = {
     [NinjaCommand.QuickFixRemoveProperty]: quickFixRemoveProperty,
     [NinjaCommand.ExpandAllRangeExplorer]: expandAllRangeExplorer,
     [NinjaCommand.CollapseAllRangeExplorer]: collapseAllRangeExplorer,
+    [NinjaCommand.GoToDefinition]: goToDefinition,
 };
 
 export function* registerCommands(): Generator<Disposable> {

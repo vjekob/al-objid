@@ -4,9 +4,6 @@ import { RootNode } from "../RootNode";
 import { ViewController } from "../ViewController";
 import { RangeExplorerRootNode } from "./RangeExplorerRootNode";
 
-// TODO Display any "no consumption yet" (and similar) nodes grayed out
-// Also, propagate this decoration to their parents
-
 // TODO Show individual IDs in range explorer, title = object id, description = file path
 // When clicking on object id, opens the document and selects that id
 // For any object consumed not by this repo, indicate with a different color that it comes from another repo

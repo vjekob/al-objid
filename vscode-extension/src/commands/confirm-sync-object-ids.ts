@@ -1,4 +1,5 @@
 import { commands, env, TreeItem, Uri, window } from "vscode";
+import { SyncObjectIdsCommandContext } from "../features/treeView/rangeExplorer/SyncObjectIdsCommandContext";
 import { URLS } from "../lib/constants";
 import { NinjaCommand } from "./commands";
 
@@ -9,18 +10,14 @@ const OPTION = {
     LEARN: "I am not sure. Tell me more about synchronization.",
 };
 
-export const confirmSyncObjectIds = async (item: TreeItem) => {
+export const confirmSyncObjectIds = async (context: SyncObjectIdsCommandContext) => {
     let result = await window.showQuickPick(Object.values(OPTION), {
         placeHolder: "How would you like to synchronize object ID assignment information with the back end?",
     });
     switch (result) {
         case OPTION.REPLACE:
         case OPTION.UPDATE:
-            commands.executeCommand(
-                NinjaCommand.SyncObjectIds,
-                { merge: result === OPTION.UPDATE },
-                item?.resourceUri?.path.substring(1)
-            );
+            commands.executeCommand(NinjaCommand.SyncObjectIds, { merge: result === OPTION.UPDATE }, context.appId);
             break;
         case OPTION.LEARN:
             env.openExternal(Uri.parse(URLS.SYNCHRONIZATION_LEARN));

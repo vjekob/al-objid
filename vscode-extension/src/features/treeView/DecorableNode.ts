@@ -10,7 +10,6 @@ import { Node } from "./Node";
 export abstract class DecorableNode extends Node {
     constructor(parent: Node | undefined) {
         super(parent);
-        // TODO Send some decorator interface parameter that can be used to store decoration from within getTreeItem method
     }
 
     private _uri: Uri | undefined;
