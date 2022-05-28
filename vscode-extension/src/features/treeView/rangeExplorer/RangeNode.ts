@@ -1,4 +1,4 @@
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { ALObjectType } from "../../../lib/types/ALObjectType";
 import { ALRange } from "../../../lib/types/ALRange";
 import { ConsumptionData } from "../../../lib/types/ConsumptionData";
@@ -19,7 +19,8 @@ export abstract class RangeNode extends AppAwareDescendantNode {
 
     protected override readonly _label: string;
     protected override readonly _uriPathPart: string;
-    protected override _iconPath = new ThemeIcon("arrow-both");
+    protected override _iconPath: string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon =
+        new ThemeIcon("arrow-both");
     protected override _collapsibleState = TreeItemCollapsibleState.Expanded;
     protected readonly _consumption: ConsumptionData;
 
@@ -36,7 +37,7 @@ export abstract class RangeNode extends AppAwareDescendantNode {
         this._childNodes = this.calculateChildren();
     }
 
-    private calculateChildren(): Node[] {
+    protected calculateChildren(): Node[] {
         const children: Node[] = [];
         for (let key of Object.values<string>(ALObjectType)) {
             const type = key as ALObjectType;

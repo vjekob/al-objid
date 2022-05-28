@@ -4,12 +4,13 @@ import { AppAwareNode } from "../AppAwareNode";
 import { Node } from "../Node";
 import { ObjectTypeNode } from "./ObjectTypeNode";
 import { LogicalObjectTypeRangeNode } from "./LogicalObjectTypeRangeNode";
+import { NinjaIcon } from "../../../lib/NinjaIcon";
 
 /**
  * Represents an individual logical object type range specified under `objectTypes` in `.objidconfig`.
  */
 export class LogicalObjectTypeNode extends ObjectTypeNode {
-    protected override readonly _iconPath = new ThemeIcon("layout");
+    protected override readonly _iconPath = NinjaIcon["object-ranges-type"];
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;
 
     constructor(parent: AppAwareNode, objectType: string) {
@@ -38,7 +39,7 @@ export class LogicalObjectTypeNode extends ObjectTypeNode {
             );
             return ranges.length === 1
                 ? new LogicalObjectTypeRangeConsumptionNode(this, this._objectType, ranges[0], true)
-                : new LogicalObjectTypeRangeNode(this, this._objectType, name, logicalRanges);
+                : new LogicalObjectTypeRangeNode(this, this._objectType, name, ranges);
         });
 
         return children;

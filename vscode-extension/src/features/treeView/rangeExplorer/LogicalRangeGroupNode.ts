@@ -10,7 +10,7 @@ import { PhysicalRangeNode } from "./PhysicalRangeNode";
 export class LogicalRangeGroupNode extends AppAwareDescendantNode {
     private readonly _name: string;
     private readonly _ranges: NinjaALRange[];
-    protected readonly _iconPath = new ThemeIcon("tag");
+    protected readonly _iconPath = new ThemeIcon("bookmark");
     protected readonly _uriPathPart: string;
     protected readonly _label: string | TreeItemLabel;
     protected _collapsibleState = TreeItemCollapsibleState.Expanded;

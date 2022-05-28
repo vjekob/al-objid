@@ -1,6 +1,8 @@
 import {
     Disposable,
     EventEmitter,
+    ThemeColor,
+    ThemeIcon,
     TreeDataProvider,
     TreeItem,
     TreeItemCollapsibleState,
@@ -20,6 +22,7 @@ import { RootNode } from "./RootNode";
 import { TextNode } from "./TextNode";
 import { ViewController } from "./ViewController";
 import { AppAwareNode } from "./AppAwareNode";
+import { SeverityColors } from "./DecorationSeverity";
 
 export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewController, Disposable {
     private readonly _id: string;
@@ -137,6 +140,12 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
 
         if (element instanceof DecorableNode && element.decoration) {
             this._decorationsProvider.decorate(element.uri, element.decoration);
+            if (item.iconPath instanceof ThemeIcon && element.decoration.severity) {
+                item.iconPath = new ThemeIcon(
+                    item.iconPath.id,
+                    new ThemeColor(SeverityColors[element.decoration.severity])
+                );
+            }
         }
 
         if (item.id) {

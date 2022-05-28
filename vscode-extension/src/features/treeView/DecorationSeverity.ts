@@ -1,3 +1,6 @@
+import { Uri } from "vscode";
+import { NinjaIcon } from "../../lib/NinjaIcon";
+
 export enum DecorationSeverity {
     none = 0,
     inactive = 1,
@@ -14,22 +17,32 @@ export const SeverityColors: any = {
     [`${DecorationSeverity.error}`]: "list.errorForeground",
 };
 
-export const SeverityIcons: { [key: number]: string | undefined } = {
-    [DecorationSeverity.none]: undefined,
+export const ObjectSeverityIcons: { [key: number]: { dark: string | Uri; light: string | Uri } | undefined } = {
+    [DecorationSeverity.none]: NinjaIcon["object-green"],
     [DecorationSeverity.inactive]: undefined,
-    [DecorationSeverity.info]: "info",
-    [DecorationSeverity.warning]: "warning",
-    [DecorationSeverity.error]: "error",
+    [DecorationSeverity.info]: NinjaIcon["object-blue"],
+    [DecorationSeverity.warning]: NinjaIcon["object-yellow"],
+    [DecorationSeverity.error]: NinjaIcon["object-red"],
 };
 
-export function getSeverityFromRemaining(remaining: number): DecorationSeverity {
+export const RangeSeverityIcons: { [key: number]: { dark: string | Uri; light: string | Uri } | undefined } = {
+    [DecorationSeverity.none]: NinjaIcon["range-green"],
+    [DecorationSeverity.inactive]: undefined,
+    [DecorationSeverity.info]: NinjaIcon["range-blue"],
+    [DecorationSeverity.warning]: NinjaIcon["range-yellow"],
+    [DecorationSeverity.error]: NinjaIcon["range-red"],
+};
+
+export function getSeverityFromRemaining(remaining: number, size: number): DecorationSeverity {
     let severity = DecorationSeverity.none;
-    if (remaining <= 10) {
-        severity = DecorationSeverity.info;
-        if (remaining <= 5) {
-            severity = DecorationSeverity.warning;
-            if (remaining === 0) {
-                severity = DecorationSeverity.error;
+    if (remaining < 100) {
+        if (remaining <= Math.max(size * 0.45, 10)) {
+            severity = DecorationSeverity.info;
+            if (remaining <= Math.max(size * 0.15, 5)) {
+                severity = DecorationSeverity.warning;
+                if (remaining === 0) {
+                    severity = DecorationSeverity.error;
+                }
             }
         }
     }

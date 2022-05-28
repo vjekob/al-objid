@@ -13,7 +13,7 @@ import { Node } from "../Node";
 export class LogicalObjectTypeRangeNode extends AppAwareDescendantNode {
     private readonly _objectType: string;
     private readonly _ranges: NinjaALRange[];
-    protected override readonly _iconPath = new ThemeIcon("tag");
+    protected override readonly _iconPath = new ThemeIcon("bookmark");
     protected override readonly _uriPathPart: string;
     protected override readonly _label: string | TreeItemLabel;
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;

@@ -1,4 +1,5 @@
-import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { TreeItemCollapsibleState } from "vscode";
+import { NinjaIcon } from "../../../lib/NinjaIcon";
 import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
 import { Node } from "../Node";
 import { LogicalObjectTypeNode } from "./LogicalObjectTypeNode";
@@ -8,7 +9,7 @@ import { LogicalObjectTypeNode } from "./LogicalObjectTypeNode";
  * node represents an object type specified under `objectTypes` property of `.objidconfig`.
  */
 export class ObjectTypeRangesGroupNode extends AppAwareDescendantNode {
-    protected override _iconPath = new ThemeIcon("group-by-ref-type");
+    protected override _iconPath = NinjaIcon["object-ranges"];
     protected override _uriPathPart = "objectranges";
     protected override readonly _label = "Object Ranges";
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;

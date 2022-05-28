@@ -1,10 +1,11 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { NinjaIcon } from "../../../lib/NinjaIcon";
 import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
 import { Node } from "../Node";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
 
 export class PhysicalRangesGroupNode extends AppAwareDescendantNode {
-    protected override _iconPath = new ThemeIcon("array");
+    protected override _iconPath = NinjaIcon["physical-range"];
     protected override _uriPathPart = "ranges";
     protected override readonly _label = "Ranges";
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;

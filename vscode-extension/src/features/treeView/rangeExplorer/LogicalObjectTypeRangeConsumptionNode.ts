@@ -1,8 +1,8 @@
-import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { TreeItemCollapsibleState } from "vscode";
 import { ALObjectType } from "../../../lib/types/ALObjectType";
 import { NinjaALRange } from "../../../lib/types/NinjaALRange";
 import { AppAwareNode } from "../AppAwareNode";
-import { getSeverityFromRemaining, SeverityIcons } from "../DecorationSeverity";
+import { DecorationSeverity, getSeverityFromRemaining, RangeSeverityIcons } from "../DecorationSeverity";
 import { Node } from "../Node";
 import { RangeNode } from "./RangeNode";
 
@@ -20,23 +20,32 @@ export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {
         const size = range.to - range.from + 1;
         const remaining = size - ids.length;
         const pct = Math.round((ids.length / size) * 100);
-        const severity = getSeverityFromRemaining(remaining);
+        const severity = getSeverityFromRemaining(remaining, size);
 
-        this._iconPath = new ThemeIcon(SeverityIcons[severity] || "check");
-        this._tooltip = `${ids.length} assigned ${objectType} object(s), ${remaining} available`;
-        this._description = `${pct}% (${ids.length} of ${size})`;
+        if (ids.length > 0) {
+            this._iconPath = RangeSeverityIcons[severity]!;
+            this._tooltip = `${ids.length} assigned ${objectType} object(s), ${remaining} available`;
+            this._description = `${pct}% (${ids.length} of ${size})`;
 
-        this._decoration =
-            remaining > 10
-                ? undefined
-                : {
-                      badge: `${remaining}`,
-                      propagate: true,
-                      severity,
-                  };
+            this._decoration =
+                remaining > 10
+                    ? undefined
+                    : {
+                          badge: `${remaining}`,
+                          propagate: true,
+                          severity,
+                      };
+        } else {
+            this._description = "(no consumption)";
+            this._decoration = {
+                badge: "-",
+                severity: DecorationSeverity.inactive,
+                tooltip: `No consumption has been recorded`,
+            };
+        }
     }
 
-    protected override getChildren(): Node[] {
+    protected override calculateChildren(): Node[] {
         // This node type has no children, but parent does
         return [];
     }

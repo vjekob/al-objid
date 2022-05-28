@@ -9,7 +9,7 @@ import { LogicalRangeNode } from "./LogicalRangeNode";
  * names (when one logical range contains multiple sub-ranges), or as list of ranges with name included in description.
  */
 export class LogicalRangesGroupNode extends AppAwareDescendantNode {
-    protected override _iconPath = new ThemeIcon("tag");
+    protected override _iconPath = new ThemeIcon("symbol-namespace");
     protected override _uriPathPart = "logicalranges";
     protected override readonly _label = "Logical Ranges";
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;
