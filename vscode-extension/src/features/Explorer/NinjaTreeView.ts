@@ -3,6 +3,7 @@ import { ALApp } from "../../lib/ALApp";
 import { ALFoldersChangedEvent } from "../../lib/types/ALFoldersChangedEvent";
 import { PropertyBag } from "../../lib/types/PropertyBag";
 import { WorkspaceManager } from "../WorkspaceManager";
+import { DecorableNode } from "./DecorableNode";
 import { ExpandCollapseController } from "./ExpandCollapseController";
 import { NinjaDecorationsProvider } from "./NinjaDecorationsProvider";
 import { Node } from "./Node";
@@ -122,35 +123,19 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
 
     // Implements TreeDataProvider<Node>
     public getTreeItem(element: Node): TreeItem {
-        return element.getTreeItem();
-        // const authority = element.app?.hash || "unknown";
-        // const path = this.getPathFromTreeItem(element);
-        // const id = `${authority}.${path}.${Date.now()}`;
-        // element.id = id;
-        // let treeItem = new TreeItem(element.label!, TreeItemCollapsibleState.Expanded);
-        // treeItem.label = element.label;
-        // if (element.icon) {
-        //     treeItem.iconPath = element.icon;
-        // }
-        // if (element.tooltip) {
-        //     treeItem.tooltip = element.tooltip;
-        // }
-        // if (element.contextValue) {
-        //     treeItem.contextValue = element.contextValue;
-        // }
-        // if (element.description) {
-        //     treeItem.description = element.description;
-        // }
-        // treeItem.id = id;
-        // treeItem.resourceUri = Uri.from({ scheme: NINJA_URI_SCHEME, authority, path });
-        // const state = this._expandCollapseController.getState(path) || element.collapsibleState;
-        // if (state !== undefined) {
-        //     treeItem.collapsibleState = state;
-        // }
-        // if (element.decoration) {
-        //     this._decorationsProvider.decorate(treeItem.resourceUri, element.decoration);
-        // }
-        // return treeItem;
+        const item = element.getTreeItem();
+
+        if (element instanceof DecorableNode && element.decoration) {
+            this._decorationsProvider.decorate(element.uri, element.decoration);
+        }
+
+        if (item.id) {
+            const state = this._expandCollapseController.getState(item.id);
+            if (state !== undefined) {
+                item.collapsibleState = state;
+            }
+        }
+        return item;
     }
 
     // Implements TreeDataProvider<Node>

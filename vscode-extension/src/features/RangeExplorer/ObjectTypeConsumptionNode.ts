@@ -16,15 +16,13 @@ export class ObjectTypeConsumptionNode extends ObjectTypeNode {
         this._iconPath = new ThemeIcon(severityIconMap[severity] || "check");
         this._tooltip = `${ids.length} assigned ${objectType} object(s), ${remaining} available`;
         this._description = `${pct}% (${ids.length} of ${size})`;
-        this._decoration = {}; // TODO Complete decoration
-        /*
+        this._decoration =
             remaining > 10
                 ? undefined
                 : {
                       badge: `${remaining}`,
                       propagate: true,
                       severity,
-                  },
-        */
+                  };
     }
 }

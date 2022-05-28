@@ -13,6 +13,7 @@ export abstract class DecorableNode extends Node {
         // TODO Send some decorator interface parameter that can be used to store decoration from within getTreeItem method
     }
 
+    private _uri: Uri | undefined;
     protected abstract readonly _iconPath: string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon;
     protected abstract readonly _uriAuthority: string;
     protected abstract readonly _uriPathPart: string;
@@ -37,10 +38,21 @@ export abstract class DecorableNode extends Node {
     }
 
     protected override completeTreeItem(item: TreeItem) {
-        const uri = this.createUri();
-        item.resourceUri = uri;
-        item.id = `${uri.toString()}.${Date.now()}`;
+        item.resourceUri = this.uri;
+        item.id = `${this.uri.toString()}.${Date.now()}`;
         item.iconPath = this._iconPath;
+    }
+
+    public get uri() {
+        if (!this._uri) {
+            this._uri = this.createUri();
+        }
+
+        return this._uri;
+    }
+
+    public get decoration() {
+        return this._decoration;
     }
 }
 

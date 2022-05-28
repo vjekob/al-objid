@@ -27,16 +27,14 @@ export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {
         this._tooltip = `${ids.length} assigned ${objectType} object(s), ${remaining} available`;
         this._description = `${pct}% (${ids.length} of ${size})`;
 
-        this._decoration = {};
-        // TODO Add decoration
-        // decoration:
-        //     remaining > 10
-        //         ? undefined
-        //         : {
-        //               badge: `${remaining}`,
-        //               propagate: true,
-        //               severity,
-        //           },
+        this._decoration =
+            remaining > 10
+                ? undefined
+                : {
+                      badge: `${remaining}`,
+                      propagate: true,
+                      severity,
+                  };
     }
 
     protected override getChildren(): Node[] {
