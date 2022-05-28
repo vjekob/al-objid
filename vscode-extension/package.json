@@ -69,10 +69,7 @@
                 "command": "vjeko-al-objid.confirm-sync-object-ids",
                 "category": "Ninja",
                 "title": "Synchronize Object IDs with Azure Back End",
-                "icon": {
-                    "dark": "images/share-dark.svg",
-                    "light": "images/share-light.svg"
-                }
+                "icon": "$(cloud-upload)"
             },
             {
                 "command": "vjeko-al-objid.confirm-authorize-app",
