@@ -5,8 +5,8 @@ import { ConsumptionData } from "../../../lib/types/ConsumptionData";
 import { NinjaALRange } from "../../../lib/types/NinjaALRange";
 import { ConsumptionCache } from "../../ConsumptionCache";
 import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
+import { DecorationSeverity } from "../DecorationSeverity";
 import { Node } from "../Node";
-import { TextNode } from "../TextNode";
 import { ObjectTypeConsumptionNode } from "./ObjectTypeConsumptionNode";
 
 /**
@@ -14,6 +14,9 @@ import { ObjectTypeConsumptionNode } from "./ObjectTypeConsumptionNode";
  */
 export abstract class RangeNode extends AppAwareDescendantNode {
     private readonly _range: ALRange;
+    private readonly _childNodes: Node[];
+    private _noConsumption = false;
+
     protected override readonly _label: string;
     protected override readonly _uriPathPart: string;
     protected override _iconPath = new ThemeIcon("arrow-both");
@@ -30,23 +33,10 @@ export abstract class RangeNode extends AppAwareDescendantNode {
         this._tooltip = `From ${range.from} to ${range.to}`;
         this._uriPathPart = `${range.from}-${range.to}`;
         this._consumption = ConsumptionCache.instance.getConsumption(this.app.hash) || {};
+        this._childNodes = this.calculateChildren();
     }
 
-    protected override completeTreeItem(item: TreeItem): void {
-        super.completeTreeItem(item);
-
-        const ninjaRange = this._range as NinjaALRange;
-        if (ninjaRange && ninjaRange.description) {
-            if (this._includeLogicalNameInDescription) {
-                item.description = ninjaRange.description;
-            }
-            if (this._includeLogicalNameInLabel) {
-                item.label = `${item.label} (${ninjaRange.description})`;
-            }
-        }
-    }
-
-    protected override getChildren(): Node[] {
+    private calculateChildren(): Node[] {
         const children: Node[] = [];
         for (let key of Object.values<string>(ALObjectType)) {
             const type = key as ALObjectType;
@@ -61,18 +51,40 @@ export abstract class RangeNode extends AppAwareDescendantNode {
         }
 
         if (children.length === 0) {
-            // TODO Display ranges with no consumption using decorations, rather than text nodes
-            // Instead of showing a child node that says "no consumption yet", create a non-expandable node, grayed out
-            // with description "No consumption" or something similar
-            children.push(
-                new TextNode(
-                    "No consumption yet",
-                    `No ids are assigned in this range (${this.range.from} to ${this.range.to}).`
-                )
-            );
+            this._noConsumption = true;
+            this._collapsibleState = TreeItemCollapsibleState.None;
+            this._decoration = {
+                badge: "-",
+                severity: DecorationSeverity.inactive,
+                tooltip: `No consumption has been recorded`,
+            };
+        } else {
+            this._decoration = undefined;
         }
 
         return children;
+    }
+
+    protected override completeTreeItem(item: TreeItem): void {
+        super.completeTreeItem(item);
+
+        const ninjaRange = this._range as NinjaALRange;
+        if (ninjaRange && ninjaRange.description) {
+            if (this._includeLogicalNameInDescription) {
+                item.description = ninjaRange.description;
+            }
+            if (this._includeLogicalNameInLabel) {
+                item.label = `${item.label} (${ninjaRange.description})`;
+            }
+        }
+
+        if (this._noConsumption) {
+            item.description = `${item.description || ""} (no consumption)`.trim();
+        }
+    }
+
+    protected override getChildren(): Node[] {
+        return this._childNodes;
     }
 
     public get range() {

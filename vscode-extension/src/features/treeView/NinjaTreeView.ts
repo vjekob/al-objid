@@ -1,4 +1,13 @@
-import { Disposable, EventEmitter, TreeDataProvider, TreeItem, TreeView, Uri, window } from "vscode";
+import {
+    Disposable,
+    EventEmitter,
+    TreeDataProvider,
+    TreeItem,
+    TreeItemCollapsibleState,
+    TreeView,
+    Uri,
+    window,
+} from "vscode";
 import { ALApp } from "../../lib/ALApp";
 import { ALFoldersChangedEvent } from "../../lib/types/ALFoldersChangedEvent";
 import { PropertyBag } from "../../lib/types/PropertyBag";
@@ -10,6 +19,7 @@ import { Node } from "./Node";
 import { RootNode } from "./RootNode";
 import { TextNode } from "./TextNode";
 import { ViewController } from "./ViewController";
+import { AppAwareNode } from "./AppAwareNode";
 
 export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewController, Disposable {
     private readonly _id: string;
@@ -131,7 +141,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
 
         if (item.id) {
             const state = this._expandCollapseController.getState(element);
-            if (state !== undefined) {
+            if (state !== undefined && item.collapsibleState !== TreeItemCollapsibleState.None) {
                 item.collapsibleState = state;
             }
         }
@@ -145,6 +155,10 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
 
     // Implements ViewController
     public update(node: Node): void {
+        const app = (node as AppAwareNode).app;
+        if (app) {
+            this._decorationsProvider.releaseDecorations(app);
+        }
         this._onDidChangeTreeData.fire(node);
     }
 
