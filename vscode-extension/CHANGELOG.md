@@ -5,6 +5,16 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [vNext] - 2022-06-01
+
+### Changed
+
+-   Range explorer as been through massive refactoring (again). The previous refactoring involved a lot of fumbling
+    around how logical and actual representations of tree items (nodes) worked. The previous solution was fully
+    functional, but extremely difficult and complicated to maintain, and was requiring far too much code duplication
+    to support any other tree views. The refactoring in this verion uses an approach that requires no duplication and
+    allows supporting new tree views through simply providing new node types.
+
 ## [2.8.1] - 2022-05-28
 
 ### Fixed
