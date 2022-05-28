@@ -1,5 +1,7 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { AppAwareNode, AppAwareDescendantNode } from "../Explorer/AppAwareNode";
+import { Node } from "../Explorer/Node";
+import { PhysicalRangeNode } from "./PhysicalRangeNode";
 
 export class PhysicalRangesGroupNode extends AppAwareDescendantNode {
     protected override _iconPath = new ThemeIcon("array");
@@ -11,5 +13,10 @@ export class PhysicalRangesGroupNode extends AppAwareDescendantNode {
 
     constructor(parent: AppAwareNode) {
         super(parent);
+    }
+
+    protected override getChildren(): Node[] {
+        const ranges = this.app.manifest.idRanges;
+        return ranges.map(range => new PhysicalRangeNode(this.parent, range));
     }
 }

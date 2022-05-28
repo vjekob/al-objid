@@ -1,5 +1,7 @@
 import { TreeItemSeverity } from "./TreeItemSeverity";
 
+// TODO Move this stuff to a differently-named file (Decoration, NodeDecoration, etc.)
+
 export interface TreeItemDecoration {
     severity?: TreeItemSeverity;
     badge?: string;

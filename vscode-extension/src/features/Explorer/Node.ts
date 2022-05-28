@@ -10,14 +10,18 @@ export abstract class Node {
     protected _parent: Node | undefined;
     protected _description: string | undefined;
     protected _tooltip: string | undefined;
-    protected _children: Node[] = [];
+    protected _children: Node[] | Promise<Node[]> | undefined;
 
     protected completeTreeItem(item: TreeItem) {
         // Override in descending classes to add more properties to the tree item
     }
 
+    protected getChildren(): Node[] | Promise<Node[]> {
+        return [];
+    }
+
     public getTreeItem(): TreeItem {
-        const item = new TreeItem(this._label, this._collapsibleState || TreeItemCollapsibleState.Expanded);
+        const item = new TreeItem(this._label, this._collapsibleState);
 
         if (this._description) {
             item.description = this._description;
@@ -32,8 +36,21 @@ export abstract class Node {
         return item;
     }
 
-    public getChildren(): Node[] | Promise<Node[]> {
-        return this._children;
+    public resetChildren(): void {
+        this._children = undefined;
+    }
+
+    public get children(): Node[] | Promise<Node[]> {
+        return this.getChildren();
+
+        // TODO The logic below should be included when smart updating is implemented
+        // Smart updating updates only those nodes where something changes
+
+        // if (!this._children) {
+        //     this._children = this.getChildren();
+        // }
+
+        // return this._children;
     }
 
     public id: string | undefined;

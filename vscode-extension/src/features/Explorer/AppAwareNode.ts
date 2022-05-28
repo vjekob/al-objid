@@ -18,7 +18,7 @@ export abstract class AppAwareDescendantNode extends DecorableDescendantNode {
         return this.parent.app;
     }
 
-    public get parent() {
+    public get parent(): AppAwareNode {
         return this._parent as AppAwareNode;
     }
 }

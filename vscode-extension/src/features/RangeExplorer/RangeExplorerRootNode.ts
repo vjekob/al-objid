@@ -1,12 +1,15 @@
 import { Node } from "../Explorer/Node";
 import { RootNode } from "../Explorer/RootNode";
 import { LogicalRangesGroupNode } from "./LogicalRangesGroupNode";
-import { ObjectRangesGroupNode } from "./ObjectRangesGroupNode";
+import { ObjectTypeRangesGroupNode } from "./ObjectTypeRangesGroupNode";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
 import { PhysicalRangesGroupNode } from "./PhysicalRangesGroupNode";
 
+/**
+ * Represents a root node for range explorer.
+ */
 export class RangeExplorerRootNode extends RootNode {
-    public override getChildren(): Node[] {
+    protected override getChildren(): Node[] {
         const hasLogical = this._app.config.idRanges.length > 0;
         const hasObject = this._app.config.objectTypesSpecified.length > 0;
 
@@ -22,7 +25,7 @@ export class RangeExplorerRootNode extends RootNode {
             children!.push(new LogicalRangesGroupNode(this));
         }
         if (hasObject) {
-            children!.push(new ObjectRangesGroupNode(this));
+            children!.push(new ObjectTypeRangesGroupNode(this));
         }
 
         return children;

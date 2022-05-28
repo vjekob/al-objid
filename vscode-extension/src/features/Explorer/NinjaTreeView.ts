@@ -8,8 +8,9 @@ import { NinjaDecorationsProvider } from "./NinjaDecorationsProvider";
 import { Node } from "./Node";
 import { RootNode } from "./RootNode";
 import { TextNode } from "./TextNode";
+import { ViewController } from "./ViewController";
 
-export abstract class NinjaTreeView implements TreeDataProvider<Node>, Disposable {
+export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewController, Disposable {
     private readonly _id: string;
     private readonly _view: TreeView<Node>;
     private readonly _workspaceFoldersChangeEvent: Disposable;
@@ -109,19 +110,17 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, Disposabl
         }
 
         return apps.map(app => {
-            const folderItem = this.createRootNode(app);
+            const folderItem = this.createRootNode(app, this);
             this._watchers.push(folderItem);
             return folderItem;
         });
     }
 
-    protected abstract createRootNode(app: ALApp): RootNode;
+    protected abstract createRootNode(app: ALApp, view: ViewController): RootNode;
 
     //#region Interface implementations
 
-    /**
-     * Implements TreeDataProvider<Node>
-     */
+    // Implements TreeDataProvider<Node>
     public getTreeItem(element: Node): TreeItem {
         return element.getTreeItem();
         // const authority = element.app?.hash || "unknown";
@@ -154,20 +153,17 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, Disposabl
         // return treeItem;
     }
 
-    /**
-     * Implements TreeDataProvider<Node>
-     */
+    // Implements TreeDataProvider<Node>
     public getChildren(element?: Node): Node[] | Promise<Node[]> {
-        if (!element) {
-            return this.getRootItems();
-        }
-
-        return element.getChildren ? element.getChildren() : [];
+        return element?.children || this.getRootItems();
     }
 
-    /**
-     * Implements Disposable
-     */
+    // Implements ViewController
+    public update(node: Node): void {
+        this._onDidChangeTreeData.fire(node);
+    }
+
+    // Implements Disposable
     public dispose() {
         if (this._disposed) {
             return;
