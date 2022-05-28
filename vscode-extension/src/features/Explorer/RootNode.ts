@@ -34,6 +34,8 @@ export abstract class RootNode extends DecorableNode implements AppAwareNode, Vi
     }
 
     protected override completeTreeItem(item: TreeItem): void {
+        super.completeTreeItem(item);
+
         item.contextValue = "ninja-folder";
     }
 

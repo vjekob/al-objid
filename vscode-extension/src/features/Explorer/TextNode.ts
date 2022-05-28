@@ -12,6 +12,8 @@ export class TextNode extends Node {
     }
 
     protected override completeTreeItem(item: TreeItem): void {
+        super.completeTreeItem(item);
+
         item.description = this._description;
     }
 }
