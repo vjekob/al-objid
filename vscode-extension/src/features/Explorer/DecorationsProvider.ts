@@ -1,11 +1,11 @@
 import { EventEmitter, FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from "vscode";
 import { ALApp } from "../../lib/ALApp";
 import { PropertyBag } from "../../lib/types/PropertyBag";
-import { TreeItemDecoration } from "./TreeItemDecoration";
-import { SeverityColors } from "./TreeItemSeverity";
+import { Decoration } from "./Decoration";
+import { SeverityColors } from "./DecorationSeverity";
 
-export class NinjaDecorationsProvider implements FileDecorationProvider {
-    private readonly _decorations: PropertyBag<PropertyBag<TreeItemDecoration>> = {};
+export class DecorationsProvider implements FileDecorationProvider {
+    private readonly _decorations: PropertyBag<PropertyBag<Decoration>> = {};
     private readonly _uriMap: PropertyBag<Uri[]> = {};
 
     private _onDidChangeFileDecorations = new EventEmitter<Uri[]>();
@@ -33,7 +33,7 @@ export class NinjaDecorationsProvider implements FileDecorationProvider {
         };
     }
 
-    public decorate(uri: Uri, decoration: TreeItemDecoration) {
+    public decorate(uri: Uri, decoration: Decoration) {
         if (!this._decorations[uri.authority]) {
             this._decorations[uri.authority] = {};
             this._uriMap[uri.authority] = [];

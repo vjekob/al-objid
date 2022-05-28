@@ -1,7 +1,7 @@
-import { TreeItemSeverity } from "./TreeItemSeverity";
+import { DecorationSeverity } from "./DecorationSeverity";
 
 export interface Decoration {
-    severity?: TreeItemSeverity;
+    severity?: DecorationSeverity;
     badge?: string;
     propagate?: boolean;
 }

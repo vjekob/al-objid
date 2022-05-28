@@ -5,7 +5,7 @@ import { PropertyBag } from "../../lib/types/PropertyBag";
 import { WorkspaceManager } from "../WorkspaceManager";
 import { DecorableNode } from "./DecorableNode";
 import { ExpandCollapseController } from "./ExpandCollapseController";
-import { NinjaDecorationsProvider } from "./NinjaDecorationsProvider";
+import { DecorationsProvider } from "./DecorationsProvider";
 import { Node } from "./Node";
 import { RootNode } from "./RootNode";
 import { TextNode } from "./TextNode";
@@ -16,7 +16,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
     private readonly _view: TreeView<Node>;
     private readonly _workspaceFoldersChangeEvent: Disposable;
     private readonly _decorationsDisposable: Disposable;
-    private readonly _decorationsProvider: NinjaDecorationsProvider;
+    private readonly _decorationsProvider: DecorationsProvider;
     private readonly _expandCollapseController: ExpandCollapseController;
     private _watchersMap: PropertyBag<Disposable[]> = {};
     private _watchers: Disposable[] = [];
@@ -31,7 +31,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
         this._workspaceFoldersChangeEvent = WorkspaceManager.instance.onDidChangeALFolders(
             this.onDidChangeWorkspaceFolders.bind(this)
         );
-        this._decorationsProvider = new NinjaDecorationsProvider();
+        this._decorationsProvider = new DecorationsProvider();
         this._decorationsDisposable = window.registerFileDecorationProvider(this._decorationsProvider);
         this._expandCollapseController = new ExpandCollapseController(id, () => this.refresh());
     }
@@ -42,8 +42,8 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
             canSelectMany: false,
             treeDataProvider: this,
         });
-        view.onDidCollapseElement(e => this._expandCollapseController.collapse(e.element.id!));
-        view.onDidExpandElement(e => this._expandCollapseController.expand(e.element.id!));
+        view.onDidCollapseElement(e => this._expandCollapseController.collapse(e.element));
+        view.onDidExpandElement(e => this._expandCollapseController.expand(e.element));
         return view;
     }
 
@@ -130,7 +130,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
         }
 
         if (item.id) {
-            const state = this._expandCollapseController.getState(item.id);
+            const state = this._expandCollapseController.getState(element);
             if (state !== undefined) {
                 item.collapsibleState = state;
             }

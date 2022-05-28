@@ -1,10 +1,9 @@
-import { Uri, ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { ALObjectType } from "../../lib/types/ALObjectType";
 import { NinjaALRange } from "../../lib/types/NinjaALRange";
 import { AppAwareNode } from "../Explorer/AppAwareNode";
+import { getSeverityFromRemaining, SeverityIcons } from "../Explorer/DecorationSeverity";
 import { Node } from "../Explorer/Node";
-import { getSeverityFromRemaining, severityIconMap } from "../Explorer/TreeItemDecoration";
-import { ObjectTypeNode } from "./ObjectTypeNode";
 import { RangeNode } from "./RangeNode";
 
 export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {
@@ -23,7 +22,7 @@ export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {
         const pct = Math.round((ids.length / size) * 100);
         const severity = getSeverityFromRemaining(remaining);
 
-        this._iconPath = new ThemeIcon(severityIconMap[severity] || "check");
+        this._iconPath = new ThemeIcon(SeverityIcons[severity] || "check");
         this._tooltip = `${ids.length} assigned ${objectType} object(s), ${remaining} available`;
         this._description = `${pct}% (${ids.length} of ${size})`;
 

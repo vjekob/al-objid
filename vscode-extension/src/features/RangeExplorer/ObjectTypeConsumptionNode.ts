@@ -1,6 +1,6 @@
 import { Uri, ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { AppAwareNode } from "../Explorer/AppAwareNode";
-import { getSeverityFromRemaining, severityIconMap } from "../Explorer/TreeItemDecoration";
+import { getSeverityFromRemaining, SeverityIcons } from "../Explorer/DecorationSeverity";
 import { ObjectTypeNode } from "./ObjectTypeNode";
 
 export class ObjectTypeConsumptionNode extends ObjectTypeNode {
@@ -13,7 +13,7 @@ export class ObjectTypeConsumptionNode extends ObjectTypeNode {
         const pct = Math.round((ids.length / size) * 100);
         const remaining = size - ids.length;
         const severity = getSeverityFromRemaining(remaining);
-        this._iconPath = new ThemeIcon(severityIconMap[severity] || "check");
+        this._iconPath = new ThemeIcon(SeverityIcons[severity] || "check");
         this._tooltip = `${ids.length} assigned ${objectType} object(s), ${remaining} available`;
         this._description = `${pct}% (${ids.length} of ${size})`;
         this._decoration =

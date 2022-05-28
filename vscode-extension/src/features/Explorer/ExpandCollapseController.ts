@@ -1,6 +1,7 @@
 import { commands, TreeItemCollapsibleState } from "vscode";
 import { CodeCommand } from "../../commands/commands";
 import { PropertyBag } from "../../lib/types/PropertyBag";
+import { Node } from "./Node";
 
 export class ExpandCollapseController {
     private static _controllers: PropertyBag<ExpandCollapseController> = {};
@@ -13,7 +14,7 @@ export class ExpandCollapseController {
     private readonly _refresh: (() => void) | undefined;
     private _expandAll: boolean = false;
     private _collapseAll: boolean = false;
-    private _treeState: PropertyBag<TreeItemCollapsibleState> = {};
+    private _treeState = new WeakMap<Node, TreeItemCollapsibleState>();
 
     private setHasExpanded(value: boolean) {
         commands.executeCommand(CodeCommand.SetContext, `${this._id}.hasExpanded`, value);
@@ -45,7 +46,7 @@ export class ExpandCollapseController {
     }
 
     public expandAll() {
-        this._treeState = {};
+        this._treeState = new WeakMap<Node, TreeItemCollapsibleState>();
 
         this.setHasExpanded(true);
         this.setHasCollapsed(false);
@@ -57,7 +58,7 @@ export class ExpandCollapseController {
     }
 
     public collapseAll() {
-        this._treeState = {};
+        this._treeState = new WeakMap<Node, TreeItemCollapsibleState>();
 
         this.setHasExpanded(false);
         this.setHasCollapsed(true);
@@ -68,25 +69,19 @@ export class ExpandCollapseController {
         this._refresh && this._refresh();
     }
 
-    public expand(id: string) {
-        if (!id) {
-            return;
-        }
-        this._treeState[id] = TreeItemCollapsibleState.Expanded;
+    public expand(node: Node) {
+        this._treeState.set(node, TreeItemCollapsibleState.Expanded);
         this.setHasExpanded(true);
         this.reset();
     }
 
-    public collapse(id: string) {
-        if (!id) {
-            return;
-        }
-        this._treeState[id] = TreeItemCollapsibleState.Collapsed;
+    public collapse(node: Node) {
+        this._treeState.set(node, TreeItemCollapsibleState.Collapsed);
         this.setHasCollapsed(true);
         this.reset();
     }
 
-    public getState(id: string): TreeItemCollapsibleState | undefined {
+    public getState(node: Node): TreeItemCollapsibleState | undefined {
         if (this.isExpandAll) {
             return TreeItemCollapsibleState.Expanded;
         }
@@ -94,9 +89,6 @@ export class ExpandCollapseController {
             return TreeItemCollapsibleState.Collapsed;
         }
 
-        if (!id) {
-            return;
-        }
-        return this._treeState[id];
+        return this._treeState.get(node);
     }
 }
