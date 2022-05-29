@@ -3,7 +3,10 @@ import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { AppAwareDescendantNode, AppAwareNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionContext,
+} from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { LogicalRangeUnnamedNode } from "./LogicalRangeUnnamedNode";
 
 /**
@@ -18,7 +21,7 @@ export class LogicalRangeGroupNode
 {
     private readonly _name: string;
     private readonly _ranges: NinjaALRange[];
-    protected readonly _iconPath = new ThemeIcon("bookmark");
+    protected readonly _iconPath = new ThemeIcon("note");
     protected readonly _uriPathPart: string;
     protected readonly _label: string | TreeItemLabel;
     protected _collapsibleState = TreeItemCollapsibleState.Expanded;
@@ -31,7 +34,7 @@ export class LogicalRangeGroupNode
         this._label = name;
         this._uriPathPart = name || "_";
 
-        this._contextValues.push(ContextValues.gotoDef);
+        this._contextValues.push(ContextValues.GotoDef);
     }
 
     protected override getChildren(): Node[] {

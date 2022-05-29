@@ -1,6 +1,6 @@
 import { commands, DocumentSymbol, Range, Selection, TextEditorRevealType, Uri, window } from "vscode";
 import { jsonAvailable } from "../features/linters/jsonAvailable";
-import { GoToDefinitionCommandContext } from "../features/treeView/rangeExplorer/contexts/GoToDefinitionCommandContext";
+import { GoToDefinitionCommandContext } from "./contexts/GoToDefinitionCommandContext";
 import { Telemetry } from "../lib/Telemetry";
 import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { CodeCommand } from "./commands";

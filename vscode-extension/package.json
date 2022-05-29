@@ -103,6 +103,7 @@
             {
                 "command": "vjeko-al-objid.consolidate-ranges",
                 "category": "Ninja",
+                "icon": "$(wand)",
                 "title": "Consolidate logical ranges"
             },
             {
@@ -258,6 +259,11 @@
                     "command": "vjeko-al-objid.goto-definition",
                     "group": "inline",
                     "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-goto-def,/"
+                },
+                {
+                    "command": "vjeko-al-objid.consolidate-ranges",
+                    "group": "inline",
+                    "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-consolidate-ranges,/"
                 }
             ],
             "explorer/context": [

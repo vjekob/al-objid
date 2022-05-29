@@ -5,7 +5,10 @@ import { AppAwareNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
 import { DecorationSeverity, getSeverityFromRemaining, RangeSeverityIcons } from "../../DecorationSeverity";
 import { Node } from "../../Node";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionContext,
+} from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
 
 /**
@@ -58,7 +61,7 @@ export class LogicalObjectTypeRangeConsumptionNode
             };
         }
 
-        this._contextValues.push(ContextValues.gotoDef);
+        this._contextValues.push(ContextValues.GotoDef);
     }
 
     protected override calculateChildren(): Node[] {

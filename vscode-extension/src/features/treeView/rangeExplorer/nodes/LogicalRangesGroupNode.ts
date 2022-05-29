@@ -3,9 +3,13 @@ import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionContext,
+} from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { LogicalRangeGroupNode } from "./LogicalRangeGroupNode";
 import { LogicalRangeNamedNode } from "./LogicalRangeNamedNode";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
 
 /**
  * Displays a node that shows "Logical Ranges" label and contains the list of logical ranges.
@@ -18,7 +22,7 @@ export class LogicalRangesGroupNode
     extends AppAwareDescendantNode
     implements GoToDefinitionCommandContext<NinjaALRange>
 {
-    protected override _iconPath = new ThemeIcon("symbol-namespace");
+    protected override _iconPath = NinjaIcon["logical-range"];
     protected override _uriPathPart = "logicalranges";
     protected override readonly _label = "Logical Ranges";
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;
@@ -27,7 +31,7 @@ export class LogicalRangesGroupNode
 
     constructor(parent: AppAwareNode) {
         super(parent);
-        this._contextValues.push(ContextValues.gotoDef);
+        this._contextValues.push(ContextValues.GotoDef, ContextValues.ConsolidateRanges);
     }
 
     protected override getChildren(): Node[] {

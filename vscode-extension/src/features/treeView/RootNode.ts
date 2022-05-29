@@ -28,7 +28,7 @@ export abstract class RootNode extends DecorableNode implements AppAwareNode, Vi
         this._tooltip = `${app.manifest.name} v${app.manifest.version}`;
         this._uriAuthority = app.hash;
         this._collapsibleState = TreeItemCollapsibleState.Expanded;
-        this._contextValues.push(ContextValues.sync);
+        this._contextValues.push(ContextValues.Sync);
 
         this._subscription = ConsumptionCache.instance.onConsumptionUpdate(app.hash, () => {
             this._view.update(this);

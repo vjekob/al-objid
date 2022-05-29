@@ -5,7 +5,10 @@ import { Node } from "../../Node";
 import { ObjectTypeNode } from "./ObjectTypeNode";
 import { LogicalObjectTypeRangesNode } from "./LogicalObjectTypeRangesNode";
 import { NinjaIcon } from "../../../../lib/NinjaIcon";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionContext,
+} from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { ContextValues } from "../../ContextValues";
 
@@ -28,7 +31,7 @@ export class LogicalObjectTypeNode extends ObjectTypeNode implements GoToDefinit
     constructor(parent: AppAwareNode, objectType: string) {
         super(parent, objectType);
         this._tooltip = `Logical ranges for ${objectType} objects, defined in .objidconfig`;
-        this._contextValues.push(ContextValues.gotoDef);
+        this._contextValues.push(ContextValues.GotoDef);
     }
 
     protected override getChildren(): Node[] {

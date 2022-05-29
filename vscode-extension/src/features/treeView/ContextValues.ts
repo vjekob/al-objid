@@ -1,4 +1,5 @@
 export enum ContextValues {
-    sync = "ninja-sync",
-    gotoDef = "ninja-goto-def",
+    Sync = "ninja-sync",
+    GotoDef = "ninja-goto-def",
+    ConsolidateRanges = "ninja-consolidate-ranges",
 }

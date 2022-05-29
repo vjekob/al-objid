@@ -1,7 +1,10 @@
 import { ALRange } from "../../../../lib/types/ALRange";
 import { AppAwareNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionContext,
+} from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
 
 /**
@@ -13,7 +16,7 @@ export class PhysicalRangeNode extends RangeNode<ALRange> implements GoToDefinit
 
     constructor(parent: AppAwareNode, range: ALRange) {
         super(parent, range);
-        this._contextValues.push(ContextValues.gotoDef);
+        this._contextValues.push(ContextValues.GotoDef);
     }
 
     public get goto(): GoToDefinitionContext<ALRange> {

@@ -3,7 +3,7 @@ import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
 import { RootNode } from "../../RootNode";
 import { ViewController } from "../../ViewController";
-import { SyncObjectIdsCommandContext } from "../contexts/SyncObjectIdsCommandContext";
+import { SyncObjectIdsCommandContext } from "../../../../commands/contexts/SyncObjectIdsCommandContext";
 import { LogicalRangesGroupNode } from "./LogicalRangesGroupNode";
 import { ObjectRangesGroupNode } from "./ObjectRangesGroupNode";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
@@ -15,7 +15,7 @@ import { PhysicalRangesGroupNode } from "./PhysicalRangesGroupNode";
 export class RangeExplorerRootNode extends RootNode implements SyncObjectIdsCommandContext {
     constructor(app: ALApp, view: ViewController) {
         super(app, view);
-        this._contextValues.push(ContextValues.sync);
+        this._contextValues.push(ContextValues.Sync);
     }
 
     protected override getChildren(): Node[] {

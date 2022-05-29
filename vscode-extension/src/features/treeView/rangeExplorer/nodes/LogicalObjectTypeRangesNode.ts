@@ -3,8 +3,12 @@ import { ThemeIcon, TreeItemLabel, TreeItemCollapsibleState } from "vscode";
 import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { AppAwareDescendantNode, AppAwareNode } from "../../AppAwareNode";
 import { Node } from "../../Node";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionContext,
+} from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { ContextValues } from "../../ContextValues";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
 
 /**
  * Represents a logical range defined for a specific object type.
@@ -25,7 +29,7 @@ export class LogicalObjectTypeRangesNode
     private readonly _objectType: string;
     private readonly _name: string;
     private readonly _ranges: NinjaALRange[];
-    protected override readonly _iconPath = new ThemeIcon("bookmark");
+    protected override readonly _iconPath = NinjaIcon["object-logical-range"];
     protected override readonly _uriPathPart: string;
     protected override readonly _label: string | TreeItemLabel;
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;
@@ -38,7 +42,7 @@ export class LogicalObjectTypeRangesNode
         this._label = name;
         this._tooltip = `Logical ranges for ${objectType} objects, named ${name}, defined in .objidconfig`;
         this._uriPathPart = name || "_";
-        this._contextValues.push(ContextValues.gotoDef);
+        this._contextValues.push(ContextValues.GotoDef);
     }
 
     protected override getChildren(): Node[] {

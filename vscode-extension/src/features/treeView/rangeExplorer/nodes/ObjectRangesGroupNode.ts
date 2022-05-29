@@ -4,7 +4,10 @@ import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionContext,
+} from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { LogicalObjectTypeNode } from "./LogicalObjectTypeNode";
 
 /**
@@ -24,7 +27,7 @@ export class ObjectRangesGroupNode
 
     constructor(parent: AppAwareNode) {
         super(parent);
-        this._contextValues.push(ContextValues.gotoDef);
+        this._contextValues.push(ContextValues.GotoDef);
     }
 
     protected override getChildren(): Node[] {
