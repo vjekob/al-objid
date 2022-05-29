@@ -8,7 +8,8 @@ export type GoToDefinitionType =
     | "range"
     | "logicalName"
     | "objectType"
-    | "objectTypeRanges";
+    | "objectTypeRanges"
+    | "objectTypeRange";
 
 export interface GoToDefinitionContext<T extends ALRange> {
     app: ALApp;

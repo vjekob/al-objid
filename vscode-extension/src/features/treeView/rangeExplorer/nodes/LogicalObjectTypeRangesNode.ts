@@ -3,6 +3,8 @@ import { ThemeIcon, TreeItemLabel, TreeItemCollapsibleState } from "vscode";
 import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { AppAwareDescendantNode, AppAwareNode } from "../../AppAwareNode";
 import { Node } from "../../Node";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import { ContextValues } from "../../ContextValues";
 
 /**
  * Represents a logical range defined for a specific object type.
@@ -16,8 +18,12 @@ import { Node } from "../../Node";
  *
  * This node always contains at least two children of {@link LogicalObjectTypeRangeConsumptionNode} type.
  */
-export class LogicalObjectTypeRangeNode extends AppAwareDescendantNode {
+export class LogicalObjectTypeRangesNode
+    extends AppAwareDescendantNode
+    implements GoToDefinitionCommandContext<NinjaALRange>
+{
     private readonly _objectType: string;
+    private readonly _name: string;
     private readonly _ranges: NinjaALRange[];
     protected override readonly _iconPath = new ThemeIcon("bookmark");
     protected override readonly _uriPathPart: string;
@@ -27,10 +33,12 @@ export class LogicalObjectTypeRangeNode extends AppAwareDescendantNode {
     constructor(parent: AppAwareNode, objectType: string, name: string, ranges: NinjaALRange[]) {
         super(parent);
         this._objectType = objectType;
+        this._name = name;
         this._ranges = ranges;
         this._label = name;
         this._tooltip = `Logical ranges for ${objectType} objects, named ${name}, defined in .objidconfig`;
         this._uriPathPart = name || "_";
+        this._contextValues.push(ContextValues.gotoDef);
     }
 
     protected override getChildren(): Node[] {
@@ -38,5 +46,15 @@ export class LogicalObjectTypeRangeNode extends AppAwareDescendantNode {
             range => new LogicalObjectTypeRangeConsumptionNode(this, this._objectType, range, false)
         );
         return children;
+    }
+
+    public get goto(): GoToDefinitionContext<NinjaALRange> {
+        return {
+            app: this.app,
+            file: "configuration",
+            type: "objectTypeRanges",
+            objectType: this._objectType,
+            logicalName: this._name,
+        };
     }
 }

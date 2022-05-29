@@ -2,8 +2,10 @@ import { TreeItemCollapsibleState } from "vscode";
 import { ALObjectType } from "../../../../lib/types/ALObjectType";
 import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { AppAwareNode } from "../../AppAwareNode";
+import { ContextValues } from "../../ContextValues";
 import { DecorationSeverity, getSeverityFromRemaining, RangeSeverityIcons } from "../../DecorationSeverity";
 import { Node } from "../../Node";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
 
 /**
@@ -13,13 +15,18 @@ import { RangeNode } from "./RangeNode";
  *
  * This is a consumption node, so it shows consumption information and may show decorations.
  */
-export class LogicalObjectTypeRangeConsumptionNode extends RangeNode<NinjaALRange> {
+export class LogicalObjectTypeRangeConsumptionNode
+    extends RangeNode<NinjaALRange>
+    implements GoToDefinitionCommandContext<NinjaALRange>
+{
+    private readonly _objectType: string;
     protected override readonly _includeLogicalNameInDescription = false;
     protected override readonly _includeLogicalNameInLabel: boolean;
     protected override _collapsibleState = TreeItemCollapsibleState.None;
 
     constructor(parent: AppAwareNode, objectType: string, range: NinjaALRange, includeName: boolean) {
         super(parent, range);
+        this._objectType = objectType;
         this._includeLogicalNameInLabel = includeName;
 
         const objConsumption = this._consumption[objectType as ALObjectType] || [];
@@ -50,10 +57,22 @@ export class LogicalObjectTypeRangeConsumptionNode extends RangeNode<NinjaALRang
                 tooltip: `No consumption has been recorded`,
             };
         }
+
+        this._contextValues.push(ContextValues.gotoDef);
     }
 
     protected override calculateChildren(): Node[] {
         // This node type has no children, but extended type does, so we must override!
         return [];
+    }
+
+    get goto(): GoToDefinitionContext<NinjaALRange> {
+        return {
+            app: this.app,
+            file: "configuration",
+            type: "objectTypeRange",
+            range: this._range,
+            objectType: this._objectType,
+        };
     }
 }

@@ -3,8 +3,11 @@ import { TreeItemCollapsibleState } from "vscode";
 import { AppAwareNode } from "../../AppAwareNode";
 import { Node } from "../../Node";
 import { ObjectTypeNode } from "./ObjectTypeNode";
-import { LogicalObjectTypeRangeNode } from "./LogicalObjectTypeRangeNode";
+import { LogicalObjectTypeRangesNode } from "./LogicalObjectTypeRangesNode";
 import { NinjaIcon } from "../../../../lib/NinjaIcon";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
+import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
+import { ContextValues } from "../../ContextValues";
 
 /**
  * Represents an individual logical object type specified under `objectTypes` in `.objidconfig`.
@@ -18,13 +21,14 @@ import { NinjaIcon } from "../../../../lib/NinjaIcon";
  * type
  * - {@link LogicalObjectTypeRangeConsumptionNode} if only a single range has this `description`
  */
-export class LogicalObjectTypeNode extends ObjectTypeNode {
+export class LogicalObjectTypeNode extends ObjectTypeNode implements GoToDefinitionCommandContext<NinjaALRange> {
     protected override readonly _iconPath = NinjaIcon["object-ranges-type"];
     protected override readonly _collapsibleState = TreeItemCollapsibleState.Expanded;
 
     constructor(parent: AppAwareNode, objectType: string) {
         super(parent, objectType);
         this._tooltip = `Logical ranges for ${objectType} objects, defined in .objidconfig`;
+        this._contextValues.push(ContextValues.gotoDef);
     }
 
     protected override getChildren(): Node[] {
@@ -48,9 +52,18 @@ export class LogicalObjectTypeNode extends ObjectTypeNode {
             );
             return ranges.length === 1
                 ? new LogicalObjectTypeRangeConsumptionNode(this, this._objectType, ranges[0], true)
-                : new LogicalObjectTypeRangeNode(this, this._objectType, name, ranges);
+                : new LogicalObjectTypeRangesNode(this, this._objectType, name, ranges);
         });
 
         return children;
+    }
+
+    public get goto(): GoToDefinitionContext<NinjaALRange> {
+        return {
+            app: this.app,
+            file: "configuration",
+            type: "objectType",
+            objectType: this._objectType,
+        };
     }
 }

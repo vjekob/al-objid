@@ -7,6 +7,11 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
 
 ## [vNext] - 2022-06-01
 
+### Added
+
+-   "Go to definition" command added to all relevant nodes in Range explorer. This allows jumping to a range definition
+    in `app.json` or `.objidconfig` directly from range explorer.
+
 ### Changed
 
 -   Range explorer as been through massive refactoring (again). The previous refactoring involved a lot of fumbling
@@ -14,6 +19,13 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
     functional, but extremely difficult and complicated to maintain, and was requiring far too much code duplication
     to support any other tree views. The refactoring in this verion uses an approach that requires no duplication and
     allows supporting new tree views through simply providing new node types.
+-   Range explorer uses new icon types and a simplified structure. Icons indicate four states (no consumption, most
+    IDs available, most IDs consumed, running out, fully consumed) but they only indicate these states through color,
+    not through icon shape. Also, there are no more "No consumption" nodes, this information is now communicated
+    through color and node state (keeps the view much more concise and easier to read).
+-   Changed icons for "Synchronize" and "Automatically synchronize" commands in Range explorer. New icons derive from
+    Codicons icon collection (a part of VS Code), that also comes with simpler license than previous icons did, and
+    follows the VS Code existing design language more closely.
 
 ## [2.8.1] - 2022-05-28
 

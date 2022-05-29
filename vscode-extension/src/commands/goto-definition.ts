@@ -1,4 +1,4 @@
-import { commands, DocumentSymbol, Selection, Uri, window } from "vscode";
+import { commands, DocumentSymbol, Range, Selection, TextEditorRevealType, Uri, window } from "vscode";
 import { jsonAvailable } from "../features/linters/jsonAvailable";
 import { GoToDefinitionCommandContext } from "../features/treeView/rangeExplorer/contexts/GoToDefinitionCommandContext";
 import { Telemetry } from "../lib/Telemetry";
@@ -57,6 +57,11 @@ async function getNamedLogicalRanges(uri: Uri, name: string): Promise<DocumentSy
     return result;
 }
 
+async function getObjectTypeRanges(uri: Uri, objectType: string): Promise<DocumentSymbol | undefined> {
+    const objectRanges = await getObjectRanges(uri);
+    return objectRanges?.children.find(r => r.name === objectType!);
+}
+
 async function goToManifest({ goto }: GoToDefinitionCommandContext<NinjaALRange>) {
     const { uri } = goto.app.manifest;
     const idRanges = await getIdRanges(uri);
@@ -95,6 +100,8 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
     let selection: Selection | undefined;
     let selections: Selection[] = [];
     let idRanges: DocumentSymbol | undefined;
+    let objectRanges: DocumentSymbol | undefined;
+    let objectTypeRanges: DocumentSymbol | undefined;
     let logicalRanges: DocumentSymbol[] | undefined;
 
     switch (goto.type) {
@@ -104,7 +111,7 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
             break;
 
         case "objectRanges":
-            const objectRanges = await getObjectRanges(uri);
+            objectRanges = await getObjectRanges(uri);
             selection = new Selection(objectRanges!.range.start, objectRanges!.range.end);
             break;
 
@@ -131,6 +138,39 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
             if (range) {
                 selection = new Selection(range.range.start, range.range.end);
             }
+            break;
+
+        case "objectType":
+            objectTypeRanges = await getObjectTypeRanges(uri, goto.objectType!);
+            if (objectTypeRanges) {
+                selection = new Selection(objectTypeRanges.range.start, objectTypeRanges.range.end);
+            }
+            break;
+
+        case "objectTypeRanges":
+            objectTypeRanges = await getObjectTypeRanges(uri, goto.objectType!);
+            const logicalObjectTypeRanges = objectTypeRanges?.children.filter(c =>
+                c.children.find(c => c.name === "description" && c.detail === goto.logicalName!)
+            );
+            if (!logicalObjectTypeRanges) {
+                return;
+            }
+            for (let range of logicalObjectTypeRanges) {
+                selections.push(new Selection(range.range.start, range.range.end));
+            }
+            break;
+
+        case "objectTypeRange":
+            objectTypeRanges = await getObjectTypeRanges(uri, goto.objectType!);
+            const logicalObjectTypeRange = objectTypeRanges?.children.find(
+                c =>
+                    c.children.find(c => c.name === "description" && c.detail === goto.range!.description) &&
+                    c.children.find(c => c.name === "from" && c.detail === from) &&
+                    c.children.find(c => c.name === "to" && c.detail === to)
+            );
+            if (logicalObjectTypeRange) {
+                selection = new Selection(logicalObjectTypeRange.range.start, logicalObjectTypeRange.range.end);
+            }
     }
 
     if (!selection && selections.length === 0) {
@@ -140,7 +180,17 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
     const editor = await window.showTextDocument(uri);
     if (selection) {
         editor.selection = selection;
+        editor.revealRange(new Range(selection.start, selection.end));
     } else {
         editor.selections = selections;
+        const firstSelection = selections.reduce(
+            (previous, current) => (current.start.line < previous.start.line ? current : previous),
+            selections[0]
+        );
+        const lastSelection = selections.reduce(
+            (previous, current) => (current.end.line > previous.end.line ? current : previous),
+            selections[0]
+        );
+        editor.revealRange(new Range(firstSelection.start, lastSelection.end));
     }
 }
