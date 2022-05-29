@@ -2,6 +2,7 @@ import { Disposable, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscod
 import { ALApp } from "../../lib/ALApp";
 import { ConsumptionCache } from "../ConsumptionCache";
 import { AppAwareNode } from "./AppAwareNode";
+import { ContextValues } from "./ContextValues";
 import { DecorableNode } from "./DecorableNode";
 import { ViewAwareNode } from "./ViewAwareNode";
 import { ViewController } from "./ViewController";
@@ -27,16 +28,11 @@ export abstract class RootNode extends DecorableNode implements AppAwareNode, Vi
         this._tooltip = `${app.manifest.name} v${app.manifest.version}`;
         this._uriAuthority = app.hash;
         this._collapsibleState = TreeItemCollapsibleState.Expanded;
+        this._contextValues.push(ContextValues.folder);
 
         this._subscription = ConsumptionCache.instance.onConsumptionUpdate(app.hash, () => {
             this._view.update(this);
         });
-    }
-
-    protected override completeTreeItem(item: TreeItem): void {
-        super.completeTreeItem(item);
-
-        item.contextValue = "ninja-folder";
     }
 
     public get app() {

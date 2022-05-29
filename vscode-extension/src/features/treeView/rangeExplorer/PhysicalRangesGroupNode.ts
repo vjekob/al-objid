@@ -1,14 +1,14 @@
-import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { TreeItemCollapsibleState } from "vscode";
 import { NinjaIcon } from "../../../lib/NinjaIcon";
 import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
+import { ContextValues } from "../ContextValues";
 import { Node } from "../Node";
-import {
-    GoToDefinitionCommandContext,
-    GoToDefinitionFile,
-    GoToDefinitionType,
-} from "./commandContexts/GoToDefinitionCommandContext";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "./commandContexts/GoToDefinitionCommandContext";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
 
+/**
+ * Displays a node that shows "Ranges" label under which all physical ranges defined in `app.json` will be shown.
+ */
 export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
     protected override _iconPath = NinjaIcon["physical-range"];
     protected override _uriPathPart = "ranges";
@@ -19,6 +19,7 @@ export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements G
 
     constructor(parent: AppAwareNode) {
         super(parent);
+        this._contextValues.push(ContextValues.gotoDef);
     }
 
     protected override getChildren(): Node[] {
@@ -26,11 +27,11 @@ export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements G
         return ranges.map(range => new PhysicalRangeNode(this.parent, range));
     }
 
-    public get file(): GoToDefinitionFile {
-        return "manifest";
-    }
-
-    public get type(): GoToDefinitionType {
-        return "idRanges";
+    public get goto(): GoToDefinitionContext {
+        return {
+            app: this.app,
+            file: "manifest",
+            type: "idRanges",
+        };
     }
 }

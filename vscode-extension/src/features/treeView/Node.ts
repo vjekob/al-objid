@@ -1,4 +1,5 @@
 import { TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
+import { ContextValues } from "./ContextValues";
 
 export abstract class Node {
     constructor(parent: Node | undefined) {
@@ -7,6 +8,7 @@ export abstract class Node {
 
     protected abstract _label: string | TreeItemLabel;
     protected abstract _collapsibleState: TreeItemCollapsibleState;
+    protected _contextValues: ContextValues[] = [];
     protected _parent: Node | undefined;
     protected _description: string | undefined;
     protected _tooltip: string | undefined;
@@ -29,6 +31,10 @@ export abstract class Node {
 
         if (this._tooltip !== undefined) {
             item.tooltip = this._tooltip;
+        }
+
+        if (this._contextValues.length > 0) {
+            item.contextValue = ["", ...this._contextValues, ""].join(",");
         }
 
         this.completeTreeItem(item);

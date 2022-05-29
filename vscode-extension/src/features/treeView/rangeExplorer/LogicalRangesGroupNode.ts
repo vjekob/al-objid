@@ -1,14 +1,16 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
+import { ContextValues } from "../ContextValues";
 import { Node } from "../Node";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "./commandContexts/GoToDefinitionCommandContext";
 import { LogicalRangeGroupNode } from "./LogicalRangeGroupNode";
 import { LogicalRangeNode } from "./LogicalRangeNode";
 
 /**
- * Represents a node that displays "Logical Ranges" label and contains the list of logical ranges, either as list of
+ * Displays a node that shows "Logical Ranges" label and contains the list of logical ranges, either as list of
  * names (when one logical range contains multiple sub-ranges), or as list of ranges with name included in description.
  */
-export class LogicalRangesGroupNode extends AppAwareDescendantNode {
+export class LogicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
     protected override _iconPath = new ThemeIcon("symbol-namespace");
     protected override _uriPathPart = "logicalranges";
     protected override readonly _label = "Logical Ranges";
@@ -18,6 +20,7 @@ export class LogicalRangesGroupNode extends AppAwareDescendantNode {
 
     constructor(parent: AppAwareNode) {
         super(parent);
+        this._contextValues.push(ContextValues.gotoDef);
     }
 
     protected override getChildren(): Node[] {
@@ -35,5 +38,13 @@ export class LogicalRangesGroupNode extends AppAwareDescendantNode {
         });
 
         return children;
+    }
+
+    public get goto(): GoToDefinitionContext {
+        return {
+            app: this.app,
+            file: "configuration",
+            type: "idRanges",
+        };
     }
 }
