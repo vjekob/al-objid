@@ -188,13 +188,13 @@ export class ObjIdConfig {
         const names: string[] = [];
         const ranges = this._config.idRanges;
         for (let range of ranges) {
-            if (!range || !range.description) {
+            if (!range) {
                 continue;
             }
-            if (names.find(name => name.toLowerCase().trim() === range.description.toLowerCase().trim())) {
+            if (names.find(name => name.toLowerCase().trim() === (range.description || "").toLowerCase().trim())) {
                 continue;
             }
-            names.push(range.description);
+            names.push(range.description || "");
         }
         this._logicalRangeNames = names;
         return names;

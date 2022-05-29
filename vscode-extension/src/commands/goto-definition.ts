@@ -50,7 +50,10 @@ async function getNamedLogicalRanges(uri: Uri, name: string): Promise<DocumentSy
     }
     const result: DocumentSymbol[] = [];
     for (let range of idRanges!.children) {
-        if (range.children.find(c => c.name === "description" && c.detail === name)) {
+        if (
+            range.children.find(c => c.name === "description" && c.detail === name) ||
+            (!name && !range.children.find(c => c.name === "description"))
+        ) {
             result.push(range);
         }
     }
