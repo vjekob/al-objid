@@ -1,5 +1,6 @@
 import { TreeItemCollapsibleState } from "vscode";
 import { NinjaIcon } from "../../../../lib/NinjaIcon";
+import { ALRange } from "../../../../lib/types/ALRange";
 import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
@@ -11,7 +12,7 @@ import { PhysicalRangeNode } from "./PhysicalRangeNode";
  *
  * Contains children of {@link PhysicalRangeNode} type.
  */
-export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
+export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext<ALRange> {
     protected override _iconPath = NinjaIcon["physical-range"];
     protected override _uriPathPart = "ranges";
     protected override readonly _label = "Ranges";
@@ -29,7 +30,7 @@ export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements G
         return ranges.map(range => new PhysicalRangeNode(this.parent, range));
     }
 
-    public get goto(): GoToDefinitionContext {
+    public get goto(): GoToDefinitionContext<ALRange> {
         return {
             app: this.app,
             file: "manifest",

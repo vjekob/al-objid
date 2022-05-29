@@ -7,7 +7,7 @@ import { RangeNode } from "./RangeNode";
 /**
  * Represents a range object defined as a `from..to` pair under `idRanges` in `app.json`.
  */
-export class PhysicalRangeNode extends RangeNode implements GoToDefinitionCommandContext {
+export class PhysicalRangeNode extends RangeNode<ALRange> implements GoToDefinitionCommandContext<ALRange> {
     protected _includeLogicalNameInDescription = false;
     protected _includeLogicalNameInLabel = false;
 
@@ -16,7 +16,7 @@ export class PhysicalRangeNode extends RangeNode implements GoToDefinitionComman
         this._contextValues.push(ContextValues.gotoDef);
     }
 
-    public get goto(): GoToDefinitionContext {
+    public get goto(): GoToDefinitionContext<ALRange> {
         return {
             app: this.app,
             file: "manifest",

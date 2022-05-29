@@ -1,3 +1,7 @@
+import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
+import { AppAwareNode } from "../../AppAwareNode";
+import { ContextValues } from "../../ContextValues";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
 
 /**
@@ -9,7 +13,24 @@ import { RangeNode } from "./RangeNode";
  *
  * This node contains children, one per unique object type represented under consumption from this range.
  */
-export class LogicalRangeNamedNode extends RangeNode {
+export class LogicalRangeNamedNode
+    extends RangeNode<NinjaALRange>
+    implements GoToDefinitionCommandContext<NinjaALRange>
+{
     protected readonly _includeLogicalNameInDescription = true;
     protected readonly _includeLogicalNameInLabel = false;
+
+    constructor(parent: AppAwareNode, range: NinjaALRange) {
+        super(parent, range);
+        this._contextValues.push(ContextValues.gotoDef);
+    }
+
+    public get goto(): GoToDefinitionContext<NinjaALRange> {
+        return {
+            app: this.app,
+            file: "configuration",
+            type: "range",
+            range: this._range,
+        };
+    }
 }

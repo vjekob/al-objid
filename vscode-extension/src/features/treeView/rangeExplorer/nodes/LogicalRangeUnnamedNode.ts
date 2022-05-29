@@ -11,7 +11,10 @@ import { LogicalRangeGroupNode } from "./LogicalRangeGroupNode";
  *
  * This node is always shown as a child of {@link LogicalRangeGroupNode}
  */
-export class LogicalRangeUnnamedNode extends RangeNode implements GoToDefinitionCommandContext {
+export class LogicalRangeUnnamedNode
+    extends RangeNode<NinjaALRange>
+    implements GoToDefinitionCommandContext<NinjaALRange>
+{
     protected _includeLogicalNameInDescription = false;
     protected _includeLogicalNameInLabel = false;
 
@@ -20,13 +23,12 @@ export class LogicalRangeUnnamedNode extends RangeNode implements GoToDefinition
         this._contextValues.push(ContextValues.gotoDef);
     }
 
-    public get goto(): GoToDefinitionContext {
+    public get goto(): GoToDefinitionContext<NinjaALRange> {
         return {
             app: this.app,
             file: "configuration",
             type: "range",
             range: this._range,
-            name: (this._range as NinjaALRange).description,
         };
     }
 }

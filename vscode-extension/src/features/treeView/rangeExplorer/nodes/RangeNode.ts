@@ -13,11 +13,11 @@ import { ObjectTypeConsumptionNode } from "./ObjectTypeConsumptionNode";
  * Abstract node that displays range (from..to) as label and typically includes children that represent
  * consumption per object type.
  */
-export abstract class RangeNode extends AppAwareDescendantNode {
+export abstract class RangeNode<T extends ALRange> extends AppAwareDescendantNode {
     private readonly _childNodes: Node[];
     private _noConsumption = false;
 
-    protected readonly _range: ALRange;
+    protected readonly _range: T;
     protected override readonly _label: string;
     protected override readonly _uriPathPart: string;
     protected override _iconPath: string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon =
@@ -28,7 +28,7 @@ export abstract class RangeNode extends AppAwareDescendantNode {
     protected abstract _includeLogicalNameInDescription: boolean;
     protected abstract _includeLogicalNameInLabel: boolean;
 
-    constructor(parent: AppAwareNode, range: ALRange) {
+    constructor(parent: AppAwareNode, range: T) {
         super(parent);
         this._range = range;
         this._label = `${range.from}..${range.to}`;
@@ -70,7 +70,7 @@ export abstract class RangeNode extends AppAwareDescendantNode {
     protected override completeTreeItem(item: TreeItem): void {
         super.completeTreeItem(item);
 
-        const ninjaRange = this._range as NinjaALRange;
+        const ninjaRange = this._range as unknown as NinjaALRange;
         if (ninjaRange && ninjaRange.description) {
             if (this._includeLogicalNameInDescription) {
                 item.description = ninjaRange.description;

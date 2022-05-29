@@ -13,7 +13,7 @@ import { RangeNode } from "./RangeNode";
  *
  * This is a consumption node, so it shows consumption information and may show decorations.
  */
-export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {
+export class LogicalObjectTypeRangeConsumptionNode extends RangeNode<NinjaALRange> {
     protected override readonly _includeLogicalNameInDescription = false;
     protected override readonly _includeLogicalNameInLabel: boolean;
     protected override _collapsibleState = TreeItemCollapsibleState.None;

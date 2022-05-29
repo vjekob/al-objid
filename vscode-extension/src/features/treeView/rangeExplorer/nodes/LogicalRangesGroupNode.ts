@@ -1,4 +1,5 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
+import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
 import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
@@ -13,7 +14,10 @@ import { LogicalRangeNamedNode } from "./LogicalRangeNamedNode";
  * - {@link LogicalRangeGroupNode} when multiple ranges (`from..to` pairs) share the same logical name (`description`)
  * - {@link LogicalRangeNamedNode} when only one range (`from..to` pair) has this logical name (`description`)
  */
-export class LogicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
+export class LogicalRangesGroupNode
+    extends AppAwareDescendantNode
+    implements GoToDefinitionCommandContext<NinjaALRange>
+{
     protected override _iconPath = new ThemeIcon("symbol-namespace");
     protected override _uriPathPart = "logicalranges";
     protected override readonly _label = "Logical Ranges";
@@ -43,7 +47,7 @@ export class LogicalRangesGroupNode extends AppAwareDescendantNode implements Go
         return children;
     }
 
-    public get goto(): GoToDefinitionContext {
+    public get goto(): GoToDefinitionContext<NinjaALRange> {
         return {
             app: this.app,
             file: "configuration",

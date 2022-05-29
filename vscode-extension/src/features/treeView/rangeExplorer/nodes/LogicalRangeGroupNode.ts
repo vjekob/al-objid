@@ -12,7 +12,10 @@ import { LogicalRangeUnnamedNode } from "./LogicalRangeUnnamedNode";
  *
  * This node always contains children of type {@link LogicalRangeUnnamedNode}.
  */
-export class LogicalRangeGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
+export class LogicalRangeGroupNode
+    extends AppAwareDescendantNode
+    implements GoToDefinitionCommandContext<NinjaALRange>
+{
     private readonly _name: string;
     private readonly _ranges: NinjaALRange[];
     protected readonly _iconPath = new ThemeIcon("bookmark");
@@ -37,12 +40,12 @@ export class LogicalRangeGroupNode extends AppAwareDescendantNode implements GoT
         return ranges.map(range => new LogicalRangeUnnamedNode(this, range));
     }
 
-    public get goto(): GoToDefinitionContext {
+    public get goto(): GoToDefinitionContext<NinjaALRange> {
         return {
             app: this.app,
             file: "configuration",
             type: "logicalName",
-            name: this._name,
+            logicalName: this._name,
         };
     }
 }

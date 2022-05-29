@@ -10,15 +10,15 @@ export type GoToDefinitionType =
     | "objectType"
     | "objectTypeRanges";
 
-export interface GoToDefinitionContext {
+export interface GoToDefinitionContext<T extends ALRange> {
     app: ALApp;
     file: GoToDefinitionFile;
     type: GoToDefinitionType;
-    range?: ALRange;
-    name?: string;
+    range?: T;
+    logicalName?: string;
     objectType?: string;
 }
 
-export interface GoToDefinitionCommandContext {
-    goto: GoToDefinitionContext;
+export interface GoToDefinitionCommandContext<T extends ALRange> {
+    goto: GoToDefinitionContext<T>;
 }
