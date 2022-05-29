@@ -1,7 +1,7 @@
 import { TreeItemCollapsibleState } from "vscode";
-import { NinjaIcon } from "../../../lib/NinjaIcon";
-import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
-import { Node } from "../Node";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
+import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
+import { Node } from "../../Node";
 import { LogicalObjectTypeNode } from "./LogicalObjectTypeNode";
 
 /**

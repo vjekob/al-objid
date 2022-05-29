@@ -1,8 +1,13 @@
 import { Uri, ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { AppAwareNode } from "../AppAwareNode";
-import { getSeverityFromRemaining, ObjectSeverityIcons } from "../DecorationSeverity";
+import { AppAwareNode } from "../../AppAwareNode";
+import { getSeverityFromRemaining, ObjectSeverityIcons } from "../../DecorationSeverity";
 import { ObjectTypeNode } from "./ObjectTypeNode";
 
+/**
+ * Represents an object type that has recorded consumption from a specific range.
+ *
+ * This is a consumption node, so it shows consumption information and may show decorations.
+ */
 export class ObjectTypeConsumptionNode extends ObjectTypeNode {
     protected _iconPath: string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon;
     protected _collapsibleState = TreeItemCollapsibleState.None;

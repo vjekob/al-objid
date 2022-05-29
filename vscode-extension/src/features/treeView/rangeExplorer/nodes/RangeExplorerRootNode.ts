@@ -1,8 +1,8 @@
-import { ALApp } from "../../../lib/ALApp";
-import { Node } from "../Node";
-import { RootNode } from "../RootNode";
-import { ViewController } from "../ViewController";
-import { SyncObjectIdsCommandContext } from "./commandContexts/SyncObjectIdsCommandContext";
+import { ALApp } from "../../../../lib/ALApp";
+import { Node } from "../../Node";
+import { RootNode } from "../../RootNode";
+import { ViewController } from "../../ViewController";
+import { SyncObjectIdsCommandContext } from "../contexts/SyncObjectIdsCommandContext";
 import { LogicalRangesGroupNode } from "./LogicalRangesGroupNode";
 import { ObjectTypeRangesGroupNode } from "./ObjectTypeRangesGroupNode";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";

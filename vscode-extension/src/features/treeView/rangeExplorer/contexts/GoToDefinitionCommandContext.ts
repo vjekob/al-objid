@@ -9,6 +9,7 @@ export interface GoToDefinitionContext {
     file: GoToDefinitionFile;
     type: GoToDefinitionType;
     range?: ALRange;
+    name?: string;
 }
 
 export interface GoToDefinitionCommandContext {

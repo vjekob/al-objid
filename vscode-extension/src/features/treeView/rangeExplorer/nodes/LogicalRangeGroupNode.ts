@@ -1,11 +1,14 @@
 import { ThemeIcon, TreeItemLabel, TreeItemCollapsibleState } from "vscode";
-import { NinjaALRange } from "../../../lib/types/NinjaALRange";
-import { AppAwareDescendantNode, AppAwareNode } from "../AppAwareNode";
-import { Node } from "../Node";
-import { PhysicalRangeNode } from "./PhysicalRangeNode";
+import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
+import { AppAwareDescendantNode, AppAwareNode } from "../../AppAwareNode";
+import { Node } from "../../Node";
+import { LogicalRangeUnnamedNode } from "./LogicalRangeUnnamedNode";
 
 /**
- * Represents a logical range node that displays logical range name as label, and contains multiple sub-ranges.
+ * Represents such logical range where there are multiple `from..to` pairs that share the same logical name
+ * (`description`).
+ *
+ * This node always contains children of type {@link LogicalRangeUnnamedNode}.
  */
 export class LogicalRangeGroupNode extends AppAwareDescendantNode {
     private readonly _name: string;
@@ -27,6 +30,6 @@ export class LogicalRangeGroupNode extends AppAwareDescendantNode {
     protected override getChildren(): Node[] {
         const nameLower = (this._name || "").toLowerCase().trim();
         const ranges = this._ranges.filter(range => (range.description || "").toLowerCase().trim() === nameLower);
-        return ranges.map(range => new PhysicalRangeNode(this, range));
+        return ranges.map(range => new LogicalRangeUnnamedNode(this, range));
     }
 }

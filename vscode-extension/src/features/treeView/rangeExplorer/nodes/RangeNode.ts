@@ -1,16 +1,17 @@
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
-import { ALObjectType } from "../../../lib/types/ALObjectType";
-import { ALRange } from "../../../lib/types/ALRange";
-import { ConsumptionData } from "../../../lib/types/ConsumptionData";
-import { NinjaALRange } from "../../../lib/types/NinjaALRange";
-import { ConsumptionCache } from "../../ConsumptionCache";
-import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
-import { DecorationSeverity } from "../DecorationSeverity";
-import { Node } from "../Node";
+import { ALObjectType } from "../../../../lib/types/ALObjectType";
+import { ALRange } from "../../../../lib/types/ALRange";
+import { ConsumptionData } from "../../../../lib/types/ConsumptionData";
+import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
+import { ConsumptionCache } from "../../../ConsumptionCache";
+import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
+import { DecorationSeverity } from "../../DecorationSeverity";
+import { Node } from "../../Node";
 import { ObjectTypeConsumptionNode } from "./ObjectTypeConsumptionNode";
 
 /**
- * Represents a base type of node that displays range (from..to) as label.
+ * Abstract node that displays range (from..to) as label and typically includes children that represent
+ * consumption per object type.
  */
 export abstract class RangeNode extends AppAwareDescendantNode {
     private readonly _childNodes: Node[];

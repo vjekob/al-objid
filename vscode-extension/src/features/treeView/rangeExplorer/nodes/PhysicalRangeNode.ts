@@ -1,11 +1,11 @@
-import { ALRange } from "../../../lib/types/ALRange";
-import { AppAwareNode } from "../AppAwareNode";
-import { ContextValues } from "../ContextValues";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "./commandContexts/GoToDefinitionCommandContext";
+import { ALRange } from "../../../../lib/types/ALRange";
+import { AppAwareNode } from "../../AppAwareNode";
+import { ContextValues } from "../../ContextValues";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
 
 /**
- * Represents a range object defined as a [`from`, `to`] pair under `idRanges` property in `app.json`.
+ * Represents a range object defined as a `from..to` pair under `idRanges` in `app.json`.
  */
 export class PhysicalRangeNode extends RangeNode implements GoToDefinitionCommandContext {
     protected _includeLogicalNameInDescription = false;

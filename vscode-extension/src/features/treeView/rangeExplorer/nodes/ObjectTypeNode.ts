@@ -1,5 +1,8 @@
-import { AppAwareDescendantNode, AppAwareNode } from "../AppAwareNode";
+import { AppAwareDescendantNode, AppAwareNode } from "../../AppAwareNode";
 
+/**
+ * Abstract node that shows object type label.
+ */
 export abstract class ObjectTypeNode extends AppAwareDescendantNode {
     protected readonly _objectType: string;
     protected override readonly _label: string;

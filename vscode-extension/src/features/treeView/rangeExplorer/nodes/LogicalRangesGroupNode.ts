@@ -1,14 +1,17 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
-import { ContextValues } from "../ContextValues";
-import { Node } from "../Node";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "./commandContexts/GoToDefinitionCommandContext";
+import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
+import { ContextValues } from "../../ContextValues";
+import { Node } from "../../Node";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
 import { LogicalRangeGroupNode } from "./LogicalRangeGroupNode";
-import { LogicalRangeNode } from "./LogicalRangeNode";
+import { LogicalRangeNamedNode } from "./LogicalRangeNamedNode";
 
 /**
- * Displays a node that shows "Logical Ranges" label and contains the list of logical ranges, either as list of
- * names (when one logical range contains multiple sub-ranges), or as list of ranges with name included in description.
+ * Displays a node that shows "Logical Ranges" label and contains the list of logical ranges.
+ *
+ * It contains list of children, one per logical name, where each child is one of these types:
+ * - {@link LogicalRangeGroupNode} when multiple ranges (`from..to` pairs) share the same logical name (`description`)
+ * - {@link LogicalRangeNamedNode} when only one range (`from..to` pair) has this logical name (`description`)
  */
 export class LogicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
     protected override _iconPath = new ThemeIcon("symbol-namespace");
@@ -33,7 +36,7 @@ export class LogicalRangesGroupNode extends AppAwareDescendantNode implements Go
                 range => (range.description || "").toLowerCase().trim() === compareName
             );
             return ranges.length === 1
-                ? new LogicalRangeNode(this, ranges[0])
+                ? new LogicalRangeNamedNode(this, ranges[0])
                 : new LogicalRangeGroupNode(this, name, logicalRanges);
         });
 

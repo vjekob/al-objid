@@ -2,7 +2,7 @@ import { ALApp } from "../../../lib/ALApp";
 import { NinjaTreeView } from "../NinjaTreeView";
 import { RootNode } from "../RootNode";
 import { ViewController } from "../ViewController";
-import { RangeExplorerRootNode } from "./RangeExplorerRootNode";
+import { RangeExplorerRootNode } from "./nodes/RangeExplorerRootNode";
 
 // TODO Show individual IDs in range explorer, title = object id, description = file path
 // When clicking on object id, opens the document and selects that id

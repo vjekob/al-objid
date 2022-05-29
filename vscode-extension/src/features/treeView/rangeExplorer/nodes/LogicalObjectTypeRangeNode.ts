@@ -1,14 +1,20 @@
 import { LogicalObjectTypeRangeConsumptionNode } from "./LogicalObjectTypeRangeConsumptionNode";
-import { Uri, ThemeIcon, TreeItemLabel, TreeItemCollapsibleState } from "vscode";
-import { NinjaALRange } from "../../../lib/types/NinjaALRange";
-import { AppAwareDescendantNode, AppAwareNode } from "../AppAwareNode";
-import { Node } from "../Node";
+import { ThemeIcon, TreeItemLabel, TreeItemCollapsibleState } from "vscode";
+import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
+import { AppAwareDescendantNode, AppAwareNode } from "../../AppAwareNode";
+import { Node } from "../../Node";
 
 /**
  * Represents a logical range defined for a specific object type.
  *
  * Each node instance from this class represents a unique value specified in `description` property under an
- * object type specified under `objectRanges` in `.objidconfig`.
+ * object type specified under `objectRanges` in `.objidconfig`. Label for this node is always equal to the
+ * `description` property.
+ *
+ * This node will only show for such object-type ranges where there are multiple different `from..to` instances
+ * with the same `description` property. Otherwise {@link LogicalObjectTypeRangeConsumptionNode} is shown directly.
+ *
+ * This node always contains at least two children of {@link LogicalObjectTypeRangeConsumptionNode} type.
  */
 export class LogicalObjectTypeRangeNode extends AppAwareDescendantNode {
     private readonly _objectType: string;

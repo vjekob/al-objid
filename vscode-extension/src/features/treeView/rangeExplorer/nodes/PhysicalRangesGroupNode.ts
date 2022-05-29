@@ -1,13 +1,15 @@
 import { TreeItemCollapsibleState } from "vscode";
-import { NinjaIcon } from "../../../lib/NinjaIcon";
-import { AppAwareNode, AppAwareDescendantNode } from "../AppAwareNode";
-import { ContextValues } from "../ContextValues";
-import { Node } from "../Node";
-import { GoToDefinitionCommandContext, GoToDefinitionContext } from "./commandContexts/GoToDefinitionCommandContext";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
+import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
+import { ContextValues } from "../../ContextValues";
+import { Node } from "../../Node";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
 
 /**
  * Displays a node that shows "Ranges" label under which all physical ranges defined in `app.json` will be shown.
+ *
+ * Contains children of {@link PhysicalRangeNode} type.
  */
 export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
     protected override _iconPath = NinjaIcon["physical-range"];

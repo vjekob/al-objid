@@ -1,11 +1,18 @@
 import { TreeItemCollapsibleState } from "vscode";
-import { ALObjectType } from "../../../lib/types/ALObjectType";
-import { NinjaALRange } from "../../../lib/types/NinjaALRange";
-import { AppAwareNode } from "../AppAwareNode";
-import { DecorationSeverity, getSeverityFromRemaining, RangeSeverityIcons } from "../DecorationSeverity";
-import { Node } from "../Node";
+import { ALObjectType } from "../../../../lib/types/ALObjectType";
+import { NinjaALRange } from "../../../../lib/types/NinjaALRange";
+import { AppAwareNode } from "../../AppAwareNode";
+import { DecorationSeverity, getSeverityFromRemaining, RangeSeverityIcons } from "../../DecorationSeverity";
+import { Node } from "../../Node";
 import { RangeNode } from "./RangeNode";
 
+/**
+ * Represents a object-type logical range defined under specific object type under `objectRanges` in `.objidconfig`.
+ * Each node of this type shows label that includes range (from..to) and may include logical range name in
+ * parentheses.
+ *
+ * This is a consumption node, so it shows consumption information and may show decorations.
+ */
 export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {
     protected override readonly _includeLogicalNameInDescription = false;
     protected override readonly _includeLogicalNameInLabel: boolean;
@@ -46,7 +53,7 @@ export class LogicalObjectTypeRangeConsumptionNode extends RangeNode {
     }
 
     protected override calculateChildren(): Node[] {
-        // This node type has no children, but parent does
+        // This node type has no children, but extended type does, so we must override!
         return [];
     }
 }

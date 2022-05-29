@@ -1,13 +1,22 @@
 import { LogicalObjectTypeRangeConsumptionNode } from "./LogicalObjectTypeRangeConsumptionNode";
-import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { AppAwareNode } from "../AppAwareNode";
-import { Node } from "../Node";
+import { TreeItemCollapsibleState } from "vscode";
+import { AppAwareNode } from "../../AppAwareNode";
+import { Node } from "../../Node";
 import { ObjectTypeNode } from "./ObjectTypeNode";
 import { LogicalObjectTypeRangeNode } from "./LogicalObjectTypeRangeNode";
-import { NinjaIcon } from "../../../lib/NinjaIcon";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
 
 /**
- * Represents an individual logical object type range specified under `objectTypes` in `.objidconfig`.
+ * Represents an individual logical object type specified under `objectTypes` in `.objidconfig`.
+ *
+ * The label for this node is always equal to object type.
+ *
+ * This node contains children, one per each unique `description` represented among ranges defined for this object
+ * type, where child type can be:
+ * - {@link LogicalObjectTypeRangeNode} if multiple ranges all have this same `description` property, there is only
+ * one child node of this type, that will then have its subchildren of {@link LogicalObjectTypeRangeConsumptionNode}
+ * type
+ * - {@link LogicalObjectTypeRangeConsumptionNode} if only a single range has this `description`
  */
 export class LogicalObjectTypeNode extends ObjectTypeNode {
     protected override readonly _iconPath = NinjaIcon["object-ranges-type"];

@@ -1,6 +1,6 @@
 import { commands, DocumentSymbol, Selection, Uri, window } from "vscode";
 import { jsonAvailable } from "../features/linters/jsonAvailable";
-import { GoToDefinitionCommandContext } from "../features/treeView/rangeExplorer/commandContexts/GoToDefinitionCommandContext";
+import { GoToDefinitionCommandContext } from "../features/treeView/rangeExplorer/contexts/GoToDefinitionCommandContext";
 import { Telemetry } from "../lib/Telemetry";
 import { CodeCommand } from "./commands";
 
