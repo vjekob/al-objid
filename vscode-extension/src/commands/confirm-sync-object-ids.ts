@@ -1,5 +1,5 @@
-import { commands, env, TreeItem, Uri, window } from "vscode";
-import { SyncObjectIdsCommandContext } from "../features/treeView/rangeExplorer/SyncObjectIdsCommandContext";
+import { commands, env, Uri, window } from "vscode";
+import { SyncObjectIdsCommandContext } from "../features/treeView/rangeExplorer/commandContexts/SyncObjectIdsCommandContext";
 import { URLS } from "../lib/constants";
 import { NinjaCommand } from "./commands";
 

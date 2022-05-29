@@ -131,6 +131,12 @@
                 "category": "Ninja",
                 "title": "Collapse all",
                 "icon": "$(collapse-all)"
+            },
+            {
+                "command": "vjeko-al-objid.go-to-definition",
+                "category": "Ninja",
+                "title": "Go to definition",
+                "icon": "$(go-to-file)"
             }
         ],
         "configuration": {
@@ -247,6 +253,11 @@
                     "command": "vjeko-al-objid.confirm-sync-object-ids",
                     "group": "inline",
                     "when": "view == ninja-rangeExplorer && viewItem == ninja-folder"
+                },
+                {
+                    "command": "vjeko-al-objid.go-to-definition",
+                    "group": "inline",
+                    "when": "view == ninja-rangeExplorer"
                 }
             ],
             "explorer/context": [
@@ -295,6 +306,10 @@
                 },
                 {
                     "command": "vjeko-al-objid.collapse-all-rangeExplorer",
+                    "when": "false"
+                },
+                {
+                    "command": "vjeko-al-objid.go-to-definition",
                     "when": "false"
                 }
             ]

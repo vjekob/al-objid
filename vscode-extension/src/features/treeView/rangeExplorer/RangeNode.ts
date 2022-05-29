@@ -13,10 +13,10 @@ import { ObjectTypeConsumptionNode } from "./ObjectTypeConsumptionNode";
  * Represents a base type of node that displays range (from..to) as label.
  */
 export abstract class RangeNode extends AppAwareDescendantNode {
-    private readonly _range: ALRange;
     private readonly _childNodes: Node[];
     private _noConsumption = false;
 
+    protected readonly _range: ALRange;
     protected override readonly _label: string;
     protected override readonly _uriPathPart: string;
     protected override _iconPath: string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon =
