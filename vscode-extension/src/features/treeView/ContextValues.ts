@@ -1,4 +1,4 @@
 export enum ContextValues {
-    folder = "ninja-folder",
+    sync = "ninja-sync",
     gotoDef = "ninja-goto-def",
 }

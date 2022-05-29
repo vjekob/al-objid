@@ -1,14 +1,16 @@
 import { TreeItemCollapsibleState } from "vscode";
 import { NinjaIcon } from "../../../../lib/NinjaIcon";
 import { AppAwareNode, AppAwareDescendantNode } from "../../AppAwareNode";
+import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
+import { GoToDefinitionCommandContext, GoToDefinitionContext } from "../contexts/GoToDefinitionCommandContext";
 import { LogicalObjectTypeNode } from "./LogicalObjectTypeNode";
 
 /**
  * Represents a node that groups logical ranges for an individual object type. It contains child nodes where each
  * node represents an object type specified under `objectTypes` property of `.objidconfig`.
  */
-export class ObjectTypeRangesGroupNode extends AppAwareDescendantNode {
+export class ObjectRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext {
     protected override _iconPath = NinjaIcon["object-ranges"];
     protected override _uriPathPart = "objectranges";
     protected override readonly _label = "Object Ranges";
@@ -18,9 +20,18 @@ export class ObjectTypeRangesGroupNode extends AppAwareDescendantNode {
 
     constructor(parent: AppAwareNode) {
         super(parent);
+        this._contextValues.push(ContextValues.gotoDef);
     }
 
     protected override getChildren(): Node[] {
         return this.app.config.objectTypesSpecified.map(objectType => new LogicalObjectTypeNode(this, objectType));
+    }
+
+    public get goto(): GoToDefinitionContext {
+        return {
+            app: this.app,
+            file: "configuration",
+            type: "objectRanges",
+        };
     }
 }

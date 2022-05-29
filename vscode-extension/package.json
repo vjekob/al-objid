@@ -252,7 +252,7 @@
                 {
                     "command": "vjeko-al-objid.confirm-sync-object-ids",
                     "group": "inline",
-                    "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-folder,/"
+                    "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-sync,/"
                 },
                 {
                     "command": "vjeko-al-objid.goto-definition",
@@ -309,7 +309,7 @@
                     "when": "false"
                 },
                 {
-                    "command": "vjeko-al-objid.",
+                    "command": "vjeko-al-objid.goto-definition",
                     "when": "false"
                 }
             ]
