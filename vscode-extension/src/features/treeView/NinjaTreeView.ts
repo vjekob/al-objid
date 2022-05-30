@@ -198,6 +198,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
         }
 
         if (item.id) {
+            item.id = `${item.id}.${this._expandCollapseController.iteration}`;
             const state = this._expandCollapseController.getState(element);
             if (state !== undefined && item.collapsibleState !== TreeItemCollapsibleState.None) {
                 item.collapsibleState = state;

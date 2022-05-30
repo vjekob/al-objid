@@ -1,4 +1,4 @@
-import { Disposable, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { Disposable, ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { ALApp } from "../../lib/ALApp";
 import { AppAwareNode } from "./AppAwareNode";
 import { ContextValues } from "./ContextValues";

@@ -12,8 +12,10 @@ export class ExpandCollapseController {
 
     private readonly _id: string;
     private readonly _refresh: (() => void) | undefined;
+    private _iteration = 0;
     private _expandAll: boolean = false;
     private _collapseAll: boolean = false;
+    private _wasCollapseAll: boolean = false;
     private _treeState: WeakMap<Node, TreeItemCollapsibleState | undefined> = new WeakMap();
 
     private setHasExpanded(value: boolean) {
@@ -37,22 +39,16 @@ export class ExpandCollapseController {
         ExpandCollapseController._controllers[id] = this;
     }
 
-    public get isExpandAll() {
-        return this._expandAll;
-    }
-
-    public get isCollapseAll() {
-        return this._collapseAll;
-    }
-
     public expandAll() {
         this._treeState = new WeakMap<Node, TreeItemCollapsibleState>();
 
         this.setHasExpanded(true);
         this.setHasCollapsed(false);
 
+        this._iteration++;
         this._expandAll = true;
         this._collapseAll = false;
+        this._wasCollapseAll = false;
 
         this._refresh && this._refresh();
     }
@@ -63,8 +59,10 @@ export class ExpandCollapseController {
         this.setHasExpanded(false);
         this.setHasCollapsed(true);
 
+        this._iteration++;
         this._expandAll = false;
         this._collapseAll = true;
+        this._wasCollapseAll = true;
 
         this._refresh && this._refresh();
     }
@@ -82,17 +80,22 @@ export class ExpandCollapseController {
     }
 
     public getState(node: Node): TreeItemCollapsibleState | undefined {
-        if (!this._treeState.has(node)) {
-            this._treeState.set(node, undefined);
-            return undefined;
-        }
-        if (this.isExpandAll) {
+        if (this._expandAll) {
             return TreeItemCollapsibleState.Expanded;
         }
-        if (this.isCollapseAll) {
+        if (this._collapseAll) {
+            return TreeItemCollapsibleState.Collapsed;
+        }
+
+        if (!this._treeState.has(node) && this._wasCollapseAll) {
+            this._treeState.set(node, TreeItemCollapsibleState.Collapsed);
             return TreeItemCollapsibleState.Collapsed;
         }
 
         return this._treeState.get(node);
+    }
+
+    public get iteration(): number {
+        return this._iteration;
     }
 }

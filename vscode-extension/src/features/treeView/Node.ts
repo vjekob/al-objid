@@ -46,6 +46,10 @@ export abstract class Node {
         this._children = undefined;
     }
 
+    public get parent(): Node | undefined {
+        return this._parent;
+    }
+
     public get children(): Node[] | Promise<Node[]> {
         return this.getChildren();
 
