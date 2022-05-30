@@ -3,9 +3,10 @@ import { showDocument } from "../lib/functions/showDocument";
 import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
+import { AppCommandContext } from "./contexts/AppCommandContext";
 
-export async function copyRanges() {
-    const app = await WorkspaceManager.instance.selectWorkspaceFolder();
+export async function copyRanges(context: AppCommandContext) {
+    const app = context?.app || (await WorkspaceManager.instance.selectWorkspaceFolder());
     if (!app) {
         return;
     }

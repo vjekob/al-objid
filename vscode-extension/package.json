@@ -98,6 +98,7 @@
             {
                 "command": "vjeko-al-objid.copy-ranges",
                 "category": "Ninja",
+                "icon": "$(copy)",
                 "title": "Copy ranges from app.json to .objidconfig"
             },
             {
@@ -264,6 +265,11 @@
                     "command": "vjeko-al-objid.consolidate-ranges",
                     "group": "inline",
                     "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-consolidate-ranges,/"
+                },
+                {
+                    "command": "vjeko-al-objid.copy-ranges",
+                    "group": "inline",
+                    "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-copy-ranges,/"
                 }
             ],
             "explorer/context": [

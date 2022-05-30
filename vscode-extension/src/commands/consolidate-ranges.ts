@@ -3,9 +3,9 @@ import { ALRange } from "../lib/types/ALRange";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
-import { ConsolidateRangesCommandContext } from "./contexts/ConsolidateRangesCommandContext";
+import { AppCommandContext } from "./contexts/AppCommandContext";
 
-export async function consolidateRanges(context: ConsolidateRangesCommandContext) {
+export async function consolidateRanges(context: AppCommandContext) {
     const app = context?.app || (await WorkspaceManager.instance.selectWorkspaceFolder());
     if (!app) {
         return;

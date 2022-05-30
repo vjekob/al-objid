@@ -1,5 +1,5 @@
 import { ALApp } from "../../lib/ALApp";
 
-export interface ConsolidateRangesCommandContext {
+export interface AppCommandContext {
     app: ALApp;
 }

@@ -9,13 +9,17 @@ import {
     GoToDefinitionContext,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
+import { AppCommandContext } from "../../../../commands/contexts/AppCommandContext";
 
 /**
  * Displays a node that shows "Ranges" label under which all physical ranges defined in `app.json` will be shown.
  *
  * Contains children of {@link PhysicalRangeNode} type.
  */
-export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements GoToDefinitionCommandContext<ALRange> {
+export class PhysicalRangesGroupNode
+    extends AppAwareDescendantNode
+    implements GoToDefinitionCommandContext<ALRange>, AppCommandContext
+{
     protected override _iconPath = NinjaIcon["physical-range"];
     protected override _uriPathPart = "ranges";
     protected override readonly _label = "Ranges";
@@ -25,7 +29,7 @@ export class PhysicalRangesGroupNode extends AppAwareDescendantNode implements G
 
     constructor(parent: AppAwareNode) {
         super(parent);
-        this._contextValues.push(ContextValues.GotoDef);
+        this._contextValues.push(ContextValues.GotoDef, ContextValues.CopyRanges);
     }
 
     protected override getChildren(): Node[] {

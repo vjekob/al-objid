@@ -10,6 +10,7 @@ import {
 import { LogicalRangeGroupNode } from "./LogicalRangeGroupNode";
 import { LogicalRangeNamedNode } from "./LogicalRangeNamedNode";
 import { NinjaIcon } from "../../../../lib/NinjaIcon";
+import { AppCommandContext } from "../../../../commands/contexts/AppCommandContext";
 
 /**
  * Displays a node that shows "Logical Ranges" label and contains the list of logical ranges.
@@ -20,7 +21,7 @@ import { NinjaIcon } from "../../../../lib/NinjaIcon";
  */
 export class LogicalRangesGroupNode
     extends AppAwareDescendantNode
-    implements GoToDefinitionCommandContext<NinjaALRange>
+    implements GoToDefinitionCommandContext<NinjaALRange>, AppCommandContext
 {
     protected override _iconPath = NinjaIcon["logical-range"];
     protected override _uriPathPart = "logicalranges";

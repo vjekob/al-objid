@@ -1,9 +1,9 @@
+import { AppCommandContext } from "../../../../commands/contexts/AppCommandContext";
 import { ALApp } from "../../../../lib/ALApp";
 import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
 import { RootNode } from "../../RootNode";
 import { ViewController } from "../../ViewController";
-import { SyncObjectIdsCommandContext } from "../../../../commands/contexts/SyncObjectIdsCommandContext";
 import { LogicalRangesGroupNode } from "./LogicalRangesGroupNode";
 import { ObjectRangesGroupNode } from "./ObjectRangesGroupNode";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
@@ -12,28 +12,35 @@ import { PhysicalRangesGroupNode } from "./PhysicalRangesGroupNode";
 /**
  * Represents a root node for range explorer.
  */
-export class RangeExplorerRootNode extends RootNode implements SyncObjectIdsCommandContext {
+export class RangeExplorerRootNode extends RootNode implements AppCommandContext {
+    private readonly _hasLogical: boolean;
+    private readonly _hasObject: boolean;
+
     constructor(app: ALApp, view: ViewController) {
         super(app, view);
+
+        this._hasLogical = this._app.config.idRanges.length > 0;
+        this._hasObject = this._app.config.objectTypesSpecified.length > 0;
+
         this._contextValues.push(ContextValues.Sync);
+        if (!this._hasLogical && !this._hasObject) {
+            this._contextValues.push(ContextValues.CopyRanges);
+        }
     }
 
     protected override getChildren(): Node[] {
-        const hasLogical = this._app.config.idRanges.length > 0;
-        const hasObject = this._app.config.objectTypesSpecified.length > 0;
-
         let children: Node[] = [];
 
-        if (!hasLogical && !hasObject) {
+        if (!this._hasLogical && !this._hasObject) {
             children = this._app.manifest.idRanges.map(range => new PhysicalRangeNode(this, range));
         } else {
             children = [new PhysicalRangesGroupNode(this)];
         }
 
-        if (hasLogical) {
+        if (this._hasLogical) {
             children!.push(new LogicalRangesGroupNode(this));
         }
-        if (hasObject) {
+        if (this._hasObject) {
             children!.push(new ObjectRangesGroupNode(this));
         }
 
