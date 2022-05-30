@@ -15,9 +15,6 @@ import { RangeExplorerRootNode } from "./nodes/RangeExplorerRootNode";
 //                  assignment made through Ninja
 // - "Release":     releases the ID in the back end and makes it available for re-assignment
 
-// TODO Each node in range explorer should have a "lookup" action
-// Clicking on this action takes the user to the section in app.json or objidconfig where that range is defined
-
 export class RangeExplorerView extends NinjaTreeView {
     protected override createRootNode(app: ALApp, view: ViewController): RootNode {
         return new RangeExplorerRootNode(app, view);

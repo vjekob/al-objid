@@ -52,6 +52,10 @@ export class Diagnostics implements Disposable {
     private _documents = new WeakMap<Uri, PropertyBag<Diagnostic[]>>();
     private _schedulers = new WeakMap<Uri, NodeJS.Timeout>();
 
+    public resetForUri(uri: Uri) {
+        this._diagnostics.delete(uri);
+    }
+
     public createDiagnostics(uri: Uri, category: string): CreateDiagnostic {
         let document = this._documents.get(uri);
         if (!document) {

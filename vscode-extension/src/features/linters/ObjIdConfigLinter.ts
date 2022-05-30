@@ -332,6 +332,7 @@ export class ObjIdConfigLinter {
     //#endregion
 
     public validate() {
+        Diagnostics.instance.resetForUri(this._uri);
         this.validateProperties();
         this.validateIdRanges();
         this.validateObjectTypes();

@@ -27,6 +27,13 @@ The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This p
     Codicons icon collection (a part of VS Code), that also comes with simpler license than previous icons did, and
     follows the VS Code existing design language more closely.
 
+### Fixed
+
+-   Tree view does not reset its expand/collapse state after changes in workspace or consumption state. Previously,
+    if, for example, consumption changes while the tree view is collapsed, it would automatically expand all when
+    refreshing. Now, tree state is retained when updating tree.
+-   Diagnostics don't update after all content removed. ([Git issue #35](https://github.com/vjekob/al-objid/issues/35))
+
 ## [2.8.1] - 2022-05-28
 
 ### Fixed
