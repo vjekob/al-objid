@@ -31,6 +31,9 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
     private readonly _decorationsDisposable: Disposable;
     private readonly _decorationsProvider: DecorationsProvider;
     private readonly _expandCollapseController: ExpandCollapseController;
+    private _rootNodes: RootNode[] = [];
+    private _rootNodesInitialized: boolean = false;
+    private _appRoots: WeakMap<ALApp, RootNode> = new WeakMap();
     private _watchersMap: PropertyBag<Disposable[]> = {};
     private _watchers: Disposable[] = [];
     private _disposed: boolean = false;
@@ -63,7 +66,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
     private onDidChangeWorkspaceFolders({ added, removed }: ALFoldersChangedEvent) {
         this.disposeWatchers(removed);
         this.setUpWatchers(added);
-        this.refresh();
+        this.refreshAfterWorkspaceChange(added, removed);
     }
 
     private setUpWatchers(alApps?: ALApp[]) {
@@ -83,10 +86,10 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
         }
     }
 
-    private disposeWatchers(removed?: Uri[]) {
+    private disposeWatchers(removed?: ALApp[]) {
         if (removed) {
-            for (let uri of removed) {
-                const watchers = this._watchersMap[uri.fsPath];
+            for (let app of removed) {
+                const watchers = this._watchersMap[app.uri.fsPath];
                 if (watchers && watchers.length) {
                     for (let disposable of watchers) {
                         disposable.dispose();
@@ -107,12 +110,62 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
             const app = WorkspaceManager.instance.getALAppFromUri(uri);
             if (app) {
                 this._decorationsProvider.releaseDecorations(app);
+                const node = this._appRoots.get(app);
+                this._onDidChangeTreeData.fire(node);
+                return;
             }
         }
         this._onDidChangeTreeData.fire();
     }
 
-    protected getRootItems(): Node[] | Promise<Node[]> {
+    private refreshAfterWorkspaceChange(added: ALApp[], removed: ALApp[]) {
+        for (let app of removed) {
+            this._appRoots.delete(app);
+            this._decorationsProvider.releaseDecorations(app);
+            for (let i = 0; i < this._rootNodes.length; i++) {
+                const node = this._rootNodes[i];
+                if (node.app === app) {
+                    this._rootNodes.splice(i, 1);
+                    node.dispose();
+                    break;
+                }
+            }
+        }
+
+        for (let app of added) {
+            this.getRootNode(app);
+        }
+
+        this._expandCollapseController.reset();
+        this.refresh();
+    }
+
+    private disposeRootNodes(): void {
+        for (let node of this._rootNodes) {
+            node.dispose();
+        }
+    }
+
+    private getRootNode(app: ALApp): RootNode {
+        const rootNode = this.createRootNode(app, this);
+        this._watchers.push(rootNode);
+
+        this._appRoots.set(app, rootNode);
+        this._rootNodes.push(rootNode);
+        return rootNode;
+    }
+
+    protected getRootNodes(): Node[] | Promise<Node[]> {
+        if (this._rootNodesInitialized) {
+            return this._rootNodes;
+        }
+
+        this.disposeRootNodes();
+
+        this._appRoots = new WeakMap();
+        this._rootNodes = [];
+        this._rootNodesInitialized = true;
+
         let apps = WorkspaceManager.instance.alApps;
         if (apps.length === 0) {
             return [new TextNode("No AL workspaces are open.", "There is nothing to show here.")];
@@ -123,11 +176,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
             return [new TextNode("Only app pools available.", "There is nothing to show here.")];
         }
 
-        return apps.map(app => {
-            const folderItem = this.createRootNode(app, this);
-            this._watchers.push(folderItem);
-            return folderItem;
-        });
+        return apps.map(app => this.getRootNode(app));
     }
 
     protected abstract createRootNode(app: ALApp, view: ViewController): RootNode;
@@ -159,7 +208,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
 
     // Implements TreeDataProvider<Node>
     public getChildren(element?: Node): Node[] | Promise<Node[]> {
-        return element?.children || this.getRootItems();
+        return element?.children || this.getRootNodes();
     }
 
     // Implements ViewController

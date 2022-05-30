@@ -1,4 +1,3 @@
-import { Uri } from "vscode";
 import { ALApp } from "../ALApp";
 
 export interface ALFoldersChangedEvent {
@@ -8,9 +7,7 @@ export interface ALFoldersChangedEvent {
     added: ALApp[];
 
     /**
-     * Uris of any AL App folders removed from the workspace.
-     * This is `Uri[]` rather than `ALApp[]` because any `ALApp` instances will have been disposed by the time
-     * the event is fired.
+     * AL Apps that have been removed from the workspace.
      */
-    removed: Uri[];
+    removed: ALApp[];
 }

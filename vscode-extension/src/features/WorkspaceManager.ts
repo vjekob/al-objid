@@ -29,14 +29,13 @@ export class WorkspaceManager implements Disposable {
 
     private onDidChangeWorkspaceFolders({ added, removed }: WorkspaceFoldersChangeEvent) {
         // Remove any ALApp instances that are no longer in workspace
-        const alRemoved: Uri[] = [];
+        const alRemoved: ALApp[] = [];
         this._apps = this._apps.filter(app => {
             const stillExists = !removed.find(folder => app.isFolder(folder));
             if (!stillExists) {
-                alRemoved.push(app.uri);
+                alRemoved.push(app);
                 delete this._appMap[app.uri.fsPath];
                 delete this._appHashMap[app.hash];
-                app.dispose();
             }
             return stillExists;
         });
@@ -51,6 +50,11 @@ export class WorkspaceManager implements Disposable {
         // Fire the event with any AL Apps added or removed
         if (alRemoved.length || alAdded.length) {
             this._onDidChangeALFolders.fire({ added: alAdded, removed: alRemoved });
+        }
+
+        // Dispose of removed apps
+        for (let app of alRemoved) {
+            app.dispose();
         }
     }
 

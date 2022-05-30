@@ -47,7 +47,7 @@ export class DecorationsProvider implements FileDecorationProvider {
     }
 
     public releaseDecorations(app: ALApp) {
-        const uris = this._uriMap[app.hash];
+        const uris = this._uriMap[app.hash] || [];
         delete this._decorations[app.hash];
         delete this._uriMap[app.hash];
         if (uris.length > 0) {

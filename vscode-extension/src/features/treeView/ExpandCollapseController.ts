@@ -14,7 +14,7 @@ export class ExpandCollapseController {
     private readonly _refresh: (() => void) | undefined;
     private _expandAll: boolean = false;
     private _collapseAll: boolean = false;
-    private _treeState = new WeakMap<Node, TreeItemCollapsibleState>();
+    private _treeState: WeakMap<Node, TreeItemCollapsibleState | undefined> = new WeakMap();
 
     private setHasExpanded(value: boolean) {
         commands.executeCommand(CodeCommand.SetContext, `${this._id}.hasExpanded`, value);
@@ -24,7 +24,7 @@ export class ExpandCollapseController {
         commands.executeCommand(CodeCommand.SetContext, `${this._id}.hasCollapsed`, value);
     }
 
-    private reset() {
+    public reset() {
         this._expandAll = false;
         this._collapseAll = false;
     }
@@ -82,6 +82,10 @@ export class ExpandCollapseController {
     }
 
     public getState(node: Node): TreeItemCollapsibleState | undefined {
+        if (!this._treeState.has(node)) {
+            this._treeState.set(node, undefined);
+            return undefined;
+        }
         if (this.isExpandAll) {
             return TreeItemCollapsibleState.Expanded;
         }

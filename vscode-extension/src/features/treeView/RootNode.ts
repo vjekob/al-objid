@@ -1,6 +1,5 @@
 import { Disposable, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { ALApp } from "../../lib/ALApp";
-import { ConsumptionCache } from "../ConsumptionCache";
 import { AppAwareNode } from "./AppAwareNode";
 import { ContextValues } from "./ContextValues";
 import { DecorableNode } from "./DecorableNode";
@@ -8,8 +7,6 @@ import { ViewAwareNode } from "./ViewAwareNode";
 import { ViewController } from "./ViewController";
 
 export abstract class RootNode extends DecorableNode implements AppAwareNode, ViewAwareNode, Disposable {
-    private _disposed = false;
-    private readonly _subscription: Disposable;
     protected readonly _iconPath = ThemeIcon.Folder;
     protected readonly _app: ALApp;
     protected readonly _view: ViewController;
@@ -29,10 +26,6 @@ export abstract class RootNode extends DecorableNode implements AppAwareNode, Vi
         this._uriAuthority = app.hash;
         this._collapsibleState = TreeItemCollapsibleState.Expanded;
         this._contextValues.push(ContextValues.Sync);
-
-        this._subscription = ConsumptionCache.instance.onConsumptionUpdate(app.hash, () => {
-            this._view.update(this);
-        });
     }
 
     public get app() {
@@ -44,10 +37,6 @@ export abstract class RootNode extends DecorableNode implements AppAwareNode, Vi
     }
 
     public dispose() {
-        if (this._disposed) {
-            return;
-        }
-        this._disposed = true;
-        this._subscription.dispose();
+        // Override in descandants if there are any disposable resources in there
     }
 }
