@@ -7,6 +7,8 @@ import { Node } from "../../Node";
 import {
     GoToDefinitionCommandContext,
     GoToDefinitionContext,
+    GoToDefinitionFile,
+    GoToDefinitionType,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { PhysicalRangeNode } from "./PhysicalRangeNode";
 import { AppCommandContext } from "../../../../commands/contexts/AppCommandContext";
@@ -40,8 +42,8 @@ export class PhysicalRangesGroupNode
     public get goto(): GoToDefinitionContext<ALRange> {
         return {
             app: this.app,
-            file: "manifest",
-            type: "idRanges",
+            file: GoToDefinitionFile.Manifest,
+            type: GoToDefinitionType.IdRanges,
         };
     }
 }

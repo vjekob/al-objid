@@ -1,6 +1,10 @@
-import { commands, DocumentSymbol, Range, Selection, TextEditorRevealType, Uri, window } from "vscode";
+import { commands, DocumentSymbol, Range, Selection, Uri, window } from "vscode";
 import { jsonAvailable } from "../features/linters/jsonAvailable";
-import { GoToDefinitionCommandContext } from "./contexts/GoToDefinitionCommandContext";
+import {
+    GoToDefinitionCommandContext,
+    GoToDefinitionFile,
+    GoToDefinitionType,
+} from "./contexts/GoToDefinitionCommandContext";
 import { Telemetry } from "../lib/Telemetry";
 import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { CodeCommand } from "./commands";
@@ -9,11 +13,11 @@ export function goToDefinition(context: GoToDefinitionCommandContext<NinjaALRang
     Telemetry.instance.log("goto-def", context.goto.app.hash, { file: context.goto.file, type: context.goto.type });
 
     switch (context.goto.file) {
-        case "manifest":
+        case GoToDefinitionFile.Manifest:
             goToManifest(context);
             break;
 
-        case "configuration":
+        case GoToDefinitionFile.Configuration:
             goToConfiguration(context);
             break;
     }
@@ -78,11 +82,11 @@ async function goToManifest({ goto }: GoToDefinitionCommandContext<NinjaALRange>
     const to = `${goto.range?.to}`;
 
     switch (goto.type) {
-        case "idRanges":
+        case GoToDefinitionType.IdRanges:
             editor.selection = new Selection(idRanges!.range.start, idRanges!.range.end);
             break;
 
-        case "range":
+        case GoToDefinitionType.Range:
             const range = idRanges.children.find(
                 c =>
                     c.children.find(c => c.name === "from" && c.detail === from) &&
@@ -108,17 +112,17 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
     let logicalRanges: DocumentSymbol[] | undefined;
 
     switch (goto.type) {
-        case "idRanges":
+        case GoToDefinitionType.IdRanges:
             idRanges = await getIdRanges(uri);
             selection = new Selection(idRanges!.range.start, idRanges!.range.end);
             break;
 
-        case "objectRanges":
+        case GoToDefinitionType.ObjectRanges:
             objectRanges = await getObjectRanges(uri);
             selection = new Selection(objectRanges!.range.start, objectRanges!.range.end);
             break;
 
-        case "logicalName":
+        case GoToDefinitionType.LogicalName:
             logicalRanges = await getNamedLogicalRanges(uri, goto.logicalName!);
             if (!logicalRanges || logicalRanges.length === 0) {
                 return;
@@ -128,7 +132,7 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
             }
             break;
 
-        case "range":
+        case GoToDefinitionType.Range:
             logicalRanges = await getNamedLogicalRanges(uri, goto.range!.description);
             if (!logicalRanges || logicalRanges.length === 0) {
                 return;
@@ -143,14 +147,14 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
             }
             break;
 
-        case "objectType":
+        case GoToDefinitionType.ObjectType:
             objectTypeRanges = await getObjectTypeRanges(uri, goto.objectType!);
             if (objectTypeRanges) {
                 selection = new Selection(objectTypeRanges.range.start, objectTypeRanges.range.end);
             }
             break;
 
-        case "objectTypeRanges":
+        case GoToDefinitionType.ObjectTypeRanges:
             objectTypeRanges = await getObjectTypeRanges(uri, goto.objectType!);
             const logicalObjectTypeRanges = objectTypeRanges?.children.filter(c =>
                 c.children.find(c => c.name === "description" && c.detail === goto.logicalName!)
@@ -163,7 +167,7 @@ async function goToConfiguration({ goto }: GoToDefinitionCommandContext<NinjaALR
             }
             break;
 
-        case "objectTypeRange":
+        case GoToDefinitionType.ObjectTypeRange:
             objectTypeRanges = await getObjectTypeRanges(uri, goto.objectType!);
             const logicalObjectTypeRange = objectTypeRanges?.children.find(
                 c =>

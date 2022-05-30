@@ -8,6 +8,8 @@ import { Node } from "../../Node";
 import {
     GoToDefinitionCommandContext,
     GoToDefinitionContext,
+    GoToDefinitionFile,
+    GoToDefinitionType,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
 
@@ -72,8 +74,8 @@ export class LogicalObjectTypeRangeConsumptionNode
     get goto(): GoToDefinitionContext<NinjaALRange> {
         return {
             app: this.app,
-            file: "configuration",
-            type: "objectTypeRange",
+            file: GoToDefinitionFile.Configuration,
+            type: GoToDefinitionType.ObjectTypeRange,
             range: this._range,
             objectType: this._objectType,
         };

@@ -1,15 +1,20 @@
 import { ALApp } from "../../lib/ALApp";
 import { ALRange } from "../../lib/types/ALRange";
 
-export type GoToDefinitionFile = "manifest" | "configuration";
-export type GoToDefinitionType =
-    | "idRanges"
-    | "objectRanges"
-    | "range"
-    | "logicalName"
-    | "objectType"
-    | "objectTypeRanges"
-    | "objectTypeRange";
+export enum GoToDefinitionFile {
+    Manifest,
+    Configuration,
+}
+
+export enum GoToDefinitionType {
+    IdRanges,
+    ObjectRanges,
+    Range,
+    LogicalName,
+    ObjectType,
+    ObjectTypeRanges,
+    ObjectTypeRange,
+}
 
 export interface GoToDefinitionContext<T extends ALRange> {
     app: ALApp;

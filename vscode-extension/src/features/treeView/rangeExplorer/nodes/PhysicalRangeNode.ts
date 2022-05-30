@@ -4,6 +4,8 @@ import { ContextValues } from "../../ContextValues";
 import {
     GoToDefinitionCommandContext,
     GoToDefinitionContext,
+    GoToDefinitionFile,
+    GoToDefinitionType,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
 
@@ -22,8 +24,8 @@ export class PhysicalRangeNode extends RangeNode<ALRange> implements GoToDefinit
     public get goto(): GoToDefinitionContext<ALRange> {
         return {
             app: this.app,
-            file: "manifest",
-            type: "range",
+            file: GoToDefinitionFile.Manifest,
+            type: GoToDefinitionType.Range,
             range: this._range,
         };
     }

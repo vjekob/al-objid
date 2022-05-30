@@ -6,6 +6,8 @@ import { Node } from "../../Node";
 import {
     GoToDefinitionCommandContext,
     GoToDefinitionContext,
+    GoToDefinitionFile,
+    GoToDefinitionType,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { ContextValues } from "../../ContextValues";
 import { NinjaIcon } from "../../../../lib/NinjaIcon";
@@ -55,8 +57,8 @@ export class LogicalObjectTypeRangesNode
     public get goto(): GoToDefinitionContext<NinjaALRange> {
         return {
             app: this.app,
-            file: "configuration",
-            type: "objectTypeRanges",
+            file: GoToDefinitionFile.Configuration,
+            type: GoToDefinitionType.ObjectTypeRanges,
             objectType: this._objectType,
             logicalName: this._name,
         };

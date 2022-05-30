@@ -6,6 +6,8 @@ import { Node } from "../../Node";
 import {
     GoToDefinitionCommandContext,
     GoToDefinitionContext,
+    GoToDefinitionFile,
+    GoToDefinitionType,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { LogicalRangeGroupNode } from "./LogicalRangeGroupNode";
 import { LogicalRangeNamedNode } from "./LogicalRangeNamedNode";
@@ -55,8 +57,8 @@ export class LogicalRangesGroupNode
     public get goto(): GoToDefinitionContext<NinjaALRange> {
         return {
             app: this.app,
-            file: "configuration",
-            type: "idRanges",
+            file: GoToDefinitionFile.Configuration,
+            type: GoToDefinitionType.IdRanges,
         };
     }
 }
