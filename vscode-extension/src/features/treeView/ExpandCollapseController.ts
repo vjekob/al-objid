@@ -79,7 +79,7 @@ export class ExpandCollapseController {
         this.reset();
     }
 
-    public getState(node: Node): TreeItemCollapsibleState | undefined {
+    public getState(node: Node, defaultState: TreeItemCollapsibleState): TreeItemCollapsibleState | undefined {
         if (this._expandAll) {
             return TreeItemCollapsibleState.Expanded;
         }
@@ -87,9 +87,13 @@ export class ExpandCollapseController {
             return TreeItemCollapsibleState.Collapsed;
         }
 
-        if (!this._treeState.has(node) && this._wasCollapseAll) {
-            this._treeState.set(node, TreeItemCollapsibleState.Collapsed);
-            return TreeItemCollapsibleState.Collapsed;
+        if (!this._treeState.has(node)) {
+            if (this._wasCollapseAll) {
+                this._treeState.set(node, TreeItemCollapsibleState.Collapsed);
+                return TreeItemCollapsibleState.Collapsed;
+            } else {
+                return defaultState;
+            }
         }
 
         return this._treeState.get(node);
@@ -97,5 +101,9 @@ export class ExpandCollapseController {
 
     public get iteration(): number {
         return this._iteration;
+    }
+
+    public iterate(): void {
+        this._iteration++;
     }
 }

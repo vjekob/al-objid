@@ -64,4 +64,8 @@ export abstract class Node {
     }
 
     public id: string | undefined;
+
+    public get collapsibleState() {
+        return this._collapsibleState;
+    }
 }

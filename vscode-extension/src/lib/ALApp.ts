@@ -18,8 +18,8 @@ export class ALApp implements Disposable, BackEndAppInfo {
     private readonly _manifestWatcher: FileWatcher;
     private readonly _manifestChanged: Disposable;
     private readonly _configWatcher: ObjIdConfigWatcher;
-    private readonly _onManifestChanged = new EventEmitter<Uri>();
-    private readonly _onConfigChanged = new EventEmitter<Uri>();
+    private readonly _onManifestChanged = new EventEmitter<ALApp>();
+    private readonly _onConfigChanged = new EventEmitter<ALApp>();
     public readonly onManifestChanged = this._onManifestChanged.event;
     public readonly onConfigChanged = this._onConfigChanged.event;
     private _diposed = false;
@@ -46,7 +46,7 @@ export class ALApp implements Disposable, BackEndAppInfo {
             }),
             () => {
                 const newConfig = this.setUpConfigFile();
-                this._onConfigChanged.fire(newConfig.uri);
+                this._onConfigChanged.fire(this);
                 return newConfig;
             }
         );
@@ -69,7 +69,7 @@ export class ALApp implements Disposable, BackEndAppInfo {
             this._encryptionKey = undefined;
             this._configWatcher.updateConfigAfterAppIdChange(this.setUpConfigFile());
         }
-        this._onManifestChanged.fire(this._manifest.uri);
+        this._onManifestChanged.fire(this);
     }
 
     private setUpConfigFile(): ObjIdConfig {
