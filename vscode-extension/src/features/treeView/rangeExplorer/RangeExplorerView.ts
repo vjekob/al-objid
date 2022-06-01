@@ -2,7 +2,7 @@ import { Disposable, window } from "vscode";
 import { ALApp } from "../../../lib/ALApp";
 import { WorkspaceManager } from "../../WorkspaceManager";
 import { AppAwareNode } from "../AppAwareNode";
-import { AppDecorationsProvider } from "../AppDecorationsProvider";
+import { AppDecorationsProvider } from "./AppDecorationsProvider";
 import { DecorableNode } from "../DecorableNode";
 import { Decoration } from "../Decoration";
 import { NinjaTreeView } from "../NinjaTreeView";

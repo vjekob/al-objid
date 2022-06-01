@@ -1,5 +1,5 @@
-import { ALApp } from "../../lib/ALApp";
-import { DecorationsProvider } from "./DecorationsProvider";
+import { ALApp } from "../../../lib/ALApp";
+import { DecorationsProvider } from "../DecorationsProvider";
 
 export class AppDecorationsProvider extends DecorationsProvider {
     public releaseDecorations(app: ALApp) {
