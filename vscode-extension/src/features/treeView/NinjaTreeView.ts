@@ -112,12 +112,6 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
 
         if (element instanceof DecorableNode && element.decoration) {
             this.decorate(element, element.decoration);
-            if (item.iconPath instanceof ThemeIcon && element.decoration.severity) {
-                item.iconPath = new ThemeIcon(
-                    item.iconPath.id,
-                    new ThemeColor(SeverityColors[element.decoration.severity])
-                );
-            }
         }
 
         if (item.id) {

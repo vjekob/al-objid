@@ -12,6 +12,7 @@ import {
     GoToDefinitionType,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { RangeNode } from "./RangeNode";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
 
 /**
  * Represents a object-type logical range defined under specific object type under `objectRanges` in `.objidconfig`.
@@ -61,6 +62,7 @@ export class LogicalObjectTypeRangeConsumptionNode
                 severity: DecorationSeverity.inactive,
                 tooltip: `No consumption has been recorded`,
             };
+            this._iconPath = NinjaIcon["arrow-both-inactive"];
         }
 
         this._contextValues.push(ContextValues.GotoDef);

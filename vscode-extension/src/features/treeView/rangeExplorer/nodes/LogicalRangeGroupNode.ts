@@ -10,6 +10,7 @@ import {
     GoToDefinitionType,
 } from "../../../../commands/contexts/GoToDefinitionCommandContext";
 import { LogicalRangeUnnamedNode } from "./LogicalRangeUnnamedNode";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
 
 /**
  * Represents such logical range where there are multiple `from..to` pairs that share the same logical name
@@ -23,7 +24,7 @@ export class LogicalRangeGroupNode
 {
     private readonly _name: string;
     private readonly _ranges: NinjaALRange[];
-    protected readonly _iconPath = new ThemeIcon("note");
+    protected readonly _iconPath = NinjaIcon.note;
     protected readonly _uriPathPart: string;
     protected readonly _label: string | TreeItemLabel;
     protected _collapsibleState = TreeItemCollapsibleState.Expanded;

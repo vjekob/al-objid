@@ -1,4 +1,5 @@
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import { NinjaIcon } from "../../../../lib/NinjaIcon";
 import { ALObjectType } from "../../../../lib/types/ALObjectType";
 import { ALRange } from "../../../../lib/types/ALRange";
 import { ConsumptionData } from "../../../../lib/types/ConsumptionData";
@@ -21,7 +22,7 @@ export abstract class RangeNode<T extends ALRange> extends AppAwareDescendantNod
     protected override readonly _label: string;
     protected override readonly _uriPathPart: string;
     protected override _iconPath: string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon =
-        new ThemeIcon("arrow-both");
+        NinjaIcon["arrow-both"];
     protected override _collapsibleState = TreeItemCollapsibleState.Expanded;
     protected readonly _consumption: ConsumptionData;
 
@@ -60,6 +61,7 @@ export abstract class RangeNode<T extends ALRange> extends AppAwareDescendantNod
                 severity: DecorationSeverity.inactive,
                 tooltip: `No consumption has been recorded`,
             };
+            this._iconPath = NinjaIcon["arrow-both-inactive"];
         } else {
             this._decoration = undefined;
         }

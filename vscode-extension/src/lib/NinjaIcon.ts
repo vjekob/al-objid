@@ -27,8 +27,10 @@ enum NinjaIconType {
     "range-blue",
     "range-red",
     "logical-range",
-    "range",
     "object-logical-range",
+    "arrow-both",
+    "arrow-both-inactive",
+    "note",
 }
 
 export const NinjaIcon: { [key in keyof typeof NinjaIconType]: IconPath } = {} as any;
