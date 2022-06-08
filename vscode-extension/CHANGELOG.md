@@ -17,6 +17,14 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     multiple active licenses and to see license report for all of them independently. Most likely to be released in
     2.11.0.
 
+## [2.9.1] - 2022-06-08
+
+### Fixed
+
+-   Extension activation context re-introduced. Ninja now does not contribute views or commands until it becomes active.
+    This takes care of confusing situation when Ninja icon appears in activity bar or Ninja commands appear in command
+    palette, without any AL workspace being loaded or active.
+
 ## [2.9.0] - 2022-06-08
 
 ### Added
