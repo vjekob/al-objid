@@ -19,6 +19,7 @@ import { Node } from "./Node";
 import { ViewController } from "./ViewController";
 import { SeverityColors } from "./DecorationSeverity";
 import { Decoration } from "./Decoration";
+import { DecorationsProvider } from "./DecorationsProvider";
 
 export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewController, Disposable {
     private readonly _id: string;
@@ -28,6 +29,8 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
     private _watchersMap: PropertyBag<Disposable[]> = {};
     private _watchers: Disposable[] = [];
     protected readonly _expandCollapseController: ExpandCollapseController;
+    protected readonly _decorationsProvider: DecorationsProvider;
+    protected readonly _decorationsDisposable: Disposable;
     protected _onDidChangeTreeData = new EventEmitter<Node | void>();
     public readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
@@ -39,6 +42,8 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
             this.onDidChangeWorkspaceFolders.bind(this)
         );
         this._expandCollapseController = new ExpandCollapseController(id, () => this.refresh());
+        this._decorationsProvider = new DecorationsProvider();
+        this._decorationsDisposable = window.registerFileDecorationProvider(this._decorationsProvider);
     }
 
     private createTreeView(): TreeView<Node> {
@@ -55,6 +60,10 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
     private onDidChangeWorkspaceFolders({ added, removed }: ALFoldersChangedEvent) {
         this.disposeWatchers(removed);
         this.setUpWatchers(added);
+
+        for (let app of removed) {
+            this._decorationsProvider.releaseDecorations(app);
+        }
         this.refreshAfterWorkspaceChange(added, removed);
     }
 
@@ -67,12 +76,17 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
             return;
         }
         for (let app of apps) {
-            const manifestChangedWatcher = app.onManifestChanged(app => this.refreshAfterConfigChange(app));
-            const confingChangedWatcher = app.onConfigChanged(app => this.refreshAfterConfigChange(app));
+            const manifestChangedWatcher = app.onManifestChanged(app => this.onManifestOrConfigChanged(app));
+            const confingChangedWatcher = app.onConfigChanged(app => this.onManifestOrConfigChanged(app));
             this._watchers.push(manifestChangedWatcher);
             this._watchers.push(confingChangedWatcher);
             this._watchersMap[app.uri.fsPath] = [manifestChangedWatcher, confingChangedWatcher];
         }
+    }
+
+    private onManifestOrConfigChanged(app: ALApp) {
+        this._decorationsProvider.releaseDecorations(app);
+        this.refreshAfterConfigChange(app);
     }
 
     private disposeWatchers(removed?: ALApp[]) {
@@ -143,6 +157,7 @@ export abstract class NinjaTreeView implements TreeDataProvider<Node>, ViewContr
         this._onDidChangeTreeData.dispose();
         this._workspaceFoldersChangeEvent.dispose();
         this._view.dispose();
+        this._decorationsDisposable?.dispose();
     }
 
     //#endregion

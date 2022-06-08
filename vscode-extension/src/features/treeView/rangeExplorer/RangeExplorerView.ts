@@ -2,12 +2,10 @@ import { Disposable, window } from "vscode";
 import { ALApp } from "../../../lib/ALApp";
 import { WorkspaceManager } from "../../WorkspaceManager";
 import { AppAwareNode } from "../AppAwareNode";
-import { AppDecorationsProvider } from "./AppDecorationsProvider";
 import { DecorableNode } from "../DecorableNode";
 import { Decoration } from "../Decoration";
 import { NinjaTreeView } from "../NinjaTreeView";
 import { Node } from "../Node";
-import { RootNode } from "../RootNode";
 import { TextNode } from "../TextNode";
 import { ViewController } from "../ViewController";
 import { RangeExplorerRootNode } from "./nodes/RangeExplorerRootNode";
@@ -24,23 +22,19 @@ import { RangeExplorerRootNode } from "./nodes/RangeExplorerRootNode";
 // - "Release":     releases the ID in the back end and makes it available for re-assignment
 
 export class RangeExplorerView extends NinjaTreeView {
-    private _rootNodes: RootNode[] = [];
+    private _rootNodes: RangeExplorerRootNode[] = [];
     private _rootNodesInitialized: boolean = false;
-    private _appRoots: WeakMap<ALApp, RootNode> = new WeakMap();
-    private readonly _decorationsProvider: AppDecorationsProvider;
-    private readonly _decorationsDisposable: Disposable;
+    private _appRoots: WeakMap<ALApp, RangeExplorerRootNode> = new WeakMap();
 
     constructor(id: string) {
         super(id);
-        this._decorationsProvider = new AppDecorationsProvider();
-        this._decorationsDisposable = window.registerFileDecorationProvider(this._decorationsProvider);
     }
 
-    private createRootNode(app: ALApp, view: ViewController): RootNode {
+    private createRootNode(app: ALApp, view: ViewController): RangeExplorerRootNode {
         return new RangeExplorerRootNode(app, view);
     }
 
-    private getRootNode(app: ALApp): RootNode {
+    private getRootNode(app: ALApp): RangeExplorerRootNode {
         const rootNode = this.createRootNode(app, this);
 
         this._appRoots.set(app, rootNode);
@@ -49,7 +43,6 @@ export class RangeExplorerView extends NinjaTreeView {
     }
 
     protected override refreshAfterConfigChange(app: ALApp): void {
-        this._decorationsProvider.releaseDecorations(app);
         const node = this._appRoots.get(app);
         this._onDidChangeTreeData.fire(node);
         return;
@@ -82,7 +75,6 @@ export class RangeExplorerView extends NinjaTreeView {
     protected override refreshAfterWorkspaceChange(added: ALApp[], removed: ALApp[]) {
         for (let app of removed) {
             this._appRoots.delete(app);
-            this._decorationsProvider.releaseDecorations(app);
             for (let i = 0; i < this._rootNodes.length; i++) {
                 const node = this._rootNodes[i];
                 if (node.app === app) {
@@ -113,7 +105,6 @@ export class RangeExplorerView extends NinjaTreeView {
 
     protected override disposeExtended(): void {
         this.disposeRootNodes();
-        this._decorationsDisposable.dispose();
     }
 
     // Implements ViewController

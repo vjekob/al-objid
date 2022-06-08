@@ -1,42 +1,27 @@
-import { Disposable, ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { ALApp } from "../../lib/ALApp";
-import { AppAwareNode } from "./AppAwareNode";
+import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
 import { ContextValues } from "./ContextValues";
 import { DecorableNode } from "./DecorableNode";
 import { ViewAwareNode } from "./ViewAwareNode";
 import { ViewController } from "./ViewController";
 
-export abstract class RootNode extends DecorableNode implements AppAwareNode, ViewAwareNode, Disposable {
+export abstract class RootNode extends DecorableNode implements ViewAwareNode {
     protected readonly _iconPath = ThemeIcon.Folder;
-    protected readonly _app: ALApp;
     protected readonly _view: ViewController;
-    protected readonly _uriAuthority: string;
-    protected readonly _label: string;
     protected readonly _uriPathPart = "";
     protected readonly _collapsibleState: TreeItemCollapsibleState;
+    protected abstract _uriAuthority: string;
+    protected abstract _label: string;
+    protected abstract _description: string;
+    protected abstract _tooltip: string;
 
-    constructor(app: ALApp, view: ViewController) {
+    constructor(view: ViewController) {
         super(undefined);
 
-        this._app = app;
         this._view = view;
-        this._label = app.name || app.manifest.name;
-        this._description = app.manifest.version;
-        this._tooltip = `${app.manifest.name} v${app.manifest.version}`;
-        this._uriAuthority = app.hash;
         this._collapsibleState = TreeItemCollapsibleState.Expanded;
-        this._contextValues.push(ContextValues.Sync);
-    }
-
-    public get app() {
-        return this._app;
     }
 
     public get view() {
         return this._view;
-    }
-
-    public dispose() {
-        // Override in descandants if there are any disposable resources in there
     }
 }

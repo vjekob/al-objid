@@ -2,6 +2,7 @@ import { Disposable } from "vscode";
 import { AppCommandContext } from "../../../../commands/contexts/AppCommandContext";
 import { ALApp } from "../../../../lib/ALApp";
 import { ConsumptionCache } from "../../../ConsumptionCache";
+import { AppAwareNode } from "../../AppAwareNode";
 import { ContextValues } from "../../ContextValues";
 import { Node } from "../../Node";
 import { RootNode } from "../../RootNode";
@@ -14,13 +15,25 @@ import { PhysicalRangesGroupNode } from "./PhysicalRangesGroupNode";
 /**
  * Represents a root node for range explorer.
  */
-export class RangeExplorerRootNode extends RootNode implements AppCommandContext {
+export class RangeExplorerRootNode extends RootNode implements AppAwareNode, AppCommandContext, Disposable {
+    protected readonly _app: ALApp;
     private readonly _hasLogical: boolean;
     private readonly _hasObject: boolean;
     private readonly _subscription: Disposable;
+    protected override readonly _uriAuthority: string;
+    protected override readonly _label: string;
+    protected override readonly _description: string;
+    protected override readonly _tooltip: string;
 
     constructor(app: ALApp, view: ViewController) {
-        super(app, view);
+        super(view);
+
+        this._app = app;
+        this._label = app.name || app.manifest.name;
+        this._description = app.manifest.version;
+        this._tooltip = `${app.manifest.name} v${app.manifest.version}`;
+        this._uriAuthority = app.hash;
+        this._contextValues.push(ContextValues.Sync);
 
         this._hasLogical = this._app.config.idRanges.length > 0;
         this._hasObject = this._app.config.objectTypesSpecified.length > 0;
@@ -54,11 +67,15 @@ export class RangeExplorerRootNode extends RootNode implements AppCommandContext
         return children;
     }
 
-    public override dispose(): void {
-        this._subscription.dispose();
+    public get app() {
+        return this._app;
     }
 
     public get appId() {
         return this.app.hash;
+    }
+
+    public dispose(): void {
+        this._subscription.dispose();
     }
 }

@@ -1,4 +1,5 @@
 import { EventEmitter, FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from "vscode";
+import { ALApp } from "../../lib/ALApp";
 import { PropertyBag } from "../../lib/types/PropertyBag";
 import { Decoration } from "./Decoration";
 import { SeverityColors } from "./DecorationSeverity";
@@ -43,5 +44,15 @@ export class DecorationsProvider implements FileDecorationProvider {
         map[uri.path] = decoration;
         uriMap.push(uri);
         this._onDidChangeFileDecorations.fire([uri]);
+    }
+
+    public releaseDecorations(app: ALApp | string): void {
+        const hash = app instanceof ALApp ? app.hash : app;
+        const uris = this._uriMap[hash] || [];
+        delete this._decorations[hash];
+        delete this._uriMap[hash];
+        if (uris.length > 0) {
+            this._onDidChangeFileDecorations.fire(uris);
+        }
     }
 }
