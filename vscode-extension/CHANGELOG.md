@@ -5,7 +5,19 @@ All notable changes to the AL Object ID Ninja extension will be documented in th
 The log is kept in [Keep a Changelog](http://keepachangelog.com/) format. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## [vNext] - 2022-06-01
+## [Unreleased]
+
+Work is in progress on two upcoming features, both of which heavily depend on tree view refactoring done in 2.9.0:
+
+-   App Pool Explorer: allows you to have object ID consumption overview over app pools very similar to how Range
+    Explorer works for simple apps. On top of this, it will allow management of "managed app pools" (provisional
+    name for the app pools which are going to be more feature complete than current "simple app pools"). Most likely
+    to be released in 2.10.0.
+-   License Explorer: allows you to have better insight into licensed state of your objects. It allows to have
+    multiple active licenses and to see license report for all of them independently. Most likely to be released in
+    2.11.0.
+
+## [2.9.0] - 2022-06-08
 
 ### Added
 
