@@ -6,6 +6,7 @@ import { DecorableNode } from "../DecorableNode";
 import { Decoration } from "../Decoration";
 import { NinjaTreeView } from "../NinjaTreeView";
 import { Node } from "../Node";
+import { AppPoolAwareNode } from "./nodes/AppPoolAwareNode";
 import { AppPoolExplorerRootNode } from "./nodes/AppPoolExplorerRootNode";
 
 export class AppPoolExplorerView extends NinjaTreeView {
@@ -36,5 +37,11 @@ export class AppPoolExplorerView extends NinjaTreeView {
         this._decorationsProvider.decorate(element.uri, decoration);
     }
 
-    public update(node: Node): void {}
+    public update(node: Node): void {
+        const { appPoolId } = node as AppPoolAwareNode;
+        if (appPoolId) {
+            this._decorationsProvider.releaseDecorations(appPoolId);
+        }
+        this._onDidChangeTreeData.fire(node);
+    }
 }

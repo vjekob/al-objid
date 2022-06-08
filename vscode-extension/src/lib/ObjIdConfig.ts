@@ -186,7 +186,7 @@ export class ObjIdConfig {
         }
 
         const names: string[] = [];
-        const ranges = this._config.idRanges;
+        const ranges = this._config.idRanges || [];
         for (let range of ranges) {
             if (!range) {
                 continue;
