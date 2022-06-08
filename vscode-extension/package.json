@@ -225,6 +225,14 @@
                     "when": "vjeko-al-objid.active == true"
                 },
                 {
+                    "id": "ninja-appPoolExplorer",
+                    "name": "App Pool Explorer",
+                    "icon": "images/tree-view.svg",
+                    "contextualTitle": "App Pool Explorer",
+                    "type": "tree",
+                    "visibility": "collapsed"
+                },
+                {
                     "id": "ninja-licenseExplorer",
                     "name": "License Explorer",
                     "icon": "images/tree-view.svg",

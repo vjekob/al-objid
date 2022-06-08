@@ -16,6 +16,7 @@ import { WorkspaceManager } from "./features/WorkspaceManager";
 import { CodeCommand, registerCommands } from "./commands/commands";
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { RangeExplorerView } from "./features/treeView/rangeExplorer/RangeExplorerView";
+import { AppPoolExplorerView } from "./features/treeView/appPoolExplorer/AppPoolExplorerView";
 
 export function activate(context: ExtensionContext) {
     commands.executeCommand(CodeCommand.SetContext, "vjeko-al-objid.active", true);
@@ -28,6 +29,7 @@ export function activate(context: ExtensionContext) {
 
         // Tree views
         new RangeExplorerView("ninja-rangeExplorer"),
+        new AppPoolExplorerView("ninja-appPoolExplorer"),
 
         // CodeActions provider
         languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),
