@@ -108,9 +108,9 @@
                 "title": "Consolidate logical ranges"
             },
             {
-                "command": "vjeko-al-objid.create-app-pool-preview",
+                "command": "vjeko-al-objid.create-app-pool-simple",
                 "category": "Ninja",
-                "title": "Create a simple App Pool (Preview)"
+                "title": "Create a simple App Pool"
             },
             {
                 "command": "vjeko-al-objid.validate-bclicense",
@@ -324,7 +324,7 @@
                     "when": "vjeko-al-objid.active == true"
                 },
                 {
-                    "command": "vjeko-al-objid.create-app-pool-preview",
+                    "command": "vjeko-al-objid.create-app-pool-simple",
                     "when": "vjeko-al-objid.active == true"
                 },
                 {

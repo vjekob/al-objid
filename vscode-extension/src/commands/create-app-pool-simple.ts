@@ -8,7 +8,7 @@ import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
 
-export const createAppPool = async () => {
+export const createSimpleAppPool = async () => {
     const apps = WorkspaceManager.instance.alApps;
     if (apps.length === 0) {
         await UI.general.showNoWorkspacesOpenInfo();
@@ -75,7 +75,7 @@ async function createAppPoolForMultipleApps(uris: Uri[]) {
         },
         getFilesToStage: () => [CONFIG_FILE_NAME],
         learnMore: () => showDocument(DOCUMENTS.APP_POOLS),
-        getCommitMessage: apps => `AL Object ID Ninja pool creation (preview) for ${getAppNames(apps)}`,
+        getCommitMessage: apps => `AL Object ID Ninja simple pool creation for ${getAppNames(apps)}`,
     });
 }
 
