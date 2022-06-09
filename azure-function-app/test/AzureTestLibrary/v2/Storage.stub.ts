@@ -43,15 +43,6 @@ export class StubStorage extends StubBuilder implements ContentAnalyzer {
         return this;
     }
 
-    setRanges(ranges: Range | Range[]) {
-        if (!Array.isArray(ranges)) {
-            ranges = [ranges];
-        }
-        this._app._ranges = [...ranges];
-        this.serializeContent();
-        return this;
-    }
-
     setConsumption(objectType: ALObjectType, ids: number[]) {
         this._app[objectType] = ids;
         this.serializeContent();
