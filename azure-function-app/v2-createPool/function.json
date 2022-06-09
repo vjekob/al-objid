@@ -16,5 +16,6 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/src/functions/v2/createPool/index.js"
+  "scriptFile": "../dist/src/functions/v2/createPool/index.js",
+  "entryPoint": "run"
 }
