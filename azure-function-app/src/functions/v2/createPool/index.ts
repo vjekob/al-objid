@@ -22,12 +22,22 @@ const createPool = new ALNinjaRequestHandler<CreatePoolRequest, CreatePoolRespon
         passphrase: managementSecret
     };
 
-    const pair = generateKeyPairSync("rsa", {
+    const pairManagement = generateKeyPairSync("rsa", {
         modulusLength,
         publicExponent,
         publicKeyEncoding,
         privateKeyEncoding,
     } as RSAKeyPairOptions<"der", "der">);
+
+    const pairValidation = generateKeyPairSync("rsa", {
+        modulusLength,
+        publicExponent,
+        publicKeyEncoding,
+        privateKeyEncoding: {
+            type: "pkcs8",
+            format:"der"
+        }
+    } as RSAKeyPairOptions<"der", "der">)
 
     const accessKey = randomBytes(128).toString("base64").substring(0, 32);
     const poolId = getSha256(`managedPool:${name}:${Date.now()}`, "hex");
@@ -45,9 +55,13 @@ const createPool = new ALNinjaRequestHandler<CreatePoolRequest, CreatePoolRespon
             joinLock,
             info: encrypt(JSON.stringify({ name, apps }), accessKey),
             appIds: apps.map(app => app.appId),
+            validationKey: {
+                public: pairValidation.publicKey.toString("base64"),
+                private: encrypt(pairValidation.privateKey.toString("base64"), joinLockEncryptionKey),
+            },
             managementKey: {
-                public: pair.publicKey.toString("base64"),
-                private: allowAnyAppToManage ? pair.privateKey.toString("base64") : undefined,
+                public: pairManagement.publicKey.toString("base64"),
+                private: allowAnyAppToManage ? pairManagement.privateKey.toString("base64") : undefined,
             }
         };
         return app;
@@ -56,7 +70,8 @@ const createPool = new ALNinjaRequestHandler<CreatePoolRequest, CreatePoolRespon
     return {
         poolId,
         accessKey,
-        managementKey: pair.privateKey.toString("base64"),
+        validationKey: pairValidation.privateKey.toString("base64"),
+        managementKey: pairManagement.privateKey.toString("base64"),
     };
 }, false);
 

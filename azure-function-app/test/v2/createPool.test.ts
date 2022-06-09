@@ -5,6 +5,7 @@ import { StubStorage } from "../AzureTestLibrary/v2/Storage.stub";
 import { run as createPool, disableCreatePoolRateLimit } from "../../src/functions/v2/createPool";
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 import { decrypt } from "../../src/common/Encryption";
+import { createPrivateKey, createPublicKey, createSign, createVerify } from "crypto";
 
 
 jest.mock("azure-storage");
@@ -152,8 +153,9 @@ describe("Testing function api/v2/createPool", () => {
         expect(storage).not.toBeAuthorized();
 
         expect(context.res.body.poolId).toBeDefined();
-        expect(context.res.body.managementKey).toBeDefined();
         expect(context.res.body.accessKey).toBeDefined();
+        expect(context.res.body.validationKey).toBeDefined();
+        expect(context.res.body.managementKey).toBeDefined();
 
         const { poolId, accessKey } = context.res.body;
         const app = storage.content[`${poolId}.json`];
@@ -165,6 +167,9 @@ describe("Testing function api/v2/createPool", () => {
         expect(typeof _pool.info).toStrictEqual("string");
         expect(_pool.joinLock).toBeDefined();
         expect(typeof _pool.joinLock).toStrictEqual("string");
+        expect(_pool.validationKey).toBeDefined();
+        expect(_pool.validationKey.public).toBeDefined();
+        expect(_pool.validationKey.private).toBeDefined();
         expect(_pool.managementKey).toBeDefined();
         expect(_pool.managementKey.public).toBeDefined();
         expect(_pool.managementKey.private).not.toBeDefined();
@@ -224,5 +229,32 @@ describe("Testing function api/v2/createPool", () => {
         expect(info.apps).toBeDefined();
         expect(info.apps.length).toStrictEqual(2);
         expect(info.apps).toEqual(apps);
+    });
+
+    it("Succeeds confirming validation key", async () => {
+        const name = "_mock_pool_";
+        const storage = new StubStorage();
+        Mock.useStorage(storage.content);
+        const context = new Mock.Context(new Mock.Request("POST", { name, managementSecret: "managementSecret", joinKey: "joinKey" }));
+        await createPool(context, context.req);
+        expect(context.res).toBeStatus(200);
+
+        const {poolId, validationKey} = context.res.body;
+        const { _pool } = storage.content[`${poolId}.json`];
+
+        const privateKey = createPrivateKey({ key: Buffer.from(validationKey, "base64"), format: "der", type: "pkcs8" });
+        const publicKey = createPublicKey({ key: Buffer.from(_pool.validationKey.public, "base64"), format: "der", type: "spki" });
+
+        const message = `${poolId}:${Date.now()}`;
+        const sign = createSign("RSA-SHA256");
+        sign.write(message);
+        sign.end();
+        const signature = sign.sign(privateKey, "base64");
+
+        const verify = createVerify("RSA-SHA256");
+        verify.write(message);
+        verify.end();
+        
+        expect(verify.verify(publicKey, signature, "base64")).toStrictEqual(true);
     });
 });

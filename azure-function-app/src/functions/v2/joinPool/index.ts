@@ -67,6 +67,7 @@ const joinPool = new ALNinjaRequestHandler<JoinPoolRequest, JoinPoolResponse>(as
 
     return {
         accessKey,
+        validationKey: decrypt(app._pool.validationKey.private, joinLockEncryptionKey),
         managementKey: app._pool.managementKey.private
     };
 }, false);

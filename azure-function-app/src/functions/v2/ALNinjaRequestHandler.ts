@@ -1,6 +1,6 @@
 import { RequestHandler } from "@vjeko.com/azure-func";
 import { injectValidators } from "./injectValidators";
-import { ALNinjaRequestContext, AppBindings, AppInfo, DefaultBindings } from "./TypesV2";
+import { ALNinjaRequestContext, AppBindings, AppInfo, DefaultBindings, DefaultRequest, PoolRequest } from "./TypesV2";
 
 injectValidators();
 
@@ -10,8 +10,12 @@ interface AppIdBody {
     user: string;
 }
 
+interface PoolBody {
+    _poolRequest?: PoolRequest;
+}
+
 type ALNinjaBindings<T> = AppBindings & T;
-type ALNinjaRequest<T> = AppIdBody & T;
+type ALNinjaRequest<T> = AppIdBody & PoolBody & T;
 
 interface ALNinjaHandlerFunc<TRequest, TResponse, TBindings> {
     (context: ALNinjaRequestContext<ALNinjaRequest<TRequest>, ALNinjaBindings<TBindings>>): Promise<TResponse>;

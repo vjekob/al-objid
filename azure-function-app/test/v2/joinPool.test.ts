@@ -106,6 +106,9 @@ describe("Testing function api/v2/joinPool", () => {
 
         const pool = await createMockPool(storage);
         const { poolId, accessKey } = pool;
+        const joinLockEncryptionKey = `${joinKey}${poolId}`.substring(0, 32);
+
+        const { _pool } = storage.content[`${poolId}.json`];
 
         const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps }));
         await joinPool(context, context.req);
@@ -114,6 +117,8 @@ describe("Testing function api/v2/joinPool", () => {
         const join = context.res.body as JoinPoolResponse;
         expect(join.accessKey).toBeDefined();
         expect(join.accessKey).toStrictEqual(accessKey);
+        expect(join.validationKey).toBeDefined();
+        expect(join.validationKey).toStrictEqual(decrypt(_pool.validationKey.private, joinLockEncryptionKey));
         expect(join.managementKey).toBeUndefined();
 
         const app = storage.content[`${poolId}.json`];
@@ -132,6 +137,9 @@ describe("Testing function api/v2/joinPool", () => {
 
         const pool = await createMockPool(storage, true);
         const { poolId, accessKey } = pool;
+        const joinLockEncryptionKey = `${joinKey}${poolId}`.substring(0, 32);
+
+        const { _pool } = storage.content[`${poolId}.json`];
 
         const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps }));
         await joinPool(context, context.req);
@@ -140,6 +148,8 @@ describe("Testing function api/v2/joinPool", () => {
         const join = context.res.body as JoinPoolResponse;
         expect(join.accessKey).toBeDefined();
         expect(join.accessKey).toStrictEqual(accessKey);
+        expect(join.validationKey).toBeDefined();
+        expect(join.validationKey).toStrictEqual(decrypt(_pool.validationKey.private, joinLockEncryptionKey));
         expect(join.managementKey).toBeDefined();
 
         const app = storage.content[`${poolId}.json`];

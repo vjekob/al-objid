@@ -27,6 +27,11 @@ export interface LogEntry {
     data: any;
 }
 
+interface KeyPair {
+    public: string;
+    private: string;
+}
+
 export type AppInfo = {
     _authorization: Authorization;
     _ranges: Range[];
@@ -35,10 +40,8 @@ export type AppInfo = {
         joinLock: string;
         info: string;
         appIds: string[];
-        managementKey: {
-            public: string;
-            private: string;
-        }
+        validationKey: KeyPair;
+        managementKey: KeyPair;
     }
 } & ObjectConsumptions;
 
@@ -52,13 +55,17 @@ export interface PoolInfo {
     apps: PoolAppInfo[];
 }
 
+export interface PoolRequest {
+    timestamp: number;
+    signature: string;
+}
+
 export interface AppBindings {
     app: AppInfo;
 }
 
-export interface DefaultBindings {};
-export interface DefaultRequest {};
-
+export interface DefaultBindings { };
+export interface DefaultRequest { };
 
 export type ChangeOperation = "getNext" | "syncMerge" | "syncFull" | "authorize" | "deauthorize";
 

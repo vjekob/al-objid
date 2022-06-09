@@ -8,5 +8,6 @@ export interface JoinPoolRequest {
 
 export interface JoinPoolResponse {
     accessKey: string;
+    validationKey: string;
     managementKey?: string;
 }

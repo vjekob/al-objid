@@ -5,7 +5,6 @@ import { run as authorizeApp, disableAuthorizeAppRateLimit } from "../../src/fun
 import { StubStorage } from "../AzureTestLibrary/v2/Storage.stub";
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 
-
 jest.mock("azure-storage");
 Blob.injectCreateBlobService(azure.createBlobService);
 Mock.initializeStorage(azure.createBlobService);
