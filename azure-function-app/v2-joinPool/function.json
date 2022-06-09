@@ -8,7 +8,7 @@
       "methods": [
         "post"
       ],
-      "route": "v1/createPool"
+      "route": "v2/joinPool"
     },
     {
       "type": "http",
@@ -16,6 +16,6 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/src/functions/v1/createPool/index.js",
+  "scriptFile": "../dist/src/functions/v2/joinPool/index.js",
   "entryPoint": "run"
 }

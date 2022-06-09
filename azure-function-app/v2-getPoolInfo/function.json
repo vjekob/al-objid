@@ -6,9 +6,9 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "post"
+        "get"
       ],
-      "route": "v1/createPool"
+      "route": "v2/getPoolInfo"
     },
     {
       "type": "http",
@@ -16,6 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/src/functions/v1/createPool/index.js",
-  "entryPoint": "run"
+  "scriptFile": "../dist/src/functions/v2/getPoolInfo/index.js"
 }

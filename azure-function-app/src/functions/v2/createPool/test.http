@@ -1,0 +1,22 @@
+### Request a new public key
+
+post http://localhost:7071/api/v2/createPool
+Content-Type: application/json
+
+{
+    "name": "Test app pool #1",
+    "managementSecret": "My doctor says that I have a malformed public-duty gland and a natural deficiency in moral fibre, and that I am therefore excused from saving Universes.",
+    "joinKey": "Joinme!",
+    "apps": [
+        {
+            "name": "App1",
+            "appId": "10932841092380419283"
+        }
+    ],
+    "allowAnyAppToManage": true
+}
+
+### Pools to delete
+# PoolID: 92df3bedf74ed9f560aa08ac501cec2e4b5070d4ddc898e14873d9cbd5e5b524
+# AccesKey: ds5teiW6hm3BZty+SGAtHWABS07tL996
+#

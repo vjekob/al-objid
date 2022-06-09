@@ -31,7 +31,26 @@ export type AppInfo = {
     _authorization: Authorization;
     _ranges: Range[];
     _log: LogEntry[];
+    _pool: {
+        joinLock: string;
+        info: string;
+        appIds: string[];
+        managementKey: {
+            public: string;
+            private: string;
+        }
+    }
 } & ObjectConsumptions;
+
+export interface PoolAppInfo {
+    appId: string;
+    name: string;
+}
+
+export interface PoolInfo {
+    name: string;
+    apps: PoolAppInfo[];
+}
 
 export interface AppBindings {
     app: AppInfo;

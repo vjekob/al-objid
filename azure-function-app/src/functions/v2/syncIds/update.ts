@@ -10,7 +10,7 @@ export async function updateConsumptions(appId: string, request: ALNinjaRequestC
 
         request.log(app, patch ? "syncMerge" : "syncFull");
 
-        let { _authorization, _ranges, _log, ...consumptions } = app;
+        let { _authorization, _ranges, _log, _pool, ...consumptions } = app;
         if (!patch) {
             consumptions = {} as ObjectConsumptions;
         }
@@ -18,7 +18,7 @@ export async function updateConsumptions(appId: string, request: ALNinjaRequestC
             let existing = consumptions[key] || [];
             consumptions[key] = [...new Set([...(patch ? existing : []), ...objectIds[key]])].sort((left, right) => left - right);
         }
-        return { _authorization, _ranges, _log, ...consumptions };
+        return { _authorization, _ranges, _log, _pool, ...consumptions };
     });
     return app;
 }

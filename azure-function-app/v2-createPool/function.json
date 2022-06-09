@@ -8,7 +8,7 @@
       "methods": [
         "post"
       ],
-      "route": "v1/createPool"
+      "route": "v2/createPool"
     },
     {
       "type": "http",
@@ -16,6 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/src/functions/v1/createPool/index.js",
-  "entryPoint": "run"
+  "scriptFile": "../dist/src/functions/v2/createPool/index.js"
 }

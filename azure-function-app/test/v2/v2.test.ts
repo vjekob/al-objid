@@ -219,4 +219,90 @@ describe("Testing generic features of api/v2", () => {
         });
         expect(() => validator.validate(request)).not.toThrowError();
     });
+
+    it("Fails on validating invalid string! (invalid type)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "string!" });
+        const request = new Mock.Request("GET", {
+            "test": false,
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid string! (empty value)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "string!" });
+        const request = new Mock.Request("GET", {
+            "test": "",
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid string! (empty trimmed value)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "string!" });
+        const request = new Mock.Request("GET", {
+            "test": " ",
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Succeeds on validating valid string!", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "string!" });
+        const request = new Mock.Request("GET", {
+            "test": "defined",
+        });
+        expect(() => validator.validate(request)).not.toThrowError();
+    });
+
+    it("Fails on validating invalid PoolApp (not object)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "PoolApp" });
+        const request = new Mock.Request("GET", {
+            "test": 3.14,
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid PoolApp (not valid object)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "PoolApp" });
+        const request = new Mock.Request("GET", {
+            "test": {},
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Fails on validating invalid PoolApp (not valid properties)", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "PoolApp" });
+        const request = new Mock.Request("GET", {
+            "test": {
+                appId: 3.14,
+                name: false
+            },
+        });
+        expect(() => validator.validate(request)).toThrowError();
+    });
+
+    it("Succeeds on validating valid PoolApp", () => {
+        injectValidators();
+        const validator = new RequestValidator();
+        validator.expect("body", { "test": "PoolApp" });
+        const request = new Mock.Request("GET", {
+            "test": {
+                appId: "id",
+                name: "name"
+            },
+        });
+        expect(() => validator.validate(request)).not.toThrowError();
+    });
 });

@@ -88,4 +88,27 @@ export function injectValidators() {
         }
         return true;
     });
+
+    RequestValidator.defineValidator("string!", (value) => {
+        if (typeof value !== "string") {
+            return `string expected, received "${typeof value}"`;
+        }
+        if (value.trim() === "") {
+            return `value must be defined`;
+        }
+        return true;
+    });
+
+    RequestValidator.defineValidator("PoolApp", (value) => {
+        if (typeof value !== "object" || !value) {
+            return `non-null object expected, received "${typeof value}"`;
+        }
+        if (typeof value.appId !== "string" || value.appId.trim() === "") {
+            return `appId must be "string" (with a defined value), it is "${typeof value.appId}"`;
+        }
+        if (typeof value.name !== "string") {
+            return `name must be "string" (with a defined value), it is "${typeof value.name}"`;
+        }
+        return true;
+    });
 }

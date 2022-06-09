@@ -8,6 +8,8 @@ import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
 
+// TODO Add telemetry here and EVERYWHERE!
+// There can't be a command that doesn't log telemetry!
 export const createSimpleAppPool = async () => {
     const apps = WorkspaceManager.instance.alApps;
     if (apps.length === 0) {
