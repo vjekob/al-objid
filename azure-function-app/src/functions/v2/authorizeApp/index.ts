@@ -10,7 +10,7 @@ const authorizeApp = new ALNinjaRequestHandler<AuthorizeAppRequest, AuthorizeApp
     switch (request.method) {
         case "GET":
             const result = {
-                authorized: !!app?._authorization,
+                authorized: !!app?._authorization || !!app?._pool,
                 user: app?._authorization?.user || null,
             } as AuthorizeAppResponse;
             if (app?._authorization?.key) {
@@ -48,6 +48,7 @@ const authorizeApp = new ALNinjaRequestHandler<AuthorizeAppRequest, AuthorizeApp
 });
 
 authorizeApp.skipAuthorization();
+authorizeApp.notForPools("DELETE", "POST");
 
 export const disableAuthorizeAppRateLimit = () => authorizeApp.noRateLimit();
 

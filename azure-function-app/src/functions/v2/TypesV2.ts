@@ -55,11 +55,6 @@ export interface PoolInfo {
     apps: PoolAppInfo[];
 }
 
-export interface PoolRequest {
-    timestamp: number;
-    signature: string;
-}
-
 export interface AppBindings {
     app: AppInfo;
 }

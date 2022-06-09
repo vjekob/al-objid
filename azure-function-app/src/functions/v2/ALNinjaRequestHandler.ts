@@ -1,6 +1,7 @@
-import { RequestHandler } from "@vjeko.com/azure-func";
+import { ErrorResponse, RequestHandler } from "@vjeko.com/azure-func";
 import { injectValidators } from "./injectValidators";
-import { ALNinjaRequestContext, AppBindings, AppInfo, DefaultBindings, DefaultRequest, PoolRequest } from "./TypesV2";
+import { ALNinjaRequestContext, AppBindings, AppInfo, DefaultBindings } from "./TypesV2";
+import { validatePoolSignature } from "./ValidatePoolSignature";
 
 injectValidators();
 
@@ -11,7 +12,8 @@ interface AppIdBody {
 }
 
 interface PoolBody {
-    _poolRequest?: PoolRequest;
+    _payload: string;
+    _signature: string;
 }
 
 type ALNinjaBindings<T> = AppBindings & T;
@@ -24,6 +26,9 @@ interface ALNinjaHandlerFunc<TRequest, TResponse, TBindings> {
 export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindings>
     extends RequestHandler<ALNinjaRequest<TRequest>, TResponse, ALNinjaBindings<TBindings>> {
     private _skipAuthorization: boolean = false;
+    private _notForPools: string[] = [];
+    private _bound: boolean = false;
+    private _requirePoolSignature: boolean = false;
 
     public constructor(handler: ALNinjaHandlerFunc<TRequest, TResponse, TBindings>, withValidation: boolean = true) {
         super(async (request) => {
@@ -53,6 +58,29 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
                 request.rawContext.bindings.notify = payload;
             };
 
+            if (!this._bound) {
+                await request.bind();
+                this._bound = true;
+            }
+            const { app } = request.bindings;
+
+            if (app && app._pool) {
+                if (this._notForPools.includes("*") || this._notForPools.includes(request.method.toUpperCase())) {
+                    throw new ErrorResponse(`Cannot perform this operation on a pool`, 403);
+                }
+
+                if (this._requirePoolSignature) {
+                    const { _payload, _signature } = request.body;
+                    if (!_payload || !_signature) {
+                        throw new ErrorResponse(`Signature required when performing this operation on a pool`, 403);
+                    }
+                    const valid = validatePoolSignature(app._pool.validationKey.public, _payload, _signature);
+                    if (!valid) {
+                        throw new ErrorResponse(`Invalid signature`, 403);
+                    }
+                }
+            }
+
             const response = await handler(request as any);
 
             if (appUpdated) {
@@ -78,6 +106,7 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
             }
 
             await req.bind();
+            this._bound = true;
 
             const { app } = req.bindings;
 
@@ -99,5 +128,13 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
 
     public skipAuthorization() {
         this._skipAuthorization = true;
+    }
+
+    public notForPools(...method: string[]) {
+        this._notForPools.push(...(method.map(m => m.toUpperCase())));
+    }
+
+    public requirePoolSignature() {
+        this._requirePoolSignature = true;
     }
 }
