@@ -4,4 +4,4 @@ node_modules
 .vscode-test/
 *.vsix
 .debug
-package-lock.json
+# package-lock.json
