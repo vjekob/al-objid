@@ -16,7 +16,7 @@
         "theme": "dark"
     },
     "engines": {
-        "vscode": "^1.50.1"
+        "vscode": "^1.60.2"
     },
     "license": "MIT",
     "categories": [
@@ -362,7 +362,7 @@
         "@types/glob": "^7.2.0",
         "@types/mocha": "^9.1.1",
         "@types/node": "17.x",
-        "@types/vscode": "^1.50.1",
+        "@types/vscode": "^1.60.2",
         "@types/xml2js": "^0.4.11",
         "glob": "^8.0.3",
         "mocha": "^10.0.0",
