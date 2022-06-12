@@ -2,7 +2,7 @@ import { Mock } from "@vjeko.com/azure-func-test";
 import * as azure from "azure-storage";
 import { Blob } from "@vjeko.com/azure-func";
 import { run as createPool } from "../../src/functions/v2/createPool";
-import { run as authorizeApp, disableAuthorizeAppRateLimit } from "../../src/functions/v2/authorizeApp";
+import { run as authorizeApp } from "../../src/functions/v2/authorizeApp";
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 import { CreatePoolResponse } from "../../src/functions/v2/createPool/types";
 import { StubStorage } from "../AzureTestLibrary/v2/Storage.stub";
@@ -11,10 +11,8 @@ jest.mock("azure-storage");
 Blob.injectCreateBlobService(azure.createBlobService);
 Mock.initializeStorage(azure.createBlobService);
 initializeCustomMatchers();
-// disableCreatePoolRateLimit();
-// disableJoinPoolRateLimit();
 
-describe("Nothing to do", () => {
+describe("Testing function api/v2/authorizeApp (for managed pools)", () => {
     const name = "_mock_pool_";
     const managementSecret = "_mock_management_secret";
     const joinKey = "_mock_join_key_";
