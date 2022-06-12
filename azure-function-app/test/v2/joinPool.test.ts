@@ -31,7 +31,7 @@ describe("Testing function api/v2/joinPool", () => {
     const managementSecret = "_mock_management_secret";
     const joinKey = "_mock_join_key_";
 
-    async function createMockPool(storage, allowAnyAppToManage = false): Promise<CreatePoolResponse> {
+    async function createMockPool(storage: StubStorage, allowAnyAppToManage = false): Promise<CreatePoolResponse> {
         Mock.useStorage(storage.content);
         const context = new Mock.Context(new Mock.Request("POST", { name, managementSecret, joinKey, allowAnyAppToManage }));
         await createPool(context, context.req);
@@ -70,18 +70,6 @@ describe("Testing function api/v2/joinPool", () => {
         expect(context.res).toBeStatus(400);
     });
 
-    it("Fails joining pool with invalid joinKey", async () => {
-        const storage = new StubStorage();
-        Mock.useStorage(storage.content);
-
-        const pool = await createMockPool(storage);
-        const { poolId } = pool;
-
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey: "invalid", apps }));
-        await joinPool(context, context.req);
-        expect(context.res).toBeStatus(401);
-    });
-
     it("Fails joining pool for a missing pool", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
@@ -96,6 +84,24 @@ describe("Testing function api/v2/joinPool", () => {
         Mock.useStorage(storage.content);
 
         const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: "invalid", apps }));
+        await joinPool(context, context.req);
+        expect(context.res).toBeStatus(405);
+    });
+
+    it("Fails joining pool for an app that's already in the pool", async () => {
+        const storage = new StubStorage();
+        Mock.useStorage(storage.content);
+
+        const pool = await createMockPool(storage);
+        const { poolId, accessKey } = pool;
+        const joinLockEncryptionKey = `${joinKey}${poolId}`.substring(0, 32);
+
+        const { _pool } = storage.content[`${poolId}.json`];
+
+        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps }));
+        await joinPool(context, context.req);
+        expect(context.res).toBeStatus(200);
+
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(405);
     });
@@ -120,6 +126,11 @@ describe("Testing function api/v2/joinPool", () => {
         expect(join.validationKey).toBeDefined();
         expect(join.validationKey).toStrictEqual(decrypt(_pool.validationKey.private, joinLockEncryptionKey));
         expect(join.managementKey).toBeUndefined();
+        expect(join.leaveKeys).toBeDefined();
+        for (let app of apps) {
+            expect(join.leaveKeys[app.appId]).toBeDefined();
+            expect(typeof join.leaveKeys[app.appId]).toStrictEqual("string");
+        }
 
         const app = storage.content[`${poolId}.json`];
         expect(app._pool).toBeDefined();

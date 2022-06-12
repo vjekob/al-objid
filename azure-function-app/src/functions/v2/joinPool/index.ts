@@ -3,6 +3,8 @@ import { JoinPoolRequest, JoinPoolResponse } from "./types";
 import { decrypt, encrypt } from "../../../common/Encryption";
 import { Blob, ErrorResponse } from "@vjeko.com/azure-func";
 import { AppInfo, PoolInfo } from "../TypesV2";
+import { getSha256 } from "../../../common/util";
+import { createPrivateKey, createSign, randomBytes } from "crypto";
 
 const joinPool = new ALNinjaRequestHandler<JoinPoolRequest, JoinPoolResponse>(async (request) => {
     const { poolId, joinKey, apps } = request.body;
@@ -20,6 +22,11 @@ const joinPool = new ALNinjaRequestHandler<JoinPoolRequest, JoinPoolResponse>(as
 
     if (!app._pool) {
         throw new ErrorResponse(`App ${poolId} is not a managed pool.`, 405);
+    }
+
+    const firstExistingApp = app._pool.appIds.find(id => apps.some(app => app.appId === id));
+    if (firstExistingApp) {
+        throw new ErrorResponse(`App ${firstExistingApp} is already in the pool.`, 405);
     }
 
     const joinLockEncryptionKey = `${joinKey}${poolId}`.substring(0, 32);
@@ -65,10 +72,17 @@ const joinPool = new ALNinjaRequestHandler<JoinPoolRequest, JoinPoolResponse>(as
         return { ...app };
     });
 
+    const validationKey = decrypt(app._pool.validationKey.private, joinLockEncryptionKey);
+    const leaveKeys = apps.reduce((leaveKeys, app) => {
+        leaveKeys[app.appId] = randomBytes(64).toString("base64");
+        return leaveKeys;
+    }, {});
+
     return {
         accessKey,
-        validationKey: decrypt(app._pool.validationKey.private, joinLockEncryptionKey),
-        managementKey: app._pool.managementKey.private
+        validationKey,
+        managementKey: app._pool.managementKey.private,
+        leaveKeys
     };
 }, false);
 
