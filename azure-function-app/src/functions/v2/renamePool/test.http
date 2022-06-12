@@ -1,0 +1,15 @@
+### Request a new public key
+
+post http://localhost:7071/api/v2/joinPool
+Content-Type: application/json
+
+{
+    "poolId": "88baecdf8e9046f1c7bf6fc59d69aebb4eb964e738857a8673fee872c5ee7683",
+    "joinKey": "Joinme!",
+    "apps": [
+        {
+            "appId": "4d4eqDs1+Fx53iqwO4IHLXpEHIu6RfeZ",
+            "name": "Test App #2"
+        }
+    ]
+}

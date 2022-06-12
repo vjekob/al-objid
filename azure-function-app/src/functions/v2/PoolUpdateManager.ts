@@ -147,4 +147,13 @@ export class PoolUpdateManager {
         this.makeSureAppsInPool(info, apps);
         await this.removeAppsFromPool(accessKey, info, apps);
     }
+
+    public async rename(accessKey: string, name: string): Promise<void> {
+        const info = this.retrievePoolInfo(accessKey);
+        info.name = name;
+        await this._blob.optimisticUpdate(app => {
+            app._pool.info = encrypt(JSON.stringify(info), accessKey);
+            return { ...app };
+        });
+    }
 }
