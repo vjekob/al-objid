@@ -156,4 +156,16 @@ export class PoolUpdateManager {
             return { ...app };
         });
     }
+
+    public async removePool(deleteBlob: boolean): Promise<void> {
+        if (deleteBlob) {
+            await this._blob.delete();
+            return;
+        }
+
+        await this._blob.optimisticUpdate(app => {
+            const { _pool, ...rest } = app;
+            return {...rest} as AppInfo;
+        })
+    }
 }
