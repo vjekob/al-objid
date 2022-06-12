@@ -46,7 +46,7 @@ describe("Testing function api/v2/leavePool", () => {
     it("Fails leaving pool with invalid info (invalid poolId type)", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: 3.14 }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: 3.14 }));
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(400);
     });
@@ -54,7 +54,7 @@ describe("Testing function api/v2/leavePool", () => {
     it("Fails leaving pool with invalid info (invalid joinKey type)", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: 3.14 }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: 3.14 }));
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(400);
     });
@@ -62,7 +62,7 @@ describe("Testing function api/v2/leavePool", () => {
     it("Fails leaving pool with invalid info (missing apps)", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: "_mock_key_" }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: "_mock_key_" }));
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(400);
     });
@@ -71,7 +71,7 @@ describe("Testing function api/v2/leavePool", () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: "invalid", apps: leaveApps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: "invalid", apps: leaveApps }));
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(404);
     });
@@ -80,7 +80,7 @@ describe("Testing function api/v2/leavePool", () => {
         const storage = new StubStorage().app("_mock_");
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: "invalid", apps: leaveApps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: "invalid", apps: leaveApps }));
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(405);
     });
@@ -92,7 +92,7 @@ describe("Testing function api/v2/leavePool", () => {
         const pool = await createMockPool(storage, existingApps);
         const { poolId } = pool;
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps: leaveApps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId, joinKey, apps: leaveApps }));
 
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(409);
@@ -105,7 +105,7 @@ describe("Testing function api/v2/leavePool", () => {
         const pool = await createMockPool(storage, existingApps);
         const { poolId } = pool;
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey: "invalid_key", apps: [existingApps[0]] }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId, joinKey: "invalid_key", apps: [existingApps[0]] }));
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(401);
     });
@@ -120,7 +120,7 @@ describe("Testing function api/v2/leavePool", () => {
         const leaveKey = createdPool.leaveKeys[createdPool.appIds[0]];
         const leaveKeyRemaining = createdPool.leaveKeys[createdPool.appIds[1]];
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps: [{ ...existingApps[0], leaveKey }] }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId, joinKey, apps: [{ ...existingApps[0], leaveKey }] }));
         await leavePool(context, context.req);
         expect(context.res).toBeStatus(200);
 

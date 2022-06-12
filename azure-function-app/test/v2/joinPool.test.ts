@@ -49,7 +49,7 @@ describe("Testing function api/v2/joinPool", () => {
     it("Fails joining pool with invalid info (invalid poolId type)", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: 3.14 }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: 3.14 }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(400);
     });
@@ -57,7 +57,7 @@ describe("Testing function api/v2/joinPool", () => {
     it("Fails joining pool with invalid info (invalid joinKey type)", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: 3.14 }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: 3.14 }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(400);
     });
@@ -65,7 +65,7 @@ describe("Testing function api/v2/joinPool", () => {
     it("Fails joining pool with invalid info (missing apps)", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: "_mock_key_" }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: "_mock_key_" }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(400);
     });
@@ -74,7 +74,7 @@ describe("Testing function api/v2/joinPool", () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: "invalid", apps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: "invalid", apps }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(404);
     });
@@ -83,7 +83,7 @@ describe("Testing function api/v2/joinPool", () => {
         const storage = new StubStorage().app("_mock_");
         Mock.useStorage(storage.content);
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId: "_mock_", joinKey: "invalid", apps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId: "_mock_", joinKey: "invalid", apps }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(405);
     });
@@ -95,7 +95,7 @@ describe("Testing function api/v2/joinPool", () => {
         const pool = await createMockPool(storage);
         const { poolId } = pool;
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId, joinKey, apps }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(200);
 
@@ -111,7 +111,7 @@ describe("Testing function api/v2/joinPool", () => {
         const pool = await createMockPool(storage);
         const { poolId } = pool;
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey: "invalid_key", apps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId, joinKey: "invalid_key", apps }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(401);
     });
@@ -126,7 +126,7 @@ describe("Testing function api/v2/joinPool", () => {
 
         const { _pool } = storage.content[`${poolId}.json`];
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId, joinKey, apps }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(200);
 
@@ -164,7 +164,7 @@ describe("Testing function api/v2/joinPool", () => {
 
         const { _pool } = storage.content[`${poolId}.json`];
 
-        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps }));
+        const context = new Mock.Context(new Mock.Request("POST", { poolId, joinKey, apps }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(200);
 
