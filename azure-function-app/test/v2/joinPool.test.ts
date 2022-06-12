@@ -70,7 +70,7 @@ describe("Testing function api/v2/joinPool", () => {
         expect(context.res).toBeStatus(400);
     });
 
-    it("Fails joining pool for a missing pool", async () => {
+    it("Fails joining pool for a non-existent pool", async () => {
         const storage = new StubStorage();
         Mock.useStorage(storage.content);
 
@@ -93,17 +93,27 @@ describe("Testing function api/v2/joinPool", () => {
         Mock.useStorage(storage.content);
 
         const pool = await createMockPool(storage);
-        const { poolId, accessKey } = pool;
-        const joinLockEncryptionKey = `${joinKey}${poolId}`.substring(0, 32);
-
-        const { _pool } = storage.content[`${poolId}.json`];
+        const { poolId } = pool;
 
         const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey, apps }));
         await joinPool(context, context.req);
         expect(context.res).toBeStatus(200);
 
         await joinPool(context, context.req);
-        expect(context.res).toBeStatus(405);
+        expect(context.res).toBeStatus(400);
+    });
+
+    
+    it("Fails joining pool with invalid joinKey", async () => {
+        const storage = new StubStorage();
+        Mock.useStorage(storage.content);
+
+        const pool = await createMockPool(storage);
+        const { poolId } = pool;
+
+        const context = new Mock.Context(new Mock.Request("GET", { poolId, joinKey: "invalid_key", apps }));
+        await joinPool(context, context.req);
+        expect(context.res).toBeStatus(401);
     });
 
     it("Succeeds joining pool with valid joinKey", async () => {

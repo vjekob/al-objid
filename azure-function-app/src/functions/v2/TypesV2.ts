@@ -42,7 +42,8 @@ export type AppInfo = {
         appIds: string[];
         validationKey: KeyPair;
         managementKey: KeyPair;
-    }
+        leaveKeys: { [key: string]: string };
+    },
 } & ObjectConsumptions;
 
 export interface PoolAppInfo {
