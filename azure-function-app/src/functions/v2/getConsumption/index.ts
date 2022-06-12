@@ -21,4 +21,5 @@ const getConsumption = new ALNinjaRequestHandler<DefaultRequest, GetConsumptionR
 });
 
 getConsumption.requirePoolSignature();
+getConsumption.requireSourceAppIdMatch();
 export default getConsumption.azureFunction;

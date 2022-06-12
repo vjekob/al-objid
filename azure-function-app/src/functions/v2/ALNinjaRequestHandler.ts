@@ -12,6 +12,7 @@ interface AppIdBody {
 }
 
 interface PoolBody {
+    _sourceAppId: string;
     _payload: string;
     _signature: string;
 }
@@ -29,6 +30,7 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
     private _notForPools: string[] = [];
     private _bound: boolean = false;
     private _requirePoolSignature: boolean = false;
+    private _requireSourceAppIdMatch: boolean = false;
 
     public constructor(handler: ALNinjaHandlerFunc<TRequest, TResponse, TBindings>, withValidation: boolean = true) {
         super(async (request) => {
@@ -77,6 +79,16 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
                     const valid = validatePoolSignature(app._pool.validationKey.public, _payload, _signature);
                     if (!valid) {
                         throw new ErrorResponse(`Invalid signature`, 403);
+                    }
+                }
+
+                if (this._requireSourceAppIdMatch) {
+                    const { _sourceAppId } = request.body;
+                    if (!_sourceAppId) {
+                        throw new ErrorResponse("Missing _sourceAppId property", 400);
+                    }
+                    if (!app._pool.appIds.includes(_sourceAppId)) {
+                        throw new ErrorResponse(`Source app is not authorized to perform this operation`, 403);
                     }
                 }
             }
@@ -136,5 +148,9 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
 
     public requirePoolSignature() {
         this._requirePoolSignature = true;
+    }
+
+    public requireSourceAppIdMatch() {
+        this._requireSourceAppIdMatch = true;
     }
 }
