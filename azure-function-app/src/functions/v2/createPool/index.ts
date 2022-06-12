@@ -46,6 +46,11 @@ const createPool = new ALNinjaRequestHandler<CreatePoolRequest, CreatePoolRespon
 
     const joinLock = encrypt(`${poolId}${accessKey}`, joinLockEncryptionKey);
 
+    const leaveKeys = apps.reduce((leaveKeys, app) => {
+        leaveKeys[app.appId] = randomBytes(64).toString("base64");
+        return leaveKeys;
+    }, {});
+
     const blob = new Blob<AppInfo>(`${poolId}.json`);
     await blob.optimisticUpdate(app => {
         if (!app) {
@@ -62,7 +67,8 @@ const createPool = new ALNinjaRequestHandler<CreatePoolRequest, CreatePoolRespon
             managementKey: {
                 public: pairManagement.publicKey.toString("base64"),
                 private: allowAnyAppToManage ? pairManagement.privateKey.toString("base64") : undefined,
-            }
+            },
+            leaveKeys,
         };
         return app;
     });
@@ -72,6 +78,7 @@ const createPool = new ALNinjaRequestHandler<CreatePoolRequest, CreatePoolRespon
         accessKey,
         validationKey: pairValidation.privateKey.toString("base64"),
         managementKey: pairManagement.privateKey.toString("base64"),
+        leaveKeys
     };
 }, false);
 

@@ -66,17 +66,19 @@ const joinPool = new ALNinjaRequestHandler<JoinPoolRequest, JoinPoolResponse>(as
     const appIds: string[] = (app._pool.appIds || []);
     appIds.push(...apps.map(app => app.appId));
 
-    await blob.optimisticUpdate(app => {
-        app._pool.info = encrypt(JSON.stringify(info), accessKey);
-        app._pool.appIds = appIds;
-        return { ...app };
-    });
-
-    const validationKey = decrypt(app._pool.validationKey.private, joinLockEncryptionKey);
     const leaveKeys = apps.reduce((leaveKeys, app) => {
         leaveKeys[app.appId] = randomBytes(64).toString("base64");
         return leaveKeys;
     }, {});
+
+    await blob.optimisticUpdate(app => {
+        app._pool.info = encrypt(JSON.stringify(info), accessKey);
+        app._pool.appIds = appIds;
+        app._pool.leaveKeys = leaveKeys;
+        return { ...app };
+    });
+
+    const validationKey = decrypt(app._pool.validationKey.private, joinLockEncryptionKey);
 
     return {
         accessKey,

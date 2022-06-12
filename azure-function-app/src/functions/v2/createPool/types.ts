@@ -5,6 +5,7 @@ export interface CreatePoolResponse {
     accessKey: string;
     validationKey: string;
     managementKey?: string;
+    leaveKeys: { [key: string]: string };
 }
 
 export interface CreatePoolRequest {

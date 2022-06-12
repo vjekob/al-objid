@@ -126,15 +126,17 @@ describe("Testing function api/v2/joinPool", () => {
         expect(join.validationKey).toBeDefined();
         expect(join.validationKey).toStrictEqual(decrypt(_pool.validationKey.private, joinLockEncryptionKey));
         expect(join.managementKey).toBeUndefined();
-        expect(join.leaveKeys).toBeDefined();
-        for (let app of apps) {
-            expect(join.leaveKeys[app.appId]).toBeDefined();
-            expect(typeof join.leaveKeys[app.appId]).toStrictEqual("string");
-        }
 
         const app = storage.content[`${poolId}.json`];
         expect(app._pool).toBeDefined();
         expect(app._pool.info).toBeDefined();
+
+        expect(join.leaveKeys).toBeDefined();
+        for (let appInfo of apps) {
+            expect(join.leaveKeys[appInfo.appId]).toBeDefined();
+            expect(typeof join.leaveKeys[appInfo.appId]).toStrictEqual("string");
+            expect(app._pool.leaveKeys[appInfo.appId]).toStrictEqual(join.leaveKeys[appInfo.appId]);
+        }
 
         const info = JSON.parse(decrypt(app._pool.info, accessKey));
         expect(info.name).toStrictEqual(name);

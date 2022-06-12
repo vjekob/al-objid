@@ -6,6 +6,7 @@ import { run as createPool, disableCreatePoolRateLimit } from "../../src/functio
 import { initializeCustomMatchers } from "../AzureTestLibrary/CustomMatchers";
 import { decrypt } from "../../src/common/Encryption";
 import { createPrivateKey, createPublicKey, createSign, createVerify } from "crypto";
+import { CreatePoolResponse } from "../../src/functions/v2/createPool/types";
 
 
 jest.mock("azure-storage");
@@ -223,6 +224,14 @@ describe("Testing function api/v2/createPool", () => {
         const { _pool } = app;
         expect(_pool.appIds).toBeDefined();
         expect(_pool.appIds.length).toStrictEqual(2);
+
+        const create = context.res.body as CreatePoolResponse;
+        expect(create.leaveKeys).toBeDefined();
+        for (let appInfo of apps) {
+            expect(create.leaveKeys[appInfo.appId]).toBeDefined();
+            expect(typeof create.leaveKeys[appInfo.appId]).toStrictEqual("string");
+            expect(app._pool.leaveKeys[appInfo.appId]).toStrictEqual(create.leaveKeys[appInfo.appId]);
+        }
 
         const info = JSON.parse(decrypt(_pool.info, accessKey));
         expect(info.name).toStrictEqual(name);
