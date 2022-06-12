@@ -30,6 +30,7 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
     private _notForPools: string[] = [];
     private _bound: boolean = false;
     private _requirePoolSignature: boolean = false;
+    private _requireManagementSignature: boolean = false;
     private _requireSourceAppIdMatch: boolean = false;
 
     public constructor(handler: ALNinjaHandlerFunc<TRequest, TResponse, TBindings>, withValidation: boolean = true) {
@@ -71,12 +72,13 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
                     throw new ErrorResponse(`Cannot perform this operation on a pool`, 403);
                 }
 
-                if (this._requirePoolSignature) {
+                if (this._requirePoolSignature || this._requireManagementSignature) {
                     const { _payload, _signature } = request.body;
                     if (!_payload || !_signature) {
                         throw new ErrorResponse(`Signature required when performing this operation on a pool`, 403);
                     }
-                    const valid = validatePoolSignature(app._pool.validationKey.public, _payload, _signature);
+                    const key = this._requireManagementSignature ? app._pool.managementKey.public : app._pool.validationKey.public;
+                    const valid = validatePoolSignature(key, _payload, _signature);
                     if (!valid) {
                         throw new ErrorResponse(`Invalid signature`, 403);
                     }
@@ -148,6 +150,10 @@ export class ALNinjaRequestHandler<TRequest, TResponse, TBindings = DefaultBindi
 
     public requirePoolSignature() {
         this._requirePoolSignature = true;
+    }
+
+    public requireManagementSignature() {
+        this._requireManagementSignature = true;
     }
 
     public requireSourceAppIdMatch() {
