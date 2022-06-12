@@ -46,7 +46,20 @@ export class PoolUpdateManager {
         return this._app._pool;
     }
 
-    private retrievePoolInfo(joinKey: string): [PoolInfo, string, string] {
+    private retrievePoolInfo(accessKey: string): PoolInfo {
+        const infoDecrypted = decrypt(this._app._pool.info, accessKey);
+        if (!infoDecrypted) {
+            throw new ErrorResponse(`Stale access key for pool ${this._poolId}. Please, ask the administrator to regenerate the join key.`, 401);
+        };
+
+        try {
+            return JSON.parse(infoDecrypted) as PoolInfo;
+        } catch {
+            throw new ErrorResponse("Invalid pool info content, you should not really see this error", 406);
+        }
+    }
+
+    private decryptPoolInfo(joinKey: string): [PoolInfo, string, string] {
         const joinLockEncryptionKey = `${joinKey}${this._poolId}`.substring(0, 32);
         const { joinLock } = this._app._pool;
         const joinLockDecrypted = decrypt(joinLock, joinLockEncryptionKey);
@@ -56,20 +69,12 @@ export class PoolUpdateManager {
         }
 
         const accessKey = joinLockDecrypted.substring(64);
-        const infoDecrypted = decrypt(this._app._pool.info, accessKey);
-        if (!infoDecrypted) {
-            throw new ErrorResponse(`Stale access key for pool ${this._poolId}. Please, ask the administrator to regenerate the join key.`, 401);
-        };
+        return [this.retrievePoolInfo(accessKey), accessKey, joinLockEncryptionKey];
 
-        try {
-            return [JSON.parse(infoDecrypted) as PoolInfo, accessKey, joinLockEncryptionKey];
-        } catch {
-            throw new ErrorResponse("Invalid pool info content, you should not really see this error", 406);
-        }
     }
 
     public async join(joinKey: string, apps: PoolAppInfo[]): Promise<JoinPoolResponse> {
-        const [info, accessKey, joinLockEncryptionKey] = this.retrievePoolInfo(joinKey);
+        const [info, accessKey, joinLockEncryptionKey] = this.decryptPoolInfo(joinKey);
 
         for (let appNew of apps) {
             if (info.apps.some(app => app.appId === appNew.appId) || this._app._pool.appIds.includes(appNew.appId)) {
@@ -102,17 +107,15 @@ export class PoolUpdateManager {
         };
     }
 
-    public async leave(joinKey: string, apps: LeavePoolAppInfo[]): Promise<void> {
-        const [info, accessKey] = this.retrievePoolInfo(joinKey);
+    private makeSureAppsInPool(info: PoolInfo, apps: PoolAppInfo[]): void {
         for (let appInfo of apps) {
             if (!this._app._pool.appIds.includes(appInfo.appId)) {
                 throw new ErrorResponse(`App ${appInfo.appId} is not in this pool`, 409);
             }
-            if (this._app._pool.leaveKeys[appInfo.appId] !== appInfo.leaveKey) {
-                throw new ErrorResponse(`Invalid leave key provided for app ${appInfo.appId}`, 403);
-            }
         }
-    
+    }
+
+    private async removeAppsFromPool(accessKey: string, info: PoolInfo, apps: PoolAppInfo[]): Promise<void> {
         info.apps = info.apps.filter(app => !apps.some(leaveApp => leaveApp.appId === app.appId));
         const appIds = this._app._pool.appIds.filter(id => !apps.some(app => app.appId === id));
         const leaveKeys = this._app._pool.leaveKeys;
@@ -123,7 +126,25 @@ export class PoolUpdateManager {
             app._pool.info = encrypt(JSON.stringify(info), accessKey);
             app._pool.appIds = appIds;
             app._pool.leaveKeys = leaveKeys
-            return {...app};
+            return { ...app };
         });
+    }
+
+    public async leave(accessKey: string, apps: LeavePoolAppInfo[]): Promise<void> {
+        const info = this.retrievePoolInfo(accessKey);
+        this.makeSureAppsInPool(info, apps);
+        for (let appInfo of apps) {
+            if (this._app._pool.leaveKeys[appInfo.appId] !== appInfo.leaveKey) {
+                throw new ErrorResponse(`Invalid leave key provided for app ${appInfo.appId}`, 403);
+            }
+        }
+        await this.removeAppsFromPool(accessKey, info, apps);
+
+    }
+
+    public async remove(accessKey: string, apps: PoolAppInfo[]): Promise<void> {
+        const info = this.retrievePoolInfo(accessKey);
+        this.makeSureAppsInPool(info, apps);
+        await this.removeAppsFromPool(accessKey, info, apps);
     }
 }

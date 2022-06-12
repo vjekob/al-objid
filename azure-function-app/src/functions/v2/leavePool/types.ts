@@ -6,6 +6,6 @@ export interface LeavePoolAppInfo extends PoolAppInfo {
 
 export interface LeavePoolRequest {
     poolId: string;
-    joinKey: string;
+    accessKey: string;
     apps: LeavePoolAppInfo[]; 
 }
