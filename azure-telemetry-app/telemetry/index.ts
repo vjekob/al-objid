@@ -9,7 +9,7 @@ let iterationId = 0;
 let instanceCallNo = 0;
 let timeout: NodeJS.Timeout;
 
-async function dump() {
+async function flush() {
     const blob = new Blob<TelemetryLog>(`${instanceId}-${iterationId}.json`);
     await blob.optimisticUpdate((log: TelemetryLog) => {
         if (!log) {
@@ -32,17 +32,18 @@ async function dump() {
     pending = [];
 }
 
-function scheduleDump() {
+async function scheduleFlush() {
     if (timeout) {
         clearTimeout(timeout);
     }
 
-    timeout = setTimeout(dump, 60000);
-}
+    if (pending.length > 10) {
+        await flush();
+        return;
+    }
 
-/*
-waldo rocks
-*/
+    timeout = setTimeout(flush, 30000);
+}
 
 const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
     const { ownEndpoints, userSha, appSha, event, context } = request.body;
@@ -60,12 +61,7 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
         context,
     });
 
-    if (pending.length >= 20) {
-        dump();
-    } else {
-        scheduleDump();
-    }
-
+    scheduleFlush();
     return null;
 });
 
