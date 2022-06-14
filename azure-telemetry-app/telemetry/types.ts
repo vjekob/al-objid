@@ -11,3 +11,10 @@ export interface TelemetryEntry extends TelemetryRequest {
     instanceId: string;
     instanceCallNo?: number;
 };
+
+export interface TelemetryLog {
+    startedAt: number;
+    log: TelemetryEntry[];
+    lastModifiedAt: number;
+    length: number;
+}

@@ -1,19 +1,48 @@
 import { Blob, RequestHandler } from "@vjeko.com/azure-func";
-import { TelemetryEntry, TelemetryRequest } from "./types";
+import { TelemetryEntry, TelemetryLog, TelemetryRequest } from "./types";
+import { randomBytes } from "crypto";
 
 let pending: TelemetryEntry[] = [];
 
-const instanceId = ((length: number) => {
-    const CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-        result += CHARS.charAt(Math.floor(Math.random() * CHARS.length));
-    }
-    return `${result}${Date.now()}`;
-})(12);
-
+const instanceId = `${new Date().toISOString().split("T")[0]}-${randomBytes(8).toString("hex")}`;
+let iterationId = 0;
 let instanceCallNo = 0;
-let lastFlushTimestamp = Date.now();
+let timeout: NodeJS.Timeout;
+
+async function dump() {
+    const blob = new Blob<TelemetryLog>(`${instanceId}-${iterationId}.json`);
+    await blob.optimisticUpdate((log: TelemetryLog) => {
+        if (!log) {
+            log = {
+                startedAt: Date.now(),
+                log: pending,
+                length: 0,
+                lastModifiedAt: Date.now(),
+            };
+        } else {
+            log.log.push(...pending);
+            log.length = log.log.length;
+            log.lastModifiedAt = Date.now();
+        }
+        if (log.log.length > 1000) {
+            iterationId++;
+        }
+        return { ...log };
+    });
+    pending = [];
+}
+
+function scheduleDump() {
+    if (timeout) {
+        clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(dump, 60000);
+}
+
+/*
+waldo rocks
+*/
 
 const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
     const { ownEndpoints, userSha, appSha, event, context } = request.body;
@@ -31,21 +60,13 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
         context,
     });
 
-    // TODO Both of these conditions should be moved to configuration (both size and time)
-    if (pending.length === 10 || timestamp - lastFlushTimestamp > 60000) {
-        const blob = new Blob<TelemetryEntry[]>(`${instanceId}.json`);
-        await blob.optimisticUpdate(existing => [...(existing || []), ...pending]);
-        pending = [];
-        lastFlushTimestamp = timestamp;
+    if (pending.length >= 20) {
+        dump();
+    } else {
+        scheduleDump();
     }
-    return null;
-});
 
-telemetry.validator.expect("body", {
-    ownEndpoints: "boolean",
-    userSha: "string",
-    "appSha?": "string",
-    event: "string",
+    return null;
 });
 
 export default telemetry.azureFunction;

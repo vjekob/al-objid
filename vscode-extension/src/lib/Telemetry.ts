@@ -1,5 +1,5 @@
 import { PropertyBag } from "./types/PropertyBag";
-import { ExtensionContext } from "vscode";
+import { ExtensionContext, version } from "vscode";
 import { getSha256 } from "./functions/getSha256";
 import { Backend } from "./backend/Backend";
 import { EXTENSION_VERSION } from "./constants";
@@ -57,11 +57,14 @@ export class Telemetry {
 
     public setContext(context: ExtensionContext) {
         this._context = context;
-        this.log("start", undefined, EXTENSION_VERSION);
+        this.log("start", undefined, {
+            ninja: EXTENSION_VERSION,
+            vscode: version,
+        });
     }
 
     public log(event: string, appId?: string, context?: any): void {
-        Backend.telemetry(appId && this.getAppSha(appId), this.userSha, event, context);
+        Backend.telemetry(appId, this.userSha, event, context);
     }
 
     public logOnce(event: string, appId?: string, context?: any): void {
