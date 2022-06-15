@@ -64,12 +64,12 @@ export class WorkspaceManager implements Disposable {
             if (!app) {
                 continue;
             }
+            this._folders.push(folder);
             this._apps.push(app);
             this._appMap[app.uri.fsPath] = app;
             this._appHashMap[app.hash] = app;
             addedApps?.push(app);
         }
-        this._folders.push(...folders);
     }
 
     private async pickFolderOrFolders(multi: boolean, description?: string): Promise<ALApp[] | ALApp | undefined> {
