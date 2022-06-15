@@ -1,68 +1,34 @@
-import { Blob, RequestHandler } from "@vjeko.com/azure-func";
-import { TelemetryEntry, TelemetryLog, TelemetryRequest } from "./types";
-import { randomBytes } from "crypto";
-
-let pending: TelemetryEntry[] = [];
-
-const instanceId = `${new Date().toISOString().split("T")[0]}-${randomBytes(8).toString("hex")}`;
-let iterationId = 0;
-let instanceCallNo = 0;
-let timeout: NodeJS.Timeout;
-
-async function flush() {
-    const blob = new Blob<TelemetryLog>(`${instanceId}-${iterationId}.json`);
-    await blob.optimisticUpdate((log: TelemetryLog) => {
-        if (!log) {
-            log = {
-                startedAt: Date.now(),
-                log: pending,
-                length: 0,
-                lastModifiedAt: Date.now(),
-            };
-        } else {
-            log.log.push(...pending);
-            log.length = log.log.length;
-            log.lastModifiedAt = Date.now();
-        }
-        if (log.log.length > 1000) {
-            iterationId++;
-        }
-        return { ...log };
-    });
-    pending = [];
-}
-
-async function scheduleFlush() {
-    if (timeout) {
-        clearTimeout(timeout);
-    }
-
-    if (pending.length > 10) {
-        await flush();
-        return;
-    }
-
-    timeout = setTimeout(flush, 30000);
-}
+import { RequestHandler } from "@vjeko.com/azure-func";
+import { TelemetryRequest } from "./types";
+import { createHmac } from "crypto";
+import { Https } from "./https";
 
 const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
-    const { ownEndpoints, userSha, appSha, event, context } = request.body;
-    const timestamp = Date.now();
-    ++instanceCallNo;
+    const { userSha, appSha, event, context } = request.body;
 
-    pending.push({
-        timestamp,
-        instanceId,
-        instanceCallNo,
-        ownEndpoints,
-        userSha,
-        appSha,
-        event,
-        context,
+    const payload = { userSha, appSha, event, context };
+
+    const workspaceId = process.env["WorkspaceId"];
+    const signatureKey = process.env["IngestionSignatureKey"]
+    const contentLength = JSON.stringify(payload).length;
+    const xMsDate = new Date().toUTCString();
+    const stringToSign = `POST\n${contentLength}\napplication/json\nx-ms-date:${xMsDate}\n/api/logs`;
+    const signature = createHmac("sha256", Buffer.from(signatureKey, "base64"))
+        .update(stringToSign, "utf-8")
+        .digest("base64");
+
+    const https = new Https({
+        headers: {
+            Authorization: `SharedKey ${workspaceId}:${signature}`,
+            ["content-type"]: "application/json",
+            ["Log-Type"]: "events",
+            ["x-ms-date"]: xMsDate
+        },
+        hostname: `${workspaceId}.ods.opinsights.azure.com`,
+        path: "/api/logs?api-version=2016-04-01"
     });
 
-    scheduleFlush();
-    return null;
+    return await https.send("POST", payload);
 });
 
 export default telemetry.azureFunction;
