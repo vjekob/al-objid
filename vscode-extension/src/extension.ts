@@ -17,8 +17,10 @@ import { CodeCommand, registerCommands } from "./commands/commands";
 import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { RangeExplorerView } from "./features/treeView/rangeExplorer/RangeExplorerView";
 import { AppPoolExplorerView } from "./features/treeView/appPoolExplorer/AppPoolExplorerView";
+import { setFlags } from "./flags";
 
 export function activate(context: ExtensionContext) {
+    setFlags();
     commands.executeCommand(CodeCommand.SetContext, "vjeko-al-objid.active", true);
 
     ConsumptionWarnings.instance.setContext(context);

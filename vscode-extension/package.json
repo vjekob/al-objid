@@ -108,9 +108,9 @@
                 "title": "Consolidate logical ranges"
             },
             {
-                "command": "vjeko-al-objid.create-app-pool-simple",
+                "command": "vjeko-al-objid.create-app-pool",
                 "category": "Ninja",
-                "title": "Create a simple App Pool"
+                "title": "Create an App Pool"
             },
             {
                 "command": "vjeko-al-objid.validate-bclicense",
@@ -230,7 +230,8 @@
                     "icon": "images/tree-view.svg",
                     "contextualTitle": "App Pool Explorer",
                     "type": "tree",
-                    "visibility": "collapsed"
+                    "visibility": "collapsed",
+                    "when": "vjeko-al-objid.feature.managedPools == true"
                 },
                 {
                     "id": "ninja-licenseExplorer",
@@ -324,7 +325,7 @@
                     "when": "vjeko-al-objid.active == true"
                 },
                 {
-                    "command": "vjeko-al-objid.create-app-pool-simple",
+                    "command": "vjeko-al-objid.create-app-pool",
                     "when": "vjeko-al-objid.active == true"
                 },
                 {
