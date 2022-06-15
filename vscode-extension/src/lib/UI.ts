@@ -89,8 +89,7 @@ export const UI = {
     nextId: {
         showNoBackEndConsumptionInfo: async (app: ALApp) =>
             window.showInformationMessage(
-                `Azure back end has no information about consumed object IDs for ${
-                    app.config.appPoolId ? `app pool to which ${describeApp(app)} belongs` : `${describeApp(app)}`
+                `Azure back end has no information about consumed object IDs for ${app.config.appPoolId ? `app pool to which ${describeApp(app)} belongs` : `${describeApp(app)}`
                 }. Do you want to synchronize?`,
                 LABELS.BUTTON_SYNCHRONIZE,
                 "No",
@@ -216,10 +215,9 @@ export const UI = {
             ),
         showInvalidRangeFromToError: (range: NinjaALRange) =>
             window.showErrorMessage(
-                `Range ${
-                    range.description
-                        ? `${range.description} (${range.from}..${range.to})`
-                        : `${range.from}..${range.to}`
+                `Range ${range.description
+                    ? `${range.description} (${range.from}..${range.to})`
+                    : `${range.from}..${range.to}`
                 } has "to" lower than "from". "from" must be lower, and "to" must be higher.`,
                 LABELS.FIX
             ),

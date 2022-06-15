@@ -8,7 +8,7 @@ import { confirmDeauthorizeApp } from "./confirm-deauthorize-app";
 import { confirmSyncObjectIds } from "./confirm-sync-object-ids";
 import { consolidateRanges } from "./consolidate-ranges";
 import { copyRanges } from "./copy-ranges";
-import { createSimpleAppPool } from "./create-app-pool-simple";
+import { createAppPool } from "./create-app-pool";
 import { deauthorizeApp } from "./deauthorize-app";
 import { expandAllRangeExplorer } from "./expand-all-rangeExplorer";
 import { goToDefinition } from "./goto-definition";
@@ -35,7 +35,7 @@ export enum NinjaCommand {
     ShowReleaseNotes = "vjeko-al-objid.show-release-notes",
     CopyRanges = "vjeko-al-objid.copy-ranges",
     ConsolidateRanges = "vjeko-al-objid.consolidate-ranges",
-    CreateSimpleAppPool = "vjeko-al-objid.create-app-pool-simple",
+    CreateSimpleAppPool = "vjeko-al-objid.create-app-pool",
     ValidateLicense = "vjeko-al-objid.validate-bclicense",
     SelectBCLicense = "vjeko-al-objid.select-bclicense",
     CommitSuggestion = "vjeko-al-objid.commit-suggestion",
@@ -58,7 +58,7 @@ export const commandMap: { [key: string]: (...args: any[]) => any } = {
     [NinjaCommand.ShowReleaseNotes]: showReleaseNotes,
     [NinjaCommand.CopyRanges]: copyRanges,
     [NinjaCommand.ConsolidateRanges]: consolidateRanges,
-    [NinjaCommand.CreateSimpleAppPool]: createSimpleAppPool,
+    [NinjaCommand.CreateSimpleAppPool]: createAppPool,
     [NinjaCommand.ValidateLicense]: validateLicense,
     [NinjaCommand.SelectBCLicense]: selectBCLicense,
     [NinjaCommand.CommitSuggestion]: commitSuggestion,
