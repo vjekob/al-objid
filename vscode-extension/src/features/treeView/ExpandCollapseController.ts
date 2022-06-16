@@ -1,5 +1,6 @@
 import { commands, TreeItemCollapsibleState } from "vscode";
 import { CodeCommand } from "../../commands/commands";
+import { Telemetry, TelemetryEventType } from "../../lib/Telemetry";
 import { PropertyBag } from "../../lib/types/PropertyBag";
 import { Node } from "./Node";
 
@@ -68,12 +69,14 @@ export class ExpandCollapseController {
     }
 
     public expand(node: Node) {
+        Telemetry.instance.log(TelemetryEventType.TreeView, undefined, { action: "expand", id: this._id });
         this._treeState.set(node, TreeItemCollapsibleState.Expanded);
         this.setHasExpanded(true);
         this.reset();
     }
 
     public collapse(node: Node) {
+        Telemetry.instance.log(TelemetryEventType.TreeView, undefined, { action: "collapse", id: this._id });
         this._treeState.set(node, TreeItemCollapsibleState.Collapsed);
         this.setHasCollapsed(true);
         this.reset();

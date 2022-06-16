@@ -54,10 +54,16 @@ export class Config extends DisposableHolder {
     }
 
     public get isBackEndConfigInError(): boolean {
-        return (
-            (this.backEndUrl === DEFAULT_HOST_NAME && this.backEndUrlPoll !== POLL_HOST_NAME) ||
-            (this.backEndUrl !== DEFAULT_HOST_NAME && this.backEndUrlPoll === POLL_HOST_NAME)
-        );
+        return !!this.backEndConfigErrorReason;
+    }
+
+    public get backEndConfigErrorReason(): string | undefined {
+        if (this.backEndUrl === DEFAULT_HOST_NAME && this.backEndUrlPoll !== POLL_HOST_NAME) {
+            return "Non-default poll URL with default back-end URL";
+        }
+        if (this.backEndUrl !== DEFAULT_HOST_NAME && this.backEndUrlPoll === POLL_HOST_NAME) {
+            return "Non-default back-end URL with default poll URL";
+        }
     }
 
     public get showEventLogNotifications(): boolean {

@@ -12,6 +12,7 @@ import { LogLevel, output } from "../features/Output";
 import { Telemetry } from "../lib/Telemetry";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
+import { NinjaCommand } from "./commands";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -325,7 +326,7 @@ export const autoSyncObjectIds = async () => {
         compressConsumptions(consumptions, apps);
         let payload = authorizeConsumptions(consumptions, apps);
 
-        Telemetry.instance.log("autoSyncIds");
+        Telemetry.instance.logCommand(NinjaCommand.AutoSyncObjectIds);
         await Backend.autoSyncIds(payload, false);
         return autoSyncResult(AutoSyncResult.Success);
     });

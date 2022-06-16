@@ -17,6 +17,8 @@ export const URLS = {
 };
 
 export const LABELS = {
+    BUTTON_INITIAL_YES: "Yes, please",
+    BUTTON_INITIAL_NO: "No, thanks",
     BUTTON_SYNCHRONIZE: "Synchronize",
     BUTTON_LEARN_MORE: "Learn more",
     BUTTON_DONT_ASK: "Stop asking me for this VS Code session",

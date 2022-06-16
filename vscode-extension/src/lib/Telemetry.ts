@@ -3,9 +3,24 @@ import { ExtensionContext, version } from "vscode";
 import { getSha256 } from "./functions/getSha256";
 import { Backend } from "./backend/Backend";
 import { EXTENSION_VERSION } from "./constants";
+import { ALApp } from "./ALApp";
+import { Config } from "./Config";
+import { NinjaCommand } from "../commands/commands";
 
-const TELEMETRY_USER_SHA = "telemetry.userSha";
-const TELEMETRY_APP_SHA = "telemetry.appSha";
+const TELEMETRY_USER_SHA = "alninja.telemetry.userSha";
+
+export enum TelemetryEventType {
+    Start = "start",
+    InvalidBackEndConfig = "invalidBackEndConfig",
+    Command = "command",
+    NextId = "nextId",
+    LearnMore = "learn",
+    ReleaseNotes = "releaseNotes",
+    ObjIdConfigDeleted = "objIdConfigDeleted",
+    ShowDocument = "showDocument",
+    TreeView = "treeView",
+    FeatureInUse = "feature",
+}
 
 export class Telemetry {
     //#region Singleton
@@ -20,12 +35,7 @@ export class Telemetry {
 
     private _context?: ExtensionContext;
     private _userSha?: string;
-    private _appSha: PropertyBag<string | undefined> = {};
     private _loggedOnce: PropertyBag<boolean> = {};
-
-    private getAppShaGlobalStateKey(appId: string): string {
-        return `${TELEMETRY_APP_SHA}.${appId}`;
-    }
 
     private get userSha(): string {
         if (!this._userSha) {
@@ -41,38 +51,50 @@ export class Telemetry {
         return this._userSha;
     }
 
-    private getAppSha(appId: string): string {
-        if (!this._appSha[appId]) {
-            this._appSha[appId] = this._context!.globalState.get<string>(this.getAppShaGlobalStateKey(appId));
-        }
-        if (!this._appSha[appId]) {
-            const now = Date.now();
-            this._context!.globalState.update(
-                this.getAppShaGlobalStateKey(appId),
-                (this._appSha[appId] = getSha256(`${now + Math.random() * now}.${appId}.${now}`))
-            );
-        }
-        return this._appSha[appId]!;
-    }
-
     public setContext(context: ExtensionContext) {
         this._context = context;
-        this.log("start", undefined, {
+        this.log(TelemetryEventType.Start, undefined, {
             ninja: EXTENSION_VERSION,
             vscode: version,
+            ownEndpoints: !Config.instance.isDefaultBackEndConfiguration,
         });
     }
 
-    public log(event: string, appId?: string, context?: any): void {
-        Backend.telemetry(appId, this.userSha, event, context);
+    public log(event: TelemetryEventType, app?: ALApp, context?: any): void {
+        Backend.telemetry(app?.hash, this.userSha, event, context);
     }
 
-    public logOnce(event: string, appId?: string, context?: any): void {
-        const logKey = `${appId || ""}.${event}`;
+    public logAppCommand(app: ALApp, command: NinjaCommand, context: {} = {}): void {
+        Backend.telemetry(app.hash, this.userSha, TelemetryEventType.Command, { command, ...context });
+    }
+
+    public logCommand(command: NinjaCommand, context: {} = {}): void {
+        Backend.telemetry(undefined, this.userSha, TelemetryEventType.Command, { command, ...context });
+    }
+
+    public logNextNo(app: ALApp, type: string, commit: boolean, conflictPrevented?: boolean) {
+        Backend.telemetry(app.hash, this.userSha, TelemetryEventType.NextId, { type, commit, conflictPrevented });
+    }
+
+    public logLearnMore(document: string) {
+        Backend.telemetry(undefined, this.userSha, TelemetryEventType.LearnMore, { document });
+    }
+
+    public logOncePerSession(event: TelemetryEventType, app?: ALApp, context?: any): void {
+        const logKey = `${app?.hash || ""}.${event}`;
         if (this._loggedOnce[logKey]) {
             return;
         }
         this._loggedOnce[logKey] = true;
-        this.log(event, appId, context);
+        this.log(event, app, context);
+    }
+
+    public logOnceAndNeverAgain(event: TelemetryEventType, app?: ALApp, context?: any): void {
+        const logId = `user:${this.userSha}${app ? `.app:${app.hash}` : ""}.${event}:${JSON.stringify(context)}`;
+        // if (this._context!.globalState.get<boolean>(logId)) {
+        //     return;
+        // }
+        // this._context!.globalState.update(logId, true);
+        this.log(event, app, context);
     }
 }

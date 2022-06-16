@@ -4,6 +4,8 @@ import { LABELS } from "../lib/constants";
 import { showDocument } from "../lib/functions/showDocument";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
+import { Telemetry } from "../lib/Telemetry";
+import { NinjaCommand } from "./commands";
 
 export async function validateLicense(uri: any) {
     const license = await (uri ? getExplicitLicense(uri) : getDefaultLicense());
@@ -12,6 +14,8 @@ export async function validateLicense(uri: any) {
         license.validate();
         return;
     }
+
+    Telemetry.instance.logCommand(NinjaCommand.ValidateLicense);
 
     if (license === LABELS.BUTTON_LEARN_MORE) {
         showDocument("validate-license");

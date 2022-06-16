@@ -4,12 +4,16 @@ import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { AppCommandContext } from "./contexts/AppCommandContext";
+import { Telemetry } from "../lib/Telemetry";
+import { NinjaCommand } from "./commands";
 
 export async function copyRanges(context: AppCommandContext) {
     const app = context?.app || (await WorkspaceManager.instance.selectWorkspaceFolder());
     if (!app) {
         return;
     }
+
+    Telemetry.instance.logCommand(NinjaCommand.CopyRanges);
 
     const ranges = app.config.idRanges;
     const existingRangesJson = JSON.stringify(ranges);

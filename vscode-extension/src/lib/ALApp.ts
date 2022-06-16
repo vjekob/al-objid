@@ -10,6 +10,7 @@ import { FileWatcher } from "./FileWatcher";
 import { ObjIdConfigWatcher } from "./ObjectIdConfigWatcher";
 import { decrypt, encrypt } from "./Encryption";
 import { BackEndAppInfo } from "./backend/BackEndAppInfo";
+import { Telemetry, TelemetryEventType } from "./Telemetry";
 
 export class ALApp implements Disposable, BackEndAppInfo {
     private readonly _uri: Uri;
@@ -33,23 +34,43 @@ export class ALApp implements Disposable, BackEndAppInfo {
         this._manifest = manifest;
         this._name = name;
         this._configUri = Uri.file(path.join(uri.fsPath, CONFIG_FILE_NAME));
-        this._config = new ObjIdConfig(this._configUri, this);
+        this._config = this.createObjectIdConfig();
 
         this._manifestWatcher = new FileWatcher(manifest.uri);
         this._manifestChanged = this._manifestWatcher.onChanged(() => this.onManifestChangedFromWatcher());
 
         this._configWatcher = new ObjIdConfigWatcher(
             this._config,
-            () => ({
-                hash: this.hash,
-                name: this._manifest.name,
-            }),
+            () => this,
             () => {
                 const newConfig = this.setUpConfigFile();
                 this._onConfigChanged.fire(this);
                 return newConfig;
             }
         );
+    }
+
+    private createObjectIdConfig(): ObjIdConfig {
+        const objIdConfig = new ObjIdConfig(this._configUri, this);
+
+        const features: string[] = [];
+        if (objIdConfig.idRanges.length > 0) {
+            features.push("logicalRanges");
+        }
+        if (objIdConfig.objectTypesSpecified.length > 0) {
+            features.push("objectRanges");
+        }
+        if (objIdConfig.appPoolId?.trim()) {
+            features.push("appPoolId");
+        }
+        if (objIdConfig.bcLicense?.trim()) {
+            features.push("bcLicense");
+        }
+        if (features.length) {
+            Telemetry.instance.logOnceAndNeverAgain(TelemetryEventType.FeatureInUse, this, { features });
+        }
+
+        return objIdConfig;
     }
 
     private onManifestChangedFromWatcher() {
@@ -73,7 +94,7 @@ export class ALApp implements Disposable, BackEndAppInfo {
     }
 
     private setUpConfigFile(): ObjIdConfig {
-        return (this._config = new ObjIdConfig(this._configUri, this));
+        return (this._config = this.createObjectIdConfig());
     }
 
     public static tryCreate(folder: WorkspaceFolder): ALApp | undefined {

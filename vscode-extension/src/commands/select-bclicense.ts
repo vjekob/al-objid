@@ -6,6 +6,8 @@ import { showDocument } from "../lib/functions/showDocument";
 import { UI } from "../lib/UI";
 import { ALApp } from "../lib/ALApp";
 import { WorkspaceManager } from "../features/WorkspaceManager";
+import { Telemetry } from "../lib/Telemetry";
+import { NinjaCommand } from "./commands";
 
 export async function selectBCLicense(appOrUri?: ALApp | Uri) {
     if (!appOrUri) {
@@ -20,6 +22,8 @@ export async function selectBCLicense(appOrUri?: ALApp | Uri) {
     if (!licensePath) {
         return;
     }
+
+    Telemetry.instance.logCommand(NinjaCommand.SelectBCLicense);
 
     const folderPath = workspace.getWorkspaceFolder(appOrUri instanceof Uri ? appOrUri : appOrUri.uri)!.uri.fsPath;
 

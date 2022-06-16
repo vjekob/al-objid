@@ -8,6 +8,8 @@ import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
 import { featureFlags } from "../flags";
+import { Telemetry } from "../lib/Telemetry";
+import { NinjaCommand } from "./commands";
 
 // TODO Add telemetry here and EVERYWHERE!
 // There can't be a command that doesn't log telemetry!
@@ -15,6 +17,8 @@ export const createAppPool = async (simple: boolean | undefined) => {
     if (!featureFlags.managedPools) {
         simple = true;
     }
+
+    Telemetry.instance.logCommand(NinjaCommand.CreateAppPool, { simple });
 
     if (simple === undefined) {
         simple = await shouldCreateSimplePool();

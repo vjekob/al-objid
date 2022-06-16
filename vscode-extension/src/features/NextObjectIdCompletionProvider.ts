@@ -24,6 +24,7 @@ import { getRangeForId } from "../lib/functions/getRangeForId";
 import { ALApp } from "../lib/ALApp";
 import { WorkspaceManager } from "./WorkspaceManager";
 import { NinjaCommand } from "../commands/commands";
+import { showDocument } from "../lib/functions/showDocument";
 
 type SymbolInfo = {
     type: string;
@@ -37,22 +38,25 @@ let stopAsking = false;
 
 export async function syncIfChosen(app: ALApp, choice: Promise<string | undefined>) {
     switch (await choice) {
-        case LABELS.BUTTON_SYNCHRONIZE:
+        case LABELS.BUTTON_INITIAL_YES:
             commands.executeCommand(NinjaCommand.SyncObjectIds, {
                 skipQuestion: true,
+                fromInitial: true,
+                app,
             });
             break;
-        case LABELS.BUTTON_LEARN_MORE:
-            Telemetry.instance.log("docs.learnExtension");
-            env.openExternal(Uri.parse(URLS.EXTENSION_LEARN));
-            break;
-        default:
+        case LABELS.BUTTON_INITIAL_NO:
             syncDisabled[app.hash] = true;
             if (++syncSkipped > 1) {
                 if ((await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo()) === LABELS.BUTTON_DONT_ASK) {
                     stopAsking = true;
                 }
             }
+            break;
+        case LABELS.BUTTON_LEARN_MORE:
+            // Telemetry.instance.logLearnMore("docs.learnExtension");
+            showDocument("welcome");
+            // env.openExternal(Uri.parse(URLS.EXTENSION_LEARN));
             break;
     }
 }
@@ -213,7 +217,7 @@ export class NextObjectIdCompletionProvider {
         }
 
         const objectId = await Backend.getNextNo(app, type, app.manifest.idRanges, false);
-        Telemetry.instance.log("getNextNo-fetch", app.hash);
+        Telemetry.instance.logNextNo(app, type, false);
 
         if (showNotificationsIfNecessary(app, objectId) || !objectId) return [];
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);

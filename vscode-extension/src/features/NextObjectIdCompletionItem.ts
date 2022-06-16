@@ -14,7 +14,7 @@ import { Backend } from "../lib/backend/Backend";
 import { NinjaALRange } from "../lib/types/NinjaALRange";
 import { LogLevel, output } from "./Output";
 import { NextObjectIdInfo } from "../lib/types/NextObjectIdInfo";
-import { Telemetry } from "../lib/Telemetry";
+import { Telemetry, TelemetryEventType } from "../lib/Telemetry";
 import { NextIdContext } from "./ParserConnector";
 import { showDocument } from "../lib/functions/showDocument";
 import { UI } from "../lib/UI";
@@ -81,9 +81,9 @@ export class NextObjectIdCompletionItem extends CompletionItem {
                         true,
                         objectId.id as number
                     );
-                    const notChanged = !realId || this.isIdEqual(realId.id, objectId.id as number);
-                    Telemetry.instance.log("getNextNo-commit", app.hash, notChanged ? undefined : "different");
-                    if (notChanged) {
+                    const changed = realId && !this.isIdEqual(realId.id, objectId.id as number);
+                    Telemetry.instance.logNextNo(app, type, true, changed);
+                    if (!changed) {
                         return;
                     }
                     output.log(

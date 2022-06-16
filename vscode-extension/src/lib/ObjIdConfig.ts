@@ -10,6 +10,7 @@ import { Backend } from "./backend/Backend";
 import { ALObjectType } from "./types/ALObjectType";
 import { BCLicense } from "./BCLicense";
 import { ObjIdConfigLinter } from "../features/linters/ObjIdConfigLinter";
+import { Telemetry, TelemetryEventType } from "./Telemetry";
 
 interface ObjIdConfigJson {
     authKey: string;

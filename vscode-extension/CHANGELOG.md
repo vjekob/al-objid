@@ -13,12 +13,22 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     multiple active licenses and to see license report for all of them independently. Most likely to be released in
     2.11.0.
 
-## [2.10.0] - 2022-06-10
+## [2.9.2] - 2022-06-15
 
 ### Added
 
--   App Pool Explore feature is added. It allows managing app pools and provides overview of object ID consumptions
-    presented per app pool, rather than per app.
+-   Telemetry events included in several places where they were not previously sent.
+
+### Fixed
+
+-   Selecting folder from among workspace folders causes the _Cannot read properties of undefined (reading
+    'manifest')_ error. ([Git issue #39](https://github.com/vjekob/al-objid/issues/39))
+-   Issues when sending telemetry caused many events to be missed under certain circumstances. Race conditions in
+    executing asynchronous initialization logic prevented this issue to be identified.
+-   Selecting "Learn more" in some situations does not show a document, and shows the "<document> not found"
+    message.
+-   Initial synchronization of object IDs uses some more user-friendly and straightforward language to explain
+    what's going on.
 
 ## [2.9.1] - 2022-06-08
 

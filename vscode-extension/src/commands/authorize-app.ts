@@ -8,6 +8,7 @@ import { getAppNames } from "../lib/functions/getAppNames";
 import { showDocument } from "../lib/functions/showDocument";
 import { CONFIG_FILE_NAME, DOCUMENTS } from "../lib/constants";
 import { WorkspaceManager } from "../features/WorkspaceManager";
+import { NinjaCommand } from "./commands";
 
 export const authorizeApp = async () => {
     const apps = await WorkspaceManager.instance.pickFolders("to authorize");
@@ -20,7 +21,7 @@ export const authorizeApp = async () => {
         operation: async app => {
             output.log(`Authorizing app "${app.manifest.name}" id ${app.hash}`, LogLevel.Info);
 
-            Telemetry.instance.log("authorize", app.hash);
+            Telemetry.instance.logAppCommand(app, NinjaCommand.AuthorizeApp);
             const gitUser = await Git.instance.getUserInfo(app.manifest.uri);
             let response = await Backend.authorizeApp(app, gitUser.name, gitUser.email, async response => {
                 const { error } = response;

@@ -3,14 +3,12 @@ import { Disposable, workspace } from "vscode";
 import { DOCUMENTS, LABELS } from "./constants";
 import { FileWatcher } from "./FileWatcher";
 import { showDocument } from "./functions/showDocument";
-import { Telemetry } from "./Telemetry";
+import { Telemetry, TelemetryEventType } from "./Telemetry";
 import { UI } from "./UI";
 import { ObjIdConfigLinter } from "../features/linters/ObjIdConfigLinter";
+import { ALApp } from "./ALApp";
 
-type GetAppInfo = () => {
-    name: string;
-    hash: string;
-};
+type GetAppInfo = () => ALApp;
 
 export class ObjIdConfigWatcher implements Disposable {
     private readonly _configWatcher: FileWatcher;
@@ -64,12 +62,12 @@ export class ObjIdConfigWatcher implements Disposable {
 
     private async onConfigDeleted(gitEvent: boolean) {
         if ((await this._config.isAuthKeyValid()) && this._config.authKey) {
-            const { hash, name } = this._getAppInfo();
+            const app = this._getAppInfo();
             if (gitEvent) {
-                this.showUnauthorizedBranch(name);
+                this.showUnauthorizedBranch(app.name);
                 return;
             }
-            this.showDeletedAuthorizationError(hash, name);
+            this.showDeletedAuthorizationError(app);
         }
         this._config = this._reload();
     }
@@ -92,10 +90,10 @@ export class ObjIdConfigWatcher implements Disposable {
         );
     }
 
-    private async showDeletedAuthorizationError(hash: string, name: string) {
-        Telemetry.instance.log("critical.objIdConfigDeleted", hash);
+    private async showDeletedAuthorizationError(app: ALApp) {
+        Telemetry.instance.log(TelemetryEventType.ObjIdConfigDeleted, app);
         this.showWithDocumentation(
-            UI.authorization.showDeletedAuthorizationError(name),
+            UI.authorization.showDeletedAuthorizationError(app.name),
             DOCUMENTS.AUTHORIZATION_DELETED
         );
     }

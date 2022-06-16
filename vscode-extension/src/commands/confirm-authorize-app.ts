@@ -1,5 +1,6 @@
 import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import { Telemetry } from "../lib/Telemetry";
 import { NinjaCommand } from "./commands";
 
 const OPTION = {
@@ -26,13 +27,18 @@ async function confirmAgain() {
         case OPTION_AGAIN.YES:
             await executeAuthorization();
             break;
+        case OPTION_AGAIN.NO:
+            Telemetry.instance.logCommand(NinjaCommand.ConfirmAuthorizeApp, { confirmAgain: "no" })
+            break;
         case OPTION_AGAIN.LEARN:
             env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
             break;
     }
 }
 
-export const confirmAuthorizeApp = async () => {
+export const confirmAuthorizeApp = async (fromStatusBar: boolean = false) => {
+    Telemetry.instance.logCommand(NinjaCommand.ConfirmAuthorizeApp, { fromStatusBar });
+
     let result = await window.showQuickPick(Object.values(OPTION), {
         placeHolder: "Are you sure you want to authorize your app?",
     });

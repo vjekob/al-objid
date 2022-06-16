@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { Config } from "../lib/Config";
 import { ALREADY_USED, EXTENSION_VERSION, LABELS } from "../lib/constants";
 import { UI } from "../lib/UI";
-import { Telemetry } from "../lib/Telemetry";
+import { Telemetry, TelemetryEventType } from "../lib/Telemetry";
 import { CodeCommand } from "../commands/commands";
 
 export class ReleaseNotesHandler {
@@ -64,12 +64,13 @@ export class ReleaseNotesHandler {
         }
 
         if ((await UI.general.showReleaseNotes(version)) === LABELS.BUTTON_SHOW_RELEASE_NOTES) {
-            Telemetry.instance.log("releaseNotes", undefined, version);
+            Telemetry.instance.log(TelemetryEventType.ReleaseNotes, undefined, { version });
             this.openReleaseNotesPanel(version);
         }
     }
 
     private openReleaseNotesPanel(version: string) {
+        Telemetry.instance.log(TelemetryEventType.ReleaseNotes, undefined, { version });
         commands.executeCommand(CodeCommand.MarkdownShowPreview, this.releaseNotesUri(version));
     }
 

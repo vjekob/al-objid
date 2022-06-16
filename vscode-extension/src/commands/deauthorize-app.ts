@@ -8,6 +8,7 @@ import { getAppNames } from "../lib/functions/getAppNames";
 import { showDocument } from "../lib/functions/showDocument";
 import { DOCUMENTS, CONFIG_FILE_NAME } from "../lib/constants";
 import { WorkspaceManager } from "../features/WorkspaceManager";
+import { NinjaCommand } from "./commands";
 
 export const deauthorizeApp = async () => {
     const apps = await WorkspaceManager.instance.pickFolders("to deauthorize");
@@ -25,7 +26,7 @@ export const deauthorizeApp = async () => {
                 return false;
             }
 
-            Telemetry.instance.log("deauthorize", app.hash);
+            Telemetry.instance.logAppCommand(app, NinjaCommand.DeauthorizeApp);
             let response = await Backend.deauthorizeApp(app, async response => {
                 switch (response.error.statusCode) {
                     case 401:

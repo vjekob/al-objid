@@ -22,7 +22,6 @@ import { setFlags } from "./flags";
 export function activate(context: ExtensionContext) {
     setFlags();
     commands.executeCommand(CodeCommand.SetContext, "vjeko-al-objid.active", true);
-
     ConsumptionWarnings.instance.setContext(context);
     Telemetry.instance.setContext(context);
 

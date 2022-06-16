@@ -7,10 +7,13 @@ import {
 } from "./contexts/GoToDefinitionCommandContext";
 import { Telemetry } from "../lib/Telemetry";
 import { NinjaALRange } from "../lib/types/NinjaALRange";
-import { CodeCommand } from "./commands";
+import { CodeCommand, NinjaCommand } from "./commands";
 
 export function goToDefinition(context: GoToDefinitionCommandContext<NinjaALRange>) {
-    Telemetry.instance.log("goto-def", context.goto.app.hash, { file: context.goto.file, type: context.goto.type });
+    Telemetry.instance.logAppCommand(context.goto.app, NinjaCommand.GoToDefinition, {
+        file: context.goto.file,
+        type: context.goto.type,
+    });
 
     switch (context.goto.file) {
         case GoToDefinitionFile.Manifest:

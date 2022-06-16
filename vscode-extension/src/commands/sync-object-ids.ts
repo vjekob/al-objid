@@ -1,4 +1,3 @@
-import { Uri } from "vscode";
 import { Backend } from "../lib/backend/Backend";
 import { UI } from "../lib/UI";
 import { LogLevel, output } from "../features/Output";
@@ -7,26 +6,25 @@ import { LABELS } from "../lib/constants";
 import { getActualConsumption, getObjectDefinitions, getWorkspaceFolderFiles } from "../lib/ObjectIds";
 import { Telemetry } from "../lib/Telemetry";
 import { WorkspaceManager } from "../features/WorkspaceManager";
+import { NinjaCommand } from "./commands";
+import { ALApp } from "../lib/ALApp";
 
 interface SyncOptions {
     merge: boolean;
     skipQuestion: boolean;
-    uri: Uri;
+    fromInitial: boolean;
+    app?: ALApp;
 }
 
 /**
  * Synchronizes object ID consumption information with the Azure back end.
  */
-export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
-    const app = appId
-        ? WorkspaceManager.instance.getALAppFromHash(appId)
-        : await WorkspaceManager.instance.selectWorkspaceFolder(options?.uri);
+export const syncObjectIds = async (options?: SyncOptions) => {
+    const app = options?.app || (await WorkspaceManager.instance.selectWorkspaceFolder());
 
     if (!app) {
         return;
     }
-
-    let authKey = app.config.authKey;
 
     if (!options?.merge && !options?.skipQuestion) {
         let consumption = await Backend.getConsumption(app);
@@ -42,8 +40,12 @@ export const syncObjectIds = async (options?: SyncOptions, appId?: string) => {
     const objects = await getObjectDefinitions(uris);
     const consumption: ConsumptionInfo = getActualConsumption(objects);
 
-    Telemetry.instance.log("syncIds", app.hash);
+    Telemetry.instance.logAppCommand(app, NinjaCommand.SyncObjectIds);
     if (await Backend.syncIds(app, consumption, !!options?.merge)) {
-        UI.sync.showSuccessInfo(app);
+        if (options?.fromInitial) {
+            UI.sync.showInitialSuccessInfo(app);
+        } else {
+            UI.sync.showSuccessInfo(app);
+        }
     }
 };

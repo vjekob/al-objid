@@ -4,12 +4,16 @@ import { UI } from "../lib/UI";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
 import { AppCommandContext } from "./contexts/AppCommandContext";
+import { Telemetry } from "../lib/Telemetry";
+import { NinjaCommand } from "./commands";
 
 export async function consolidateRanges(context: AppCommandContext) {
     const app = context?.app || (await WorkspaceManager.instance.selectWorkspaceFolder());
     if (!app) {
         return;
     }
+
+    Telemetry.instance.logCommand(NinjaCommand.ConsolidateRanges);
 
     // Create a sorted clone of app.json ranges and .objidconfig (logical) ranges
     let ranges = app.manifest.idRanges.sort((left, right) => left.from - right.from).map(range => ({ ...range }));

@@ -12,7 +12,7 @@ import { Config } from "../Config";
 import { UI } from "../UI";
 import { API_RESULT, LABELS } from "../constants";
 import { env, Uri } from "vscode";
-import { Telemetry } from "../Telemetry";
+import { Telemetry, TelemetryEventType } from "../Telemetry";
 import { getRangeForId } from "../functions/getRangeForId";
 import { BackEndAppInfo } from "./BackEndAppInfo";
 import { NinjaALRange } from "../types/NinjaALRange";
@@ -69,7 +69,7 @@ export class Backend {
         require?: number
     ): Promise<NextObjectIdInfo | undefined> {
         if (!(await this.isKnownManagedApp(app.hash))) {
-            if (!commit) {
+            if (commit) {
                 this.rememberManagedApp(app.hash);
             }
         }
@@ -202,7 +202,9 @@ export class Backend {
 
         // We are not calling the polling endpoint if it's misconfigured. Either both URLs are default, or polling is pointless.
         if (Config.instance.isBackEndConfigInError) {
-            Telemetry.instance.logOnce("invalidBackendConfig");
+            Telemetry.instance.logOncePerSession(TelemetryEventType.InvalidBackEndConfig, undefined, {
+                errorReason: Config.instance.backEndConfigErrorReason,
+            });
             return;
         }
 
@@ -272,8 +274,13 @@ export class Backend {
         return response.value ?? false;
     }
 
-    public static async telemetry(appSha: string | undefined, userSha: string, event: string, context?: any) {
-        if (appSha && !(await this.isKnownManagedApp(appSha))) {
+    public static async telemetry(
+        appSha: string | undefined,
+        userSha: string,
+        event: TelemetryEventType,
+        context?: any
+    ) {
+        if (appSha && !(await this.isKnownManagedApp(appSha, true))) {
             // No telemetry is logged for non-managed apps
             return;
         }
@@ -282,7 +289,6 @@ export class Backend {
             "/api/telemetry",
             "POST",
             {
-                ownEndpoints: !Config.instance.isDefaultBackEndConfiguration,
                 userSha,
                 appSha,
                 event,

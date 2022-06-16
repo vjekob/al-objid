@@ -1,5 +1,6 @@
 import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import { Telemetry } from "../lib/Telemetry";
 import { NinjaCommand } from "./commands";
 
 const OPTION = {
@@ -13,6 +14,8 @@ async function executeDeuthorization() {
 }
 
 export const confirmDeauthorizeApp = async () => {
+    Telemetry.instance.logCommand(NinjaCommand.ConfirmDeauthorizeApp);
+
     let result = await window.showQuickPick(Object.values(OPTION), {
         placeHolder: "Are you sure you want to deauthorize your app?",
     });

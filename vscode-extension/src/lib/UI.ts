@@ -70,6 +70,8 @@ export const UI = {
             window.showInformationMessage(
                 `Object IDs${app ? ` for ${describeApp(app)}` : ""} are now in sync with the Azure back end.`
             ),
+        showInitialSuccessInfo: (app: ALApp) =>
+            window.showInformationMessage(`That's it, no more object ID conflicts in ${app.name}.`),
         showAreYouSure: async () =>
             window.showQuickPick(Object.values(LABELS.SYNC_ARE_YOU_SURE), {
                 placeHolder: "Are you sure you want to replace existing object ID assignments?",
@@ -89,10 +91,9 @@ export const UI = {
     nextId: {
         showNoBackEndConsumptionInfo: async (app: ALApp) =>
             window.showInformationMessage(
-                `Azure back end has no information about consumed object IDs for ${app.config.appPoolId ? `app pool to which ${describeApp(app)} belongs` : `${describeApp(app)}`
-                }. Do you want to synchronize?`,
-                LABELS.BUTTON_SYNCHRONIZE,
-                "No",
+                `We see that you have AL Object ID Ninja installed. Would you like it to assign unique object IDs for you?`,
+                LABELS.BUTTON_INITIAL_YES,
+                LABELS.BUTTON_INITIAL_NO,
                 LABELS.BUTTON_LEARN_MORE
             ),
         showNumbersAboutToRunOut: (name: string, type: string, remaining: number) =>
@@ -215,9 +216,10 @@ export const UI = {
             ),
         showInvalidRangeFromToError: (range: NinjaALRange) =>
             window.showErrorMessage(
-                `Range ${range.description
-                    ? `${range.description} (${range.from}..${range.to})`
-                    : `${range.from}..${range.to}`
+                `Range ${
+                    range.description
+                        ? `${range.description} (${range.from}..${range.to})`
+                        : `${range.from}..${range.to}`
                 } has "to" lower than "from". "from" must be lower, and "to" must be higher.`,
                 LABELS.FIX
             ),
