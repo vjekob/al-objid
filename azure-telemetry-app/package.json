@@ -10,7 +10,9 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@vjeko.com/azure-func": "0.0.4"
+    "@vjeko.com/azure-func": "0.0.4",
+    "applicationinsights": "^2.3.3",
+    "geoip-lite": "^1.4.5"
   },
   "devDependencies": {
     "@azure/functions": "^1.2.3",
