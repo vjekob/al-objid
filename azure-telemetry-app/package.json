@@ -12,7 +12,7 @@
   "dependencies": {
     "@vjeko.com/azure-func": "0.0.4",
     "applicationinsights": "^2.3.3",
-    "geoip-lite": "^1.4.5"
+    "fast-geoip": "^1.1.81"
   },
   "devDependencies": {
     "@azure/functions": "^1.2.3",
