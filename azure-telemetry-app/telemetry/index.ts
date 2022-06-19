@@ -9,7 +9,7 @@ setup(InsightsConnectionString);
 
 const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
     const ipAddress = request.rawContext.req.headers["x-forwarded-for"] || "";
-    let { country, city } = (await lookup(ipAddress)) || {};
+    let { country, region, city } = (await lookup(ipAddress)) || {};
     country = getCountry(country);
 
     let { userSha, appSha, event, context } = request.body;
@@ -20,7 +20,7 @@ const telemetry = new RequestHandler<TelemetryRequest>(async (request) => {
     }
     client.trackEvent({
         name: event,
-        properties: { user: userSha, app: appSha, country, city, ...context, ipAddress }
+        properties: { user: userSha, app: appSha, country, region, city, ...context, ipAddress }
     });
 });
 
