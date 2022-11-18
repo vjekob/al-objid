@@ -2,7 +2,7 @@ import * as crypto from "crypto";
 import { output } from "../features/Output";
 
 const ALGORITHM = "aes-256-cbc";
-var IV_LENGTH = 16;
+const IV_LENGTH = 16;
 const IV_SEPARATOR = "?";
 
 export function encrypt(text: string, encryptionKey: string): string | undefined {
