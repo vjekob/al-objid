@@ -1,9 +1,9 @@
 export interface TelemetryRequest {
-    ownEndpoints?: boolean;
     userSha?: string;
     appSha?: string;
     event: string;
     context?: any;
+    version: string;
 }
 
 export interface TelemetryEntry extends TelemetryRequest {
