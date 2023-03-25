@@ -1,14 +1,4 @@
-import {
-    CancellationToken,
-    commands,
-    CompletionContext,
-    CompletionItem,
-    DocumentSymbol,
-    Position,
-    ProviderResult,
-    TextDocument,
-    Uri,
-} from "vscode";
+import { commands, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS } from "../lib/constants";
@@ -162,7 +152,9 @@ async function getTypeAtPositionRaw(
     const match = symbol.name.match(/^(?<type>\w+)\s(?<id>\d+)\s(?<name>"?.+"?)?$/);
     if (match) {
         const { type, id } = match.groups as SymbolInfo;
-        if (id !== "0") return null;
+        if (id !== "0") {
+            return null;
+        }
 
         const pos = position.translate(
             -symbol.range.start.line,
@@ -185,14 +177,18 @@ async function getTypeAtPosition(
     context: NextIdContext
 ): Promise<string | null> {
     let type = await getTypeAtPositionRaw(document, position, context);
-    if (type === null) return null;
+    if (type === null) {
+        return null;
+    }
 
     type = type.toLowerCase();
     return Object.values<string>(ALObjectType).includes(type) || isTableOrEnum(type) ? type : null;
 }
 
 function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): boolean {
-    if (!objectId) return true;
+    if (!objectId) {
+        return true;
+    }
 
     if (!objectId.hasConsumption) {
         if (!syncDisabled[app.hash] && !stopAsking) {
@@ -222,12 +218,7 @@ function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): 
 }
 
 export class NextObjectIdCompletionProvider {
-    async provideCompletionItems(
-        document: TextDocument,
-        position: Position,
-        token: CancellationToken,
-        context: CompletionContext
-    ) {
+    async provideCompletionItems(document: TextDocument, position: Position) {
         const nextIdContext: NextIdContext = { injectSemicolon: false };
         const type = await getTypeAtPosition(document, position, nextIdContext);
         if (!type) {
@@ -242,7 +233,9 @@ export class NextObjectIdCompletionProvider {
         const objectId = await Backend.getNextNo(app, type, app.manifest.idRanges, false);
         Telemetry.instance.logNextNo(app, type, false);
 
-        if (showNotificationsIfNecessary(app, objectId) || !objectId) return [];
+        if (showNotificationsIfNecessary(app, objectId) || !objectId) {
+            return [];
+        }
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
 
         if (Array.isArray(objectId.id)) {
