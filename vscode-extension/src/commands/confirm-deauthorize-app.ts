@@ -1,5 +1,6 @@
 import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import openExternal from "../lib/functions/openExternal";
 import { Telemetry } from "../lib/Telemetry";
 import { NinjaCommand } from "./commands";
 
@@ -24,7 +25,7 @@ export const confirmDeauthorizeApp = async () => {
             executeDeuthorization();
             break;
         case OPTION.LEARN:
-            env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
+            openExternal(URLS.AUTHORIZATION_LEARN);
             break;
     }
 };

@@ -1,5 +1,6 @@
 import { env, ExtensionContext, Uri, window } from "vscode";
 import { EXTENSION_NAME, EXTENSION_VERSION, LABELS } from "../lib/constants";
+import openExternal from "../lib/functions/openExternal";
 import { PropertyBag } from "../lib/types/PropertyBag";
 import { DisposableHolder } from "./DisposableHolder";
 import { LogLevel, output } from "./Output";
@@ -35,7 +36,7 @@ export class HttpStatusHandler extends DisposableHolder {
             LABELS.BUTTON_LEARN_MORE
         );
         if (response === LABELS.BUTTON_LEARN_MORE) {
-            env.openExternal(Uri.parse("https://vjeko.com/2021/10/01/important-announcement-for-al-object-id-ninja/"));
+            openExternal("https://vjeko.com/2021/10/01/important-announcement-for-al-object-id-ninja/");
         }
     }
 
@@ -69,9 +70,7 @@ export class HttpStatusHandler extends DisposableHolder {
                 LABELS.BUTTON_LEARN_MORE
             );
             if (response === LABELS.BUTTON_LEARN_MORE) {
-                env.openExternal(
-                    Uri.parse("https://vjeko.com/why-is-using-old-versions-of-al-object-id-ninja-not-a-good-idea/")
-                );
+                openExternal("https://vjeko.com/why-is-using-old-versions-of-al-object-id-ninja-not-a-good-idea/");
             }
         },
 
@@ -119,7 +118,7 @@ export class HttpStatusHandler extends DisposableHolder {
             LABELS.BUTTON_LEARN_MORE
         );
         if (response === LABELS.BUTTON_LEARN_MORE) {
-            env.openExternal(Uri.parse(error.error.toLowerCase()));
+            openExternal(error.error.toLowerCase());
         }
     }
 

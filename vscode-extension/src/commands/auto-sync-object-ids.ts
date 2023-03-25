@@ -13,6 +13,7 @@ import { Telemetry } from "../lib/Telemetry";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { ALApp } from "../lib/ALApp";
 import { NinjaCommand } from "./commands";
+import openExternal from "../lib/functions/openExternal";
 
 const BranchInfo = {
     getName(branch: GitBranchInfo) {
@@ -181,7 +182,7 @@ export const autoSyncObjectIds = async () => {
             auto = true;
             break;
         case LABELS.AUTO_SYNC_PICK.LEARN_MORE:
-            env.openExternal(Uri.parse(URLS.AUTO_SYNC));
+            openExternal(URLS.AUTO_SYNC);
             return;
         case LABELS.AUTO_SYNC_PICK.INTERACTIVE:
             break;
@@ -343,7 +344,7 @@ export const autoSyncObjectIds = async () => {
             let repoName = getRepoName(result.context);
             output.log(`[auto-sync-object-ids] Git repository ${repoName} is dirty. Cannot auto sync.`, LogLevel.Info);
             if ((await UI.sync.showRepoNotClean(repoName)) === LABELS.BUTTON_LEARN_MORE) {
-                env.openExternal(Uri.parse(URLS.AUTO_SYNC_DIRTY));
+                openExternal(URLS.AUTO_SYNC_DIRTY);
             }
             break;
     }

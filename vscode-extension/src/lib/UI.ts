@@ -111,7 +111,7 @@ export const UI = {
             window.showWarningMessage(
                 "No more numbers are available for assignment. Do you want to synchronize?",
                 LABELS.BUTTON_SYNCHRONIZE,
-                "No"
+                LABELS.NO
             ),
         showNoBackEndConsumptionInfoAlreadySaidNo: async () =>
             window.showInformationMessage(
@@ -216,10 +216,9 @@ export const UI = {
             ),
         showInvalidRangeFromToError: (range: NinjaALRange) =>
             window.showErrorMessage(
-                `Range ${
-                    range.description
-                        ? `${range.description} (${range.from}..${range.to})`
-                        : `${range.from}..${range.to}`
+                `Range ${range.description
+                    ? `${range.description} (${range.from}..${range.to})`
+                    : `${range.from}..${range.to}`
                 } has "to" lower than "from". "from" must be lower, and "to" must be higher.`,
                 LABELS.FIX
             ),
