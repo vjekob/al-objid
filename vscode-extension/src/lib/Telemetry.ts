@@ -57,7 +57,7 @@ export class Telemetry {
 
     public setContext(context: ExtensionContext) {
         this._context = context;
-        this.log(TelemetryEventType.Start, undefined, {
+        this.logOncePerSession(TelemetryEventType.Start, undefined, {
             ninja: EXTENSION_VERSION,
             vscode: version,
             ownEndpoints: !Config.instance.isDefaultBackEndConfiguration,
