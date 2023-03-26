@@ -118,7 +118,7 @@ export class ObjIdConfig {
 
         if (fs.existsSync(this._bcLicense)) {
             this._bcLicensePromise = new Promise<BCLicense | undefined>(resolve =>
-                setTimeout(() => resolve(new BCLicense(this._bcLicense!)))
+                setTimeout(() => resolve(new BCLicense(this._bcLicense!, this._folder.uri)))
             );
         }
     }

@@ -298,7 +298,8 @@ export class ObjIdConfigLinter {
             return;
         }
 
-        const license = new BCLicense(bcLicensePath);
+        const appFolderUri = workspace.getWorkspaceFolder(this._uri)!.uri;
+        const license = new BCLicense(bcLicensePath, appFolderUri);
         if (!license.isValid) {
             diagnose(
                 this.getDetailRange(bcLicense),

@@ -13,7 +13,7 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     multiple active licenses and to see license report for all of them independently. Most likely to be released in
     2.11.0.
 
-## [2.9.3] - 2023-03-31
+## [2.10.0] - 2023-03-31
 
 ### Added
 
@@ -23,6 +23,11 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     notifying the other team members which user has consumed which object ID.
 -   Protected publishers feature added. This allows publishers who don't want to use the notifications feature about
     consumed object IDs to be explicitly prevented by Ninja to share such info.
+
+### Fixed
+
+-   Config file cannot specify relative license path that specifies levels up from current workspace folder.
+    ([Git issue #52](https://github.com/vjekob/al-objid/issues/52)).
 
 ## [2.9.2] - 2023-03-26
 

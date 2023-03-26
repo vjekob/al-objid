@@ -27,8 +27,8 @@ export class BCLicense {
     private _valid: boolean = false;
     private _data: any;
 
-    constructor(path: string) {
-        this._uri = workspace.getWorkspaceFolder(Uri.file(path))!.uri;
+    constructor(path: string, appFolderUri?: Uri) {
+        this._uri = appFolderUri || workspace.getWorkspaceFolder(Uri.file(path))!.uri;
         this._contents = fs.readFileSync(path, { encoding: "utf16le" }).toString() || "";
         if (!this._contents) {
             return;
