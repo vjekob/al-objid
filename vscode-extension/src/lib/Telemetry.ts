@@ -20,6 +20,10 @@ export enum TelemetryEventType {
     ShowDocument = "showDocument",
     TreeView = "treeView",
     FeatureInUse = "feature",
+    AcceptNinja = "acceptNinja",
+    RefuseNinja = "refuseNinja",
+    LearnAboutNinja = "learnAboutNinja",
+    OpenExternal = "openExternal",
 }
 
 export class Telemetry {
@@ -91,10 +95,10 @@ export class Telemetry {
 
     public logOnceAndNeverAgain(event: TelemetryEventType, app?: ALApp, context?: any): void {
         const logId = `user:${this.userSha}${app ? `.app:${app.hash}` : ""}.${event}:${JSON.stringify(context)}`;
-        // if (this._context!.globalState.get<boolean>(logId)) {
-        //     return;
-        // }
-        // this._context!.globalState.update(logId, true);
+        if (this._context!.globalState.get<boolean>(logId)) {
+            return;
+        }
+        this._context!.globalState.update(logId, true);
         this.log(event, app, context);
     }
 }

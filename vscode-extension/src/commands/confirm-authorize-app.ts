@@ -1,5 +1,6 @@
 import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import openExternal from "../lib/functions/openExternal";
 import { Telemetry } from "../lib/Telemetry";
 import { NinjaCommand } from "./commands";
 
@@ -28,10 +29,10 @@ async function confirmAgain() {
             await executeAuthorization();
             break;
         case OPTION_AGAIN.NO:
-            Telemetry.instance.logCommand(NinjaCommand.ConfirmAuthorizeApp, { confirmAgain: "no" })
+            Telemetry.instance.logCommand(NinjaCommand.ConfirmAuthorizeApp, { confirmAgain: "no" });
             break;
         case OPTION_AGAIN.LEARN:
-            env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
+            openExternal(URLS.AUTHORIZATION_LEARN);
             break;
     }
 }
@@ -47,7 +48,7 @@ export const confirmAuthorizeApp = async (fromStatusBar: boolean = false) => {
             confirmAgain();
             break;
         case OPTION.LEARN:
-            env.openExternal(Uri.parse(URLS.AUTHORIZATION_LEARN));
+            openExternal(URLS.AUTHORIZATION_LEARN);
             break;
     }
 };

@@ -1,23 +1,14 @@
-import {
-    CancellationToken,
-    commands,
-    CompletionContext,
-    DocumentSymbol,
-    env,
-    Position,
-    TextDocument,
-    Uri,
-} from "vscode";
+import { commands, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
-import { LABELS, URLS } from "../lib/constants";
+import { LABELS } from "../lib/constants";
 import { ALObjectType } from "../lib/types/ALObjectType";
 import { Backend } from "../lib/backend/Backend";
 import { UI } from "../lib/UI";
 import { output } from "./Output";
 import { NextObjectIdInfo } from "../lib/types/NextObjectIdInfo";
 import { PropertyBag } from "../lib/types/PropertyBag";
-import { Telemetry } from "../lib/Telemetry";
+import { Telemetry, TelemetryEventType } from "../lib/Telemetry";
 import { NextIdContext, ParserConnector } from "./ParserConnector";
 import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
 import { getRangeForId } from "../lib/functions/getRangeForId";
@@ -36,8 +27,18 @@ let syncDisabled: PropertyBag<boolean> = {};
 let syncSkipped = 0;
 let stopAsking = false;
 
-export async function syncIfChosen(app: ALApp, choice: Promise<string | undefined>) {
-    switch (await choice) {
+export async function syncIfChosen(
+    app: ALApp,
+    choicePromise: Promise<string | undefined>,
+    onChoice?: (choice: string | undefined) => void
+): Promise<void> {
+    const choice = await choicePromise;
+    if (typeof onChoice === "function") {
+        onChoice(choice);
+    }
+
+    switch (choice) {
+        case LABELS.BUTTON_SYNCHRONIZE:
         case LABELS.BUTTON_INITIAL_YES:
             commands.executeCommand(NinjaCommand.SyncObjectIds, {
                 skipQuestion: true,
@@ -45,6 +46,8 @@ export async function syncIfChosen(app: ALApp, choice: Promise<string | undefine
                 app,
             });
             break;
+
+        case LABELS.NO:
         case LABELS.BUTTON_INITIAL_NO:
             syncDisabled[app.hash] = true;
             if (++syncSkipped > 1) {
@@ -54,9 +57,7 @@ export async function syncIfChosen(app: ALApp, choice: Promise<string | undefine
             }
             break;
         case LABELS.BUTTON_LEARN_MORE:
-            // Telemetry.instance.logLearnMore("docs.learnExtension");
             showDocument("welcome");
-            // env.openExternal(Uri.parse(URLS.EXTENSION_LEARN));
             break;
     }
 }
@@ -151,7 +152,9 @@ async function getTypeAtPositionRaw(
     const match = symbol.name.match(/^(?<type>\w+)\s(?<id>\d+)\s(?<name>"?.+"?)?$/);
     if (match) {
         const { type, id } = match.groups as SymbolInfo;
-        if (id !== "0") return null;
+        if (id !== "0") {
+            return null;
+        }
 
         const pos = position.translate(
             -symbol.range.start.line,
@@ -174,18 +177,34 @@ async function getTypeAtPosition(
     context: NextIdContext
 ): Promise<string | null> {
     let type = await getTypeAtPositionRaw(document, position, context);
-    if (type === null) return null;
+    if (type === null) {
+        return null;
+    }
 
     type = type.toLowerCase();
     return Object.values<string>(ALObjectType).includes(type) || isTableOrEnum(type) ? type : null;
 }
 
 export function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): boolean {
-    if (!objectId) return true;
+    if (!objectId) {
+        return true;
+    }
 
     if (!objectId.hasConsumption) {
         if (!syncDisabled[app.hash] && !stopAsking) {
-            syncIfChosen(app, UI.nextId.showNoBackEndConsumptionInfo(app));
+            syncIfChosen(app, UI.nextId.showNoBackEndConsumptionInfo(app), choice => {
+                switch (choice) {
+                    case LABELS.BUTTON_INITIAL_YES:
+                        Telemetry.instance.log(TelemetryEventType.AcceptNinja);
+                        break;
+                    case LABELS.BUTTON_INITIAL_NO:
+                        Telemetry.instance.log(TelemetryEventType.RefuseNinja);
+                        break;
+                    case LABELS.BUTTON_LEARN_MORE:
+                        Telemetry.instance.log(TelemetryEventType.LearnAboutNinja);
+                        break;
+                }
+            });
         }
         return true;
     }
@@ -199,12 +218,7 @@ export function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectId
 }
 
 export class NextObjectIdCompletionProvider {
-    async provideCompletionItems(
-        document: TextDocument,
-        position: Position,
-        token: CancellationToken,
-        context: CompletionContext
-    ) {
+    async provideCompletionItems(document: TextDocument, position: Position) {
         const nextIdContext: NextIdContext = { injectSemicolon: false };
         const type = await getTypeAtPosition(document, position, nextIdContext);
         if (!type) {
@@ -219,7 +233,9 @@ export class NextObjectIdCompletionProvider {
         const objectId = await Backend.getNextNo(app, type, app.manifest.idRanges, false);
         Telemetry.instance.logNextNo(app, type, false);
 
-        if (showNotificationsIfNecessary(app, objectId) || !objectId) return [];
+        if (showNotificationsIfNecessary(app, objectId) || !objectId) {
+            return [];
+        }
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
 
         if (Array.isArray(objectId.id)) {

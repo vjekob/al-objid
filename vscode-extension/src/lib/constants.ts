@@ -43,6 +43,9 @@ export const LABELS = {
     },
 
     FIX: "Fix it",
+
+    NO: "No",
+    YES: "Yes"
 };
 
 /**

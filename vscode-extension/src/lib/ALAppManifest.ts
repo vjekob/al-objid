@@ -5,6 +5,7 @@ import { ALRange } from "./types/ALRange";
 interface ALAppJson {
     id: string;
     name: string;
+    publisher: string;
     version: string;
     idRanges: ALRange[];
     preprocessorSymbols: string[];
@@ -69,6 +70,13 @@ export class ALAppManifest {
      */
     public get name(): string {
         return this._manifest.name || "";
+    }
+
+    /**
+     * The `publisher` property from the `app.json` file.
+     */
+    public get publisher(): string {
+        return this._manifest.publisher || "";
     }
 
     /**

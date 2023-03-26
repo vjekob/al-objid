@@ -5,6 +5,7 @@ import { NewsButton } from "../lib/types/NewsButton";
 import { NewsActionType } from "../lib/types/NewsActionType";
 import { NewsType } from "../lib/types/NewsType";
 import { CodeCommand } from "../commands/commands";
+import openExternal from "../lib/functions/openExternal";
 
 enum NewsEntryStatus {
     shown = 0,
@@ -71,7 +72,7 @@ export class NewsHandler implements Disposable {
 
     private navigateToUrl(entry: NewsEntry, button: NewsButton) {
         this.dismiss(entry);
-        env.openExternal(Uri.parse(button.parameter));
+        openExternal(button.parameter);
     }
 
     private cleanUpCache(ids: string[]) {

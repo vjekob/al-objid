@@ -1,5 +1,6 @@
 import { commands, env, Uri, window } from "vscode";
 import { URLS } from "../lib/constants";
+import openExternal from "../lib/functions/openExternal";
 import { Telemetry } from "../lib/Telemetry";
 import { NinjaCommand } from "./commands";
 import { AppCommandContext } from "./contexts/AppCommandContext";
@@ -23,7 +24,7 @@ export const confirmSyncObjectIds = async (context?: AppCommandContext) => {
             commands.executeCommand(NinjaCommand.SyncObjectIds, { merge: result === OPTION.UPDATE, app: context?.app });
             break;
         case OPTION.LEARN:
-            env.openExternal(Uri.parse(URLS.SYNCHRONIZATION_LEARN));
+            openExternal(URLS.SYNCHRONIZATION_LEARN);
             break;
     }
 };

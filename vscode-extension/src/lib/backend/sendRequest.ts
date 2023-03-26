@@ -15,6 +15,7 @@ import { HttpErrorHandler } from "./HttpErrorHandler";
 import { HttpEndpoints } from "./HttpEndpoints";
 import { preprocessHttpStatusError } from "./preprocessHttpStatusError";
 import { handleHttpErrorDefault } from "./handleHttpErrorDefault";
+import { isProtectedPublisher } from "../functions/isProtectedPublisher";
 
 /**
  * Sends a request to the back-end API.
@@ -60,7 +61,7 @@ export async function sendRequest<T>(
 
     if (Config.instance.includeUserName && data && typeof data === "object" && !Array.isArray(data) && data.appId) {
         const app = WorkspaceManager.instance.getALAppFromHash(data.appId);
-        if (app) {
+        if (app && !isProtectedPublisher(app?.manifest.publisher)) {
             data.user = app.encrypt(Config.instance.userName);
         }
     }

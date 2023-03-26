@@ -10,8 +10,7 @@ import { ConsumptionInfo } from "../types/ConsumptionInfo";
 import { NextObjectIdInfo } from "../types/NextObjectIdInfo";
 import { Config } from "../Config";
 import { UI } from "../UI";
-import { API_RESULT, LABELS } from "../constants";
-import { env, Uri } from "vscode";
+import { API_RESULT, EXTENSION_VERSION, LABELS } from "../constants";
 import { Telemetry, TelemetryEventType } from "../Telemetry";
 import { getRangeForId } from "../functions/getRangeForId";
 import { BackEndAppInfo } from "./BackEndAppInfo";
@@ -23,17 +22,20 @@ import { HttpErrorHandler } from "./HttpErrorHandler";
 import { HttpEndpoints } from "./HttpEndpoints";
 import { sendRequest } from "./sendRequest";
 import { PropertyBag } from "../types/PropertyBag";
+import openExternal from "../functions/openExternal";
+import { isProtectedPublisher } from "../functions/isProtectedPublisher";
 
 (async () => {
     if (Config.instance.isBackEndConfigInError) {
         if ((await UI.general.showBackEndConfigurationError()) === LABELS.BUTTON_LEARN_MORE) {
-            env.openExternal(Uri.parse("https://github.com/vjekob/al-objid/blob/master/doc/DeployingBackEnd.md"));
+            openExternal("https://github.com/vjekob/al-objid/blob/master/doc/DeployingBackEnd.md");
         }
     }
 })();
 
 export class Backend {
-    private static readonly _knownManagedApps: PropertyBag<Promise<boolean> | undefined> = {};
+    private static readonly _knownManagedAppsPromises: PropertyBag<Promise<boolean> | undefined> = {};
+    private static readonly _knownManagedApps: PropertyBag<boolean | undefined> = {};
 
     /**
      * Checks if an app is a known managed app. A managed app is an app that Ninja's back end is aware of and Ninja
@@ -43,14 +45,29 @@ export class Backend {
      * @returns Promise to boolean result. When false, the app is not managed, and calls for it should not be made.
      */
     private static async isKnownManagedApp(appId: string, forceCheck: boolean = false): Promise<boolean> {
-        if (!this._knownManagedApps[appId]) {
-            if (!forceCheck) {
+        switch (this._knownManagedApps[appId]) {
+            case true:
+                return true;
+            case false:
                 return false;
-            }
-            return await (this._knownManagedApps[appId] = Backend.checkApp(appId));
+            case undefined:
+                // This case is here only to explicitly indicate that there is this third possibility
+                break;
         }
 
-        return await this._knownManagedApps[appId]!;
+        if (this._knownManagedAppsPromises[appId] instanceof Promise) {
+            return this._knownManagedAppsPromises[appId] as Promise<boolean>;
+        }
+
+        if (!forceCheck) {
+            return false;
+        }
+
+        return (this._knownManagedAppsPromises[appId] = new Promise<boolean>(async resolve => {
+            const result = await this.checkApp(appId);
+            this._knownManagedApps[appId] = result;
+            resolve(result);
+        }));
     }
 
     /**
@@ -58,7 +75,8 @@ export class Backend {
      * @param appHash App hash to remember.
      */
     private static rememberManagedApp(appHash: string) {
-        this._knownManagedApps[appHash] = Promise.resolve(true);
+        this._knownManagedAppsPromises[appHash] = Promise.resolve(true);
+        this._knownManagedApps[appHash] = true;
     }
 
     public static async getNextNo(
@@ -68,7 +86,8 @@ export class Backend {
         commit: boolean,
         require?: number
     ): Promise<NextObjectIdInfo | undefined> {
-        if (!(await this.isKnownManagedApp(app.hash))) {
+        // Intentionally checking the hash property bag, instead of calling isKnownManagedApp
+        if (!this._knownManagedApps[app.hash] && commit) {
             if (commit) {
                 this.rememberManagedApp(app.hash);
             }
@@ -144,7 +163,9 @@ export class Backend {
         this.rememberManagedApp(app.hash);
         const additional: any = {};
 
-        if (Config.instance.includeUserName) {
+        const alApp = WorkspaceManager.instance.getALAppFromHash(app.hash);
+
+        if (Config.instance.includeUserName && alApp && !isProtectedPublisher(alApp?.manifest.publisher)) {
             additional.gitUser = app.encrypt(gitUser);
             additional.gitEMail = app.encrypt(gitEMail);
         }
@@ -163,6 +184,9 @@ export class Backend {
         return response.value;
     }
 
+    // TODO Remove dependency on this fuunction
+    // It's currently being called every single time status bar is updated (from AuthorizationStatusBar.ts)
+    // This is too many calls. Probably authorization status bar should remember its choice, or something else should be done.
     public static async getAuthInfo(app: BackEndAppInfo, authKey: string): Promise<AuthorizedAppResponse | undefined> {
         // If the app is known to not be managed by the back end, then we exit
         if (!(await this.isKnownManagedApp(app.hash, true))) {
@@ -212,21 +236,9 @@ export class Backend {
         const actualPayload: FolderAuthorization[] = [];
         const promises: Promise<boolean>[] = [];
         for (let folder of payload) {
-            let knownApp = this._knownManagedApps[folder.appId];
-            if (knownApp) {
-                if (await knownApp) {
-                    actualPayload.push(folder);
-                }
-                continue;
-            }
-
-            promises.push(
-                ((appFolder: FolderAuthorization) => {
-                    const checkApp = this.isKnownManagedApp(appFolder.appId, true);
-                    checkApp.then(result => result && actualPayload.push(appFolder));
-                    return checkApp;
-                })(folder)
-            );
+            const checkApp = this.isKnownManagedApp(folder.appId, true);
+            checkApp.then(result => result && actualPayload.push(folder));
+            promises.push(checkApp);
         }
 
         // Let's await on any pending promises
@@ -267,20 +279,15 @@ export class Backend {
         return response.value;
     }
 
-    public static async checkApp(appId: string): Promise<boolean> {
+    private static async checkApp(appId: string): Promise<boolean> {
         appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(appId);
 
         const response = await sendRequest<boolean>("/api/v2/checkApp", "GET", { appId });
         return response.value ?? false;
     }
 
-    public static async telemetry(
-        appSha: string | undefined,
-        userSha: string,
-        event: TelemetryEventType,
-        context?: any
-    ) {
-        if (appSha && !(await this.isKnownManagedApp(appSha, true))) {
+    public static async telemetry(app: string | undefined, userSha: string, event: TelemetryEventType, context?: any) {
+        if (app && !(await this.isKnownManagedApp(app, true))) {
             // No telemetry is logged for non-managed apps
             return;
         }
@@ -290,9 +297,10 @@ export class Backend {
             "POST",
             {
                 userSha,
-                appSha,
+                appSha: app,
                 event,
                 context,
+                version: EXTENSION_VERSION,
             },
             async () => true,
             HttpEndpoints.telemetry

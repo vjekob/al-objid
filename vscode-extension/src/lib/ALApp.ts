@@ -52,7 +52,11 @@ export class ALApp implements Disposable, BackEndAppInfo {
 
     private createObjectIdConfig(): ObjIdConfig {
         const objIdConfig = new ObjIdConfig(this._configUri, this);
+        this.logTelemetryFeatures(objIdConfig);
+        return objIdConfig;
+    }
 
+    private logTelemetryFeatures(objIdConfig: ObjIdConfig): void {
         const features: string[] = [];
         if (objIdConfig.idRanges.length > 0) {
             features.push("logicalRanges");
@@ -67,10 +71,20 @@ export class ALApp implements Disposable, BackEndAppInfo {
             features.push("bcLicense");
         }
         if (features.length) {
-            Telemetry.instance.logOnceAndNeverAgain(TelemetryEventType.FeatureInUse, this, { features });
-        }
+            // TODO This is a stupid way to address problems explained deeper in #41 and #42
+            /*
+            The problem is that during app initialization, at this point the WorkspaceManager instance in creation has
+            not yet been assigned to the singleton instance property, but WorkspaceManager.instance will be accessed from
+            call stack of checkApp function in Backend, that happens during processing of telemetry.
+            This would not be a problem if #41 and #42 were done. Then, telemetry would send ALApp instance, rather than
+            app hash, and checkApp function would not need to access WorkspaceManager.instance or check for app pool.
 
-        return objIdConfig;
+            Once #41 and #42 are solved, refactor this one, too.
+            */
+            setTimeout(() => {
+                Telemetry.instance.logOnceAndNeverAgain(TelemetryEventType.FeatureInUse, this, { features });
+            }, 2000);
+        }
     }
 
     private onManifestChangedFromWatcher() {
