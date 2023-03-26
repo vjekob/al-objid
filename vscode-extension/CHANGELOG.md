@@ -13,7 +13,16 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     multiple active licenses and to see license report for all of them independently. Most likely to be released in
     2.11.0.
 
-## [2.9.2] - 2022-06-15
+## [2.9.3] - 2023-03-31
+
+### Added
+
+-   When publisher is "Microsoft", no user-identifiable information is ever sent to the back-end for the purpose of
+    notifying the other team members which user has consumed which object ID.
+-   Protected publishers feature added. This allows publishers who don't want to use the notifications feature about
+    consumed object IDs to be explicitly prevented by Ninja to share such info.
+
+## [2.9.2] - 2023-03-26
 
 ### Added
 

@@ -23,6 +23,7 @@ import { HttpEndpoints } from "./HttpEndpoints";
 import { sendRequest } from "./sendRequest";
 import { PropertyBag } from "../types/PropertyBag";
 import openExternal from "../functions/openExternal";
+import { isProtectedPublisher } from "../functions/isProtectedPublisher";
 
 (async () => {
     if (Config.instance.isBackEndConfigInError) {
@@ -162,7 +163,9 @@ export class Backend {
         this.rememberManagedApp(app.hash);
         const additional: any = {};
 
-        if (Config.instance.includeUserName) {
+        const alApp = WorkspaceManager.instance.getALAppFromHash(app.hash);
+
+        if (Config.instance.includeUserName && alApp && !isProtectedPublisher(alApp?.manifest.publisher)) {
             additional.gitUser = app.encrypt(gitUser);
             additional.gitEMail = app.encrypt(gitEMail);
         }

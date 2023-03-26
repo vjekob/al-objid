@@ -1,15 +1,15 @@
-import { commands } from "vscode"
-import { CodeCommand } from "./commands/commands"
+import { commands } from "vscode";
+import { CodeCommand } from "./commands/commands";
 
 let flagsSet = false;
 
 enum FeatureFlags {
-    ManagedPools = "managedPools"
+    ManagedPools = "managedPools",
 }
 
 export const featureFlags: { readonly [key in FeatureFlags]: boolean } = {
     managedPools: false,
-}
+};
 
 export function setFlags() {
     if (flagsSet) {
