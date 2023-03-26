@@ -185,7 +185,7 @@ async function getTypeAtPosition(
     return Object.values<string>(ALObjectType).includes(type) || isTableOrEnum(type) ? type : null;
 }
 
-function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): boolean {
+export function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): boolean {
     if (!objectId) {
         return true;
     }

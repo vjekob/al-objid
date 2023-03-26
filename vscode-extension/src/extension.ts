@@ -18,6 +18,7 @@ import { ConsumptionWarnings } from "./features/ConsumptionWarnings";
 import { RangeExplorerView } from "./features/treeView/rangeExplorer/RangeExplorerView";
 import { AppPoolExplorerView } from "./features/treeView/appPoolExplorer/AppPoolExplorerView";
 import { setFlags } from "./flags";
+import { ExtensionApi } from "./api/ExtensionApi";
 
 export function activate(context: ExtensionContext) {
     setFlags();
@@ -52,6 +53,9 @@ export function activate(context: ExtensionContext) {
     );
 
     ReleaseNotesHandler.instance.check(context);
+
+    // Return public extension API
+    return new ExtensionApi();
 }
 
 export function deactivate() {
