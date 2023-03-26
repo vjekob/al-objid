@@ -103,9 +103,16 @@ export class HttpStatusHandler extends DisposableHolder {
         if (maintenance) {
             return;
         }
-        maintenance = true;
         const date = new Date(error.headers["retry-after"]);
         const diff = date.valueOf() - Date.now();
+
+        if (!diff || diff < 0) {
+            // This is not a scheduled maintenance, but a temporary outage.
+            return;
+        }
+
+        maintenance = true;
+
         let buttons = ["OK"];
         if (typeof error.error === "string" && error.error.toLowerCase().startsWith("http")) {
             buttons.push(LABELS.BUTTON_LEARN_MORE);
