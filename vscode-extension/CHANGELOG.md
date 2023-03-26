@@ -17,6 +17,8 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
 
 ### Added
 
+-   Ninja exports API so other VS Code extensions can reserve object IDs. ([Git issue #8](https://github.com/vjekob/al-objid/issues/8))
+    (Thanks for contribution, Andrzej Zwierzchowski)
 -   When publisher is "Microsoft", no user-identifiable information is ever sent to the back-end for the purpose of
     notifying the other team members which user has consumed which object ID.
 -   Protected publishers feature added. This allows publishers who don't want to use the notifications feature about
