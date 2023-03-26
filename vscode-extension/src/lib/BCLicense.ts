@@ -63,7 +63,20 @@ export class BCLicense {
                 const uri = Uri.file(object.path);
                 uriCache[object.path] = uri;
             }
+
             const objectUri = uriCache[object.path];
+            Diagnostics.instance.resetForUri(objectUri);
+
+            // Skipping obsolete objects
+            if (object.properties?.obsoletestate?.toLowerCase() === "removed") {
+                continue;
+            }
+
+            // Skipping temporary tables
+            if (object.properties?.tabletype?.toLowerCase() === "temporary") {
+                continue;
+            }
+
             const diagnose = Diagnostics.instance.createDiagnostics(objectUri, `bclicense.${object.type}.${object.id}`);
             const mappedType = objectTypeToPermissionTypeMap[object.type];
             let permissions = cache[mappedType];

@@ -28,6 +28,8 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
 
 -   Config file cannot specify relative license path that specifies levels up from current workspace folder.
     ([Git issue #52](https://github.com/vjekob/al-objid/issues/52)).
+-   Obsolete objects are shown as not included in license. ([Git issue #47](https://github.com/vjekob/al-objid/issues/47))
+-   Temporary tables are shown as not included in license. ([Git issue #40](https://github.com/vjekob/al-objid/issues/40))
 
 ## [2.9.2] - 2023-03-26
 
