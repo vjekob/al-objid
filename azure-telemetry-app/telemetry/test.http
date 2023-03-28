@@ -2,11 +2,12 @@ post http://localhost:7071/api/telemetry
 Content-Type: application/json
 
 {
-    "userSha": "cscscs",
-    "appSha": "babebt",
-    "event": "start",
-    "context": {
-        "vscode": "1.68.0",
-        "ninja": "2.9.2"
-    }
+    "userSha":"5cc890331e95eec75b35dcbc8d25518c740bc5ba8e117a2723a8a5ccf2f0a217",
+    "event":"start",
+    "context":{
+        "ninja":"2.10.0",
+        "vscode":"1.76.2",
+        "ownEndpoints":false
+    },
+    "version":"2.10.0"
 }
