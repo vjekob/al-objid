@@ -6,7 +6,7 @@ Zero-configuration, dead-simple, no-collision object ID assignment for multi-use
 
 Object ID collisions are a reality of every AL development team. Sooner or later two developers will assign
 the same object ID to different objects they create. In the best case, this causes manual renumbering work.
-In the worst case you have a broken build.
+In the worst case you have a broken build. In either case, you waste time.
 
 AL Object ID Ninja solves this problem. It uses a central object ID cache that keeps track, in real time,
 of all object IDs your team members assigned to their objects. Unlike the AL Language, AL Object ID Ninja
@@ -87,7 +87,32 @@ Range Explorer feature shows you an overview of consumed and available object ID
 range, per object type. The view is live, and updates whenever you or your colleagues assign new
 object IDs using AL Object ID Ninja.
 
-![Rnage Explorer](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/range-explorer.png)
+![Range Explorer](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/range-explorer-2.11.0.png)
+
+### Logical ID ranges, object ID ranges, and consumption reports
+
+Very often you don't want to just assign numbers from a single huge range and you prefer assigning IDs
+per functional area. For example, you might want to assign IDs from range `50000..50099` to sales, and
+`50100..50199` to purchase. AL Object ID Ninja supports this.
+
+![Logical ID ranges](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/logical-ranges-range-explorer.png)
+
+> Logical ranges can group your object IDs into any meaningful group that makes sense for you.
+
+When you have logical ranges defined, IntelliSense will give you the next available object ID in each defined range:
+
+![Logical ID ranges](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/logical-ranges-intellisense.gif)
+
+> In the example above, you can see that IntelliSense suggests the next available object ID in each logical range.
+
+But it gets even better! Very often on-premise licenses define different ranges for different object
+types. For example, you'll have only 50 tables, but 200 pages and codeunits. With AL Object ID Ninja,
+you can define different ranges per object type, and thus make sure that you never assign an object ID
+that you will not be able to deploy to your on-premise environment.
+
+![Object ranges](https://raw.githubusercontent.com/vjekob/al-objid/master/doc/images/object-type-ranges.png)
+
+Learn more about logical and object ID ranges: https://github.com/vjekob/al-objid/blob/master/vscode-extension/docs/logical-ranges.md
 
 ### Warnings about running out of available object IDs
 
