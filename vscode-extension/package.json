@@ -3,7 +3,7 @@
     "displayName": "AL Object ID Ninja",
     "description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
     "publisher": "vjeko",
-    "version": "2.10.0",
+    "version": "2.11.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/vjekob/al-objid.git"
@@ -116,6 +116,12 @@
                 "command": "vjeko-al-objid.validate-bclicense",
                 "category": "Ninja",
                 "title": "Validate object IDs against license"
+            },
+            {
+                "command": "vjeko-al-objid.report-consumption",
+                "category": "Ninja",
+                "title": "Report consumption",
+                "icon": "$(export)"
             },
             {
                 "command": "vjeko-al-objid.select-bclicense",
@@ -268,6 +274,11 @@
                     "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-sync,/"
                 },
                 {
+                    "command": "vjeko-al-objid.report-consumption",
+                    "group": "inline",
+                    "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-sync,/"
+                },
+                {
                     "command": "vjeko-al-objid.goto-definition",
                     "group": "inline",
                     "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-goto-def,/"
@@ -334,6 +345,10 @@
                 },
                 {
                     "command": "vjeko-al-objid.select-bclicense",
+                    "when": "vjeko-al-objid.active == true"
+                },
+                {
+                    "command": "vjeko-al-objid.report-consumption",
                     "when": "vjeko-al-objid.active == true"
                 },
                 {

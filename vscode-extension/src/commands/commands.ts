@@ -19,6 +19,7 @@ import { selectBCLicense } from "./select-bclicense";
 import { showReleaseNotes } from "./show-release-notes";
 import { syncObjectIds } from "./sync-object-ids";
 import { validateLicense } from "./validate-bclicense";
+import { reportConsumption } from "./report-consumption";
 
 export enum CodeCommand {
     SetContext = "setContext",
@@ -38,6 +39,7 @@ export enum NinjaCommand {
     CreateAppPool = "vjeko-al-objid.create-app-pool",
     ValidateLicense = "vjeko-al-objid.validate-bclicense",
     SelectBCLicense = "vjeko-al-objid.select-bclicense",
+    ReportConsumption = "vjeko-al-objid.report-consumption",
     CommitSuggestion = "vjeko-al-objid.commit-suggestion",
     SyncObjectIds = "vjeko-al-objid.sync-object-ids",
     AuthorizeApp = "vjeko-al-objid.authorize-app",
@@ -61,6 +63,7 @@ export const commandMap: { [key: string]: (...args: any[]) => any } = {
     [NinjaCommand.CreateAppPool]: createAppPool,
     [NinjaCommand.ValidateLicense]: validateLicense,
     [NinjaCommand.SelectBCLicense]: selectBCLicense,
+    [NinjaCommand.ReportConsumption]: reportConsumption,
     [NinjaCommand.CommitSuggestion]: commitSuggestion,
     [NinjaCommand.SyncObjectIds]: syncObjectIds,
     [NinjaCommand.AuthorizeApp]: authorizeApp,
