@@ -11,6 +11,10 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
 
 -   License Explorer: allows you to have better insight into licensed state of your objects. It allows to have
     multiple active licenses and to see license report for all of them independently.
+-   Managed app pools: allows you to create app pools with full control of apps included in them. Existing unmanaged
+    pools allow anyone who knows the pool ID to join their app into a pool. Managed pools allow you to control who
+    can join the pool, you can remove apps from pool centrally, and you can make sure that only apps that are actually
+    a part of the pool to assign object IDs to that pool.
 
 ## [2.11.0] - 2023-04-07
 
