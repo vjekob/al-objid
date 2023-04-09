@@ -14,6 +14,10 @@ export const URLS = {
     EXTENSION_LEARN: "https://github.com/vjekob/al-objid/tree/master/doc/Welcome.md",
     AUTO_SYNC: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSync.md",
     AUTO_SYNC_DIRTY: "https://github.com/vjekob/al-objid/tree/master/doc/AutoSyncDirty.md",
+
+    WIKI: {
+        DOES_EVERYONE_NEED_TO_USE_NINJA: "https://github.com/vjekob/al-objid/wiki/Does-everyone-on-my-team-need-to-use-Ninja%3F"
+    }
 };
 
 export const LABELS = {

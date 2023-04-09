@@ -5,7 +5,8 @@ import { NinjaCommand } from "./commands";
 import { Range, TextDocument, Uri } from "vscode";
 import { Backend } from "../lib/backend/Backend";
 import { UI } from "../lib/UI";
-import { LABELS } from "../lib/constants";
+import { LABELS, URLS } from "../lib/constants";
+import openExternal from "../lib/functions/openExternal";
 
 /**
  * Stores an ID assignment in the back end for a manually-assigned ID.
@@ -20,7 +21,7 @@ export async function QuickFixStoreIdAssignment(app: ALApp, object: ALObject, do
     const result = await Backend.addAssignment(app, object.type, object.id);
     if (!result) {
         if (await UI.assignment.showNotUpdatedError(object.type, object.id) === LABELS.BUTTON_LEARN_MORE) {
+            openExternal(URLS.WIKI.DOES_EVERYONE_NEED_TO_USE_NINJA);
         }
     }
-    // app.config.removeProperty(type);
 }
