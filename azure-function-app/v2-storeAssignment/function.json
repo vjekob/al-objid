@@ -1,0 +1,29 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "post",
+        "delete"
+      ],
+      "route": "v2/storeAssignment"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "notify",
+      "queueName": "appchange",
+      "connection": "NotifyQueueStorage"
+    }
+  ],
+  "scriptFile": "../dist/src/functions/v2/storeAssignment/index.js",
+  "entryPoint": "run"
+}

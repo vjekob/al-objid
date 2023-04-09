@@ -63,7 +63,7 @@ export interface AppBindings {
 export interface DefaultBindings { };
 export interface DefaultRequest { };
 
-export type ChangeOperation = "getNext" | "syncMerge" | "syncFull" | "authorize" | "deauthorize";
+export type ChangeOperation = "getNext" | "syncMerge" | "syncFull" | "authorize" | "deauthorize" | "addAssignment" | "removeAssignment";
 
 export interface ALNinjaRequestContext<TRequest = any, TBindings = any> extends RequestContext<TRequest, TBindings> {
     log(app: AppInfo, operation: ChangeOperation, content?: any): void;
