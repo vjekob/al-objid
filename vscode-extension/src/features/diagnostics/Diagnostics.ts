@@ -1,8 +1,9 @@
+import { PropertyBag } from "../../lib/types/PropertyBag";
 import { Diagnostic, DiagnosticCollection, DiagnosticSeverity, Disposable, languages, Range, Uri } from "vscode";
-import { PropertyBag } from "../lib/types/PropertyBag";
+import { NinjaDiagnostic } from "./NinjaDiagnostic";
 
 export interface CreateDiagnostic {
-    (range: Range, message: string, severity?: DiagnosticSeverity, code?: string): Diagnostic;
+    (range: Range, message: string, severity?: DiagnosticSeverity, code?: string): NinjaDiagnostic;
 }
 
 export const DIAGNOSTIC_CODE = {
@@ -19,8 +20,16 @@ export const DIAGNOSTIC_CODE = {
     },
 
     BCLICENSE: {
-        UNAVAILABLE: "N0101",
+        UNAVAILABLE: "N0201",
     },
+
+    CONSUMPTION: {
+        UNASSIGNED: "N0301",
+    },
+};
+
+export const DIAGNOSTIC_URI: PropertyBag<Uri> = {
+    [DIAGNOSTIC_CODE.CONSUMPTION.UNASSIGNED]: Uri.parse("https://github.com/vjekob/al-objid/wiki/Ninja-Warning-N0301"),
 };
 
 export class Diagnostics implements Disposable {
@@ -86,9 +95,20 @@ export class Diagnostics implements Disposable {
         scheduleUpdate();
 
         return (range, message, severity, code) => {
-            const diagnostic = new Diagnostic(range, message, severity);
+            const diagnostic = new NinjaDiagnostic(
+                range,
+                `${message.charAt(0).toUpperCase()}${message.slice(1)}`,
+                severity
+            );
+            let diagnosticCode: string | { target: Uri; value: string } | undefined = code;
+            if (code && DIAGNOSTIC_URI[code]) {
+                diagnosticCode = {
+                    value: code,
+                    target: DIAGNOSTIC_URI[code],
+                };
+            }
             diagnostic.source = "Ninja";
-            diagnostic.code = code;
+            diagnostic.code = diagnosticCode;
             newDiagnostics.push(diagnostic);
             scheduleUpdate();
             return diagnostic;

@@ -145,6 +145,11 @@
                 "category": "Ninja",
                 "title": "Go to definition",
                 "icon": "$(go-to-file)"
+            },
+            {
+                "command": "vjeko-al-objid.quickfix-store-id-assignment",
+                "category": "Ninja",
+                "title": "Store ID assignment"
             }
         ],
         "configuration": {

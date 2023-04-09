@@ -14,15 +14,16 @@ export class FileWatcher implements Disposable {
     private _gitWatcher: FileSystemWatcher | undefined;
     private _gitAware: boolean = false;
     private _gitBranch: string | undefined;
+    private _disposables: Disposable[] = [];
     private _disposed = false;
 
     public constructor(uri: Uri) {
         this._uri = uri;
         const fileGlob = uri.fsPath;
         this._watcher = workspace.createFileSystemWatcher(fileGlob, false, false, false);
-        this._watcher.onDidCreate(() => this.onDidCreate());
-        this._watcher.onDidChange(() => this.onDidChange());
-        this._watcher.onDidDelete(() => this.onDidDelete());
+        this._watcher.onDidCreate(() => this.onDidCreate(), this._disposables);
+        this._watcher.onDidChange(() => this.onDidChange(), this._disposables);
+        this._watcher.onDidDelete(() => this.onDidDelete(), this._disposables);
 
         this.setUpGitWatcher();
     }
@@ -89,5 +90,7 @@ export class FileWatcher implements Disposable {
         if (this._gitWatcher) {
             this._gitWatcher.dispose();
         }
+
+        this._disposables.forEach(disposable => disposable.dispose());
     }
 }

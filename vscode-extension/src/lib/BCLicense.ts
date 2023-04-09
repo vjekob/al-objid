@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as xml2js from "xml2js";
 import { DiagnosticSeverity, Position, Range, Uri, workspace } from "vscode";
-import { Diagnostics, DIAGNOSTIC_CODE } from "../features/Diagnostics";
+import { Diagnostics, DIAGNOSTIC_CODE } from "../features/diagnostics/Diagnostics";
 import { getObjectDefinitions, getWorkspaceFolderFiles } from "./ObjectIds";
 import { PropertyBag } from "./types/PropertyBag";
 

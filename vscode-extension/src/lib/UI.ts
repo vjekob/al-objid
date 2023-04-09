@@ -126,6 +126,14 @@ export const UI = {
             ),
     },
 
+    assignment: {
+        showNotUpdatedError: async (type: string, id: number) =>
+            window.showErrorMessage(
+                `We could not update the object ID for ${type} ${id}. It seems that somebody on your team has just assigned it to another object.`,
+                LABELS.BUTTON_LEARN_MORE
+            ),
+    },
+
     git: {
         showNotRepoWarning: (app: ALApp, operation: string) =>
             window.showWarningMessage(

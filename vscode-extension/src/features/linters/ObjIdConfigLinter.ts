@@ -6,7 +6,7 @@ import { BCLicense } from "../../lib/BCLicense";
 import { ConfigurationProperty } from "../../lib/ObjIdConfig";
 import { ALObjectType } from "../../lib/types/ALObjectType";
 import { ALRange } from "../../lib/types/ALRange";
-import { CreateDiagnostic, Diagnostics, DIAGNOSTIC_CODE } from "../Diagnostics";
+import { CreateDiagnostic, Diagnostics, DIAGNOSTIC_CODE } from "../diagnostics/Diagnostics";
 import { jsonAvailable } from "./jsonAvailable";
 
 // TODO Warn on logical ranges not covered by physical ranges

@@ -70,6 +70,11 @@ export class Backend {
         }));
     }
 
+    // TODO Keeping track of managed apps is no task for the backend class. Move this to ALApp class.
+    // Each app should know whether it is managed or not. At initialization, the back-end call is placed to see if the app is managed.
+    // Managed apps place calls to the back end, unmanaged don't.
+    // Ninja explorer should be able to show managed apps, and unmanaged apps should be shown as unmanaged.
+    // Ninja explorer should have an action to make an app managed.
     /**
      * Marks the local app as known managed app.
      * @param appHash App hash to remember.
@@ -126,6 +131,33 @@ export class Backend {
         if (response.status === API_RESULT.SUCCESS)
             output.log(`Received next ${type} ID response: ${JSON.stringify(response.value)}`);
         return response.value;
+    }
+
+    public static async addAssignment(app: ALApp, type: string, id: number): Promise<boolean> {
+        this.rememberManagedApp(app.hash);
+
+        const appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(app.hash);
+
+        const response = await sendRequest<{ updated: boolean }>("/api/v2/storeAssignment", "POST", {
+            appId,
+            type,
+            id,
+            authKey: app.config.authKey,
+        });
+        return !!response.value?.updated;
+    }
+
+    public static async removeAssignment(app: BackEndAppInfo, type: string, id: number): Promise<boolean> {
+        this.rememberManagedApp(app.hash);
+
+        const appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(app.hash);
+
+        const response = await sendRequest<{ updated: boolean }>("/api/v2/storeAssignment", "DELETE", {
+            appId,
+            type,
+            id,
+        });
+        return !!response.value?.updated;
     }
 
     public static async syncIds(app: BackEndAppInfo, ids: ConsumptionInfo, patch: boolean): Promise<boolean> {

@@ -9,8 +9,8 @@ import { HttpStatusHandler } from "./features/HttpStatusHandler";
 import { ReleaseNotesHandler } from "./features/ReleaseNotesHandler";
 import { Telemetry } from "./lib/Telemetry";
 import { ParserConnector } from "./features/ParserConnector";
-import { Diagnostics } from "./features/Diagnostics";
-import { ObjIdConfigActionProvider } from "./features/ObjIdConfigCodeActionProvider";
+import { Diagnostics } from "./features/diagnostics/Diagnostics";
+import { ObjIdConfigActionProvider } from "./features/codeActions/ObjIdConfigCodeActionProvider";
 import { ConsumptionCache } from "./features/ConsumptionCache";
 import { WorkspaceManager } from "./features/WorkspaceManager";
 import { CodeCommand, registerCommands } from "./commands/commands";
@@ -19,6 +19,7 @@ import { RangeExplorerView } from "./features/treeView/rangeExplorer/RangeExplor
 import { AppPoolExplorerView } from "./features/treeView/appPoolExplorer/AppPoolExplorerView";
 import { setFlags } from "./flags";
 import { ExtensionApi } from "./api/ExtensionApi";
+import { ALCodeActionProvider } from "./features/codeActions/ALCodeActionProvider";
 
 export function activate(context: ExtensionContext) {
     setFlags();
@@ -33,8 +34,9 @@ export function activate(context: ExtensionContext) {
         new RangeExplorerView("ninja-rangeExplorer"),
         new AppPoolExplorerView("ninja-appPoolExplorer"),
 
-        // CodeActions provider
+        // CodeActions providers
         languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),
+        languages.registerCodeActionsProvider("al", new ALCodeActionProvider()),
 
         // Other VS Code features
         languages.registerCompletionItemProvider("al", new NextObjectIdCompletionProvider()),

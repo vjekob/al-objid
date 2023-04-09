@@ -11,11 +11,13 @@ import { ObjIdConfigWatcher } from "./ObjectIdConfigWatcher";
 import { decrypt, encrypt } from "./Encryption";
 import { BackEndAppInfo } from "./backend/BackEndAppInfo";
 import { Telemetry, TelemetryEventType } from "./Telemetry";
+import { AssigmentMonitor } from "../features/AssignmentMonitor";
 
 export class ALApp implements Disposable, BackEndAppInfo {
     private readonly _uri: Uri;
     private readonly _configUri: Uri;
     private readonly _name: string;
+    private readonly _assignmentMonitor: AssigmentMonitor;
     private readonly _manifestWatcher: FileWatcher;
     private readonly _manifestChanged: Disposable;
     private readonly _configWatcher: ObjIdConfigWatcher;
@@ -48,6 +50,8 @@ export class ALApp implements Disposable, BackEndAppInfo {
                 return newConfig;
             }
         );
+
+        this._assignmentMonitor = new AssigmentMonitor(uri, this.hash);
     }
 
     private createObjectIdConfig(): ObjIdConfig {

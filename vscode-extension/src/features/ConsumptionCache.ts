@@ -25,10 +25,10 @@ export class ConsumptionCache implements Disposable {
     private readonly _onConsumptionUpdateEmitter = new EventEmitter<ConsumptionEventInfo>();
     private readonly _onConsumptionUpdateEvent = this._onConsumptionUpdateEmitter.event;
 
-    public onConsumptionUpdate(appId: string, onUpdate: () => void): Disposable {
+    public onConsumptionUpdate(appId: string, onUpdate: (consumption: ConsumptionData) => void): Disposable {
         return this._onConsumptionUpdateEvent(e => {
             if (e.appId === appId) {
-                onUpdate();
+                onUpdate(e.consumption);
             }
         });
     }

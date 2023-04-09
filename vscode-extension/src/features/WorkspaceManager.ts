@@ -196,6 +196,7 @@ export class WorkspaceManager implements Disposable {
         return this.pickFolder();
     }
 
+    // TODO This function belongs to the ALApp class. Move it there.
     /**
      * Returns app pool ID that specified app identified by hash belongs to. If the app does not exist, or does not belong
      * to a pool, then the same passed as `appHash` parameter is returned.

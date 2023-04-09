@@ -1,22 +1,11 @@
-import { WorkspaceManager } from "./WorkspaceManager";
-import { CodeActionProvider, TextDocument, Range, CodeActionContext, CodeAction, CodeActionKind, Uri } from "vscode";
-import { ALObjectType } from "../lib/types/ALObjectType";
-import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
-import { DIAGNOSTIC_CODE } from "./Diagnostics";
-import { NinjaCommand } from "../commands/commands";
-import { ALApp } from "../lib/ALApp";
-import { PropertyBag } from "../lib/types/PropertyBag";
-
-interface QuickFixContext {
-    actions: CodeAction[];
-    app: ALApp;
-    document: TextDocument;
-    range: Range;
-}
-
-interface QuickFixProvider {
-    (context: QuickFixContext): void | Promise<void>;
-}
+import { CodeAction, CodeActionKind } from "vscode";
+import { ALObjectType } from "../../lib/types/ALObjectType";
+import { getSymbolAtPosition } from "../../lib/functions/getSymbolAtPosition";
+import { DIAGNOSTIC_CODE } from "../diagnostics/Diagnostics";
+import { NinjaCommand } from "../../commands/commands";
+import { PropertyBag } from "../../lib/types/PropertyBag";
+import { QuickFixProvider } from "./QuickFixProvider";
+import { BaseCodeActionProvider } from "./BaseCodeActionProvider";
 
 function createAction(command: string, args: any[], title: string) {
     const action = new CodeAction(title);
@@ -57,29 +46,8 @@ const QuickFix: PropertyBag<QuickFixProvider> = {
     },
 };
 
-export class ObjIdConfigActionProvider implements CodeActionProvider {
-    public async provideCodeActions(
-        document: TextDocument,
-        range: Range,
-        context: CodeActionContext
-    ): Promise<CodeAction[] | undefined> {
-        const ninjaIssues = context.diagnostics.filter(diagnostic => diagnostic.source === "Ninja");
-        if (ninjaIssues.length === 0) {
-            return;
-        }
-
-        const app = WorkspaceManager.instance.getALAppFromUri(document.uri);
-        if (!app) {
-            return;
-        }
-
-        const actions: CodeAction[] = [];
-        for (let issue of ninjaIssues) {
-            const action = QuickFix[issue.code as string]({ actions, app, document, range });
-            if (action instanceof Promise) {
-                await action;
-            }
-        }
-        return actions;
+export class ObjIdConfigActionProvider extends BaseCodeActionProvider {
+    public constructor() {
+        super(QuickFix);
     }
 }

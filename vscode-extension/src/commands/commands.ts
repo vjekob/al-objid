@@ -20,6 +20,7 @@ import { showReleaseNotes } from "./show-release-notes";
 import { syncObjectIds } from "./sync-object-ids";
 import { validateLicense } from "./validate-bclicense";
 import { reportConsumption } from "./report-consumption";
+import { QuickFixStoreIdAssignment } from "./quickfix-store-id-assignment";
 
 export enum CodeCommand {
     SetContext = "setContext",
@@ -47,6 +48,7 @@ export enum NinjaCommand {
     QuickFixRemoveDeclaration = "vjeko-al-objid.quickfix-remove-declaration",
     QuickFixSelectValidType = "vjeko-al-objid.quickfix-select-valid-type",
     QuickFixRemoveProperty = "vjeko-al-objid.quickfix-remove-property",
+    QuickFixStoreIdAssignment = "vjeko-al-objid.quickfix-store-id-assignment",
     ExpandAllRangeExplorer = "vjeko-al-objid.expand-all-rangeExplorer",
     CollapseAllRangeExplorer = "vjeko-al-objid.collapse-all-rangeExplorer",
     GoToDefinition = "vjeko-al-objid.goto-definition",
@@ -71,6 +73,7 @@ export const commandMap: { [key: string]: (...args: any[]) => any } = {
     [NinjaCommand.QuickFixRemoveDeclaration]: quickFixRemoveDeclaration,
     [NinjaCommand.QuickFixSelectValidType]: quickFixSelectValidType,
     [NinjaCommand.QuickFixRemoveProperty]: quickFixRemoveProperty,
+    [NinjaCommand.QuickFixStoreIdAssignment]: QuickFixStoreIdAssignment,
     [NinjaCommand.ExpandAllRangeExplorer]: expandAllRangeExplorer,
     [NinjaCommand.CollapseAllRangeExplorer]: collapseAllRangeExplorer,
     [NinjaCommand.GoToDefinition]: goToDefinition,
