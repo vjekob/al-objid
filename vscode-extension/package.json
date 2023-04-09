@@ -395,6 +395,6 @@
         "@vjeko.com/al-parser-types": "^0.0.4",
         "@vjeko.com/al-parser-types-ninja": "^1.0.11",
         "comment-json": "^4.1.1",
-        "xml2js": "^0.4.23"
+        "xml2js": "^0.5.0"
     }
 }
