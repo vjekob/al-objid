@@ -16,13 +16,18 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     can join the pool, you can remove apps from pool centrally, and you can make sure that only apps that are actually
     a part of the pool to assign object IDs to that pool.
 
-## [2.11.0] - 2023-04-07
+## [2.11.0] - 2023-04-14
 
 ### Added
 
 -   Consumption Report: gives you a summary of object consumption per object type, which is very useful for license
     management. You can choose whether to save the report in a file or to copy it to clipboard. Supports text, JSON,
     CSV, and XML formats. ([Git issue #33](https://gitub.com/vjekob/al-objid/issues/33))
+-   Assignment Explorer: provides an overview of manually assigned objects (that are likely going to cause conflicts
+    when merging) and "lost" object (assigned with Ninja, but then deleted, making their object ID unused, but unavailable
+    for assignment). The view is interactive and allows fixing both kinds of issues directly from the view.
+-   Manually assigned objects are clearly marked as such in code and in _Problems_ panel. Quick fix is availale to store
+    the assignment in the back end.
 
 ## [2.10.0] - 2023-03-31
 
