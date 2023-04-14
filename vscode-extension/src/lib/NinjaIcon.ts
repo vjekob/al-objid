@@ -14,7 +14,13 @@ export function getIconPath(id: string): IconPath {
     };
 }
 
-enum NinjaIconType {
+export function getSingleIconPath(id: keyof typeof NinjaIconType): Uri {
+    const pathToIcon = path.join(__dirname, `../../images/${id}`);
+    const uri = Uri.file(`${pathToIcon}.svg`);
+    return uri;
+}
+
+export enum NinjaIconType {
     "object-ranges",
     "object-ranges-type",
     "physical-range",
@@ -34,6 +40,11 @@ enum NinjaIconType {
     "al-app",
     "al-apps",
     "al-app-cloud",
+    "al-collision",
+    "check",
+    "object-collision",
+    "al-lost",
+    "object-lost",
 }
 
 export const NinjaIcon: { [key in keyof typeof NinjaIconType]: IconPath } = {} as any;

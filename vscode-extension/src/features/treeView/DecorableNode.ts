@@ -12,7 +12,7 @@ export abstract class DecorableNode extends Node {
         super(parent);
     }
 
-    private _uri: Uri | undefined;
+    protected _uri: Uri | undefined;
     protected abstract readonly _iconPath: string | Uri | { light: string | Uri; dark: string | Uri } | ThemeIcon;
     protected abstract readonly _uriAuthority: string;
     protected abstract readonly _uriPathPart: string;

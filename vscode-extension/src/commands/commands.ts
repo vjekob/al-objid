@@ -21,6 +21,9 @@ import { syncObjectIds } from "./sync-object-ids";
 import { validateLicense } from "./validate-bclicense";
 import { reportConsumption } from "./report-consumption";
 import { QuickFixStoreIdAssignment } from "./quickfix-store-id-assignment";
+import reclaimObjectId from "./reclaim-object-id";
+import confirmReclaimObjectId from "./confirm-reclaim-object-id";
+import storeIdAssignment from "./store-id-assignment";
 
 export enum CodeCommand {
     SetContext = "setContext",
@@ -52,6 +55,9 @@ export enum NinjaCommand {
     ExpandAllRangeExplorer = "vjeko-al-objid.expand-all-rangeExplorer",
     CollapseAllRangeExplorer = "vjeko-al-objid.collapse-all-rangeExplorer",
     GoToDefinition = "vjeko-al-objid.goto-definition",
+    ReclaimObjectId = "vjeko-al-objid.reclaim-object-id",
+    ConfirmReclaimObjectId = "vjeko-al-objid.confirm-reclaim-object-id",
+    StoreIdAssignment = "vjeko-al-objid.store-id-assignment",
 }
 
 export const commandMap: { [key: string]: (...args: any[]) => any } = {
@@ -77,6 +83,9 @@ export const commandMap: { [key: string]: (...args: any[]) => any } = {
     [NinjaCommand.ExpandAllRangeExplorer]: expandAllRangeExplorer,
     [NinjaCommand.CollapseAllRangeExplorer]: collapseAllRangeExplorer,
     [NinjaCommand.GoToDefinition]: goToDefinition,
+    [NinjaCommand.ReclaimObjectId]: reclaimObjectId,
+    [NinjaCommand.ConfirmReclaimObjectId]: confirmReclaimObjectId,
+    [NinjaCommand.StoreIdAssignment]: storeIdAssignment,
 };
 
 export function* registerCommands(): Generator<Disposable> {

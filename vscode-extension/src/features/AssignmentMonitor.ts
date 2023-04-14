@@ -7,12 +7,20 @@ import { ConsumptionCache } from "./ConsumptionCache";
 import { consumptionToObjects } from "../lib/functions/consumptionToObjects";
 import { ConsumptionData } from "../lib/types/ConsumptionData";
 import { PropertyBag } from "../lib/types/PropertyBag";
+import { ALApp } from "../lib/ALApp";
+import { EventEmitter } from "vscode";
+import { AssignedALObject } from "../lib/types/AssignedALObject";
 
 export class AssigmentMonitor implements Disposable {
+    private _assigned: AssignedALObject[] = [];
+    private _unassigned: ALObject[] = [];
+    private readonly _onAssignmentChanged = new EventEmitter<{ assigned: AssignedALObject[], unassigned: ALObject[] }>();
+    public readonly onAssignmentChanged = this._onAssignmentChanged.event;
     readonly _uri: Uri;
     readonly _hash: string;
     readonly _watcher: FileSystemWatcher;
     readonly _disposables: Disposable[] = [];
+
     readonly _pending = {
         changed: [] as Uri[],
         created: [] as Uri[],
@@ -132,16 +140,23 @@ export class AssigmentMonitor implements Disposable {
 
         const assignedObjects = consumptionToObjects(this._consumption);
 
-        const notUsed = assignedObjects.filter(
+        // Array of object IDs that are assigned (consumed) but do not exist in the workspace
+        const assigned = assignedObjects.filter(
             assignedObject =>
                 !this._objects!.some(object => object.id === assignedObject.id && object.type === assignedObject.type)
         );
+        this._assigned = assigned;
+
+        // Array of object IDs that are not assigned by Ninja but exist in the workspace
         const unassigned = this._objects.filter(
             object =>
                 !assignedObjects.some(
                     assignedObject => object.id === assignedObject.id && object.type === assignedObject.type
                 )
         );
+        this._unassigned = unassigned;
+
+        this._onAssignmentChanged.fire({ assigned, unassigned })
 
         this.clearDiagnostics();
 
@@ -174,6 +189,14 @@ export class AssigmentMonitor implements Disposable {
         }
     }
 
+    public get assigned() {
+        return this._assigned;
+    }
+
+    public get unassigned() {
+        return this._unassigned;
+    }
+
     private clearDiagnostics() {
         for (let uri of this._diagnosedUris) {
             Diagnostics.instance.resetForUri(uri);
@@ -189,6 +212,7 @@ export class AssigmentMonitor implements Disposable {
         this._watcher.dispose();
         this._disposables.forEach(disposable => disposable.dispose());
         this.clearDiagnostics();
+        this._onAssignmentChanged.dispose();
 
         this._disposed = true;
     }

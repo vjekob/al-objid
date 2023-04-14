@@ -1,5 +1,4 @@
 import { ThemeIcon, TreeItemCollapsibleState } from "vscode";
-import { ContextValues } from "./ContextValues";
 import { DecorableNode } from "./DecorableNode";
 import { ViewAwareNode } from "./ViewAwareNode";
 import { ViewController } from "./ViewController";

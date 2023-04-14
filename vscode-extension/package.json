@@ -150,6 +150,24 @@
                 "command": "vjeko-al-objid.quickfix-store-id-assignment",
                 "category": "Ninja",
                 "title": "Store ID assignment"
+            },
+            {
+                "command": "vjeko-al-objid.store-id-assignment",
+                "category": "Ninja",
+                "title": "Store ID assignment",
+                "icon": "$(cloud-upload)"
+            },
+            {
+                "command": "vjeko-al-objid.reclaim-object-id",
+                "category": "Ninja",
+                "title": "Reclaim object ID",
+                "icon": "$(discard)"
+            },
+            {
+                "command": "vjeko-al-objid.confirm-reclaim-object-id",
+                "category": "Ninja",
+                "title": "Reclaim object ID",
+                "icon": "$(discard)"
             }
         ],
         "configuration": {
@@ -245,6 +263,14 @@
                     "when": "vjeko-al-objid.feature.managedPools == true"
                 },
                 {
+                    "id": "ninja-assignmentExplorer",
+                    "name": "Assignment Explorer",
+                    "icon": "images/tree-view.svg",
+                    "contextualTitle": "Assignment Explorer",
+                    "type": "tree",
+                    "when": "vjeko-al-objid.active == true"
+                },
+                {
                     "id": "ninja-licenseExplorer",
                     "name": "License Explorer",
                     "icon": "images/tree-view.svg",
@@ -297,6 +323,16 @@
                     "command": "vjeko-al-objid.copy-ranges",
                     "group": "inline",
                     "when": "view == ninja-rangeExplorer && viewItem =~ /,ninja-copy-ranges,/"
+                },
+                {
+                    "command": "vjeko-al-objid.confirm-reclaim-object-id",
+                    "group": "inline",
+                    "when": "view == ninja-assignmentExplorer && viewItem =~ /,ninja-reclaim-id,/"
+                },
+                {
+                    "command": "vjeko-al-objid.store-id-assignment",
+                    "group": "inline",
+                    "when": "view == ninja-assignmentExplorer && viewItem =~ /,ninja-store-assignment,/"
                 }
             ],
             "explorer/context": [

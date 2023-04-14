@@ -1,10 +1,6 @@
 import { ConsumptionData } from "../types/ConsumptionData";
 import { ALObjectType } from "../types/ALObjectType";
-
-interface AssignedALObject {
-    type: ALObjectType;
-    id: number;
-}
+import { AssignedALObject } from "../types/AssignedALObject";
 
 export function consumptionToObjects(consumption: ConsumptionData): AssignedALObject[] {
     const objects: AssignedALObject[] = [];

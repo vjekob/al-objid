@@ -147,7 +147,7 @@ export class Backend {
         return !!response.value?.updated;
     }
 
-    public static async removeAssignment(app: BackEndAppInfo, type: string, id: number): Promise<boolean> {
+    public static async removeAssignment(app: ALApp, type: string, id: number): Promise<boolean> {
         this.rememberManagedApp(app.hash);
 
         const appId = WorkspaceManager.instance.getPoolIdFromAppIdIfAvailable(app.hash);
@@ -156,6 +156,7 @@ export class Backend {
             appId,
             type,
             id,
+            authKey: app.config.authKey,
         });
         return !!response.value?.updated;
     }

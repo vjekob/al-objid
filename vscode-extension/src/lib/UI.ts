@@ -132,6 +132,28 @@ export const UI = {
                 `We could not update the object ID for ${type} ${id}. It seems that somebody on your team has just assigned it to another object.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
+        reclaimId: async (type: string, id: number) =>
+            window.showInformationMessage(
+                `Are you sure that ${type} ${id} is really available and not actually in use by another local or remote branch?`,
+                LABELS.YES,
+                LABELS.NO,
+                LABELS.BUTTON_LEARN_MORE
+            ),
+        reconfirmReclaimId: async (type: string, id: number) =>
+            window.showInformationMessage(
+                `Call us extra careful, but are you really sure that ${type} ${id} is really no longer in use by another local or remote branch?`,
+                LABELS.YES,
+                LABELS.NO,
+                LABELS.BUTTON_LEARN_MORE
+            ),
+        reclaimSucceeded: async (type: string, id: number) =>
+            window.showInformationMessage(
+                `Object ID ${type} ${id} has been successfully reclaimed. It is now free for assignment to another object.`
+            ),
+        reclaimFailed: async (type: string, id: number) =>
+            window.showErrorMessage(
+                `We could not reclaim object ID ${type} ${id}. This is an unexpected error, please try again.`
+            ),
     },
 
     git: {
@@ -224,9 +246,10 @@ export const UI = {
             ),
         showInvalidRangeFromToError: (range: NinjaALRange) =>
             window.showErrorMessage(
-                `Range ${range.description
-                    ? `${range.description} (${range.from}..${range.to})`
-                    : `${range.from}..${range.to}`
+                `Range ${
+                    range.description
+                        ? `${range.description} (${range.from}..${range.to})`
+                        : `${range.from}..${range.to}`
                 } has "to" lower than "from". "from" must be lower, and "to" must be higher.`,
                 LABELS.FIX
             ),

@@ -185,6 +185,13 @@ export class ALApp implements Disposable, BackEndAppInfo {
     }
 
     /**
+     * Returns the assignment monitor instance for this app.
+     */
+    public get assignmentMonitor(): AssigmentMonitor {
+        return this._assignmentMonitor;
+    }
+
+    /**
      * Encrypts a string using the app encryption key.
      * @param value String to encrypt
      * @returns Encrypted string (or `undefined` if encryption failed)

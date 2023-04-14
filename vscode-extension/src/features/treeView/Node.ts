@@ -1,4 +1,4 @@
-import { TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
+import { MarkdownString, TreeItem, TreeItemCollapsibleState, TreeItemLabel, Uri } from "vscode";
 import { ContextValues } from "./ContextValues";
 
 export abstract class Node {
@@ -11,7 +11,7 @@ export abstract class Node {
     protected _contextValues: ContextValues[] = [];
     protected _parent: Node | undefined;
     protected _description: string | undefined;
-    protected _tooltip: string | undefined;
+    protected _tooltip: string | MarkdownString | undefined;
     protected _children: Node[] | Promise<Node[]> | undefined;
 
     protected completeTreeItem(item: TreeItem) {

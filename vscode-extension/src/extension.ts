@@ -20,6 +20,7 @@ import { AppPoolExplorerView } from "./features/treeView/appPoolExplorer/AppPool
 import { setFlags } from "./flags";
 import { ExtensionApi } from "./api/ExtensionApi";
 import { ALCodeActionProvider } from "./features/codeActions/ALCodeActionProvider";
+import { AssignmentExplorerView } from "./features/treeView/assignmentExplorer/AssignmentExplorerView";
 
 export function activate(context: ExtensionContext) {
     setFlags();
@@ -33,6 +34,7 @@ export function activate(context: ExtensionContext) {
         // Tree views
         new RangeExplorerView("ninja-rangeExplorer"),
         new AppPoolExplorerView("ninja-appPoolExplorer"),
+        new AssignmentExplorerView("ninja-assignmentExplorer"),
 
         // CodeActions providers
         languages.registerCodeActionsProvider("jsonc", new ObjIdConfigActionProvider()),
