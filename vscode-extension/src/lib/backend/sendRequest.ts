@@ -50,7 +50,11 @@ export async function sendRequest<T>(
 
     if (Config.instance.useVerboseOutputLogging) {
         let { authKey, ...log } = data;
-        output.log(`[Verbose] sending request to https://${hostname}${path}: ${JSON.stringify(log)}`);
+        output.log(
+            `[Verbose] sending request to https://${hostname}${path}: ${JSON.stringify(
+                Array.isArray(data) ? data : log
+            )}`
+        );
     }
 
     const request: HttpRequest = { hostname, path, method, data };
