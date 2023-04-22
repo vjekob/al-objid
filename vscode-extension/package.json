@@ -3,7 +3,7 @@
     "displayName": "AL Object ID Ninja",
     "description": "Manage object IDs in multi-user environments with mind-boggling simplicity.",
     "publisher": "vjeko",
-    "version": "2.11.0",
+    "version": "2.11.1",
     "repository": {
         "type": "git",
         "url": "https://github.com/vjekob/al-objid.git"
@@ -402,6 +402,22 @@
                 },
                 {
                     "command": "vjeko-al-objid.goto-definition",
+                    "when": "false"
+                },
+                {
+                    "command": "vjeko-al-objid.confirm-reclaim-object-id",
+                    "when": "false"
+                },
+                {
+                    "command": "vjeko-al-objid.quickfix-store-id-assignment",
+                    "when": "false"
+                },
+                {
+                    "command": "vjeko-al-objid.reclaim-object-id",
+                    "when": "false"
+                },
+                {
+                    "command": "vjeko-al-objid.store-id-assignment",
                     "when": "false"
                 }
             ]
