@@ -16,6 +16,13 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     can join the pool, you can remove apps from pool centrally, and you can make sure that only apps that are actually
     a part of the pool to assign object IDs to that pool.
 
+## [2.11.2] - 2023-08-24
+
+### Fixed
+
+-   Parsing precompiler directives failed under certain circumstances (end of line character sequence), which in turn
+    causes some objects to be incompletely parsed. This prevented synchronization of any object IDs in some repos.
+
 ## [2.11.1] - 2023-04-22
 
 ### Fixed

@@ -30,6 +30,11 @@ export class ParserConnector implements Disposable {
         await this.initialization;
         const files = uris.map(uri => uri.fsPath);
         const objects = await ALParserNinja.parse(files);
+        objects
+            .filter(o => o.error)
+            .forEach(o =>
+                output.log(`[AL Parser] Error parsing ${o.name} (${o.path}): ${(o as any).error}`, LogLevel.Info)
+            );
         return objects;
     }
 
@@ -73,6 +78,7 @@ export class ParserConnector implements Disposable {
     private constructor() {
         output.log("[AL Parser] Initializing parser...", LogLevel.Verbose);
         this._initialization = ALParserNinja.initialize();
+        ALParserNinja.on("error", (e: Error) => output.log(`[AL Parser] Parser error ${e.message}`, LogLevel.Info));
         this._initialization.then(() => {
             output.log("[AL Parser] Parser is now initialized.", LogLevel.Verbose);
             this._initialized = true;
