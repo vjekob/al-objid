@@ -16,6 +16,12 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     can join the pool, you can remove apps from pool centrally, and you can make sure that only apps that are actually
     a part of the pool to assign object IDs to that pool.
 
+## [2.11.3] - 2023-08-24
+
+### Fixed
+
+-   New namespace declarations (`namespace` and `using`) prevented parsing of entire objects.
+
 ## [2.11.2] - 2023-08-24
 
 ### Fixed
