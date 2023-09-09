@@ -10,18 +10,18 @@ import {
     workspace,
     WorkspaceEdit,
 } from "vscode";
-import { Backend } from "../lib/backend/Backend";
-import { NinjaALRange } from "../lib/types/NinjaALRange";
-import { LogLevel, output } from "./Output";
-import { NextObjectIdInfo } from "../lib/types/NextObjectIdInfo";
-import { Telemetry, TelemetryEventType } from "../lib/Telemetry";
-import { NextIdContext } from "./ParserConnector";
-import { showDocument } from "../lib/functions/showDocument";
-import { UI } from "../lib/UI";
-import { DOCUMENTS, LABELS } from "../lib/constants";
+import { Backend } from "../../lib/backend/Backend";
+import { NinjaALRange } from "../../lib/types/NinjaALRange";
+import { LogLevel, output } from "../Output";
+import { NextObjectIdInfo } from "../../lib/types/NextObjectIdInfo";
+import { Telemetry, TelemetryEventType } from "../../lib/Telemetry";
+import { NextIdContext } from "../ParserConnector";
+import { showDocument } from "../../lib/functions/showDocument";
+import { UI } from "../../lib/UI";
+import { DOCUMENTS, LABELS } from "../../lib/constants";
 import { syncIfChosen } from "./NextObjectIdCompletionProvider";
-import { ALApp } from "../lib/ALApp";
-import { NinjaCommand } from "../commands/commands";
+import { ALApp } from "../../lib/ALApp";
+import { NinjaCommand } from "../../commands/commands";
 
 export type CommitNextObjectId = (app: ALApp) => Promise<NextObjectIdInfo>;
 
@@ -57,7 +57,7 @@ export class NextObjectIdCompletionItem extends CompletionItem {
         this._injectSemicolon = nextIdContext.injectSemicolon;
         this._range = range;
 
-        this.sortText = nextIdContext.additional ? `0.${nextIdContext.additional.ordinal / 1000}` : "0";
+        this.sortText = nextIdContext.additional ? `!!.${nextIdContext.additional.ordinal / 1000}` : "0";
         this.command = this.getCompletionCommand(position, uri, type, app, objectId);
         this.documentation = this.getCompletionDocumentation(type, objectId);
         this.insertText = `${objectId.id}${this._injectSemicolon ? ";" : ""}`;

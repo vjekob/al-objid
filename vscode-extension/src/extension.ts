@@ -2,7 +2,7 @@ import { commands, ExtensionContext, languages } from "vscode";
 import { NewsHandler } from "./features/NewsHandler";
 import { AuthorizationStatusBar } from "./features/AuthorizationStatusBar";
 import { PollingHandler } from "./features/PollingHandler";
-import { NextObjectIdCompletionProvider } from "./features/NextObjectIdCompletionProvider";
+import { NextObjectIdCompletionProvider } from "./features/completion/NextObjectIdCompletionProvider";
 import { Output } from "./features/Output";
 import { Config } from "./lib/Config";
 import { HttpStatusHandler } from "./features/HttpStatusHandler";

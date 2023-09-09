@@ -1,5 +1,5 @@
 import { Uri } from "vscode";
-import { showNotificationsIfNecessary } from "../features/NextObjectIdCompletionProvider";
+import { showNotificationsIfNecessary } from "../features/completion/NextObjectIdCompletionProvider";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { Backend } from "../lib/backend/Backend";
 import { Telemetry } from "../lib/Telemetry";

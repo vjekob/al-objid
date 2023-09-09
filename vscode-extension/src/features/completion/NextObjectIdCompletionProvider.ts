@@ -1,21 +1,21 @@
-import { commands, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
+import { commands, CompletionItem, CompletionItemKind, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
-import { LABELS } from "../lib/constants";
-import { ALObjectType } from "../lib/types/ALObjectType";
-import { Backend } from "../lib/backend/Backend";
-import { UI } from "../lib/UI";
-import { output } from "./Output";
-import { NextObjectIdInfo } from "../lib/types/NextObjectIdInfo";
-import { PropertyBag } from "../lib/types/PropertyBag";
-import { Telemetry, TelemetryEventType } from "../lib/Telemetry";
-import { NextIdContext, ParserConnector } from "./ParserConnector";
-import { getSymbolAtPosition } from "../lib/functions/getSymbolAtPosition";
-import { getRangeForId } from "../lib/functions/getRangeForId";
-import { ALApp } from "../lib/ALApp";
-import { WorkspaceManager } from "./WorkspaceManager";
-import { NinjaCommand } from "../commands/commands";
-import { showDocument } from "../lib/functions/showDocument";
+import { LABELS } from "../../lib/constants";
+import { ALObjectType } from "../../lib/types/ALObjectType";
+import { Backend } from "../../lib/backend/Backend";
+import { UI } from "../../lib/UI";
+import { output } from "../Output";
+import { NextObjectIdInfo } from "../../lib/types/NextObjectIdInfo";
+import { PropertyBag } from "../../lib/types/PropertyBag";
+import { Telemetry, TelemetryEventType } from "../../lib/Telemetry";
+import { NextIdContext, ParserConnector } from "../ParserConnector";
+import { getSymbolAtPosition } from "../../lib/functions/getSymbolAtPosition";
+import { getRangeForId } from "../../lib/functions/getRangeForId";
+import { ALApp } from "../../lib/ALApp";
+import { WorkspaceManager } from "../WorkspaceManager";
+import { NinjaCommand } from "../../commands/commands";
+import { showDocument } from "../../lib/functions/showDocument";
 
 type SymbolInfo = {
     type: string;
