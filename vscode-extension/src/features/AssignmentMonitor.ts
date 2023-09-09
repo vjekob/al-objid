@@ -7,7 +7,6 @@ import { ConsumptionCache } from "./ConsumptionCache";
 import { consumptionToObjects } from "../lib/functions/consumptionToObjects";
 import { ConsumptionData } from "../lib/types/ConsumptionData";
 import { PropertyBag } from "../lib/types/PropertyBag";
-import { ALApp } from "../lib/ALApp";
 import { EventEmitter } from "vscode";
 import { AssignedALObject } from "../lib/types/AssignedALObject";
 
@@ -162,6 +161,9 @@ export class AssigmentMonitor implements Disposable {
 
         let uriCache: PropertyBag<Uri> = {};
         for (let object of unassigned) {
+            if (object.hasError) {
+                continue;
+            }
             if (!uriCache[object.path]) {
                 const uri = Uri.file(object.path);
                 uriCache[object.path] = uri;
