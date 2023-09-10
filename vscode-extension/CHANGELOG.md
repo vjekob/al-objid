@@ -16,6 +16,16 @@ Work is in progress on two upcoming features, both of which heavily depend on tr
     can join the pool, you can remove apps from pool centrally, and you can make sure that only apps that are actually
     a part of the pool to assign object IDs to that pool.
 
+## [2.12.0] - 2023-09-10
+
+### Added
+
+-   Interactive assignment feature. This allows you to assign a new object ID from within a custom range you define
+    on the fly. Some companies prefer having their object IDs to be arranged in a specific way, and this feature
+    allows you to do that. When assigning a new object ID, simply specify the minimum and the maximum object ID you
+    want to assign from, and Ninja will assign the next available object ID from that range (or it will let you know
+    if it can't find any available object IDs in that range).
+
 ## [2.11.3] - 2023-08-24
 
 ### Fixed
