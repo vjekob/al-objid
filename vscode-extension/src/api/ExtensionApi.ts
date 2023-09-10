@@ -1,9 +1,9 @@
 import { Uri } from "vscode";
-import { showNotificationsIfNecessary } from "../features/completion/NextObjectIdCompletionProvider";
 import { WorkspaceManager } from "../features/WorkspaceManager";
 import { Backend } from "../lib/backend/Backend";
 import { Telemetry } from "../lib/Telemetry";
 import { NextObjectIdInfo } from "../lib/types/NextObjectIdInfo";
+import { continueWithAssignment } from "../features/completion/completionFunctions";
 
 export class ExtensionApi {
     async suggestIds(uri: Uri, type: string): Promise<number[] | undefined> {
@@ -15,7 +15,7 @@ export class ExtensionApi {
         const objectId = await Backend.getNextNo(app, type, app.manifest.idRanges, false);
         Telemetry.instance.logNextNo(app, type, false);
 
-        if (showNotificationsIfNecessary(app, objectId) || !objectId) {
+        if (!continueWithAssignment(app, objectId) || !objectId) {
             return undefined;
         }
 

@@ -1,4 +1,4 @@
-import { commands, CompletionItem, CompletionItemKind, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
+import { commands, CompletionItem, DocumentSymbol, Position, TextDocument, Uri } from "vscode";
 import { EOL } from "os";
 import { NextObjectIdCompletionItem } from "./NextObjectIdCompletionItem";
 import { LABELS } from "../../lib/constants";
@@ -6,9 +6,7 @@ import { ALObjectType } from "../../lib/types/ALObjectType";
 import { Backend } from "../../lib/backend/Backend";
 import { UI } from "../../lib/UI";
 import { output } from "../Output";
-import { NextObjectIdInfo } from "../../lib/types/NextObjectIdInfo";
-import { PropertyBag } from "../../lib/types/PropertyBag";
-import { Telemetry, TelemetryEventType } from "../../lib/Telemetry";
+import { Telemetry } from "../../lib/Telemetry";
 import { NextIdContext, ParserConnector } from "../ParserConnector";
 import { getSymbolAtPosition } from "../../lib/functions/getSymbolAtPosition";
 import { getRangeForId } from "../../lib/functions/getRangeForId";
@@ -16,6 +14,8 @@ import { ALApp } from "../../lib/ALApp";
 import { WorkspaceManager } from "../WorkspaceManager";
 import { NinjaCommand } from "../../commands/commands";
 import { showDocument } from "../../lib/functions/showDocument";
+import { InteractiveCompletionItem } from "./InteractiveCompletionItem";
+import { continueWithAssignment, stopAsking, stopSyncing } from "./completionFunctions";
 
 type SymbolInfo = {
     type: string;
@@ -23,9 +23,7 @@ type SymbolInfo = {
     name: string;
 };
 
-let syncDisabled: PropertyBag<boolean> = {};
 let syncSkipped = 0;
-let stopAsking = false;
 
 export async function syncIfChosen(
     app: ALApp,
@@ -49,10 +47,10 @@ export async function syncIfChosen(
 
         case LABELS.NO:
         case LABELS.BUTTON_INITIAL_NO:
-            syncDisabled[app.hash] = true;
+            stopSyncing(app.hash);
             if (++syncSkipped > 1) {
                 if ((await UI.nextId.showNoBackEndConsumptionInfoAlreadySaidNo()) === LABELS.BUTTON_DONT_ASK) {
-                    stopAsking = true;
+                    stopAsking();
                 }
             }
             break;
@@ -185,38 +183,6 @@ async function getTypeAtPosition(
     return Object.values<string>(ALObjectType).includes(type) || isTableOrEnum(type) ? type : null;
 }
 
-export function showNotificationsIfNecessary(app: ALApp, objectId?: NextObjectIdInfo): boolean {
-    if (!objectId) {
-        return true;
-    }
-
-    if (!objectId.hasConsumption) {
-        if (!syncDisabled[app.hash] && !stopAsking) {
-            syncIfChosen(app, UI.nextId.showNoBackEndConsumptionInfo(app), choice => {
-                switch (choice) {
-                    case LABELS.BUTTON_INITIAL_YES:
-                        Telemetry.instance.log(TelemetryEventType.AcceptNinja);
-                        break;
-                    case LABELS.BUTTON_INITIAL_NO:
-                        Telemetry.instance.log(TelemetryEventType.RefuseNinja);
-                        break;
-                    case LABELS.BUTTON_LEARN_MORE:
-                        Telemetry.instance.log(TelemetryEventType.LearnAboutNinja);
-                        break;
-                }
-            });
-        }
-        return true;
-    }
-
-    if (!objectId.available) {
-        syncIfChosen(app, UI.nextId.showNoMoreNumbersWarning());
-        return true;
-    }
-
-    return false;
-}
-
 export class NextObjectIdCompletionProvider {
     async provideCompletionItems(document: TextDocument, position: Position) {
         const nextIdContext: NextIdContext = { injectSemicolon: false };
@@ -233,7 +199,7 @@ export class NextObjectIdCompletionProvider {
         const objectId = await Backend.getNextNo(app, type, app.manifest.idRanges, false);
         Telemetry.instance.logNextNo(app, type, false);
 
-        if (showNotificationsIfNecessary(app, objectId) || !objectId) {
+        if (!continueWithAssignment(app, objectId) || !objectId) {
             return [];
         }
         output.log(`Suggesting object ID auto-complete for ${type} ${objectId.id}`);
@@ -243,7 +209,7 @@ export class NextObjectIdCompletionProvider {
                 objectId.id.push(0);
             }
 
-            const items: NextObjectIdCompletionItem[] = [];
+            const items: CompletionItem[] = [];
             const logicalNames: string[] = [];
             for (let i = 0; i < objectId.id.length; i++) {
                 const id = objectId.id[i];
@@ -272,6 +238,7 @@ export class NextObjectIdCompletionProvider {
                     )
                 );
             }
+            items.push(new InteractiveCompletionItem(type, app, position, document.uri));
             return items;
         } else {
             return [new NextObjectIdCompletionItem(type, objectId, app, position, document.uri, nextIdContext)];

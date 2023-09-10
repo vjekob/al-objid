@@ -132,6 +132,17 @@ export const UI = {
                 `We could not update the object ID for ${type} ${id}. It seems that somebody on your team has just assigned it to another object.`,
                 LABELS.BUTTON_LEARN_MORE
             ),
+        showInteractiveNoOverlapError: async (app: ALApp, type: string) =>
+            window.showErrorMessage(
+                `The range you have selected does not overlap with any of the existing ranges configured in your ${
+                    app.config.objectRanges[type]
+                        ? `.objidconfig file ${type} ranges`
+                        : app.config.idRanges.length
+                        ? ".objidconfig file idRanges"
+                        : "app manifest"
+                }.`,
+                LABELS.BUTTON_LEARN_MORE
+            ),
         reclaimId: async (type: string, id: number) =>
             window.showInformationMessage(
                 `Are you sure that ${type} ${id} is really available and not actually in use by another local or remote branch?`,

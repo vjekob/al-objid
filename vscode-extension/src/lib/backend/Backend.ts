@@ -15,7 +15,7 @@ import { Telemetry, TelemetryEventType } from "../Telemetry";
 import { getRangeForId } from "../functions/getRangeForId";
 import { BackEndAppInfo } from "./BackEndAppInfo";
 import { NinjaALRange } from "../types/NinjaALRange";
-import { ALRange } from "../types/ALRange";
+import { ALRange, ALRanges } from "../types/ALRange";
 import { ALApp } from "../ALApp";
 import { WorkspaceManager } from "../../features/WorkspaceManager";
 import { HttpErrorHandler } from "./HttpErrorHandler";
@@ -87,7 +87,7 @@ export class Backend {
     public static async getNextNo(
         app: ALApp,
         type: string,
-        ranges: ALRange[],
+        ranges: ALRanges,
         commit: boolean,
         require?: number
     ): Promise<NextObjectIdInfo | undefined> {
@@ -100,7 +100,7 @@ export class Backend {
 
         const additionalOptions = {} as NextObjectIdInfo;
         const idRanges = app.config.getObjectTypeRanges(type);
-        if (Config.instance.requestPerRange || idRanges.length > 0) {
+        if (!ranges.mandatory && (Config.instance.requestPerRange || idRanges.length > 0)) {
             additionalOptions.perRange = true;
             if (commit && require) {
                 additionalOptions.require = require;
