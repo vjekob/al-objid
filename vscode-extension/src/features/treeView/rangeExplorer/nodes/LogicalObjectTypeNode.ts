@@ -39,9 +39,12 @@ export class LogicalObjectTypeNode extends ObjectTypeNode implements GoToDefinit
     protected override getChildren(): Node[] {
         const logicalRanges = this.app.config.getObjectTypeRanges(this._objectType);
         const logicalRangeNames = logicalRanges.reduce<string[]>((results, range) => {
+            if ((range.description || "").trim() === "") {
+                return results;
+            }
             if (
                 results.find(
-                    left => (left || "").toLowerCase().trim() === (range.description || "").toLocaleLowerCase().trim()
+                    left => left.toLowerCase().trim() === range.description.toLowerCase().trim()
                 )
             ) {
                 return results;
@@ -50,8 +53,8 @@ export class LogicalObjectTypeNode extends ObjectTypeNode implements GoToDefinit
             return results;
         }, []);
 
-        const children = logicalRangeNames.map(name => {
-            const compareName = (name || "").toLowerCase().trim();
+        let children: Node[] = logicalRangeNames.map(name => {
+            const compareName = name.toLowerCase().trim();
             const ranges = logicalRanges.filter(
                 range => (range.description || "").toLowerCase().trim() === compareName
             );
@@ -59,6 +62,14 @@ export class LogicalObjectTypeNode extends ObjectTypeNode implements GoToDefinit
                 ? new LogicalObjectTypeRangeConsumptionNode(this, this._objectType, ranges[0], true)
                 : new LogicalObjectTypeRangesNode(this, this._objectType, name, ranges);
         });
+
+        const rangesWithoutDescription = logicalRanges.filter(range => (range.description || "").trim() === "");
+        const nodesWithoutDescription = rangesWithoutDescription.map(range => {
+            return new LogicalObjectTypeRangeConsumptionNode(this, this._objectType, range, false);
+        });
+        for (const nodeWithoutDescription of nodesWithoutDescription) {
+            children.push(nodeWithoutDescription)
+        }
 
         return children;
     }
