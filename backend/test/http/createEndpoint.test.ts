@@ -68,19 +68,6 @@ describe("createEndpoint", () => {
             );
         });
 
-        it("should not set authLevel when not provided", () => {
-            const getHandler: AzureHttpHandler = jest.fn();
-
-            createEndpoint({
-                moniker: "publicEndpoint",
-                route: "api/public",
-                GET: getHandler,
-            });
-
-            const callArgs = mockAppHttp.mock.calls[0][1];
-            expect(callArgs).not.toHaveProperty("authLevel");
-        });
-
         it("should support anonymous authLevel", () => {
             const getHandler: AzureHttpHandler = jest.fn();
 

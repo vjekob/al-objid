@@ -22,6 +22,5 @@ appRequestMandatory(post);
 export const getConsumption = createEndpoint({
     moniker: "v3-getConsumption",
     route: "v3/getConsumption/{appId}",
-    authLevel: "anonymous",
     POST: post,
 });

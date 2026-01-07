@@ -65,7 +65,6 @@ validate(patch, array({
 export const autoSyncIds = createEndpoint({
     moniker: "v3-autoSyncIds",
     route: "v3/autoSyncIds",
-    authLevel: "anonymous",
     POST: post,
     PATCH: patch,
 });

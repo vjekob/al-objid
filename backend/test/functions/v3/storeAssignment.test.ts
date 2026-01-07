@@ -76,8 +76,8 @@ describe("storeAssignment", () => {
             expect(storeAssignmentConfig.route).toBe("v3/storeAssignment/{appId}/{type}/{id}");
         });
 
-        it("should create endpoint with anonymous auth level", () => {
-            expect(storeAssignmentConfig.authLevel).toBe("anonymous");
+        it("should create endpoint with undefined auth level", () => {
+            expect(storeAssignmentConfig.authLevel).toBeUndefined();
         });
 
         it("should register only POST handler", () => {
@@ -100,8 +100,8 @@ describe("storeAssignment", () => {
             expect(storeAssignmentDeleteConfig.route).toBe("v3/storeAssignment/{appId}/{type}/{id}/delete");
         });
 
-        it("should create delete endpoint with anonymous auth level", () => {
-            expect(storeAssignmentDeleteConfig.authLevel).toBe("anonymous");
+        it("should create delete endpoint with undefined auth level", () => {
+            expect(storeAssignmentDeleteConfig.authLevel).toBeUndefined();
         });
 
         it("should register only POST handler for delete endpoint", () => {

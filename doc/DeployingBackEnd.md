@@ -55,9 +55,10 @@ Your choice of operating system is entirely up to you. The app can run on Window
 
 The back-end requires the following environment variables to be configured.
 
-| Variable          | Value  | Usage notes                   |
-| ----------------- | ------ | ----------------------------- |
-| `PRIVATE_BACKEND` | `true` | Case-insensitive feature flag |
+| Variable                   | Value  | Usage notes                   |
+| -------------------------- | ------ | ----------------------------- |
+| `PRIVATE_BACKEND`          | `true` | Case-insensitive feature flag |
+| `USE_FUNCTION_ACCESS_KEYS` | `true` | Case-insensitive feature flag |
 
 #### `PRIVATE_BACKEND` Flag
 
@@ -68,6 +69,18 @@ When running the back-end on your own infrastructure, you must set this flag to 
 - User authorization checks (whether users are allowed to assign numbers)
 - Consumption counting
 - Orphan app management
+
+#### `USE_FUNCTION_ACCESS_KEYS` Flag
+
+This flag controls whether the back-end requires Azure Function access keys for authorization.
+
+**Default behavior (flag not set or `false`)**: All HTTP requests to function endpoints are accepted without authentication. Anyone who knows your Function App URL can access the back-end.
+
+**When set to `true`**: The back-end enforces authorization using Azure Function access keys:
+- **Obtaining the key**: In the Azure portal, navigate to your Function App → Functions → App keys. Copy the default host key or create a new one. 
+- **Configuring VS Code AL Ninja Extension**: Set the `objectIdNinja.backEndAPIKey` setting to the function access key you copied.
+- **Security**: All requests without a valid function access key will be rejected with HTTP 401 Unauthorized.
+
 
 ## Storage
 

@@ -117,7 +117,6 @@ validate(post, arrayOrEntity({
 export const check = createEndpoint({
     moniker: "v3-check",
     route: "v3/check",
-    authLevel: "anonymous",
     POST: post,
 });
 

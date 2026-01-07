@@ -59,8 +59,8 @@ describe("getConsumption", () => {
             expect(endpointConfig.route).toBe("v3/getConsumption/{appId}");
         });
 
-        it("should create endpoint with anonymous auth level", () => {
-            expect(endpointConfig.authLevel).toBe("anonymous");
+        it("should create endpoint with undefined auth level", () => {
+            expect(endpointConfig.authLevel).toBeUndefined();
         });
 
         it("should register only POST handler", () => {

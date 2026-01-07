@@ -20,6 +20,5 @@ const get: AzureHttpHandler<void, string> = async (req) => {
 export const checkApp = createEndpoint({
     moniker: "v3-checkApp",
     route: "v3/checkApp/{appId}",
-    authLevel: "anonymous",
     GET: get,
 });

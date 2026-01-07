@@ -181,6 +181,5 @@ withPermissionCheck(post);
 export const getNext = createEndpoint({
     moniker: "v3-getNext",
     route: "v3/getNext/{appId}",
-    authLevel: "anonymous",
     POST: post,
 });

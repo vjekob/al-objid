@@ -74,8 +74,8 @@ describe("authorizeApp", () => {
             expect(endpointConfig.route).toBe("v3/authorizeApp/{appId}");
         });
 
-        it("should create endpoint with anonymous auth level", () => {
-            expect(endpointConfig.authLevel).toBe("anonymous");
+        it("should create endpoint with undefined auth level", () => {
+            expect(endpointConfig.authLevel).toBeUndefined();
         });
 
         it("should register GET, POST, and DELETE handlers", () => {

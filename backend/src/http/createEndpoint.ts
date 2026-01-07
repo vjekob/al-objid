@@ -1,6 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext, HttpMethod } from "@azure/functions";
 import { handleRequest } from "./handleRequest";
 import { AzureHttpHandler } from "./AzureHttpHandler";
+import { getHttpAuthLevel } from "../utils/httpAuthLevel";
 
 interface EndpointSetup {
     moniker: string;
@@ -50,6 +51,8 @@ export function createEndpoint(setup: EndpointSetup): void {
 
     if (authLevel) {
         options.authLevel = authLevel;
+    } else {
+        options.authLevel = getHttpAuthLevel();
     }
 
     app.http(moniker, options);

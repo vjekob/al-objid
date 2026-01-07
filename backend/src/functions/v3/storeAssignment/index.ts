@@ -128,7 +128,6 @@ appRequestOptional(postDelete);
 export const storeAssignment = createEndpoint({
     moniker: "v3-storeAssignment",
     route: "v3/storeAssignment/{appId}/{type}/{id}",
-    authLevel: "anonymous",
     POST: post,
 });
 
@@ -136,6 +135,5 @@ export const storeAssignment = createEndpoint({
 export const storeAssignmentDelete = createEndpoint({
     moniker: "v3-storeAssignment-delete",
     route: "v3/storeAssignment/{appId}/{type}/{id}/delete",
-    authLevel: "anonymous",
     POST: postDelete,
 });
