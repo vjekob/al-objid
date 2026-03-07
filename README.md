@@ -22,6 +22,8 @@ Unfortunately, that openness **has been used for unfair commercial gain**: a wel
 
 Because of that, I am no longer able to publicly distribute the source code or support unrestricted self-hosting in the way I originally intended. I regret having to do this, but I also have to protect the sustainability of the product and my own legitimate commercial interests.
 
+Read more at: [https://vjeko.com/2026/03/05/al-object-id-ninja-an-apology-a-decision-and-a-month-on-the-house/](https://vjeko.com/)
+
 ## License
 
 This repository is provided under a commercial license. For terms and conditions, please visit [https://alid.ninja/terms](https://alid.ninja/terms).
